@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="13.3">
+  <zoom_level>11</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>385</x>
+      <y>11</y>
+      <w>319</w>
+      <h>209</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Person&gt;&gt;
+--
++id:int
++name:String
++surname:String
++age:int
++passport:String
++address:String
++phone:String
+--
++updatePhone()
++updateAdress()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>748</x>
+      <y>352</y>
+      <w>297</w>
+      <h>154</h>
+    </coordinates>
+    <panel_attributes>Doctor
+--
++classification:String
++qualification:String
+--
++updateMedicalCard()
++updateQualification()
++giveInjection()
++prescribeTreatment(disease:String)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>11</x>
+      <y>352</y>
+      <w>308</w>
+      <h>154</h>
+    </coordinates>
+    <panel_attributes>Receptionist
+--
++id:int
+--
++appointDoctor(disease:String):String
++giveTicket()
++updateMedicalCard()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>418</x>
+      <y>352</y>
+      <w>231</w>
+      <h>154</h>
+    </coordinates>
+    <panel_attributes>Patient
+--
++card:idCard
++disease:String
+--
++complains():String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>616</x>
+      <y>209</y>
+      <w>275</w>
+      <h>165</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;230.0;130.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>187</x>
+      <y>209</y>
+      <w>275</w>
+      <h>165</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>230.0;10.0;10.0;130.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>517</x>
+      <y>209</y>
+      <w>33</w>
+      <h>165</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;130.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>308</x>
+      <y>418</y>
+      <w>132</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;100.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>638</x>
+      <y>418</y>
+      <w>132</w>
+      <h>44</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>100.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>418</x>
+      <y>594</y>
+      <w>231</w>
+      <h>165</h>
+    </coordinates>
+    <panel_attributes>MedicalCard
+--
++idCard:int
++name:String
++surname:String
++date:String
++disease:String
+--
++getMedicalHistory()
++addMedicalHistory()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>517</x>
+      <y>495</y>
+      <w>33</w>
+      <h>121</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=1</panel_attributes>
+    <additional_attributes>10.0;90.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>231</x>
+      <y>495</y>
+      <w>209</w>
+      <h>165</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=1
+</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0;170.0;120.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>638</x>
+      <y>495</y>
+      <w>187</w>
+      <h>165</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>150.0;10.0;150.0;120.0;10.0;120.0</additional_attributes>
+  </element>
+</diagram>
