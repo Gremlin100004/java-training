@@ -1,48 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="13.3">
-  <zoom_level>10</zoom_level>
+  <zoom_level>8</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>440</x>
-      <y>350</y>
-      <w>210</w>
-      <h>210</h>
+      <x>960</x>
+      <y>200</y>
+      <w>816</w>
+      <h>328</h>
     </coordinates>
-    <panel_attributes>Flight
+    <panel_attributes>FlightInformation
 --
-+id:int
-+number:int
-+date:String
-+boardingTime:String
-+arrivalTime:String
-+departurePoint:String
-+arrivalPoint:String
+-name:String
+-date:Date
+-boardingTime:Time
+-arrivalTime:Time
+-departurePoint:Airport
+-arrivalPoint:Airport
+-aircraft:Aircraft
 --
-+add()
-+change()
-+get()
-+delete()</panel_attributes>
++FlightInformation(name:String, date:Date, boardingTime:Time, arrivalTime:Time, departurePoint:Airport, arrivalPoint:Airport, aircraft:Aircraft)
++setName(name:String)
++setDate(date:Date)
++setBoardingTime(boardingTime:Time)
++setArrivalTime(arrivalTime:Time)
++setDeparturePoint(departurePoint:Airport)
++setArrivalPoint(arrivalPoint:Airport)
++setAircraft(aircraft:Aircraft)
++Flight(name:String, date:Date, boardingTime:Time, arrivalTime:Time, departurePoint:Airport, arrivalPoint:Airport)
++getName():String
++getDate():Date
++getBoardingTime():Time
++getArrivalTime():Time
++getDeparturePoint():Airport
++getArrivalPoint():Airport
++getAircraft():Aircraft</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>30</x>
-      <y>300</y>
-      <w>210</w>
-      <h>160</h>
+      <x>1896</x>
+      <y>552</y>
+      <w>472</w>
+      <h>288</h>
     </coordinates>
     <panel_attributes>Airport
 --
-+id:int
-+name:String
-+codeICAO:String
-+type:String
-+numberAircraft:int
-+capacity:int
+-name:String
+-codeICAO:String
+-type:String
+-aircraft:Aircraft[0..*]
+-runway:Runway[0..*]
+-capacity:int
 --
-+increase()
-+reduce()
++Airport(name:String, codeICAO:String, type:String, aircraft:Aircraft, capacity:int)
++setName(name:String)
++setCodeICAO(codeICAO:String)
++setType(type:String)
++setAircraft(aircraft:Aircraft)
++setCapacity(capacity:int)
++setRunway(runway:Runway)
++getName():String
++getCodeICAO():String
++getType():String
++getAircraft():Aircraft[0..*]
++getCapacity():int
++getRunway(runway:Runway)
+
 
 </panel_attributes>
     <additional_attributes/>
@@ -50,41 +74,50 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>30</x>
-      <y>90</y>
-      <w>210</w>
-      <h>140</h>
+      <x>520</x>
+      <y>104</y>
+      <w>216</w>
+      <h>144</h>
     </coordinates>
-    <panel_attributes>City
+    <panel_attributes>WeatherInformation
 --
-+id:int
-+name:String
-+country:String
-+description:String
+-date:Date
+-location:String
+-description:String
 --
-+getDescription()
-+changeDescription()
-
++setDate(date:Date)
++setLocation(location:String)
++setDescription(description:String)
++getDate():Date
++getLocation():String
++getDescription():String
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>30</x>
-      <y>680</y>
-      <w>210</w>
-      <h>130</h>
+      <x>1416</x>
+      <y>624</y>
+      <w>360</w>
+      <h>200</h>
     </coordinates>
     <panel_attributes>Runway
 --
-+id:int
-+name:String
-+type:String
-+length:int
+-name:String
+-type:String
+-length:int
+-status:boolean
 --
-+checkStatus()
-+changeStatus()
+Runway(name:String, type:String, length:int, status:boolean)
++setName(name:String)
++setType(type:String)
++setLength(length:int)
++setStatus(status:boolean)
++getName():String
++getType():String
++getLength():int
++getStatus():boolean
 
 </panel_attributes>
     <additional_attributes/>
@@ -92,118 +125,165 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>790</x>
-      <y>300</y>
-      <w>210</w>
-      <h>190</h>
+      <x>1864</x>
+      <y>0</y>
+      <w>672</w>
+      <h>400</h>
     </coordinates>
     <panel_attributes>Aircraft
 --
-+id:int
-+codeICAO:String
-+type:String
-+MSN:int
-+airline:String
-+carryingCapacity:int
+-name:String
+-codeICAO:String
+-type:String
+-MSN:int
+-airline:String
+-carryingCapacity:int
+-height:int
+-speed:int
+-direction:int
 --
--systemDiagnostics()
-+takeOff()
-+land()</panel_attributes>
++Aircraft(codeICAO:String, type:String, MSN:int, airline:String, carryingCapacity:int, height:int, speed:int, direction:int)
++setName(name:String)
++setCodeICAO(codeICAO:String)
++setType(type:String)
++setMSN(MSN:int)
++setAirline(airline:String)
++setCarryingCapacity(carryingCapacity:int)
++setHeight(height:int)
++setSpeed(speed:int)
++setdirection(direction:int)
++getName():String
++getCodeICAO():String
++getType():String
++getMSN():int
++getAirline():String
++getCarryingCapacity():int
++getHeight():int
++getSpeed():int
++getdirection():int</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>152</x>
+      <y>368</y>
+      <w>704</w>
+      <h>224</h>
+    </coordinates>
+    <panel_attributes>AirTrafficControl
+--
+-name:String
+-location:String
+-flightInformation:FlightInformation[0..*]
+-weatherInformation:WeatherInformation[0..*]
+--
+AirTrafficControl(name:String, location:String, flightInformation:FlightInformation, weatherInformation:WeatherInformation)
++setName(name:String)
++setLocation(location:String)
++setFlightInformation(flightInformation:FlightInformation
++setWeatherInformation(weatherInformation:WeatherInformation
++getName():String
++getLocation():String
++getFlightInformation():FlightInformation[0..*]
++getWeatherInformation():WeatherInformation[0..*]
++ControlFlight(flightInformation:FlightInformation, weatherInformation:WeatherInformation)
++ChangeParametrsOfFlight()</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>120</x>
-      <y>220</y>
-      <w>30</w>
-      <h>100</h>
+      <x>1720</x>
+      <y>104</y>
+      <w>160</w>
+      <h>112</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>180.0;10.0;10.0;10.0;10.0;120.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>70</x>
-      <y>450</y>
-      <w>30</w>
-      <h>250</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
-bg=black</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;230.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>230</x>
-      <y>300</y>
-      <w>580</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=-
-m1=1
-m2=0..*
-</panel_attributes>
-    <additional_attributes>10.0;20.0;560.0;20.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>230</x>
-      <y>430</y>
-      <w>230</w>
-      <h>50</h>
+      <x>1736</x>
+      <y>520</y>
+      <w>176</w>
+      <h>104</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
-m1=1
-m2=0..*
-board</panel_attributes>
-    <additional_attributes>10.0;20.0;210.0;20.0</additional_attributes>
+m1=2
+m2=1</panel_attributes>
+    <additional_attributes>200.0;100.0;10.0;100.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>230</x>
-      <y>390</y>
-      <w>230</w>
-      <h>50</h>
+      <x>1768</x>
+      <y>632</y>
+      <w>144</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+bg=black
+m1=2
+m2=1..*</panel_attributes>
+    <additional_attributes>160.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2128</x>
+      <y>392</y>
+      <w>40</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>616</x>
+      <y>240</y>
+      <w>40</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..*
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;160.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>848</x>
+      <y>416</y>
+      <w>128</w>
+      <h>32</h>
     </coordinates>
     <panel_attributes>lt=-&gt;
 m1=1
-m2=0..*
-arrive</panel_attributes>
-    <additional_attributes>10.0;20.0;210.0;20.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>640</x>
-      <y>390</y>
-      <w>170</w>
-      <h>40</h>
-    </coordinates>
-    <panel_attributes>lt=-
-m1=1
-m2=1</panel_attributes>
-    <additional_attributes>10.0;10.0;150.0;10.0</additional_attributes>
+m2=0..*</panel_attributes>
+    <additional_attributes>10.0;10.0;140.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>360</x>
-      <y>610</y>
-      <w>210</w>
-      <h>110</h>
+      <x>408</x>
+      <y>648</y>
+      <w>248</w>
+      <h>96</h>
     </coordinates>
-    <panel_attributes>AirTrafficControl
+    <panel_attributes>ShowFlyInformation
 --
-+id:int
-+name:String
+-fly:AirTrafficControl
 --
-+givePermissionToLand()
-+givePermissionToTakeOff()
++ShowFlyInformation(fly:AirTrafficControl)
++get(fly:AirTrafficControl)
++set():AirTrafficControl
++Show(fly:AirTrafficControl)
 
 </panel_attributes>
     <additional_attributes/>
@@ -211,55 +291,12 @@ m2=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>170</x>
-      <y>450</y>
-      <w>210</w>
-      <h>220</h>
+      <x>504</x>
+      <y>584</y>
+      <w>24</w>
+      <h>80</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
-bg=black</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;200.0;190.0;200.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>230</x>
-      <y>450</y>
-      <w>580</w>
-      <h>330</h>
-    </coordinates>
-    <panel_attributes>lt=-
-m1=1
-m2=1
-use</panel_attributes>
-    <additional_attributes>10.0;300.0;490.0;300.0;490.0;10.0;560.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>370</x>
-      <y>510</y>
-      <w>90</w>
-      <h>120</h>
-    </coordinates>
-    <panel_attributes>lt=-
-m1=1
-m2=0..*
-control</panel_attributes>
-    <additional_attributes>10.0;100.0;10.0;10.0;70.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>230</x>
-      <y>690</y>
-      <w>150</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=-
-m1=1..*
-m2=1
-control</panel_attributes>
-    <additional_attributes>10.0;20.0;130.0;20.0</additional_attributes>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
   </element>
 </diagram>
