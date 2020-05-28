@@ -3,14 +3,13 @@ package com.senla.firm.model;
 import com.senla.firm.department.Department;
 import com.senla.firm.employee.Employee;
 
-public class Company {
+public class Firm {
     private String name;
     private int index;
     private int numberDepartment;
     private Department[] departments;
-    private int generalSalary;
 
-    public Company(String name, int numberDepartment) {
+    public Firm(String name, int numberDepartment) {
         this.name = name;
         this.numberDepartment = numberDepartment;
         this.index = 0;
@@ -33,10 +32,6 @@ public class Company {
         return departments;
     }
 
-    public int getGeneralSalary() {
-        return generalSalary;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -49,36 +44,38 @@ public class Company {
         this.numberDepartment = numberDepartment;
     }
 
-    public void setDepartments(Department[] departments) {
-        this.departments = departments;
-    }
-
-    public void setGeneralSalary(int generalSalary) {
-        this.generalSalary = generalSalary;
-    }
-
     public void addDepartment(String name, int numberDepartment) {
         Department department = new Department(name, numberDepartment);
         if (this.index < this.numberDepartment) {
             this.departments[this.index] = department;
-            this.index += 1;
+            this.index++;
         }
     }
 
-    public void addEmploee(Employee employee, String nameDepartment) {
+    public void addEmployee(Employee employee, String nameDepartment) {
+        boolean isDepartmentsEqual = false;
         for (Department department : departments) {
             if (department.getName().equals(nameDepartment)) {
+                isDepartmentsEqual = true;
                 department.addEmployee(employee);
             }
         }
+        if (!isDepartmentsEqual){
+            System.out.println(nameDepartment + " there is no such department");
+        }
+
     }
 
-    public void countGeneralSelery() {
+    public int countGeneralSalary() {
+        int generalSalary = 0;
         for (Department value : this.departments) {
             Employee[] employees = value.getEmployees();
             for (Employee item : employees) {
-                this.generalSalary += item.getSalary();
+                if (item != null) {
+                    generalSalary += item.getSalary();
+                }
             }
         }
+        return generalSalary;
     }
 }

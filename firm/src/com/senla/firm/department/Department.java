@@ -43,14 +43,10 @@ public class Department {
         this.name = name;
     }
 
-    public void setEmployees(Employee[] employees) {
-        this.employees = employees;
-    }
-
     public void addEmployee(Employee employee){
         if (this.index < this.numberEmployee) {
             this.employees[this.index] = employee;
-            this.index += 1;
+            this.index++;
         }
     }
 }
