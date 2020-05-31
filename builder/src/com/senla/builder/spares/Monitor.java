@@ -1,11 +1,12 @@
-package com.senla.spares;
+package com.senla.builder.spares;
 
 public class Monitor implements IProductPart{
 
     public Monitor() {
     }
 
-    public String getName() {
+    @Override
+    public String toString() {
         return "Monitor";
     }
 }

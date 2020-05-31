@@ -1,6 +1,6 @@
-package com.senla.product;
+package com.senla.builder.product;
 
-import com.senla.spares.IProductPart;
+import com.senla.builder.spares.IProductPart;
 
 public interface IProduct {
     void installFirstPart(IProductPart iProductPart);

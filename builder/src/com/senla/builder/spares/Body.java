@@ -1,11 +1,12 @@
-package com.senla.spares;
+package com.senla.builder.spares;
 
 public class Body implements IProductPart{
 
     public Body() {
     }
 
-    public String getName() {
+    @Override
+    public String toString() {
         return "Body";
     }
 }

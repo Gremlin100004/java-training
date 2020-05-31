@@ -1,14 +1,14 @@
-package com.senla;
+package com.senla.mathoperation.main;
 
-import com.senla.math.MathNumbers;
+import com.senla.mathoperation.math.Math;
 
 public class Main {
 
     public static void main(String[] args) {
         int min = 100;
         int max = 1000;
-        MathNumbers mathNumbers = new MathNumbers(min, max);
-        mathNumbers.randomRange();
+        Math mathNumbers = new Math(min, max);
+        mathNumbers.generateRandomRange();
         int differenceNumbers = mathNumbers.calculateDifferenceNumbers();
         for (int number : mathNumbers.getArrayNumbers()) {
             System.out.println("Number is : " + number);

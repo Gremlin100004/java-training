@@ -6,32 +6,30 @@ import com.senla.firm.model.Firm;
 public class Main {
 
     public static void main(String[] args) {
-        Employee employeeOne = new Employee("Petya", 600);
-        Employee employeeTwo = new Employee("Vasya", 700);
-        Employee employeeThree = new Employee("Petya", 625);
-        Employee employeeFour = new Employee("Petya", 900);
-        Employee employeeFive = new Employee("Petya", 700);
-        Employee employeeSix = new Employee("Petya", 500);
-        Employee employeeSeven = new Employee("Petya", 700);
-        Employee employeeEight = new Employee("Petya", 950);
-        Employee employeeNine = new Employee("Petya", 456);
-        Employee employeeTen = new Employee("Petya", 999);
-        Employee employeeEleven = new Employee("Petya", 10000);
-        Firm firm = new Firm("Senla", 3);
-        firm.addDepartment("department1", 3);
-        firm.addDepartment("department2", 4);
-        firm.addDepartment("department3", 4);
-        firm.addEmployee(employeeOne, "department1");
-        firm.addEmployee(employeeTwo, "department1");
-        firm.addEmployee(employeeThree, "department1");
-        firm.addEmployee(employeeFour, "department2");
-        firm.addEmployee(employeeFive, "department2");
-        firm.addEmployee(employeeSix, "department2");
-        firm.addEmployee(employeeSeven, "department2");
-        firm.addEmployee(employeeEight, "department3");
-        firm.addEmployee(employeeNine, "department3");
-        firm.addEmployee(employeeTen, "department3");
-        firm.addEmployee(employeeEleven, "department3");
+        Employee[] arrayEmployee = new Employee[] {
+                new Employee("Petya", 600),
+                new Employee("Vasya", 700),
+                new Employee("Georgiy", 625),
+                new Employee("Antonina", 900),
+                new Employee("Igor", 700),
+                new Employee("Dima", 500),
+                new Employee("Aleksandr", 700),
+                new Employee("Jon", 950),
+                new Employee("Kostya", 456),
+                new Employee("Andrey", 999),
+                new Employee("Pasha", 10000)
+        };
+        String [] arrayNameDepartments = new String[] {"department1", "department2", "department3"};
+        int [] arrayNumberEmployeeDepartment = new int[] {3, 4, 4};
+        Firm firm = new Firm("Senla", arrayNameDepartments.length);
+        int index = 0;
+        for (int i = 0; i < arrayNameDepartments.length; i++){
+            firm.addDepartment(arrayNameDepartments[i], arrayNumberEmployeeDepartment[i]);
+            for (int j = 0; j < arrayNumberEmployeeDepartment[i]; j++){
+                firm.addEmployee(arrayEmployee[index], arrayNameDepartments[i]);
+                index++;
+            }
+        }
         System.out.println("The firm " + firm.getName());
         System.out.println("General salary: " + firm.countGeneralSalary());
     }

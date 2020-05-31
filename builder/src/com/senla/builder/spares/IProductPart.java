@@ -1,4 +1,4 @@
-package com.senla.spares;
+package com.senla.builder.spares;
 
 public interface IProductPart {
 }
