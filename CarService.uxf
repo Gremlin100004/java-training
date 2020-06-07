@@ -1,0 +1,1184 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="13.3">
+  <zoom_level>2</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>198</x>
+      <y>602</y>
+      <w>82</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>Data
+--
++getNameCarService(): String
++getArrayMasterNames(): String[]
++getArrayGarageNames(): String[]
++getArrayAutomaker(): String[]
++getArrayModel(): String[]
++getArrayRegistrationNumber(): String[]
++getArrayPrice(): BigDecimal[]
++getArrayExecutionStartTime(): GregorianCalendar[]
++getArrayLeadTime(): GregorianCalendar[]
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>286</x>
+      <y>658</y>
+      <w>84</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>GarageController
+--
+-carService: IAdministrator
+-data: Data
+--
++GarageController(IAdministrator carServise, Data data)
++AddGarage(): void
++deleteGarage(): void
++addGaragePlace(): void
++deleteGaragePlace(): void
++getFreePlaceGarage(): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>306</x>
+      <y>546</y>
+      <w>88</w>
+      <h>34</h>
+    </coordinates>
+    <panel_attributes>MasterController
+--
+-carService: IAdministrator
+-data: Data
+--
++MasterController(IAdministrator carService, Data data)
++addMaster(): void
++deleteMaster(): void
++getMasterByAlphabet(): void
++getMasterByBusy(): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>56</x>
+      <y>556</y>
+      <w>114</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>OrderController
+--
+-carService: IAdministrator
+-data: Data
+-printer: Printer
+--
++OrderController(IAdministrator carService, Data data, Printer printer)
++addOrder(): void
++completeOrder(): void
++deleteOrder(): void
++closeOrder(): void
++cancelOrder(): void
++shiftLeadTime(): void
++getOrderByCreationTime(): void
++getOrderByLeadTime(): void
++getOrderByStartTime(): void
++getOrderByPrice(): void
++getExecutedOrderByCreationTime(): void
++getExecutedOrderByLeadTime(): void
++getExecutedOrderByPrice(): void
++getMasterOrder(): void
++getOrderMasters(): void
++getCompletedOrders(): void
++getCanceledOrders(): void
++getDeletedOrders(): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>118</x>
+      <y>422</y>
+      <w>68</w>
+      <h>14</h>
+    </coordinates>
+    <panel_attributes>Printer
+--
++printOrder(IOrder[] orders): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>316</x>
+      <y>368</y>
+      <w>78</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>CarServiceModel
+--
+-data: Data
+-printer: Printer
+-carService: IAdministrator
+-masterService: MasterController
+-orderService: OrderController
+-garageService: GarageController
+--
++CarServiceModel()
++init(): void
++addMaster(): void
++deleteMaster(): void
++getMasterByAlphabet(): void
++AddGarage(): void
++deleteGarage(): void
++addGaragePlace(): void
++deleteGaragePlace(): void
++getFreePlaceGarage(): void
++addOrder(): void
++completeOrder(): void
++deleteOrder(): void
++closeOrder(): void
++cancelOrder(): void
++shiftLeadTime(): void
++getOrderByCreationTime(): void
++getOrderByLeadTime(): void
++getOrderByStartTime(): void
++getOrderByPrice(): void
++getExecutedOrderByCreationTime(): void
++getExecutedOrderByLeadTime(): void
++getExecutedOrderByPrice(): void
++getMasterOrder(): void
++getOrderMasters(): void
++getCompletedOrders(): void
++getCanceledOrders(): void
++getDeletedOrders(): void
++getFreePlacesByDate(): void
++getNearestFreeDate(): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>978</x>
+      <y>350</y>
+      <w>56</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>CarService
+--
+-name: String
+-orders: IOrder[]
+-masters: IMaster[]
+-garages: IGarage[]
+--
++CarService(String name)
++getName(): String
++getOrders(): IOrder[]
++getMasters(): IMaster[]
++getGarages(): IGarage[]
++setName(String name): void
++setOrders(IOrder[] orders): void
++setMasters(IMaster[] masters): void
++setGarages(IGarage[] garages): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1062</x>
+      <y>570</y>
+      <w>70</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>Garage
+--
+-name: String
+-places: IPlace[]
+--
++Garage(String name, IPlace[] places)
++Garage(String name)
++getName(): String
++getPlaces(): IPlace[]
++setName(String name): void
++setPlaces(IPlace[] places): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1540</x>
+      <y>430</y>
+      <w>56</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+ICar
+--
+--
+~getAutomaker(): String
+~getModel(): String
+~getRegistrationNumber(): String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>962</x>
+      <y>222</y>
+      <w>66</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+ICarService
+--
+--
+~getName(): String
+~getOrders(): IOrder[]
+~getMasters(): IMaster[]
+~getGarages(): IGarage[]
+~setOrders(IOrder[] orders): void
+~setMasters(IMaster[] masters): void
+~setGarages(IGarage[] garages): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1034</x>
+      <y>670</y>
+      <w>62</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+IGarage
+--
+--
+~getName(): String
+~getPlaces(): IPlace[]
+~setName(String name): void
+~setPlaces(IPlace[] places): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1186</x>
+      <y>280</y>
+      <w>62</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+IMaster
+--
+--
+~getName(): String
+~getNumberOrder(): int
+~setNumberOrder(int numberOrder): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1086</x>
+      <y>366</y>
+      <w>92</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+IOrder
+--
+--
+~getMasters(): IMaster[]
+~getCar(): ICar
+~getStatus(): String
+~getGarage(): IGarage
+~getPlace(): IPlace
+~getCreationTime(): Calendar
+~getExecutionStartTime(): Calendar
+~getLeadTime(): Calendar
+~getPrice(): BigDecimal
+~isDeleteStatus(): boolean
+~setLeadTime(Calendar leadTime): void
+~setGarage(Garage garage): void
+~setPlace(Place place): void
+~setCar(Car car): void
+~setDeleteStatus(boolean deleteStatus): void
+~setExecutionStartTime(Calendar executionStartTime): void
+~setStatus(String status): void
+~setPrice(BigDecimal price): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1154</x>
+      <y>492</y>
+      <w>68</w>
+      <h>22</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+IPlace
+--
+--
+~isBusyStatus(): boolean
+~setBusyStatus(boolean busyStatus): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1298</x>
+      <y>278</y>
+      <w>62</w>
+      <h>34</h>
+    </coordinates>
+    <panel_attributes>Master
+--
+-name: String
+-numberOrder: int
+-busyStatus: boolean
+--
++Master(String name)
++getName(): String
++getNumberOrder(): int
++setNumberOrder(int numberOrder): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1286</x>
+      <y>430</y>
+      <w>192</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>Order
+--
+-creationTime: Calendar
+-executionStartTime: Calendar
+-leadTime: Calendar
+-masters: IMaster[]
+-garage: IGarage
+-place: IPlace
+-car: ICar
+-price: BigDecimal
+-status: String
+-deleteStatus: boolean
+--
++Order(Calendar executionStartTime, Calendar leadTime, IMaster[] masters, IGarage garage, IPlace place, ICar car, BigDecimal price)
++getMasters(): IMaster[]
++getCar(): ICar
++getStatus(): String
++getGarage(): IGarage
++getPlace(): IPlace
++getCreationTime(): Calendar
++getExecutionStartTime(): Calendar
++getLeadTime(): Calendar
++getPrice(): BigDecimal
++isDeleteStatus(): boolean
++setLeadTime(Calendar leadTime): void
++setGarage(Garage garage): void
++setPlace(Place place): void
++setCar(Car car): void
++setDeleteStatus(boolean deleteStatus): void
++setExecutionStartTime(Calendar executionStartTime): void
++setStatus(String status): void
++setPrice(BigDecimal price): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1038</x>
+      <y>492</y>
+      <w>68</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>Place
+--
+-busyStatus: boolean
+--
++Place()
++isBusyStatus(): boolean
++setBusyStatus(boolean busyStatus): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>420</x>
+      <y>198</y>
+      <w>280</w>
+      <h>138</h>
+    </coordinates>
+    <panel_attributes>Administrator
+--
+-carService: CarService
+-masterService: IMasterService
+-garageService: IGarageService
+-orderService: IOrderService
+--
++Administrator(String name)
++getCarServiceName(): String
++getOrders(): IOrder[]
++addOrder(Calendar executionStartTime, Calendar leadTime, IMaster[] masters, IGarage garage, IPlace place, String automaker, String model, String registrationNumber, BigDecimal price): void
++completeOrder(IOrder order): boolean
++deleteOrder(IOrder order): boolean
++cancelOrder(IOrder order): boolean
++closeOrder(IOrder order): boolean
++shiftLeadTime(IOrder order, Calendar executionStartTime, Calendar leadTime): boolean
++sortOrderCreationTime(IOrder[] order): IOrder[]
++sortOrderByLeadTime(IOrder[] order): IOrder[]
++sortOrderByStartTime(IOrder[] order): IOrder[]
++sortOrderByPrice(IOrder[] order): IOrder[]
++sortOrderByPeriod(IOrder[] orders, Calendar startPeriod, Calendar endPeriod): IOrder[]
++getCurrentRunningOrders(): IOrder[]
++getMasterOrders(IMaster master): IOrder[]
++getOrderMasters(IOrder order): IMaster[]
++getCompletedOrders(): IOrder[]
++getCanceledOrders(): IOrder[]
++getDeletedOrders(): IOrder[]
++getMasters(): IMaster[]
++addMaster(String name): void
++deleteMaster(IMaster master): void
++getMasterByAlphabet(): IMaster[]
++getMasterByBusy(): IMaster[]
++getGarage(): IGarage[]
++addGarage(String name): void
++deleteGarage(IGarage garage): void
++addGaragePlace(IGarage garage): void
++deleteGaragePlace(IGarage garage, IPlace place): void
++getFreePlaceGarage(IGarage garage): IPlace[]
++getNumberFreePlaceDate(Calendar date): int
++getNumberFreeMasters(Calendar date): int
++getNearestFreeDate(): Calendar
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>748</x>
+      <y>342</y>
+      <w>86</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>GarageService
+--
+-carService: CarService
+--
++GarageService(CarService carService)
++getGarage(): IGarage[]
++addGarage(String name): void
++deleteGarage(IGarage garage): void
++addGaragePlace(IGarage garage): void
++deleteGaragePlace(IGarage garage, IPlace place): void
++getFreePlaceGarage(IGarage garage): IPlace[]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>402</x>
+      <y>722</y>
+      <w>72</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+IAdministrator
+--
+--
+~getCarServiceName(): String
+~getOrders(): IOrder[]
+~getNumberFreePlaceDate(Calendar date): int
+~getNumberFreeMasters(Calendar date): int
+~getNearestFreeDate(): Calendar</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>520</x>
+      <y>554</y>
+      <w>86</w>
+      <h>34</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+IGarageService
+--
+--
+~getGarage(): IGarage[]
+~addGarage(String name): void
+~deleteGarage(IGarage garage): void
+~addGaragePlace(IGarage garage): void
+~deleteGaragePlace(IGarage garage, IPlace place): void
+~getFreePlaceGarage(IGarage garage): IPlace[]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>910</x>
+      <y>710</y>
+      <w>72</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+IMasterService
+--
+--
+~getMasters(): IMaster[]
+~addMaster(String name): void
+~deleteMaster(IMaster master): void
+~getMasterByAlphabet(): IMaster[]
+~getMasterByBusy(): IMaster[]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>546</x>
+      <y>628</y>
+      <w>280</w>
+      <h>74</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+IOrderService
+--
+--
+~getOrders(): IOrder[]
+~addOrder(Calendar executionStartTime, Calendar leadTime, IMaster[] masters, IGarage garage, IPlace place, String automaker, String model, String registrationNumber, BigDecimal price): void
+~completeOrder(IOrder order): boolean
+~cancelOrder(IOrder order): boolean
+~closeOrder(IOrder order): boolean
+~deleteOrder(IOrder order): boolean
+~shiftLeadTime(IOrder order, Calendar executionStartTime, Calendar leadTime): boolean
+~sortOrderCreationTime(IOrder[] order): IOrder[]
+~sortOrderByLeadTime(IOrder[] order): IOrder[]
+~sortOrderByStartTime(IOrder[] order): IOrder[]
+~sortOrderByPrice(IOrder[] order): IOrder[]
+~sortOrderByPeriod(IOrder[] orders, Calendar startPeriod, Calendar EndPeriod): IOrder[]
+~getCurrentRunningOrders(): IOrder[]
+~getMasterOrders(IMaster master): IOrder[]
+~getOrderMasters(IOrder order): IMaster[]
+~getCompletedOrders(): IOrder[]
+~getCanceledOrders(): IOrder[]
+~getDeletedOrders(): IOrder[]
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>912</x>
+      <y>568</y>
+      <w>58</w>
+      <h>34</h>
+    </coordinates>
+    <panel_attributes>MasterService
+--
+-carService: CarService
+--
++MasterService(CarService carService)
++getMasters(): IMaster[]
++addMaster(String name): void
++deleteMaster(IMaster master): void
++getMasterByAlphabet(): IMaster[]
++getMasterByBusy(): IMaster[]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>590</x>
+      <y>404</y>
+      <w>276</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>OrderService
+--
+-carService: CarService
+--
++OrderService(CarService carService)
++getOrders(): IOrder[]
++addOrder(Calendar executionStartTime, Calendar leadTime, IMaster[] masters, IGarage garage, IPlace place, String automaker, String model, String registrationNumber, BigDecimal price): void
++completeOrder(IOrder order): boolean
++cancelOrder(IOrder order): boolean
++closeOrder(IOrder order): boolean
++deleteOrder(IOrder order): boolean
++shiftLeadTime(IOrder order, Calendar executionStartTime, Calendar leadTime): boolean
++sortOrderCreationTime(IOrder[] order): IOrder[]
++sortOrderByLeadTime(IOrder[] order): IOrder[]
++sortOrderByPrice(IOrder[] order): IOrder[]
++sortOrderByStartTime(IOrder[] order): IOrder[]
++sortOrderByPeriod(IOrder[] orders, Calendar startPeriod, Calendar EndPeriod): IOrder[]
++getCurrentRunningOrders(): IOrder[]
++getMasterOrders(IMaster master): IOrder[]
++getOrderMasters(IOrder order): IMaster[]
++getCompletedOrders(): IOrder[]
++getCanceledOrders(): IOrder[]
++getDeletedOrders(): IOrder[]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>748</x>
+      <y>294</y>
+      <w>84</w>
+      <h>14</h>
+    </coordinates>
+    <panel_attributes>Deleter
+--
++deleteElementArray(T[] array, S elementObject): T[]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>686</x>
+      <y>518</y>
+      <w>76</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>Sort
+--
++bubbleSort(T[] arrayValue, S[] arrayObject): S[]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1538</x>
+      <y>494</y>
+      <w>94</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>Car
+--
+-automaker: String
+-model: String
+-registrationNumber: String
+--
++Car(String automaker, String model, String registrationNumber)
++getAutomaker(): String
++getModel(): String
++getRegistrationNumber(): String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1566</x>
+      <y>452</y>
+      <w>6</w>
+      <h>46</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;210.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1476</x>
+      <y>442</y>
+      <w>68</w>
+      <h>10</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1
+</panel_attributes>
+    <additional_attributes>320.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1220</x>
+      <y>504</y>
+      <w>70</w>
+      <h>8</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>10.0;10.0;330.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1094</x>
+      <y>524</y>
+      <w>196</w>
+      <h>166</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>10.0;800.0;810.0;800.0;810.0;10.0;960.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1080</x>
+      <y>606</y>
+      <w>6</w>
+      <h>68</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;320.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1104</x>
+      <y>504</y>
+      <w>54</w>
+      <h>6</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>250.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1176</x>
+      <y>426</y>
+      <w>114</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;90.0;10.0;90.0;80.0;550.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1226</x>
+      <y>302</y>
+      <w>96</w>
+      <h>132</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..*</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;460.0;460.0;460.0;460.0;640.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1246</x>
+      <y>296</y>
+      <w>56</w>
+      <h>6</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;260.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1032</x>
+      <y>392</y>
+      <w>58</w>
+      <h>8</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;
+m1=0..*</panel_attributes>
+    <additional_attributes>270.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1032</x>
+      <y>302</y>
+      <w>174</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;
+m1=0..*</panel_attributes>
+    <additional_attributes>830.0;10.0;830.0;110.0;100.0;110.0;100.0;280.0;10.0;280.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1020</x>
+      <y>258</y>
+      <w>6</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;460.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>864</x>
+      <y>258</y>
+      <w>128</w>
+      <h>162</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>600.0;10.0;600.0;330.0;230.0;330.0;230.0;790.0;10.0;790.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>832</x>
+      <y>258</y>
+      <w>144</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>680.0;10.0;680.0;260.0;280.0;260.0;280.0;500.0;10.0;500.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>698</x>
+      <y>250</y>
+      <w>268</w>
+      <h>34</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>1320.0;10.0;1170.0;10.0;1170.0;150.0;10.0;150.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>962</x>
+      <y>258</y>
+      <w>46</w>
+      <h>312</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>190.0;10.0;190.0;400.0;10.0;400.0;10.0;1540.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1020</x>
+      <y>402</y>
+      <w>36</w>
+      <h>272</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;
+m1=0..*</panel_attributes>
+    <additional_attributes>140.0;1340.0;140.0;1090.0;10.0;1090.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>936</x>
+      <y>600</y>
+      <w>6</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;550.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>26</x>
+      <y>236</y>
+      <w>898</w>
+      <h>544</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;
+m1=1
+bg=black</panel_attributes>
+    <additional_attributes>4470.0;2530.0;4470.0;2700.0;20.0;2700.0;10.0;10.0;1970.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>472</x>
+      <y>734</y>
+      <w>442</w>
+      <h>6</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>2190.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>802</x>
+      <y>480</y>
+      <w>6</w>
+      <h>152</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;740.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>464</x>
+      <y>684</y>
+      <w>86</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>410.0;10.0;10.0;10.0;10.0;190.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>454</x>
+      <y>570</y>
+      <w>70</w>
+      <h>156</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>330.0;10.0;10.0;10.0;10.0;760.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>442</x>
+      <y>334</y>
+      <w>6</w>
+      <h>392</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;1940.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>380</x>
+      <y>578</y>
+      <w>26</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>110.0;770.0;10.0;770.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>392</x>
+      <y>486</y>
+      <w>36</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>140.0;1180.0;140.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>360</x>
+      <y>694</y>
+      <w>46</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>210.0;240.0;10.0;240.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>278</x>
+      <y>624</y>
+      <w>20</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>10.0;10.0;80.0;10.0;80.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>278</x>
+      <y>578</y>
+      <w>44</w>
+      <h>38</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>10.0;160.0;200.0;160.0;200.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>266</x>
+      <y>490</y>
+      <w>54</w>
+      <h>116</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>10.0;560.0;10.0;10.0;250.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>168</x>
+      <y>566</y>
+      <w>48</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>200.0;180.0;200.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>158</x>
+      <y>638</y>
+      <w>132</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>640.0;240.0;10.0;240.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>146</x>
+      <y>434</y>
+      <w>10</w>
+      <h>126</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;610.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>162</x>
+      <y>450</y>
+      <w>158</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>10.0;530.0;10.0;10.0;770.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>184</x>
+      <y>428</y>
+      <w>136</w>
+      <h>8</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>10.0;10.0;660.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>338</x>
+      <y>498</y>
+      <w>10</w>
+      <h>52</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=0..1</panel_attributes>
+    <additional_attributes>10.0;240.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>528</x>
+      <y>334</y>
+      <w>6</w>
+      <h>224</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;
+m1=1
+bg=black</panel_attributes>
+    <additional_attributes>10.0;1100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>568</x>
+      <y>334</y>
+      <w>84</w>
+      <h>298</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;
+m1=1
+bg=black</panel_attributes>
+    <additional_attributes>400.0;1470.0;400.0;890.0;10.0;890.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>546</x>
+      <y>368</y>
+      <w>204</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;930.0;10.0;10.0;1000.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1118</x>
+      <y>512</y>
+      <w>52</w>
+      <h>62</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;
+m1=0..*</panel_attributes>
+    <additional_attributes>220.0;10.0;220.0;150.0;10.0;150.0;10.0;290.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>722</x>
+      <y>480</y>
+      <w>6</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;190.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>788</x>
+      <y>306</y>
+      <w>6</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;180.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>830</x>
+      <y>300</y>
+      <w>112</w>
+      <h>272</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;540.0;10.0;540.0;1340.0</additional_attributes>
+  </element>
+</diagram>
