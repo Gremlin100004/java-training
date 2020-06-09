@@ -5,7 +5,9 @@ import com.senla.carservice.domain.IOrder;
 public class Printer {
 
     public void printOrder(IOrder[] orders) {
+        // тест чего?
         char test = '-';
+        // что такое 162? Почему не 165? Почитай про такой антипаттерн "магическое число"
         char [] arrayChar = new char[162];
         for (int i = 0; i < arrayChar.length; i++){
             arrayChar[i] = test;
@@ -21,6 +23,7 @@ public class Printer {
                 "Price",
                 "Status",
                 "Deleted"));
+        // использовать стринг билдер и конкатенацию одновременно не рекомендуется
         stringBuilder.append("|" + String.valueOf(arrayChar) + "|\n");
         for (IOrder order: orders){
             stringBuilder.append(String.format("|%-10s|%-12s|%-19s|%s|%s|%s|%-10s|%-12s|%-7s|\n",
@@ -34,6 +37,7 @@ public class Printer {
                     order.getStatus(),
                     order.isDeleteStatus()));
         }
+        // использовать стринг билдер и конкатенацию одновременно не рекомендуется
         stringBuilder.append(" " + String.valueOf(arrayChar));
         System.out.println(stringBuilder.toString());
         }

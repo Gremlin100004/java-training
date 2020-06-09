@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+// тестовые данные никак не могут относиться к слою контроллер
 public class Data {
 
     public String getNameCarService() {

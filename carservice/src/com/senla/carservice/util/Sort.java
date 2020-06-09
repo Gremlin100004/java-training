@@ -3,8 +3,14 @@ package com.senla.carservice.util;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
+// можно было использовать метод Arrays.sort()
+// архитектура данного класса сомнительная, сходу вообще не понятно, что он делает и как работает
+// сортировка пузырьком - не самая лучшая, всегда надо использовать готовые решения (тем более что они есть)
+// класс утилитный, значит, его методы могут быть статическими
 public class Sort {
 
+    // дженерик тип T не нужен, явно метод завязан на сортировку по определенному типу
+    // нейминг
     public <T extends Calendar, S> S[] bubbleSort(T[] arrayValue, S[] arrayObject) {
         for (int i = arrayValue.length - 1; i > 0; i--) {
             for (int j = 0; j < i; j++) {
@@ -21,6 +27,7 @@ public class Sort {
         return arrayObject;
     }
 
+    // класс String - final, у него не будет наследников, значит, можно сразу типизировать этот метод
     public <T extends String, S> S[] bubbleSort(T[] arrayValue, S[] arrayObject) {
         for (int i = arrayValue.length - 1; i > 0; i--) {
             for (int j = 0; j < i; j++) {

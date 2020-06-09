@@ -39,6 +39,7 @@ public interface IOrderService {
 
     IOrder[] sortOrderByPrice(IOrder[] order);
 
+    // нейминг
     IOrder[] sortOrderByPeriod(IOrder[] orders, Calendar startPeriod, Calendar EndPeriod);
 
     IOrder[] getCurrentRunningOrders();

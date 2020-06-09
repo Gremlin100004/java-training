@@ -152,6 +152,8 @@ public class OrderService implements IOrderService {
         return sortArrayOrder;
     }
 
+    // неправильная реализация сортировки, использовать метод Arrays.sort и компараторы
+    // нейминг
     @Override
     public IOrder[] sortOrderByPeriod(IOrder[] orders, Calendar startPeriod, Calendar EndPeriod) {
         int lengthArray;

@@ -1,3 +1,4 @@
+// пакеты именуются в ед. числе
 package com.senla.carservice.services;
 
 import com.senla.carservice.domain.CarService;
@@ -26,6 +27,7 @@ public class Administrator implements IAdministrator {
 
     @Override
     public String getCarServiceName() {
+        // можно объединить в одну строку
         String carServiceName = this.carService.getName();
         return carServiceName;
     }
@@ -35,6 +37,7 @@ public class Administrator implements IAdministrator {
         return this.orderService.getOrders();
     }
 
+    // оптимальное количество параметров у метода - до 3, максимальное - до 5, больше не рекомендуется
     @Override
     public void addOrder(Calendar executionStartTime,
                          Calendar leadTime,
@@ -186,9 +189,13 @@ public class Administrator implements IAdministrator {
 
     @Override
     public int getNumberFreePlaceDate(Calendar date) {
+        // так объявлять переменные в джава не принято,
         int numberFreePlace, numberPlaceOrders;
         int numberGeneralPlace = 0;
         Calendar dateEnd = new GregorianCalendar();
+        // вместо этого проще использовать для хранения даты класс Date
+        // чтобы задать дату, использовать ее строковое представление типа "18.02.2020" или любой другой
+        // удобный формат, описать формат паттерном и использовать SimpleDateFormat
         date.set(Calendar.HOUR_OF_DAY, 0);
         date.set(Calendar.MINUTE, 0);
         date.set(Calendar.SECOND, 0);
@@ -214,6 +221,7 @@ public class Administrator implements IAdministrator {
         date.set(Calendar.HOUR_OF_DAY, 0);
         date.set(Calendar.MINUTE, 0);
         date.set(Calendar.SECOND, 0);
+        // почему администратор назначает эти даты? это тестовые данные? почему они в администраторе?
         dateEnd.set(Calendar.YEAR, date.get(Calendar.YEAR));
         dateEnd.set(Calendar.MONTH, date.get(Calendar.MONTH));
         dateEnd.set(Calendar.DAY_OF_MONTH, date.get(Calendar.DAY_OF_MONTH));

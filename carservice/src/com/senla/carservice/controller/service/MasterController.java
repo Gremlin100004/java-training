@@ -40,6 +40,7 @@ public class MasterController {
 
     }
 
+    // метод не используется
     public void getMasterByBusy() {
         System.out.println("Get masters sort by busy().");
         IMaster[] sortArrayMasters = this.carService.getMasterByBusy();

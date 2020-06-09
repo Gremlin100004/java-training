@@ -5,6 +5,13 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Order implements IOrder {
+    /*
+    Читай общий чат, пожалуйста
+    Вопрос: Как хранить дату?
+    Ответ: Для даты используем джава класс java.util.Date
+
+    Календарь можно использовать для вычисления дат
+     */
     private Calendar creationTime;
     private Calendar executionStartTime;
     private Calendar leadTime;
@@ -26,6 +33,7 @@ public class Order implements IOrder {
         this.place = place;
         this.car = car;
         this.price = price;
+        // для хранения статусов нужно использовать ENUM
         this.status = "wait";
         this.deleteStatus = false;
     }

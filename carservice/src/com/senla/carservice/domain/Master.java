@@ -2,7 +2,9 @@ package com.senla.carservice.domain;
 
 public class Master implements IMaster {
     private String name;
+    // в моделях забываем про примитивы, используем объекты
     private int numberOrder;
+    // это поле нигде не используется
     private boolean busyStatus = false;
 
     public Master(String name) {

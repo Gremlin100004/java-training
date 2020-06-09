@@ -53,6 +53,7 @@ public class OrderController {
     }
 
     public void completeOrder() {
+        // НЕЙМИНГ!!!!
         boolean status_operation;
         IOrder[] orders = new Order[5];
         orders[0] = this.carService.getOrders()[0];
@@ -77,6 +78,7 @@ public class OrderController {
     public void deleteOrder() {
         boolean status_operation;
         IOrder[] orders = new Order[2];
+        // что такое 0, а что такое 10? почему именно они выбраны?
         orders[0] = this.carService.getOrders()[0];
         orders[1] = this.carService.getOrders()[10];
         System.out.println("Delete order:");

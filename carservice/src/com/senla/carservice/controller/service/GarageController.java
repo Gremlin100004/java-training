@@ -1,3 +1,4 @@
+// сервис и контроллер - это разные слои, и они никак не могут быть в одном пакете
 package com.senla.carservice.controller.service;
 
 import com.senla.carservice.controller.data.Data;
@@ -14,6 +15,7 @@ public class GarageController {
         this.data = data;
     }
 
+    // нейминг
     public void AddGarage() {
         System.out.println("Add garage to service:");
         for (String garageName : this.data.getArrayGarageNames()) {

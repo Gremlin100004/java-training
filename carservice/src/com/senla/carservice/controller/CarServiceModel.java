@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+// так модель или контроллер?
 public class CarServiceModel {
     private Data data;
     private Printer printer;

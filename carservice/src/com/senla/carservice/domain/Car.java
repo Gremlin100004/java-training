@@ -1,5 +1,6 @@
 package com.senla.carservice.domain;
 
+// доменная модель не должна имплементить интерфейсы
 public class Car implements ICar {
     private String automaker;
     private String model;
