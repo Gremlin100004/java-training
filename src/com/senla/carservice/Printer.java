@@ -11,7 +11,7 @@ public class Printer {
         char line = '-';
         char [] arrayChar = new char[LENGTH];
         Arrays.fill(arrayChar, line);
-        StringBuilder stringBuilder = new StringBuilder(" " + String.valueOf(arrayChar) + "\n");
+        StringBuilder stringBuilder = new StringBuilder(String.format(" %s\n", String.valueOf(arrayChar)));
         stringBuilder.append(String.format("|%-10s|%-12s|%-19s|%-28s|%-28s|%-28s|%-10s|%-12s|%-7s|\n",
                 "Automaker",
                 "Model",
