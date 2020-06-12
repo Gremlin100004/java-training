@@ -1,7 +1,7 @@
 package com.senla.carservice;
 
 import com.senla.carservice.controller.CarServiceController;
-import com.senla.carservice.domain.*;
+import com.senla.carservice.domain.Master;
 import com.senla.carservice.repository.Garage;
 import com.senla.carservice.repository.Order;
 import com.senla.carservice.repository.OrderDto;
@@ -22,7 +22,7 @@ public class Main {
         System.out.println(delimiter);
 
         System.out.println("Add master:");
-        for (String masterName:testData.getArrayMasterNames()){
+        for (String masterName : testData.getArrayMasterNames()) {
             message = carServiceController.addMaster(masterName);
             System.out.println(String.format(" -master \"%s\" has been added to service.", message));
         }
@@ -30,7 +30,7 @@ public class Main {
 
         System.out.println("Get array masters.");
         Master[] masters = carServiceController.getMasters();
-        for (Master master: carServiceController.getMasters()) {
+        for (Master master : carServiceController.getMasters()) {
             System.out.println(String.format(" -master with name \"%s\"", master.getName()));
         }
         System.out.println(delimiter);
@@ -41,7 +41,7 @@ public class Main {
         System.out.println(delimiter);
 
         System.out.println("Add garage to service:");
-        for (String garageName:testData.getArrayGarageNames()){
+        for (String garageName : testData.getArrayGarageNames()) {
             message = carServiceController.addGarage(garageName);
             System.out.println(String.format(" -garage \"%s\" has been added to service", message));
         }
@@ -49,7 +49,7 @@ public class Main {
 
         System.out.println("Get array garages:");
         Garage[] garages = carServiceController.getArrayGarages();
-        for (Garage garage:garages) {
+        for (Garage garage : garages) {
             System.out.println(String.format(" -garage \"%s\"", garage.getName()));
         }
         System.out.println(delimiter);
@@ -114,7 +114,7 @@ public class Main {
         choosedOrders[2] = orders[7];
         choosedOrders[3] = orders[8];
         choosedOrders[4] = orders[9];
-        for (Order order: choosedOrders){
+        for (Order order : choosedOrders) {
             message = carServiceController.completeOrder(order);
             System.out.println(message);
             Printer.printOrder(new Order[]{order});
@@ -122,8 +122,8 @@ public class Main {
         System.out.println(delimiter);
 
         System.out.println("Get free place in garages");
-        int numberFreePlaces = 0;
-        for (Garage garage: garages){
+        int numberFreePlaces;
+        for (Garage garage : garages) {
             numberFreePlaces = carServiceController.getNumberFreePlaceGarage(garage);
             System.out.println(String.format(" -garage with name \"%s\" %s available places", garage.getName(),
                     numberFreePlaces));
@@ -265,14 +265,14 @@ public class Main {
 
         System.out.println("Sort array masters by alphabet:");
         Master[] sortArrayMasters = carServiceController.sortMastersByAlphabet();
-        for (Master master: sortArrayMasters) {
+        for (Master master : sortArrayMasters) {
             System.out.println(String.format(" -master with name \"%s\"", master.getName()));
         }
         System.out.println(delimiter);
 
         System.out.println("Sort array masters by busy:");
         sortArrayMasters = carServiceController.sortMastersByBusy();
-        for (Master master: sortArrayMasters) {
+        for (Master master : sortArrayMasters) {
             System.out.println(String.format(" -master with name \"%s\" orders: %s", master.getName(), master.getNumberOrder()));
         }
         System.out.println(delimiter);

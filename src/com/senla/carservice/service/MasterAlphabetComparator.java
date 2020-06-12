@@ -14,4 +14,3 @@ public class MasterAlphabetComparator implements Comparator<Master> {
         return masterOne.getName().compareTo(masterTwo.getName());
     }
 }
-

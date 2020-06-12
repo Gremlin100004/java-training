@@ -1,6 +1,6 @@
 package com.senla.carservice.domain;
 
-public class Car  {
+public class Car {
     private String automaker;
     private String model;
     private String registrationNumber;
@@ -11,6 +11,18 @@ public class Car  {
         this.registrationNumber = registrationNumber;
     }
 
+    public String getAutomaker() {
+        return automaker;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
     @Override
     public String toString() {
         return "Car{" +
@@ -18,19 +30,5 @@ public class Car  {
                 ", model='" + model + '\'' +
                 ", registrationNumber='" + registrationNumber + '\'' +
                 '}';
-    }
-
-    public String getAutomaker() {
-        return automaker;
-    }
-
-
-    public String getModel() {
-        return model;
-    }
-
-
-    public String getRegistrationNumber() {
-        return registrationNumber;
     }
 }

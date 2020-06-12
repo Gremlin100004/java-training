@@ -4,14 +4,14 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.service.IAdministrator;
 
 public class MasterController {
-    private IAdministrator carService;
+    private final IAdministrator carService;
 
     public MasterController(IAdministrator carService) {
         this.carService = carService;
     }
-    public Master[] getMasters(){
-        Master[] masters = this.carService.getMasters();
-        return masters;
+
+    public Master[] getMasters() {
+        return this.carService.getMasters();
     }
 
     public String addMaster(String name) {

@@ -4,14 +4,14 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
-    public static Date addDays(Date date, int days){
+    public static Date addDays(Date date, int days) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.DATE, days);
         return calendar.getTime();
     }
 
-    public static Date addHourMinutes(Date date, int hour, int minute){
+    public static Date addHourMinutes(Date date, int hour, int minute) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.HOUR_OF_DAY, hour);

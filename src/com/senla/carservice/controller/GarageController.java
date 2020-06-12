@@ -4,7 +4,7 @@ import com.senla.carservice.repository.Garage;
 import com.senla.carservice.service.IAdministrator;
 
 public class GarageController {
-    private IAdministrator carService;
+    private final IAdministrator carService;
 
     public GarageController(IAdministrator carService) {
         this.carService = carService;
@@ -15,7 +15,7 @@ public class GarageController {
         return name;
     }
 
-    public Garage[] getArrayGarages(){
+    public Garage[] getArrayGarages() {
         return this.carService.getGarage();
     }
 
@@ -29,7 +29,7 @@ public class GarageController {
         return garage.getName();
     }
 
-    public int getNumberGaragePlaces(Garage garage){
+    public int getNumberGaragePlaces(Garage garage) {
         return this.carService.getNumberGaragePlaces(garage);
     }
 

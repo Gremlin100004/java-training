@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class OrderController {
-    private IAdministrator carService;
+    private final IAdministrator carService;
 
     public OrderController(IAdministrator carService) {
         this.carService = carService;
@@ -28,13 +28,13 @@ public class OrderController {
             return "error date, should be dd.MM.yyyy";
         }
         Car car = new Car(orderDto.getAutomaker(), orderDto.getModel(), orderDto.getRegistrationNumber());
-        Order order =  new Order(executionStartTime, leadTime, orderDto.getMasters(), orderDto.getGarage(),
+        Order order = new Order(executionStartTime, leadTime, orderDto.getMasters(), orderDto.getGarage(),
                 orderDto.getPlace(), car, orderDto.getPrice());
         this.carService.addOrder(order);
         return "order add successfully!";
     }
 
-    public Order[] getOrders(){
+    public Order[] getOrders() {
         return this.carService.getOrders();
     }
 
@@ -74,7 +74,7 @@ public class OrderController {
         }
     }
 
-    public String shiftLeadTime(Order order,String stringStartTime, String stringLeadTime) {
+    public String shiftLeadTime(Order order, String stringStartTime, String stringLeadTime) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date executionStartTime;
         Date leadTime;
@@ -108,11 +108,11 @@ public class OrderController {
         return this.carService.sortOrderByPrice(orders);
     }
 
-    public Order[] getExecuteOrder(){
+    public Order[] getExecuteOrder() {
         return this.carService.getCurrentRunningOrders();
     }
 
-    public Order[] getOrdersByPeriod(String startPeriod, String endPeriod){
+    public Order[] getOrdersByPeriod(String startPeriod, String endPeriod) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date startPeriodDate;
         Date endPeriodDate;

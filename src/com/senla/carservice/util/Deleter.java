@@ -3,7 +3,7 @@ package com.senla.carservice.util;
 import java.util.Arrays;
 
 public class Deleter {
-    public static  <T extends Object, S> T[] deleteElementArray(T[] array, S elementObject) {
+    public static <T, S> T[] deleteElementArray(T[] array, S elementObject) {
         for (int i = 0; i < array.length; i++) {
             if (array[i].equals(elementObject)) {
                 if (array.length - 1 - i >= 0) {

@@ -1,20 +1,19 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.repository.CarService;
 import com.senla.carservice.repository.Garage;
-import com.senla.carservice.domain.Master;
 import com.senla.carservice.repository.Order;
-import com.senla.carservice.domain.Place;
 import com.senla.carservice.util.DateUtil;
 
-import java.text.ParseException;
 import java.util.Date;
 
 public class Administrator implements IAdministrator {
-    private CarService carService;
-    private IMasterService masterService;
-    private IGarageService garageService;
-    private IOrderService orderService;
+    private final CarService carService;
+    private final IMasterService masterService;
+    private final IGarageService garageService;
+    private final IOrderService orderService;
 
     public Administrator(String name) {
         this.carService = new CarService(name);
@@ -208,8 +207,8 @@ public class Administrator implements IAdministrator {
     @Override
     public Date getNearestFreeDate() {
         Date date = DateUtil.getDateWithoutTime();
-        while (true){
-            if (this.getNumberFreeMasters(date) > 1 && this.getNumberFreePlaceDate(date) > 0){
+        while (true) {
+            if (this.getNumberFreeMasters(date) > 1 && this.getNumberFreePlaceDate(date) > 0) {
                 return date;
             }
             date = DateUtil.addDays(date, 1);

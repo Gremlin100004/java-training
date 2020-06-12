@@ -2,7 +2,6 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.repository.Order;
-import com.senla.carservice.repository.OrderDto;
 
 import java.util.Date;
 

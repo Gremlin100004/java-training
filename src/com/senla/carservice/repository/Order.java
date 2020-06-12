@@ -1,12 +1,16 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.domain.*;
+import com.senla.carservice.domain.Car;
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Place;
+import com.senla.carservice.domain.Status;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 public class Order {
-    private Date creationTime;
+    private Long id;
+    private final Date creationTime;
     private Date executionStartTime;
     private Date leadTime;
     private Master[] masters;
@@ -29,6 +33,10 @@ public class Order {
         this.price = price;
         this.status = Status.WAIT;
         this.deleteStatus = false;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Master[] getMasters() {
@@ -69,6 +77,10 @@ public class Order {
 
     public boolean isDeleteStatus() {
         return deleteStatus;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setLeadTime(Date leadTime) {

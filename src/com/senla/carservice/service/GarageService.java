@@ -1,14 +1,14 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.repository.Garage;
-import com.senla.carservice.repository.CarService;
 import com.senla.carservice.domain.Place;
+import com.senla.carservice.repository.CarService;
+import com.senla.carservice.repository.Garage;
 import com.senla.carservice.util.Deleter;
 
 import java.util.Arrays;
 
 public class GarageService implements IGarageService {
-    private CarService carService;
+    private final CarService carService;
 
     public GarageService(CarService carService) {
         this.carService = carService;
@@ -22,8 +22,10 @@ public class GarageService implements IGarageService {
     @Override
     public void addGarage(String name) {
         int index = this.carService.getGarages().length;
+        Garage garage = new Garage(name);
+        garage.setId(this.carService.getGeneratorIdGarage().getId());
         this.carService.setGarages(Arrays.copyOf(this.carService.getGarages(), index + 1));
-        this.carService.getGarages()[index] = new Garage(name);
+        this.carService.getGarages()[index] = garage;
     }
 
     @Override
@@ -34,13 +36,15 @@ public class GarageService implements IGarageService {
     @Override
     public void addGaragePlace(Garage garage) {
         int length = garage.getPlaces().length;
+        Place place = new Place();
+        place.setId(garage.getGeneratorIdPlace().getId());
         Place[] places = Arrays.copyOf(garage.getPlaces(), length + 1);
-        places[length] = new Place();
+        places[length] = place;
         garage.setPlaces(places);
     }
 
     @Override
-    public int getNumberGaragePlaces(Garage garage){
+    public int getNumberGaragePlaces(Garage garage) {
         return garage.getPlaces().length;
     }
 

@@ -2,7 +2,6 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.repository.Order;
 
-import java.text.ParseException;
 import java.util.Date;
 
 public interface IAdministrator extends IMasterService, IGarageService, IOrderService {

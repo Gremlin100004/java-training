@@ -1,7 +1,7 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.repository.Garage;
 import com.senla.carservice.domain.Master;
+import com.senla.carservice.repository.Garage;
 import com.senla.carservice.repository.Order;
 import com.senla.carservice.repository.OrderDto;
 import com.senla.carservice.service.Administrator;
@@ -32,7 +32,7 @@ public class CarServiceController {
         return this.masterService.addMaster(name);
     }
 
-    public Master[] getMasters(){
+    public Master[] getMasters() {
         return this.masterService.getMasters();
     }
 
@@ -52,7 +52,7 @@ public class CarServiceController {
         return this.garageService.addGarage(name);
     }
 
-    public Garage[] getArrayGarages(){
+    public Garage[] getArrayGarages() {
         return this.garageService.getArrayGarages();
     }
 
@@ -80,7 +80,7 @@ public class CarServiceController {
         return this.orderService.addOrder(order);
     }
 
-    public Order[] getOrders(){
+    public Order[] getOrders() {
         return this.orderService.getOrders();
     }
 
@@ -124,7 +124,7 @@ public class CarServiceController {
         return this.orderService.getExecuteOrder();
     }
 
-    public Order[] getOrdersByPeriod(String startPeriod, String endPeriod){
+    public Order[] getOrdersByPeriod(String startPeriod, String endPeriod) {
         return this.orderService.getOrdersByPeriod(startPeriod, endPeriod);
     }
 
@@ -140,11 +140,11 @@ public class CarServiceController {
         return this.orderService.getDeletedOrders(orders);
     }
 
-    public Order[] getMasterOrders(Master master){
+    public Order[] getMasterOrders(Master master) {
         return this.orderService.getMasterOrders(master);
     }
 
-    public Master[] getOrderMasters(Order order){
+    public Master[] getOrderMasters(Order order) {
         return this.orderService.getOrderMasters(order);
     }
 

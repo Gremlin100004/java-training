@@ -1,9 +1,9 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Master;
-import com.senla.carservice.repository.Order;
 import com.senla.carservice.domain.Status;
 import com.senla.carservice.repository.CarService;
+import com.senla.carservice.repository.Order;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -23,6 +23,7 @@ public class OrderService implements IOrderService {
     @Override
     public void addOrder(Order order) {
         int index = this.carService.getOrders().length;
+        order.setId(this.carService.getGeneratorIdOrder().getId());
         this.carService.setOrders(Arrays.copyOf(this.carService.getOrders(), index + 1));
         this.carService.getOrders()[index] = order;
         for (Master master : order.getMasters()) {

@@ -1,7 +1,7 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.repository.CarService;
 import com.senla.carservice.domain.Master;
+import com.senla.carservice.repository.CarService;
 import com.senla.carservice.util.Deleter;
 
 import java.util.Arrays;
@@ -21,8 +21,10 @@ public class MasterService implements IMasterService {
     @Override
     public void addMaster(String name) {
         int index = this.carService.getMasters().length;
+        Master master = new Master(name);
+        master.setId(this.carService.getGeneratorIdMaster().getId());
         this.carService.setMasters(Arrays.copyOf(this.carService.getMasters(), index + 1));
-        this.carService.getMasters()[index] = new Master(name);
+        this.carService.getMasters()[index] = master;
     }
 
     @Override
