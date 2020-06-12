@@ -213,12 +213,11 @@ public class Main {
         System.out.println(delimiter);
 
         System.out.println("Receive orders for a period of time:");
-        Printer.printOrder(executedOrders);
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date startPeriod = new Date();
         Date endPeriod = new Date();
-        String stringStartPeriod = format.format(DateUtil.addDays(startPeriod, 1));
-        String stringEndPeriod = format.format(DateUtil.addDays(endPeriod, -1));
+        String stringStartPeriod = format.format(DateUtil.addDays(startPeriod, -1));
+        String stringEndPeriod = format.format(DateUtil.addDays(endPeriod, 1));
         System.out.println(String.format("%s - %s", stringStartPeriod, stringEndPeriod));
         Order[] periodOrders = carServiceController.getOrdersByPeriod(stringStartPeriod, stringEndPeriod);
         Printer.printOrder(periodOrders);

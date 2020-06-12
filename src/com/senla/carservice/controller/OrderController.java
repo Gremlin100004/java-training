@@ -116,8 +116,6 @@ public class OrderController {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date startPeriodDate;
         Date endPeriodDate;
-        System.out.println(startPeriod);
-        System.out.println(endPeriod);
         try {
             startPeriodDate = format.parse(startPeriod);
             endPeriodDate = format.parse(endPeriod);
@@ -125,8 +123,6 @@ public class OrderController {
             startPeriodDate = null;
             endPeriodDate = null;
         }
-        System.out.println(startPeriodDate);
-        System.out.println(endPeriodDate);
         Order[] orders = this.carService.getOrders();
         orders = this.carService.sortOrderByPeriod(orders, startPeriodDate, endPeriodDate);
         return orders;
