@@ -3,6 +3,8 @@ package com.senla.carservice.repository;
 import com.senla.carservice.domain.Place;
 
 public class Garage {
+    // я говорил на созвоне - у репозитория не может быть айди, а из полей - только массивы и коллекции
+    // иначе это модель
     private Long id;
     private String name;
     private Place[] places;

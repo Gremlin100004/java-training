@@ -24,6 +24,7 @@ public class OrderService implements IOrderService {
     public void addOrder(Order order) {
         int index = this.carService.getOrders().length;
         order.setId(this.carService.getGeneratorIdOrder().getId());
+        // не очень оптимально - увеличивать массив на 1 каждый раз, лучше применять коэффициент - так сделано в ArrayList
         this.carService.setOrders(Arrays.copyOf(this.carService.getOrders(), index + 1));
         this.carService.getOrders()[index] = order;
         for (Master master : order.getMasters()) {
@@ -230,6 +231,7 @@ public class OrderService implements IOrderService {
         for (Order order : orders) {
             lengthArray = sortOrders.length;
             if (order.isDeleteStatus()) {
+                // этот метод будет работать ужасно межденно из-за этой строчки
                 sortOrders = Arrays.copyOf(sortOrders, lengthArray + 1);
                 sortOrders[lengthArray] = order;
             }

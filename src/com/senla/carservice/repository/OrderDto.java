@@ -5,6 +5,7 @@ import com.senla.carservice.domain.Place;
 
 import java.math.BigDecimal;
 
+// откуда в пакете репозиторий класс ДТО????? это ни репозиторий, ни модель - это ДТО
 public class OrderDto {
     private String executionStartTime;
     private String leadTime;

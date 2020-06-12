@@ -8,6 +8,8 @@ import com.senla.carservice.domain.Status;
 import java.math.BigDecimal;
 import java.util.Date;
 
+// почему этот класс лежит в пакете репозиторий? у него есть айдишка, куча полей, и он нужен по бизнес-логике
+// это точно модель
 public class Order {
     private Long id;
     private final Date creationTime;

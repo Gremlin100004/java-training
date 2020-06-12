@@ -1,7 +1,9 @@
 package com.senla.carservice.domain;
 
 public class Place {
+    // айдишка или у всех, или ни у кого
     private Long id;
+    // забываем про примитивы в полях класса
     private boolean busyStatus;
 
     public Place() {

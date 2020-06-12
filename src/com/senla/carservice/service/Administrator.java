@@ -16,6 +16,7 @@ public class Administrator implements IAdministrator {
     private final IOrderService orderService;
 
     public Administrator(String name) {
+        // если это репозиторий - у него должен быть интерфейс в ДЗ-5
         this.carService = new CarService(name);
         this.masterService = new MasterService(this.carService);
         this.garageService = new GarageService(this.carService);

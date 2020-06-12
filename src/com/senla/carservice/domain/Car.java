@@ -5,6 +5,8 @@ public class Car {
     private String model;
     private String registrationNumber;
 
+    // желательно создавать конструктор по умолчанию, даже если он не будет использоваться
+
     public Car(String automaker, String model, String registrationNumber) {
         this.automaker = automaker;
         this.model = model;

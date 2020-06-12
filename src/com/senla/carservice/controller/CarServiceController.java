@@ -12,6 +12,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CarServiceController {
+    // вообще ничего не понятно, класс вроде бы контроллер, а переменная для него - сервис, это разные слои
+    // контроллеры не вызывают друг друга, только UI сам может вызывать любой контроллер
+    // контроллеры могут сами вызывать только сервисы (любые)
+    // сервисы самии могут вызывать только репозитории (зато любые, даже "чужие")
+    // сервисы не могут вызывать другие сервисы
+    // репозитории не могут вызывать другие репозитории
     private IAdministrator carService;
     private MasterController masterService;
     private OrderController orderService;

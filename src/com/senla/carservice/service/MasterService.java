@@ -7,6 +7,7 @@ import com.senla.carservice.util.Deleter;
 import java.util.Arrays;
 
 public class MasterService implements IMasterService {
+    // везде были поля файнал (которые инифиализируются через конструктор), а тут забыл?
     private CarService carService;
 
     public MasterService(CarService carService) {
