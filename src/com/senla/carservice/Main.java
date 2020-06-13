@@ -1,5 +1,6 @@
 package com.senla.carservice;
 
+import com.senla.carservice.api.MenuController;
 import com.senla.carservice.controller.CarOfficeController;
 import com.senla.carservice.controller.GarageController;
 import com.senla.carservice.controller.MasterController;
@@ -15,7 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Main {
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args){
+        MenuController menuController = new MenuController();
+        menuController.run();
         CarOfficeController carOfficeController = new CarOfficeController();
         GarageController garageController = new GarageController();
         MasterController masterController = new MasterController();

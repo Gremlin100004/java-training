@@ -5,6 +5,9 @@ public class Master {
     private String name;
     private Integer numberOrder;
 
+    public Master() {
+    }
+
     public Master(String name) {
         this.name = name;
     }

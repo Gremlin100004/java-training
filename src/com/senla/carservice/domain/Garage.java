@@ -8,6 +8,9 @@ public class Garage {
     private Place[] places;
     private IdGenerator idGeneratorPlace;
 
+    public Garage() {
+    }
+
     public Garage(String name) {
         this.name = name;
         this.places = new Place[0];

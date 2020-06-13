@@ -7,7 +7,6 @@ import com.senla.carservice.util.IdGenerator;
 
 public final class CarOfficeRepositoryImpl implements CarOfficeRepository {
     private static CarOfficeRepositoryImpl instance;
-    private String name;
     private Order[] orders;
     private Master[] masters;
     private Garage[] garages;
@@ -47,11 +46,6 @@ public final class CarOfficeRepositoryImpl implements CarOfficeRepository {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public Order[] getOrders() {
         return this.orders;
     }
@@ -63,11 +57,6 @@ public final class CarOfficeRepositoryImpl implements CarOfficeRepository {
     @Override
     public Garage[] getGarages() {
         return this.garages;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override

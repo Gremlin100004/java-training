@@ -13,15 +13,11 @@ public interface CarOfficeRepository {
 
     IdGenerator getIdGeneratorMaster();
 
-    String getName();
-
     Order[] getOrders();
 
     Master[] getMasters();
 
     Garage[] getGarages();
-
-    void setName(String name);
 
     void setOrders(Order[] orders);
 
