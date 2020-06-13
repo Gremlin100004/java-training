@@ -11,7 +11,6 @@ import com.senla.carservice.domain.Order;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.util.DateUtil;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

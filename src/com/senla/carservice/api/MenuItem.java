@@ -7,10 +7,10 @@ public class MenuItem {
     private Action action;
     private Menu nextMenu;
 
-
-    public MenuItem(String title, Action action) {
+    public MenuItem(String title, Action action, Menu nextMenu) {
         this.title = title;
         this.action = action;
+        this.nextMenu = nextMenu;
     }
 
     @Override
