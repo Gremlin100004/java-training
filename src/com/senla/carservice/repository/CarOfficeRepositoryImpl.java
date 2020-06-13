@@ -5,7 +5,8 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.util.IdGenerator;
 
-public class CarOfficeRepositoryImpl implements CarOfficeRepository {
+public final class CarOfficeRepositoryImpl implements CarOfficeRepository {
+    private static CarOfficeRepositoryImpl instance;
     private String name;
     private Order[] orders;
     private Master[] masters;
@@ -23,22 +24,34 @@ public class CarOfficeRepositoryImpl implements CarOfficeRepository {
         this.idGeneratorMaster = new IdGenerator();
     }
 
+    public static CarOfficeRepositoryImpl getInstance() {
+        if (instance == null) {
+            instance = new CarOfficeRepositoryImpl();
+        }
+        return instance;
+    }
+
+    @Override
     public IdGenerator getIdGeneratorGarage() {
         return idGeneratorGarage;
     }
 
+    @Override
     public IdGenerator getIdGeneratorOrder() {
         return idGeneratorOrder;
     }
 
+    @Override
     public IdGenerator getIdGeneratorMaster() {
         return idGeneratorMaster;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public Order[] getOrders() {
         return this.orders;
     }
@@ -47,22 +60,27 @@ public class CarOfficeRepositoryImpl implements CarOfficeRepository {
         return this.masters;
     }
 
+    @Override
     public Garage[] getGarages() {
         return this.garages;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public void setOrders(Order[] orders) {
         this.orders = orders;
     }
 
+    @Override
     public void setMasters(Master[] masters) {
         this.masters = masters;
     }
 
+    @Override
     public void setGarages(Garage[] garages) {
         this.garages = garages;
     }

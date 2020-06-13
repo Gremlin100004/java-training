@@ -13,11 +13,19 @@ import com.senla.carservice.repository.CarOfficeRepositoryImpl;
 import java.util.Arrays;
 import java.util.Date;
 
-public class OrderServiceImpl implements OrderService {
-    private CarOfficeRepository carOfficeRepository;
+public final class OrderServiceImpl implements OrderService {
+    private static OrderServiceImpl instance;
+    private final CarOfficeRepository carOfficeRepository;
 
     public OrderServiceImpl() {
-        this.carOfficeRepository = new CarOfficeRepositoryImpl();
+        this.carOfficeRepository = CarOfficeRepositoryImpl.getInstance();
+    }
+
+    public static OrderServiceImpl getInstance() {
+        if (instance == null) {
+            instance = new OrderServiceImpl();
+        }
+        return instance;
     }
 
     @Override

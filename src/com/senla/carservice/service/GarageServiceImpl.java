@@ -8,11 +8,19 @@ import com.senla.carservice.util.Deleter;
 
 import java.util.Arrays;
 
-public class GarageServiceImpl implements GarageService {
+public final class GarageServiceImpl implements GarageService {
+    private static GarageServiceImpl instance;
     private final CarOfficeRepository carOfficeRepository;
 
     public GarageServiceImpl() {
-        this.carOfficeRepository = new CarOfficeRepositoryImpl();
+        this.carOfficeRepository = CarOfficeRepositoryImpl.getInstance();
+    }
+
+    public static GarageServiceImpl getInstance() {
+        if (instance == null) {
+            instance = new GarageServiceImpl();
+        }
+        return instance;
     }
 
     @Override

@@ -74,16 +74,16 @@ public class TestData {
         };
     }
 
-    public String[] getArrayExecutionStartTime() throws ParseException {
+    public String[] getArrayExecutionStartTime() {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         return new String[]{
                 format.format(new Date()),
                 format.format(new Date()),
-                "12.06.2020 14:00",
-                "13.06.2020 15:00",
-                "14.06.2020 15:00",
-                "15.06.2020 15:00",
-                "16.06.2020 15:00",
+                "12.07.2020 14:00",
+                "13.07.2020 15:00",
+                "14.07.2020 15:00",
+                "15.07.2020 15:00",
+                "16.07.2020 15:00",
                 format.format(new Date()),
                 format.format(new Date()),
                 format.format(new Date()),
@@ -92,19 +92,19 @@ public class TestData {
         };
     }
 
-    public String[] getArrayLeadTime() throws ParseException {
+    public String[] getArrayLeadTime() {
         return new String[]{ "11.06.2020 10:00",
-                "11.06.2020 18:00",
-                "13.06.2020 10:00",
-                "14.06.2020 18:00",
+                "11.07.2020 18:00",
+                "13.07.2020 10:00",
+                "14.07.2020 18:00",
                 "15.07.2020 10:00",
-                "16.06.2020 10:00",
-                "17.06.2020 10:00",
-                "18.06.2020 10:00",
-                "19.06.2020 10:00",
-                "20.06.2020 10:00",
-                "11.06.2020 10:00",
-                "11.06.2020 10:00"
+                "16.07.2020 10:00",
+                "17.07.2020 10:00",
+                "18.07.2020 10:00",
+                "19.07.2020 10:00",
+                "20.07.2020 10:00",
+                "11.07.2020 10:00",
+                "11.07.2020 10:00"
         };
     }
 }

@@ -9,11 +9,19 @@ import com.senla.carservice.util.Deleter;
 
 import java.util.Arrays;
 
-public class MasterServiceImpl implements MasterService {
+public final class MasterServiceImpl implements MasterService {
+    private static MasterServiceImpl instance;
     private final CarOfficeRepository carOfficeRepository;
 
     public MasterServiceImpl() {
-        this.carOfficeRepository = new CarOfficeRepositoryImpl();
+        this.carOfficeRepository = CarOfficeRepositoryImpl.getInstance();
+    }
+
+    public static MasterServiceImpl getInstance() {
+        if (instance == null) {
+            instance = new MasterServiceImpl();
+        }
+        return instance;
     }
 
     @Override
