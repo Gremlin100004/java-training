@@ -2,7 +2,7 @@ package com.senla.carservice.domain;
 
 public class Place {
     private Long id;
-    private boolean busyStatus;
+    private Boolean busyStatus;
 
     public Place() {
         this.busyStatus = false;
@@ -12,11 +12,11 @@ public class Place {
         return id;
     }
 
-    public boolean isBusyStatus() {
+    public Boolean isBusyStatus() {
         return busyStatus;
     }
 
-    public void setBusyStatus(boolean busyStatus) {
+    public void setBusyStatus(Boolean busyStatus) {
         this.busyStatus = busyStatus;
     }
 

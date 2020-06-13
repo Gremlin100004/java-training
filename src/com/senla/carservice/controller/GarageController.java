@@ -1,46 +1,45 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.repository.Garage;
-import com.senla.carservice.service.IAdministrator;
+import com.senla.carservice.domain.Garage;
+import com.senla.carservice.service.GarageService;
+import com.senla.carservice.service.GarageServiceImpl;
 
 public class GarageController {
-    private final IAdministrator carService;
+    private final GarageService garageService;
 
-    public GarageController(IAdministrator carService) {
-        this.carService = carService;
+    public GarageController() {
+        this.garageService = new GarageServiceImpl();
     }
 
     public String addGarage(String name) {
-        this.carService.addGarage(name);
+        this.garageService.addGarage(name);
         return name;
     }
 
     public Garage[] getArrayGarages() {
-        return this.carService.getGarage();
+        return this.garageService.getGarages();
     }
 
     public String deleteGarage(Garage garage) {
-        this.carService.deleteGarage(garage);
+        this.garageService.deleteGarage(garage);
         return garage.getName();
     }
 
     public String addGaragePlace(Garage garage) {
-        this.carService.addGaragePlace(garage);
+        this.garageService.addGaragePlace(garage);
         return garage.getName();
     }
 
     public int getNumberGaragePlaces(Garage garage) {
-        return this.carService.getNumberGaragePlaces(garage);
+        return this.garageService.getNumberGaragePlaces(garage);
     }
 
     public String deleteGaragePlace(Garage garage) {
-        this.carService.deleteGaragePlace(garage);
+        this.garageService.deleteGaragePlace(garage);
         return garage.getName();
     }
 
     public int getNumberFreePlaceGarage(Garage garage) {
-        int numberFreePlaces;
-        numberFreePlaces = this.carService.getFreePlaceGarage(garage).length;
-        return numberFreePlaces;
+        return this.garageService.getFreePlaceGarage(garage).length;
     }
 }

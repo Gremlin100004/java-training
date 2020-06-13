@@ -1,7 +1,8 @@
-package com.senla.carservice.repository;
+package com.senla.carservice.dto;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Place;
+import com.senla.carservice.domain.Garage;
 
 import java.math.BigDecimal;
 

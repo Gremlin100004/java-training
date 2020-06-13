@@ -1,25 +1,25 @@
-package com.senla.carservice.repository;
+package com.senla.carservice.domain;
 
-import com.senla.carservice.domain.Place;
+import com.senla.carservice.util.IdGenerator;
 
 public class Garage {
     private Long id;
     private String name;
     private Place[] places;
-    private IGeneratorId generatorIdPlace;
+    private IdGenerator idGeneratorPlace;
 
     public Garage(String name) {
         this.name = name;
         this.places = new Place[0];
-        this.generatorIdPlace = new GeneratorId();
+        this.idGeneratorPlace = new IdGenerator();
     }
 
     public Long getId() {
         return id;
     }
 
-    public IGeneratorId getGeneratorIdPlace() {
-        return generatorIdPlace;
+    public IdGenerator getIdGeneratorPlace() {
+        return idGeneratorPlace;
     }
 
     public String getName() {
@@ -42,8 +42,8 @@ public class Garage {
         this.places = places;
     }
 
-    public void setGeneratorIdPlace(IGeneratorId generatorIdPlace) {
-        this.generatorIdPlace = generatorIdPlace;
+    public void setIdGeneratorPlace(IdGenerator idGeneratorPlace) {
+        this.idGeneratorPlace = idGeneratorPlace;
     }
 
     @Override

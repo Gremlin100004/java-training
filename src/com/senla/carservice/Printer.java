@@ -1,6 +1,6 @@
 package com.senla.carservice;
 
-import com.senla.carservice.repository.Order;
+import com.senla.carservice.domain.Order;
 
 import java.util.Arrays;
 

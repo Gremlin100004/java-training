@@ -1,36 +1,38 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
+import com.senla.carservice.util.IdGenerator;
 
-public class CarService {
+public class CarOfficeRepositoryImpl implements CarOfficeRepository {
     private String name;
     private Order[] orders;
     private Master[] masters;
     private Garage[] garages;
-    private final IGeneratorId generatorIdGarage;
-    private final IGeneratorId generatorIdOrder;
-    private final IGeneratorId generatorIdMaster;
+    private final IdGenerator idGeneratorGarage;
+    private final IdGenerator idGeneratorOrder;
+    private final IdGenerator idGeneratorMaster;
 
-    public CarService(String name) {
-        this.name = name;
+    public CarOfficeRepositoryImpl () {
         this.orders = new Order[0];
         this.masters = new Master[0];
         this.garages = new Garage[0];
-        this.generatorIdGarage = new GeneratorId();
-        this.generatorIdOrder = new GeneratorId();
-        this.generatorIdMaster = new GeneratorId();
+        this.idGeneratorGarage = new IdGenerator();
+        this.idGeneratorOrder = new IdGenerator();
+        this.idGeneratorMaster = new IdGenerator();
     }
 
-    public IGeneratorId getGeneratorIdGarage() {
-        return generatorIdGarage;
+    public IdGenerator getIdGeneratorGarage() {
+        return idGeneratorGarage;
     }
 
-    public IGeneratorId getGeneratorIdOrder() {
-        return generatorIdOrder;
+    public IdGenerator getIdGeneratorOrder() {
+        return idGeneratorOrder;
     }
 
-    public IGeneratorId getGeneratorIdMaster() {
-        return generatorIdMaster;
+    public IdGenerator getIdGeneratorMaster() {
+        return idGeneratorMaster;
     }
 
     public String getName() {

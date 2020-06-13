@@ -1,9 +1,4 @@
-package com.senla.carservice.repository;
-
-import com.senla.carservice.domain.Car;
-import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Place;
-import com.senla.carservice.domain.Status;
+package com.senla.carservice.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
