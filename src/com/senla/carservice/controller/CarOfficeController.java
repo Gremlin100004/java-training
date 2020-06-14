@@ -11,10 +11,14 @@ import java.util.Date;
 public class CarOfficeController {
     private final CarOfficeService carOfficeService;
     private final OrderService orderService;
+    private final MasterService masterService;
+    private final GarageService garageService;
 
     public CarOfficeController() {
         this.carOfficeService = CarOfficeServiceImpl.getInstance();
         this.orderService = OrderServiceImpl.getInstance();
+        this.masterService = MasterServiceImpl.getInstance();
+        this.garageService = GarageServiceImpl.getInstance();
     }
 
     public String getFreePlacesByDate(String date) {
@@ -40,6 +44,9 @@ public class CarOfficeController {
         final int minute = 59;
         Date dateFree = DateUtil.getDateWithoutTime();
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM yyyy");
+        if (this.masterService.getMasters().length <2 &&  this.garageService.getGarages().length < 1){
+            return "Error!!! Add masters, garage and place to service!";
+        }
         while (true) {
             Date endDay = DateUtil.addHourMinutes(dateFree, hour, minute);
             Order[] orders = this.orderService.getOrders();
@@ -51,6 +58,6 @@ public class CarOfficeController {
             }
             dateFree = DateUtil.addDays(dateFree, 1);
         }
-        return String.format(" - nearest free date: %s", dateFormat.format(dateFree.getTime()));
+        return String.format("Nearest free date: %s", dateFormat.format(dateFree.getTime()));
     }
 }

@@ -23,11 +23,11 @@ public final class AvailableSeatsActionImpl implements Action {
         CarOfficeController carOfficeController = new CarOfficeController();
         String message;
         String date;
-        while (true){
+        while (true) {
             System.out.println("Enter the date in format dd.mm.yyyy, example:\"10.10.2010\"");
             date = scanner.nextLine();
             message = carOfficeController.getFreePlacesByDate(date);
-            if (message.equals("error date")){
+            if (message.equals("error date")) {
                 System.out.println("You enter wrong value!!!");
                 continue;
             }

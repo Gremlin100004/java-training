@@ -1,5 +1,9 @@
 package com.senla.carservice.api.action;
 
+import com.senla.carservice.controller.CarOfficeController;
+
+import java.util.Scanner;
+
 public final class FreeDateActionImpl implements Action {
     private static FreeDateActionImpl instance;
 
@@ -15,6 +19,9 @@ public final class FreeDateActionImpl implements Action {
 
     @Override
     public void execute() {
-        System.out.println("Go to item garages");
+        CarOfficeController carOfficeController = new CarOfficeController();
+        String message;
+        message = carOfficeController.getNearestFreeDate();
+        System.out.println(message);
     }
 }
