@@ -9,6 +9,7 @@ import com.senla.carservice.service.OrderServiceImpl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class OrderController {
@@ -26,7 +27,13 @@ public class OrderController {
             executionStartTime = format.parse(orderDto.getExecutionStartTime());
             leadTime = format.parse(orderDto.getLeadTime());
         } catch (ParseException e) {
-            return "error date, should be dd.MM.yyyy";
+            return "Error date, should be \"dd.MM.yyyy hh:mm\"";
+        }
+        if (executionStartTime.compareTo(leadTime) < 1){
+            return "Error!!!, Lead time can't be early then planning time to start working!";
+        }
+        if (executionStartTime.compareTo(new Date()) < 1){
+            return "Error!!!, You can't start work at past!";
         }
         Car car = new Car(orderDto.getAutomaker(), orderDto.getModel(), orderDto.getRegistrationNumber());
         Order order = new Order(executionStartTime, leadTime, orderDto.getMasters(), orderDto.getGarage(),
@@ -145,7 +152,7 @@ public class OrderController {
         return this.orderService.getMasterOrders(master);
     }
 
-    public Master[] getOrderMasters(Order order) {
+    public ArrayList<Master> getOrderMasters(Order order) {
         return this.orderService.getOrderMasters(order);
     }
 }

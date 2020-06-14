@@ -1,6 +1,7 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.domain.Garage;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.service.GarageService;
 import com.senla.carservice.service.GarageServiceImpl;
 
@@ -13,7 +14,7 @@ public class GarageController {
 
     public String addGarage(String name) {
         this.garageService.addGarage(name);
-        return name;
+        return String.format("-garage \"%s\" has been added to service", name);
     }
 
     public Garage[] getArrayGarages() {
@@ -22,12 +23,12 @@ public class GarageController {
 
     public String deleteGarage(Garage garage) {
         this.garageService.deleteGarage(garage);
-        return garage.getName();
+        return String.format(" -delete garage in service with name \"%s\"", garage.getName());
     }
 
     public String addGaragePlace(Garage garage) {
         this.garageService.addGaragePlace(garage);
-        return garage.getName();
+        return String.format("Add place in garage \"%s\"", garage.getName());
     }
 
     public int getNumberGaragePlaces(Garage garage) {
@@ -36,10 +37,14 @@ public class GarageController {
 
     public String deleteGaragePlace(Garage garage) {
         this.garageService.deleteGaragePlace(garage);
-        return garage.getName();
+        return String.format(" -the place in garage with name \"%s\" has been deleted successfully.", garage.getName());
     }
 
     public int getNumberFreePlaceGarage(Garage garage) {
         return this.garageService.getFreePlaceGarage(garage).length;
+    }
+
+    public Place [] getFreePlaceGarage(Garage garage) {
+        return this.garageService.getFreePlaceGarage(garage);
     }
 }

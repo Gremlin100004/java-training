@@ -35,7 +35,7 @@ public final class CarOfficeServiceImpl implements CarOfficeService{
         int numberMastersOrders = 0;
         int numberGeneralMasters = this.carOfficeRepository.getMasters().length;
         for (Order order : orders)
-            numberMastersOrders += order.getMasters().length;
+            numberMastersOrders += order.getMasters().size();
         return numberGeneralMasters - numberMastersOrders;
     }
 }

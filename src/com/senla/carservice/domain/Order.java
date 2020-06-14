@@ -1,6 +1,7 @@
 package com.senla.carservice.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Order {
@@ -8,7 +9,7 @@ public class Order {
     private final Date creationTime;
     private Date executionStartTime;
     private Date leadTime;
-    private Master[] masters;
+    private ArrayList<Master> masters;
     private Garage garage;
     private Place place;
     private Car car;
@@ -16,7 +17,7 @@ public class Order {
     private Status status;
     private boolean deleteStatus;
 
-    public Order(Date executionStartTime, Date leadTime, Master[] masters, Garage garage, Place place,
+    public Order(Date executionStartTime, Date leadTime, ArrayList<Master> masters, Garage garage, Place place,
                  Car car, BigDecimal price) {
         this.creationTime = new Date();
         this.executionStartTime = executionStartTime;
@@ -34,7 +35,7 @@ public class Order {
         return id;
     }
 
-    public Master[] getMasters() {
+    public ArrayList<Master> getMasters() {
         return masters;
     }
 
@@ -86,7 +87,7 @@ public class Order {
         this.garage = garage;
     }
 
-    public void setMasters(Master[] masters) {
+    public void setMasters(ArrayList<Master> masters) {
         this.masters = masters;
     }
 

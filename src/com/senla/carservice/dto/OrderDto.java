@@ -5,11 +5,12 @@ import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.Garage;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class OrderDto {
     private String executionStartTime;
     private String leadTime;
-    private Master[] masters;
+    private ArrayList masters;
     private Garage garage;
     private Place place;
     private String automaker;
@@ -17,7 +18,7 @@ public class OrderDto {
     private String registrationNumber;
     private BigDecimal price;
 
-    public OrderDto(String executionStartTime, String leadTime, Master[] masters, Garage garage, Place place,
+    public OrderDto(String executionStartTime, String leadTime, ArrayList masters, Garage garage, Place place,
                     String automaker, String model, String registrationNumber, BigDecimal price) {
         this.executionStartTime = executionStartTime;
         this.leadTime = leadTime;
@@ -38,7 +39,7 @@ public class OrderDto {
         return leadTime;
     }
 
-    public Master[] getMasters() {
+    public ArrayList getMasters() {
         return masters;
     }
 
@@ -74,7 +75,7 @@ public class OrderDto {
         this.leadTime = leadTime;
     }
 
-    public void setMasters(Master[] masters) {
+    public void setMasters(ArrayList masters) {
         this.masters = masters;
     }
 

@@ -1,7 +1,7 @@
 package com.senla.carservice.api.action;
 
 import com.senla.carservice.TestData;
-import com.senla.carservice.api.printer.Printer;
+import com.senla.carservice.api.printer.PrinterOrder;
 import com.senla.carservice.controller.GarageController;
 import com.senla.carservice.controller.MasterController;
 import com.senla.carservice.controller.OrderController;
@@ -9,6 +9,8 @@ import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.dto.OrderDto;
+
+import java.util.ArrayList;
 
 public final class DemoActionImpl implements Action {
     private static DemoActionImpl instance;
@@ -62,9 +64,9 @@ public final class DemoActionImpl implements Action {
         int indexGarage = 0;
         int indexPlace = 0;
         for (int i = 0; i < testData.getArrayAutomaker().length; i++) {
-            Master[] mastersOrder = new Master[2];
+            ArrayList<Master> mastersOrder = new ArrayList<>();
             for (int j = 0; j < 2; j++) {
-                mastersOrder[j] = masterController.getMasters()[indexMaster];
+                mastersOrder.add(masterController.getMasters()[indexMaster]);
                 indexMaster++;
                 if (indexMaster == masterController.getMasters().length - 1) {
                     indexMaster = 0;
@@ -83,6 +85,6 @@ public final class DemoActionImpl implements Action {
             }
         }
         Order[] orders = orderController.getOrders();
-        Printer.printOrder(orders);
+        PrinterOrder.printOrder(orders);
     }
 }

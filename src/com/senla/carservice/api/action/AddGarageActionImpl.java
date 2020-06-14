@@ -1,19 +1,19 @@
 package com.senla.carservice.api.action;
 
 import com.senla.carservice.api.action.util.Checker;
-import com.senla.carservice.controller.MasterController;
+import com.senla.carservice.controller.GarageController;
 
 import java.util.Scanner;
 
-public final class AddMasterActionImpl implements Action {
-    private static AddMasterActionImpl instance;
+public final class AddGarageActionImpl implements Action {
+    private static AddGarageActionImpl instance;
 
-    public AddMasterActionImpl() {
+    public AddGarageActionImpl() {
     }
 
-    public static AddMasterActionImpl getInstance() {
+    public static AddGarageActionImpl getInstance() {
         if (instance == null) {
-            instance = new AddMasterActionImpl();
+            instance = new AddGarageActionImpl();
         }
         return instance;
     }
@@ -21,17 +21,17 @@ public final class AddMasterActionImpl implements Action {
     @Override
     public void execute() {
         Scanner scanner = new Scanner(System.in);
-        MasterController masterController = new MasterController();
+        GarageController garageController = new GarageController();
         String message;
         String name;
         while (true) {
-            System.out.println("Enter the name of master");
+            System.out.println("Enter the name of garage");
             name = scanner.nextLine();
             if (Checker.isSymbolsString(name)){
                 System.out.println("You enter wrong value!!!");
                 continue;
             }
-            message = masterController.addMaster(name);
+            message = garageController.addGarage(name);
             break;
         }
         System.out.println(message);

@@ -10,6 +10,7 @@ import com.senla.carservice.repository.CarOfficeRepository;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.repository.CarOfficeRepositoryImpl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -198,7 +199,7 @@ public final class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Master[] getOrderMasters(Order order) {
+    public ArrayList<Master> getOrderMasters(Order order) {
         return order.getMasters();
     }
 

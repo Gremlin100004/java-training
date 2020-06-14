@@ -1,5 +1,9 @@
 package com.senla.carservice.api.action;
 
+import com.senla.carservice.api.printer.PrinterMaster;
+import com.senla.carservice.controller.MasterController;
+import com.senla.carservice.domain.Master;
+
 public final class AlphabetListMasterActionImpl implements Action {
     private static AlphabetListMasterActionImpl instance;
 
@@ -15,6 +19,12 @@ public final class AlphabetListMasterActionImpl implements Action {
 
     @Override
     public void execute() {
-        System.out.println("get list masters sort by alphabet");
+        MasterController masterController = new MasterController();
+        Master[] sortArrayMasters = masterController.sortMasterByAlphabet();
+        if (sortArrayMasters.length == 0){
+            System.out.println("There are no masters.");
+            return;
+        }
+        PrinterMaster.printMasters(sortArrayMasters);
     }
 }

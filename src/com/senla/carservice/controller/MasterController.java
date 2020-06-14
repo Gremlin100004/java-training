@@ -22,7 +22,7 @@ public class MasterController {
 
     public String deleteMaster(Master master) {
         this.masterService.deleteMaster(master);
-        return master.getName();
+        return String.format(" -master with name \"%s\" has been deleted", master.getName());
     }
 
     public Master[] sortMasterByAlphabet() {

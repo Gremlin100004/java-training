@@ -3,6 +3,7 @@ package com.senla.carservice.service;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public interface OrderService {
@@ -35,7 +36,7 @@ public interface OrderService {
 
     Order[] getMasterOrders(Master master);
 
-    Master[] getOrderMasters(Order order);
+    ArrayList<Master> getOrderMasters(Order order);
 
     Order[] getCompletedOrders(Order[] orders);
 
