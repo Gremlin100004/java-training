@@ -1,7 +1,5 @@
 package com.senla.carservice.api;
 
-import com.senla.carservice.api.action.*;
-
 import java.util.Scanner;
 
 public class MenuController {
@@ -18,9 +16,14 @@ public class MenuController {
         while (true) {
             this.navigator.printMenu();
             System.out.println("Enter number item menu:");
+            while (!scanner.hasNextInt()) {
+                System.out.println("You enter wrong value!!!");
+                System.out.println("Try again:");
+                scanner.next();
+            }
             int answer = scanner.nextInt();
             if (answer == 0){
-                return;
+                break;
             }
             navigator.navigate(answer);
         }

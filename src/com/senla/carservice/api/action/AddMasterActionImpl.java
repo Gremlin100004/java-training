@@ -15,6 +15,6 @@ public final class AddMasterActionImpl implements Action {
 
     @Override
     public void execute() {
-        System.out.println("Add master to service");
+
     }
 }

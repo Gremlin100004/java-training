@@ -25,14 +25,14 @@ public class CarOfficeController {
         try {
             dateFree = format.parse(date);
         } catch (ParseException e) {
-            return "error date, shoud be dd.MM.yyyy";
+            return "error date";
         }
         Date endDay = DateUtil.addHourMinutes(dateFree, hour, minute);
         Order[] orders = this.orderService.getOrders();
         orders = this.orderService.sortOrderByPeriod(orders, dateFree, endDay);
         int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
         int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);
-        return String.format("- number free places in service: %s\n - number free masters in service: %s", numberFreePlace, numberFreeMasters);
+        return String.format("- number free places in service: %s\n- number free masters in service: %s", numberFreePlace, numberFreeMasters);
     }
 
     public String getNearestFreeDate() {

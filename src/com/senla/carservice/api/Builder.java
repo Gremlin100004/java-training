@@ -29,15 +29,14 @@ public final class Builder {
         Menu canceledOrderMenu = new Menu("Canceled orders");
 
         this.rootMenu.setMenuItems(new MenuItem[]{
-                new MenuItem("Masters", MoveMasterActionImpl.getInstance(), mastersMenu),
-                new MenuItem("Orders", MoveOrdersActionImpl.getInstance(), ordersMenu),
-                new MenuItem("Garages", MoveGaragesActionImpl.getInstance(), garagesMenu),
+                new MenuItem("Masters", PassiveActionImpl.getInstance(), mastersMenu),
+                new MenuItem("Orders", PassiveActionImpl.getInstance(), ordersMenu),
+                new MenuItem("Garages", PassiveActionImpl.getInstance(), garagesMenu),
                 new MenuItem("Get the number of available seats at the car service", AvailableSeatsActionImpl.getInstance(), this.rootMenu),
                 new MenuItem("Get the closest free date", FreeDateActionImpl.getInstance(), this.rootMenu),
                 new MenuItem("Fill in test data", DemoActionImpl.getInstance(), this.rootMenu)
         });
         mastersMenu.setMenuItems(new MenuItem[]{
-                new MenuItem("Show list of masters", ShowMastersActionImpl.getInstance(), mastersMenu),
                 new MenuItem("Add master", AddMasterActionImpl.getInstance(), mastersMenu),
                 new MenuItem("Delete Master", DeleteMasterActionImpl.getInstance(), mastersMenu),
                 new MenuItem("Show a list of masters sorted alphabetically", AlphabetListMasterActionImpl.getInstance(), mastersMenu),
