@@ -1,4 +1,4 @@
-package com.senla.carservice;
+package com.senla.carservice.api.printer;
 
 import com.senla.carservice.domain.Order;
 

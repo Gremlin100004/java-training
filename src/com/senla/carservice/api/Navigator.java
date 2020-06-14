@@ -21,9 +21,11 @@ public final class Navigator {
         System.out.println(String.format("%s:",this.currentMenu.getName()));
         for (int i = 0; i < this.currentMenu.getMenuItems().length; i++)
             System.out.println(String.format("%s. %s", i + 1, this.currentMenu.getMenuItems()[i]));
+        System.out.println("0. Exit program");
     }
 
     public void navigate(Integer index) {
-        this.currentMenu.getMenuItems()[index].doAction();
+        this.currentMenu.getMenuItems()[index-1].doAction();
+        this.currentMenu = this.currentMenu.getMenuItems()[index-1].getNextMenu();
     }
 }

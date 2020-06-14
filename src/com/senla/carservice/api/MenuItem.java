@@ -3,9 +3,9 @@ package com.senla.carservice.api;
 import com.senla.carservice.api.action.Action;
 
 public class MenuItem {
-    private String title;
-    private Action action;
-    private Menu nextMenu;
+    private final String title;
+    private final Action action;
+    Menu nextMenu;
 
     public MenuItem(String title, Action action, Menu nextMenu) {
         this.title = title;
@@ -20,5 +20,9 @@ public class MenuItem {
 
     public void doAction(){
         this.action.execute();
+    }
+
+    public Menu getNextMenu() {
+        return nextMenu;
     }
 }

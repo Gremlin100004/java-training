@@ -10,28 +10,18 @@ public class MenuController {
 
     public MenuController() {
         this.builder = Builder.getInstance();
-    }
-
-    public void run() {
         this.builder.buildMenu();
-        Menu carOfficeMenu = this.builder.getRootMenu();
-        carOfficeMenu.setName("Car Service Menu");
-        Menu mastersMenu = this.builder.getRootMenu();
-        mastersMenu.setName("Car Service Menu");
-        Menu ordersMenu = this.builder.getRootMenu();
-        ordersMenu.setName("Car Service Menu");
-        Menu garagesMenu = this.builder.getRootMenu();
-        garagesMenu.setName("Car Service Menu");
-        carOfficeMenu.setMenuItems(new MenuItem[]{
-                new MenuItem("Masters", MoveMasterActionImpl.getInstance()),
-                new MenuItem("Orders", MoveOrdersActionImpl.getInstance()),
-                new MenuItem("Garages", MoveGaragesActionImpl.getInstance())});
-        this.navigator = Navigator.getInstance(carOfficeMenu);
+        this.navigator = Navigator.getInstance(this.builder.getRootMenu());
+    }
+    public void run() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             this.navigator.printMenu();
             System.out.println("Enter number item menu:");
             int answer = scanner.nextInt();
+            if (answer == 0){
+                return;
+            }
             navigator.navigate(answer);
         }
     }
