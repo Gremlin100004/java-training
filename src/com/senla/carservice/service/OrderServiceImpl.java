@@ -12,6 +12,7 @@ import com.senla.carservice.repository.CarOfficeRepositoryImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 public final class OrderServiceImpl implements OrderService {
@@ -30,16 +31,14 @@ public final class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order[] getOrders() {
-        return Arrays.copyOf(this.carOfficeRepository.getOrders(), this.carOfficeRepository.getOrders().length);
+    public ArrayList<Order> getOrders() {
+        return this.carOfficeRepository.getOrders();
     }
 
     @Override
     public void addOrder(Order order) {
-        int index = this.carOfficeRepository.getOrders().length;
         order.setId(this.carOfficeRepository.getIdGeneratorOrder().getId());
-        this.carOfficeRepository.setOrders(Arrays.copyOf(this.carOfficeRepository.getOrders(), index + 1));
-        this.carOfficeRepository.getOrders()[index] = order;
+        this.carOfficeRepository.getOrders().add(order);
         for (Master master : order.getMasters()) {
             if (master.getNumberOrder()!= null){
                 master.setNumberOrder(master.getNumberOrder() + 1);
@@ -113,84 +112,79 @@ public final class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order[] sortOrderCreationTime(Order[] order) {
-        Order[] sortArrayOrder = this.carOfficeRepository.getOrders().clone();
+    public ArrayList<Order> sortOrderCreationTime(ArrayList<Order> orders) {
+        ArrayList<Order> sortArrayOrder = new ArrayList<>();
+        Collections.copy(sortArrayOrder, orders);
         OrderCreationComparator orderCreationComparator = new OrderCreationComparator();
-        Arrays.sort(sortArrayOrder, orderCreationComparator);
+        sortArrayOrder.sort(orderCreationComparator);
         return sortArrayOrder;
     }
 
     @Override
-    public Order[] sortOrderByLeadTime(Order[] order) {
-        Order[] sortArrayOrder = this.carOfficeRepository.getOrders().clone();
+    public ArrayList<Order> sortOrderByLeadTime(ArrayList<Order> orders) {
+        ArrayList<Order> sortArrayOrder = new ArrayList<>();
+        Collections.copy(sortArrayOrder, orders);
         OrderLeadComparator orderLeadComparator = new OrderLeadComparator();
-        Arrays.sort(sortArrayOrder, orderLeadComparator);
+        sortArrayOrder.sort(orderLeadComparator);
         return sortArrayOrder;
     }
 
     @Override
-    public Order[] sortOrderByPrice(Order[] order) {
-        Order[] sortArrayOrder = this.carOfficeRepository.getOrders().clone();
+    public ArrayList<Order> sortOrderByPrice(ArrayList<Order> orders) {
+        ArrayList<Order> sortArrayOrder = new ArrayList<>();
+        Collections.copy(sortArrayOrder, orders);
         OrderPriceComparator orderPriceComparator = new OrderPriceComparator();
-        Arrays.sort(sortArrayOrder, orderPriceComparator);
+        sortArrayOrder.sort(orderPriceComparator);
         return sortArrayOrder;
     }
 
     @Override
-    public Order[] sortOrderByStartTime(Order[] order) {
-        Order[] sortArrayOrder = this.carOfficeRepository.getOrders().clone();
+    public ArrayList<Order> sortOrderByStartTime(ArrayList<Order> orders) {
+        ArrayList<Order> sortArrayOrder = new ArrayList<>();
+        Collections.copy(sortArrayOrder, orders);
         OrderStartComparator orderStartComparator = new OrderStartComparator();
-        Arrays.sort(sortArrayOrder, orderStartComparator);
+        sortArrayOrder.sort(orderStartComparator);
         return sortArrayOrder;
     }
 
     @Override
-    public Order[] sortOrderByPeriod(Order[] orders, Date startPeriod, Date endPeriod) {
-        int lengthArray;
-        Order[] sortArrayOrder = new Order[0];
+    public ArrayList<Order> sortOrderByPeriod(ArrayList<Order> orders, Date startPeriod, Date endPeriod) {
+        ArrayList<Order> sortArrayOrder = new ArrayList<>();
         if (startPeriod == null || endPeriod == null){
             return sortArrayOrder;
         }
         for (Order order : orders) {
-            lengthArray = sortArrayOrder.length;
             if (order.getLeadTime().compareTo(startPeriod) >= 0 & order.getLeadTime().compareTo(endPeriod) <= 0) {
-                sortArrayOrder = Arrays.copyOf(sortArrayOrder, lengthArray + 1);
-                sortArrayOrder[lengthArray] = order;
+                sortArrayOrder.add(order);
             }
         }
         return sortArrayOrder;
     }
 
     @Override
-    public Order[] getCurrentRunningOrders() {
-        int indexOrder;
-        Order[] arrayOder = new Order[0];
+    public ArrayList<Order> getCurrentRunningOrders() {
+        ArrayList<Order> arrayOder = new ArrayList<>();
         for (Order order : this.carOfficeRepository.getOrders()) {
             if (order.isDeleteStatus()) {
                 continue;
             }
             if (order.getStatus().equals(Status.PERFORM)) {
-                indexOrder = arrayOder.length;
-                arrayOder = Arrays.copyOf(arrayOder, indexOrder + 1);
-                arrayOder[indexOrder] = order;
+                arrayOder.add(order);
             }
         }
         return arrayOder;
     }
 
     @Override
-    public Order[] getMasterOrders(Master master) {
-        int lengthArray;
-        Order[] orders = new Order[0];
+    public ArrayList<Order> getMasterOrders(Master master) {
+        ArrayList<Order> orders = new ArrayList<>();
         for (Order order : this.carOfficeRepository.getOrders()) {
             if (order.isDeleteStatus()) {
                 continue;
             }
             for (Master masterService : order.getMasters()) {
                 if (masterService.equals(master)) {
-                    lengthArray = orders.length;
-                    orders = Arrays.copyOf(orders, lengthArray + 1);
-                    orders[lengthArray] = order;
+                    orders.add(order);
                     break;
                 }
             }
@@ -204,48 +198,39 @@ public final class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order[] getCompletedOrders(Order[] orders) {
-        int lengthArray;
-        Order[] sortOrders = new Order[0];
+    public ArrayList<Order> getCompletedOrders(ArrayList<Order> orders) {
+        ArrayList<Order> sortOrders = new ArrayList<>();
         for (Order order : orders) {
             if (order.isDeleteStatus()) {
                 continue;
             }
-            lengthArray = sortOrders.length;
             if (order.getStatus().equals(Status.COMPLETED)) {
-                sortOrders = Arrays.copyOf(sortOrders, lengthArray + 1);
-                sortOrders[lengthArray] = order;
+                sortOrders.add(order);
             }
         }
         return sortOrders;
     }
 
     @Override
-    public Order[] getCanceledOrders(Order[] orders) {
-        int lengthArray;
-        Order[] sortOrders = new Order[0];
+    public ArrayList<Order> getCanceledOrders(ArrayList<Order> orders) {
+        ArrayList<Order> sortOrders = new ArrayList<>();
         for (Order order : orders) {
             if (order.isDeleteStatus()) {
                 continue;
             }
-            lengthArray = sortOrders.length;
             if (order.getStatus().equals(Status.CANCELED)) {
-                sortOrders = Arrays.copyOf(sortOrders, lengthArray + 1);
-                sortOrders[lengthArray] = order;
+                sortOrders.add(order);
             }
         }
         return sortOrders;
     }
 
     @Override
-    public Order[] getDeletedOrders(Order[] orders) {
-        int lengthArray;
-        Order[] sortOrders = new Order[0];
+    public ArrayList<Order> getDeletedOrders(ArrayList<Order> orders) {
+        ArrayList<Order> sortOrders = new ArrayList<>();
         for (Order order : orders) {
-            lengthArray = sortOrders.length;
             if (order.isDeleteStatus()) {
-                sortOrders = Arrays.copyOf(sortOrders, lengthArray + 1);
-                sortOrders[lengthArray] = order;
+                sortOrders.add(order);
             }
         }
         return sortOrders;

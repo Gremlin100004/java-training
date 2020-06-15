@@ -5,6 +5,8 @@ import com.senla.carservice.domain.Order;
 import com.senla.carservice.repository.CarOfficeRepository;
 import com.senla.carservice.repository.CarOfficeRepositoryImpl;
 
+import java.util.ArrayList;
+
 public final class CarOfficeServiceImpl implements CarOfficeService{
     private static CarOfficeServiceImpl instance;
     private final CarOfficeRepository carOfficeRepository;
@@ -22,18 +24,18 @@ public final class CarOfficeServiceImpl implements CarOfficeService{
 
 
     @Override
-    public int getNumberFreePlaceDate(Order[] orders) {
+    public int getNumberFreePlaceDate(ArrayList<Order> orders) {
         int numberGeneralPlace = 0;
-        int numberPlaceOrders = orders.length;
+        int numberPlaceOrders = orders.size();
         for (Garage garage : this.carOfficeRepository.getGarages())
-            numberGeneralPlace += garage.getPlaces().length;
+            numberGeneralPlace += garage.getPlaces().size();
         return numberGeneralPlace - numberPlaceOrders;
     }
 
     @Override
-    public int getNumberFreeMasters(Order[] orders) {
+    public int getNumberFreeMasters(ArrayList<Order> orders) {
         int numberMastersOrders = 0;
-        int numberGeneralMasters = this.carOfficeRepository.getMasters().length;
+        int numberGeneralMasters = this.carOfficeRepository.getMasters().size();
         for (Order order : orders)
             numberMastersOrders += order.getMasters().size();
         return numberGeneralMasters - numberMastersOrders;

@@ -4,6 +4,7 @@ import com.senla.carservice.api.printer.PrinterGarages;
 import com.senla.carservice.controller.GarageController;
 import com.senla.carservice.domain.Garage;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public final class AddPlaceActionImpl implements Action {
@@ -23,8 +24,8 @@ public final class AddPlaceActionImpl implements Action {
     public void execute() {
         Scanner scanner = new Scanner(System.in);
         GarageController garageController = new GarageController();
-        Garage[] garages = garageController.getArrayGarages();
-        if (garages.length == 0) {
+        ArrayList<Garage> garages = garageController.getArrayGarages();
+        if (garages.size() == 0) {
             System.out.println("There are no garages!");
             return;
         }
@@ -38,11 +39,11 @@ public final class AddPlaceActionImpl implements Action {
                 scanner.next();
             }
             int index = scanner.nextInt();
-            if (index > garages.length || index < 1) {
+            if (index > garages.size() || index < 1) {
                 System.out.println("There is no such garage");
                 continue;
             }
-            message = garageController.addGaragePlace(garages[index-1]);
+            message = garageController.addGaragePlace(garages.get(index-1));
             break;
         }
         System.out.println(message);

@@ -34,9 +34,9 @@ public final class AddOrderActionImpl implements Action {
         OrderController orderController = new OrderController();
         MasterController masterController = new MasterController();
         GarageController garageController = new GarageController();
-        Master[] masters = masterController.getMasters();
-        ArrayList orderMaster = new ArrayList();
-        Garage[] garages = garageController.getArrayGarages();
+        ArrayList<Master> masters = masterController.getMasters();
+        ArrayList<Garage> garages = garageController.getArrayGarages();
+        ArrayList<Master> orderMasters = new ArrayList<>();
         Garage garage;
         Place place;
         String message;
@@ -75,9 +75,9 @@ public final class AddOrderActionImpl implements Action {
             executionStartTime = scanner.nextLine();
             System.out.println("Enter the lead time the order in format dd.mm.yyyy \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
             leadTime = scanner.nextLine();
-            orderMaster = addMastersOrder(masters, orderMaster, scanner);
+            addMastersOrder(masters, orderMasters, scanner);
             garage = addGarageOrder(garages, scanner, garageController);
-            place = garageController.getFreePlaceGarage(garage)[0];
+            place = garageController.getFreePlaceGarage(garage).get(0);
             while (!scanner.hasNextInt()) {
                 System.out.println("You enter wrong value!!!");
                 System.out.println("Try again:");
@@ -86,7 +86,7 @@ public final class AddOrderActionImpl implements Action {
             System.out.println("Enter the price");
             price = scanner.nextBigDecimal();
             OrderDto orderDto = new OrderDto(executionStartTime, leadTime,
-                    orderMaster, garage, place, automaker, model,
+                    orderMasters, garage, place, automaker, model,
                     registrationNumber, price);
             message = orderController.addOrder(orderDto);
             System.out.println(message);
@@ -96,7 +96,7 @@ public final class AddOrderActionImpl implements Action {
         }
     }
 
-    private ArrayList addMastersOrder(Master[] masters, ArrayList orderMaster, Scanner scanner) {
+    private ArrayList<Master> addMastersOrder(ArrayList<Master> masters, ArrayList<Master> orderMaster, Scanner scanner) {
         while (true) {
             PrinterMaster.printMasters(masters);
             System.out.println("Enter the index number of the master to add:");
@@ -106,11 +106,11 @@ public final class AddOrderActionImpl implements Action {
                 scanner.next();
             }
             int index = scanner.nextInt();
-            if (index > masters.length || index < 1) {
+            if (index > masters.size() || index < 1) {
                 System.out.println("There is no such master");
                 continue;
             }
-            orderMaster.add(masters[index - 1]);
+            orderMaster.add(masters.get(index - 1));
             if (!isAnotherMaster(scanner)) {
                 return orderMaster;
             }
@@ -132,7 +132,7 @@ public final class AddOrderActionImpl implements Action {
         }
     }
 
-    private Garage addGarageOrder(Garage[] garages, Scanner scanner, GarageController garageController) {
+    private Garage addGarageOrder(ArrayList<Garage> garages, Scanner scanner, GarageController garageController) {
         PrinterGarages.printGarages(garages);
         while (true) {
             System.out.println("Enter the index number of the garage to add in order:");
@@ -142,22 +142,22 @@ public final class AddOrderActionImpl implements Action {
                 scanner.next();
             }
             int index = scanner.nextInt();
-            if (index > garages.length || index < 1) {
+            if (index > garages.size() || index < 1) {
                 System.out.println("There is no such garage");
                 continue;
             }
-            if (garageController.getNumberFreePlaceGarage(garages[index-1]) < 1) {
+            if (garageController.getNumberFreePlaceGarage(garages.get(index-1)) < 1) {
                 System.out.println("There are no free place in garage");
                 continue;
             }
-            return garages[index];
+            return garages.get(index);
         }
     }
 
     private boolean isPlace(Garage[] garages) {
         int numberPlace = 0;
         for (Garage garage : garages) {
-            numberPlace += garage.getPlaces().length;
+            numberPlace += garage.getPlaces().size();
         }
         return numberPlace >= 1;
     }

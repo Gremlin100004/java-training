@@ -49,7 +49,7 @@ public final class DemoActionImpl implements Action {
         }
         System.out.println(delimiter);
 
-        Garage[] garages = garageController.getArrayGarages();
+        ArrayList<Garage> garages = garageController.getArrayGarages();
         System.out.println("Add places in garages.");
         for (Garage garage : garages) {
             for (int j = 0; j < 4; j++) {
@@ -63,19 +63,19 @@ public final class DemoActionImpl implements Action {
         int indexMaster = 0;
         int indexGarage = 0;
         int indexPlace = 0;
-        for (int i = 0; i < testData.getArrayAutomaker().length; i++) {
+        for (int i = 0; i < testData.getArrayAutomaker().size(); i++) {
             ArrayList<Master> mastersOrder = new ArrayList<>();
             for (int j = 0; j < 2; j++) {
-                mastersOrder.add(masterController.getMasters()[indexMaster]);
+                mastersOrder.add(masterController.getMasters().get(indexMaster));
                 indexMaster++;
-                if (indexMaster == masterController.getMasters().length - 1) {
+                if (indexMaster == masterController.getMasters().size() - 1) {
                     indexMaster = 0;
                 }
             }
-            OrderDto orderDto = new OrderDto(testData.getArrayExecutionStartTime()[i], testData.getArrayLeadTime()[i],
-                    mastersOrder, garages[indexGarage], garages[indexGarage].getPlaces()[indexPlace],
-                    testData.getArrayAutomaker()[i], testData.getArrayModel()[i],
-                    testData.getArrayRegistrationNumber()[i], testData.getArrayPrice()[i]);
+            OrderDto orderDto = new OrderDto(testData.getArrayExecutionStartTime().get(i), testData.getArrayLeadTime().get(i),
+                    mastersOrder, garages.get(indexGarage), garages.get(indexGarage).getPlaces().get(indexPlace),
+                    testData.getArrayAutomaker().get(i), testData.getArrayModel().get(i),
+                    testData.getArrayRegistrationNumber().get(i), testData.getArrayPrice().get(i));
 
             orderController.addOrder(orderDto);
             indexPlace++;
@@ -84,7 +84,7 @@ public final class DemoActionImpl implements Action {
                 indexGarage++;
             }
         }
-        Order[] orders = orderController.getOrders();
+        ArrayList<Order> orders = orderController.getOrders();
         PrinterOrder.printOrder(orders);
     }
 }

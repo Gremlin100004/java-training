@@ -1,5 +1,7 @@
 package com.senla.carservice.domain;
 
+import java.util.Objects;
+
 public class Master {
     private Long id;
     private String name;
@@ -46,5 +48,18 @@ public class Master {
                 "name='" + name + '\'' +
                 ", numberOrder=" + numberOrder +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Master master = (Master) o;
+        return id.equals(master.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -5,9 +5,9 @@ import com.senla.carservice.comporator.MasterBusyComparator;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.repository.CarOfficeRepository;
 import com.senla.carservice.repository.CarOfficeRepositoryImpl;
-import com.senla.carservice.util.Deleter;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public final class MasterServiceImpl implements MasterService {
     private static MasterServiceImpl instance;
@@ -25,37 +25,37 @@ public final class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public Master[] getMasters() {
-        return Arrays.copyOf(this.carOfficeRepository.getMasters(), this.carOfficeRepository.getMasters().length);
+    public ArrayList<Master> getMasters() {
+        return this.carOfficeRepository.getMasters();
     }
 
     @Override
     public void addMaster(String name) {
-        int index = this.carOfficeRepository.getMasters().length;
         Master master = new Master(name);
         master.setId(this.carOfficeRepository.getIdGeneratorMaster().getId());
-        this.carOfficeRepository.setMasters(Arrays.copyOf(this.carOfficeRepository.getMasters(), index + 1));
-        this.carOfficeRepository.getMasters()[index] = master;
+        this.carOfficeRepository.getMasters().add(master);
     }
 
     @Override
     public void deleteMaster(Master master) {
-        this.carOfficeRepository.setMasters(Deleter.deleteElementArray(this.carOfficeRepository.getMasters(), master));
+        this.carOfficeRepository.getMasters().remove(master);
     }
 
     @Override
-    public Master[] sortMasterByAlphabet(Master[] masters) {
-        Master[] sortArrayMaster = masters.clone();
+    public ArrayList<Master> sortMasterByAlphabet(ArrayList<Master> masters) {
+        ArrayList<Master> sortArrayMaster = new ArrayList<>();
+        Collections.copy(sortArrayMaster, masters);
         MasterAlphabetComparator masterAlphabetComparator = new MasterAlphabetComparator();
-        Arrays.sort(sortArrayMaster, masterAlphabetComparator);
+        sortArrayMaster.sort(masterAlphabetComparator);
         return sortArrayMaster;
     }
 
     @Override
-    public Master[] sortMasterByBusy(Master[] masters) {
-        Master[] sortArrayMaster = masters.clone();
+    public ArrayList<Master> sortMasterByBusy(ArrayList<Master> masters) {
+        ArrayList<Master> sortArrayMaster = new ArrayList<>();
+        Collections.copy(sortArrayMaster, masters);
         MasterBusyComparator masterBusyComparator = new MasterBusyComparator();
-        Arrays.sort(sortArrayMaster, masterBusyComparator);
+        sortArrayMaster.sort(masterBusyComparator);
         return sortArrayMaster;
     }
 }

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public interface OrderService {
-    Order[] getOrders();
+    ArrayList<Order> getOrders();
 
     void addOrder(Order order);
 
@@ -22,25 +22,25 @@ public interface OrderService {
     boolean shiftLeadTime(Order order, Date executionStartTime,
                           Date leadTime);
 
-    Order[] sortOrderCreationTime(Order[] order);
+    ArrayList<Order> sortOrderCreationTime(ArrayList<Order> order);
 
-    Order[] sortOrderByLeadTime(Order[] order);
+    ArrayList<Order> sortOrderByLeadTime(ArrayList<Order> order);
 
-    Order[] sortOrderByStartTime(Order[] order);
+    ArrayList<Order> sortOrderByStartTime(ArrayList<Order> order);
 
-    Order[] sortOrderByPrice(Order[] order);
+    ArrayList<Order> sortOrderByPrice(ArrayList<Order> order);
 
-    Order[] sortOrderByPeriod(Order[] orders, Date startPeriod, Date endPeriod);
+    ArrayList<Order> sortOrderByPeriod(ArrayList<Order> orders, Date startPeriod, Date endPeriod);
 
-    Order[] getCurrentRunningOrders();
+    ArrayList<Order> getCurrentRunningOrders();
 
-    Order[] getMasterOrders(Master master);
+    ArrayList<Order> getMasterOrders(Master master);
 
     ArrayList<Master> getOrderMasters(Order order);
 
-    Order[] getCompletedOrders(Order[] orders);
+    ArrayList<Order> getCompletedOrders(ArrayList<Order> orders);
 
-    Order[] getCanceledOrders(Order[] orders);
+    ArrayList<Order> getCanceledOrders(ArrayList<Order> orders);
 
-    Order[] getDeletedOrders(Order[] orders);
+    ArrayList<Order> getDeletedOrders(ArrayList<Order> orders);
 }

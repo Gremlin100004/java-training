@@ -29,10 +29,13 @@ public class OrderController {
         } catch (ParseException e) {
             return "Error date, should be \"dd.MM.yyyy hh:mm\"";
         }
-        if (executionStartTime.compareTo(leadTime) < 1){
+        if (executionStartTime.compareTo(leadTime) > 0){
             return "Error!!!, Lead time can't be early then planning time to start working!";
         }
         if (executionStartTime.compareTo(new Date()) < 1){
+            System.out.println(orderDto.getExecutionStartTime());
+            System.out.println(new Date().getTime());
+            System.out.println(executionStartTime.compareTo(new Date()));
             return "Error!!!, You can't start work at past!";
         }
         Car car = new Car(orderDto.getAutomaker(), orderDto.getModel(), orderDto.getRegistrationNumber());
@@ -42,7 +45,7 @@ public class OrderController {
         return "order add successfully!";
     }
 
-    public Order[] getOrders() {
+    public ArrayList<Order> getOrders() {
         return this.orderService.getOrders();
     }
 
@@ -100,27 +103,27 @@ public class OrderController {
         }
     }
 
-    public Order[] sortOrderByCreationTime(Order[] orders) {
+    public ArrayList<Order> sortOrderByCreationTime(ArrayList<Order> orders) {
         return this.orderService.sortOrderCreationTime(orders);
     }
 
-    public Order[] sortOrderByLeadTime(Order[] orders) {
+    public ArrayList<Order> sortOrderByLeadTime(ArrayList<Order> orders) {
         return this.orderService.sortOrderByLeadTime(orders);
     }
 
-    public Order[] sortOrderByStartTime(Order[] orders) {
+    public ArrayList<Order> sortOrderByStartTime(ArrayList<Order> orders) {
         return this.orderService.sortOrderByStartTime(orders);
     }
 
-    public Order[] sortOrderByPrice(Order[] orders) {
+    public ArrayList<Order> sortOrderByPrice(ArrayList<Order> orders) {
         return this.orderService.sortOrderByPrice(orders);
     }
 
-    public Order[] getExecuteOrder() {
+    public ArrayList<Order> getExecuteOrder() {
         return this.orderService.getCurrentRunningOrders();
     }
 
-    public Order[] getOrdersByPeriod(String startPeriod, String endPeriod) {
+    public ArrayList<Order> getOrdersByPeriod(String startPeriod, String endPeriod) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date startPeriodDate;
         Date endPeriodDate;
@@ -131,24 +134,24 @@ public class OrderController {
             startPeriodDate = null;
             endPeriodDate = null;
         }
-        Order[] orders = this.orderService.getOrders();
+        ArrayList<Order> orders = this.orderService.getOrders();
         orders = this.orderService.sortOrderByPeriod(orders, startPeriodDate, endPeriodDate);
         return orders;
     }
 
-    public Order[] getCompletedOrders(Order[] orders) {
+    public ArrayList<Order> getCompletedOrders(ArrayList<Order> orders) {
         return this.orderService.getCompletedOrders(orders);
     }
 
-    public Order[] getCanceledOrders(Order[] orders) {
+    public ArrayList<Order> getCanceledOrders(ArrayList<Order> orders) {
         return this.orderService.getCanceledOrders(orders);
     }
 
-    public Order[] getDeletedOrders(Order[] orders) {
+    public ArrayList<Order> getDeletedOrders(ArrayList<Order> orders) {
         return this.orderService.getDeletedOrders(orders);
     }
 
-    public Order[] getMasterOrders(Master master) {
+    public ArrayList<Order> getMasterOrders(Master master) {
         return this.orderService.getMasterOrders(master);
     }
 

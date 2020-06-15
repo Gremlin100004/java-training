@@ -1,12 +1,11 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.Garage;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.repository.CarOfficeRepository;
 import com.senla.carservice.repository.CarOfficeRepositoryImpl;
-import com.senla.carservice.util.Deleter;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 public final class GarageServiceImpl implements GarageService {
     private static GarageServiceImpl instance;
@@ -24,54 +23,45 @@ public final class GarageServiceImpl implements GarageService {
     }
 
     @Override
-    public Garage[] getGarages() {
-        return Arrays.copyOf(this.carOfficeRepository.getGarages(), this.carOfficeRepository.getGarages().length);
+    public ArrayList<Garage> getGarages() {
+        return this.carOfficeRepository.getGarages();
     }
 
     @Override
     public void addGarage(String name) {
-        int index = this.carOfficeRepository.getGarages().length;
         Garage garage = new Garage(name);
         garage.setId(this.carOfficeRepository.getIdGeneratorGarage().getId());
-        this.carOfficeRepository.setGarages(Arrays.copyOf(this.carOfficeRepository.getGarages(), index + 1));
-        this.carOfficeRepository.getGarages()[index] = garage;
+        this.carOfficeRepository.getGarages().add(garage);
     }
 
     @Override
     public void deleteGarage(Garage garage) {
-        this.carOfficeRepository.setGarages(Deleter.deleteElementArray(this.carOfficeRepository.getGarages(), garage));
+        this.carOfficeRepository.getGarages().remove(garage);
     }
 
     @Override
     public void addGaragePlace(Garage garage) {
-        int length = garage.getPlaces().length;
         Place place = new Place();
         place.setId(garage.getIdGeneratorPlace().getId());
-        Place[] places = Arrays.copyOf(garage.getPlaces(), length + 1);
-        places[length] = place;
-        garage.setPlaces(places);
+        garage.getPlaces().add(place);
     }
 
     @Override
     public int getNumberGaragePlaces(Garage garage) {
-        return garage.getPlaces().length;
+        return garage.getPlaces().size();
     }
 
     @Override
     public void deleteGaragePlace(Garage garage) {
-        Place place = garage.getPlaces()[garage.getPlaces().length - 1];
-        garage.setPlaces(Deleter.deleteElementArray(garage.getPlaces(), place));
+        garage.getPlaces().remove(garage.getPlaces().get(garage.getPlaces().size()-1));
     }
 
     @Override
-    public Place[] getFreePlaceGarage(Garage garage) {
-        Place[] freePlaces = new Place[0];
-        int index;
+    public ArrayList<Place> getFreePlaceGarage(Garage garage) {
+        ArrayList<Place> freePlaces = new ArrayList<>();
         for (Place place : garage.getPlaces())
             if (!place.isBusyStatus()) {
-                index = freePlaces.length;
-                freePlaces = Arrays.copyOf(freePlaces, index + 1);
-                freePlaces[index] = place;
+                freePlaces.add(place);
             }
         return freePlaces;
     }

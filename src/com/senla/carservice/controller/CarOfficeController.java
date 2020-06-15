@@ -6,6 +6,7 @@ import com.senla.carservice.util.DateUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class CarOfficeController {
@@ -32,7 +33,7 @@ public class CarOfficeController {
             return "error date";
         }
         Date endDay = DateUtil.addHourMinutes(dateFree, hour, minute);
-        Order[] orders = this.orderService.getOrders();
+        ArrayList<Order> orders = this.orderService.getOrders();
         orders = this.orderService.sortOrderByPeriod(orders, dateFree, endDay);
         int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
         int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);
@@ -44,12 +45,12 @@ public class CarOfficeController {
         final int minute = 59;
         Date dateFree = DateUtil.getDateWithoutTime();
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM yyyy");
-        if (this.masterService.getMasters().length <2 &&  this.garageService.getGarages().length < 1){
+        if (this.masterService.getMasters().size() <2 &&  this.garageService.getGarages().size() < 1){
             return "Error!!! Add masters, garage and place to service!";
         }
         while (true) {
             Date endDay = DateUtil.addHourMinutes(dateFree, hour, minute);
-            Order[] orders = this.orderService.getOrders();
+            ArrayList<Order> orders = this.orderService.getOrders();
             orders = this.orderService.sortOrderByPeriod(orders, dateFree, endDay);
             int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
             int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);

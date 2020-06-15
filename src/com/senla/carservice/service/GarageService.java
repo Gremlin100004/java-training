@@ -3,8 +3,10 @@ package com.senla.carservice.service;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.Garage;
 
+import java.util.ArrayList;
+
 public interface GarageService {
-    Garage[] getGarages();
+    ArrayList<Garage> getGarages();
 
     void addGarage(String name);
 
@@ -16,5 +18,5 @@ public interface GarageService {
 
     void deleteGaragePlace(Garage garage);
 
-    Place[] getFreePlaceGarage(Garage garage);
+    ArrayList<Place> getFreePlaceGarage(Garage garage);
 }

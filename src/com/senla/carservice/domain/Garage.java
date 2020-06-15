@@ -2,10 +2,12 @@ package com.senla.carservice.domain;
 
 import com.senla.carservice.util.IdGenerator;
 
+import java.util.ArrayList;
+
 public class Garage {
     private Long id;
     private String name;
-    private Place[] places;
+    private ArrayList<Place> places;
     private IdGenerator idGeneratorPlace;
 
     public Garage() {
@@ -13,7 +15,7 @@ public class Garage {
 
     public Garage(String name) {
         this.name = name;
-        this.places = new Place[0];
+        this.places = new ArrayList<>();
         this.idGeneratorPlace = new IdGenerator();
     }
 
@@ -29,7 +31,7 @@ public class Garage {
         return name;
     }
 
-    public Place[] getPlaces() {
+    public ArrayList<Place> getPlaces() {
         return places;
     }
 
@@ -41,7 +43,7 @@ public class Garage {
         this.name = name;
     }
 
-    public void setPlaces(Place[] places) {
+    public void setPlaces(ArrayList<Place> places) {
         this.places = places;
     }
 

@@ -2,14 +2,16 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Master;
 
+import java.util.ArrayList;
+
 public interface MasterService {
-    Master[] getMasters();
+    ArrayList<Master> getMasters();
 
     void addMaster(String name);
 
     void deleteMaster(Master master);
 
-    Master[] sortMasterByAlphabet(Master[] masters);
+    ArrayList<Master> sortMasterByAlphabet(ArrayList<Master> masters);
 
-    Master[] sortMasterByBusy(Master[] masters);
+    ArrayList<Master> sortMasterByBusy(ArrayList<Master> masters);
 }

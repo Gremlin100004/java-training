@@ -5,6 +5,8 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.util.IdGenerator;
 
+import java.util.ArrayList;
+
 public interface CarOfficeRepository {
 
     IdGenerator getIdGeneratorGarage();
@@ -13,15 +15,15 @@ public interface CarOfficeRepository {
 
     IdGenerator getIdGeneratorMaster();
 
-    Order[] getOrders();
+    ArrayList<Order> getOrders();
 
-    Master[] getMasters();
+    ArrayList<Master> getMasters();
 
-    Garage[] getGarages();
+    ArrayList<Garage> getGarages();
 
-    void setOrders(Order[] orders);
+    void setOrders(ArrayList<Order> orders);
 
-    void setMasters(Master[] masters);
+    void setMasters(ArrayList<Master> masters);
 
-    void setGarages(Garage[] garages);
+    void setGarages(ArrayList<Garage> garages);
 }

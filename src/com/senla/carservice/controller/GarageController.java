@@ -5,6 +5,8 @@ import com.senla.carservice.domain.Place;
 import com.senla.carservice.service.GarageService;
 import com.senla.carservice.service.GarageServiceImpl;
 
+import java.util.ArrayList;
+
 public class GarageController {
     private final GarageService garageService;
 
@@ -17,7 +19,7 @@ public class GarageController {
         return String.format("-garage \"%s\" has been added to service", name);
     }
 
-    public Garage[] getArrayGarages() {
+    public ArrayList<Garage> getArrayGarages() {
         return this.garageService.getGarages();
     }
 
@@ -41,10 +43,10 @@ public class GarageController {
     }
 
     public int getNumberFreePlaceGarage(Garage garage) {
-        return this.garageService.getFreePlaceGarage(garage).length;
+        return this.garageService.getFreePlaceGarage(garage).size();
     }
 
-    public Place [] getFreePlaceGarage(Garage garage) {
+    public ArrayList<Place> getFreePlaceGarage(Garage garage) {
         return this.garageService.getFreePlaceGarage(garage);
     }
 }

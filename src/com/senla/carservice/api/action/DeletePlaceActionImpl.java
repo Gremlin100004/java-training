@@ -4,6 +4,7 @@ import com.senla.carservice.api.printer.PrinterGarages;
 import com.senla.carservice.controller.GarageController;
 import com.senla.carservice.domain.Garage;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public final class DeletePlaceActionImpl implements Action {
@@ -23,8 +24,8 @@ public final class DeletePlaceActionImpl implements Action {
     public void execute() {
         GarageController garageController = new GarageController();
         Scanner scanner = new Scanner(System.in);
-        Garage[] garages = garageController.getArrayGarages();
-        if (garages.length == 0) {
+        ArrayList<Garage> garages = garageController.getArrayGarages();
+        if (garages.size() == 0) {
             System.out.println("There are no garages to delete place!");
             return;
         }
@@ -42,15 +43,15 @@ public final class DeletePlaceActionImpl implements Action {
             if (index == 0){
                 return;
             }
-            if (index > garages.length || index < 0) {
+            if (index > garages.size() || index < 0) {
                 System.out.println("There is no such garage");
                 continue;
             }
-            if (garages[index-1].getPlaces().length < 1) {
+            if (garages.get(index-1).getPlaces().size() < 1) {
                 System.out.println("There are no places in garage!");
                 continue;
             }
-            message = garageController.deleteGaragePlace(garages[index - 1]);
+            message = garageController.deleteGaragePlace(garages.get(index - 1));
             break;
         }
         System.out.println(message);
