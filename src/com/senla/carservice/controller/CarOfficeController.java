@@ -1,7 +1,16 @@
 package com.senla.carservice.controller;
 
+import com.senla.carservice.domain.Garage;
+import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.service.*;
+import com.senla.carservice.service.CarOfficeService;
+import com.senla.carservice.service.CarOfficeServiceImpl;
+import com.senla.carservice.service.GarageService;
+import com.senla.carservice.service.GarageServiceImpl;
+import com.senla.carservice.service.MasterService;
+import com.senla.carservice.service.MasterServiceImpl;
+import com.senla.carservice.service.OrderService;
+import com.senla.carservice.service.OrderServiceImpl;
 import com.senla.carservice.util.DateUtil;
 
 import java.text.ParseException;
@@ -20,6 +29,49 @@ public class CarOfficeController {
         this.orderService = OrderServiceImpl.getInstance();
         this.masterService = MasterServiceImpl.getInstance();
         this.garageService = GarageServiceImpl.getInstance();
+    }
+
+    public ArrayList<Garage> getGarageFreePlace(String stringExecuteDate, String stringLeadDate) {
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        Date executeDate;
+        Date leadDate;
+        try {
+            executeDate = format.parse(stringExecuteDate);
+            leadDate = format.parse(stringLeadDate);
+        } catch (ParseException e) {
+            return new ArrayList<>();
+        }
+        ArrayList<Garage> freeGarages = new ArrayList<>(this.garageService.getGarages());
+        ArrayList<Order> orders = this.orderService.getOrders();
+        orders = this.orderService.sortOrderByPeriod(orders, executeDate, leadDate);
+        for (Order order : orders) {
+            for (Garage garage: freeGarages){
+                if (garage.equals(order.getGarage())){
+                    garage.getPlaces().remove(order.getPlace());
+                    break;
+                }
+            }
+        }
+        return freeGarages;
+    }
+
+    public ArrayList<Master> getFreeMasters(String stringExecuteDate, String stringLeadDate) {
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        Date executeDate;
+        Date leadDate;
+        ArrayList<Master> freeMasters = new ArrayList<>(this.masterService.getMasters());
+        try {
+            executeDate = format.parse(stringExecuteDate);
+            leadDate = format.parse(stringLeadDate);
+        } catch (ParseException e) {
+            return freeMasters;
+        }
+        ArrayList<Order> orders = this.orderService.getOrders();
+        orders = this.orderService.sortOrderByPeriod(orders, executeDate, leadDate);
+        for (Order order : orders) {
+            order.getMasters().forEach(freeMasters::remove);
+        }
+        return freeMasters;
     }
 
     public String getFreePlacesByDate(String date) {

@@ -113,8 +113,8 @@ public final class OrderServiceImpl implements OrderService {
 
     @Override
     public ArrayList<Order> sortOrderCreationTime(ArrayList<Order> orders) {
-        ArrayList<Order> sortArrayOrder = new ArrayList<>();
-        Collections.copy(sortArrayOrder, orders);
+        ArrayList<Order> sortArrayOrder = new ArrayList<>(orders);
+
         OrderCreationComparator orderCreationComparator = new OrderCreationComparator();
         sortArrayOrder.sort(orderCreationComparator);
         return sortArrayOrder;
@@ -122,8 +122,7 @@ public final class OrderServiceImpl implements OrderService {
 
     @Override
     public ArrayList<Order> sortOrderByLeadTime(ArrayList<Order> orders) {
-        ArrayList<Order> sortArrayOrder = new ArrayList<>();
-        Collections.copy(sortArrayOrder, orders);
+        ArrayList<Order> sortArrayOrder = new ArrayList<>(orders);
         OrderLeadComparator orderLeadComparator = new OrderLeadComparator();
         sortArrayOrder.sort(orderLeadComparator);
         return sortArrayOrder;
@@ -131,8 +130,7 @@ public final class OrderServiceImpl implements OrderService {
 
     @Override
     public ArrayList<Order> sortOrderByPrice(ArrayList<Order> orders) {
-        ArrayList<Order> sortArrayOrder = new ArrayList<>();
-        Collections.copy(sortArrayOrder, orders);
+        ArrayList<Order> sortArrayOrder = new ArrayList<>(orders);
         OrderPriceComparator orderPriceComparator = new OrderPriceComparator();
         sortArrayOrder.sort(orderPriceComparator);
         return sortArrayOrder;
@@ -140,8 +138,7 @@ public final class OrderServiceImpl implements OrderService {
 
     @Override
     public ArrayList<Order> sortOrderByStartTime(ArrayList<Order> orders) {
-        ArrayList<Order> sortArrayOrder = new ArrayList<>();
-        Collections.copy(sortArrayOrder, orders);
+        ArrayList<Order> sortArrayOrder = new ArrayList<>(orders);
         OrderStartComparator orderStartComparator = new OrderStartComparator();
         sortArrayOrder.sort(orderStartComparator);
         return sortArrayOrder;

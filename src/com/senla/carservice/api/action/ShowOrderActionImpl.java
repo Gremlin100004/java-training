@@ -6,15 +6,15 @@ import com.senla.carservice.domain.Order;
 
 import java.util.ArrayList;
 
-public final class SortExecutionOrderActionImpl implements Action {
-    private static SortExecutionOrderActionImpl instance;
+public final class ShowOrderActionImpl implements Action {
+    private static ShowOrderActionImpl instance;
 
-    public SortExecutionOrderActionImpl() {
+    public ShowOrderActionImpl() {
     }
 
-    public static SortExecutionOrderActionImpl getInstance() {
+    public static ShowOrderActionImpl getInstance() {
         if (instance == null) {
-            instance = new SortExecutionOrderActionImpl();
+            instance = new ShowOrderActionImpl();
         }
         return instance;
     }
@@ -22,13 +22,11 @@ public final class SortExecutionOrderActionImpl implements Action {
     @Override
     public void execute() {
         OrderController orderController = new OrderController();
-        ArrayList<Order> sortArrayOrders;
         ArrayList<Order> orders = orderController.getOrders();
         if (orders.size() == 0) {
             System.out.println("There are no orders.");
             return;
         }
-        sortArrayOrders = orderController.sortOrderByLeadTime(orders);
-        PrinterOrder.printOrder(sortArrayOrders);
+        PrinterOrder.printOrder(orders);
     }
 }

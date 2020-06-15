@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class OrderDto {
     private String executionStartTime;
     private String leadTime;
-    private ArrayList masters;
+    private ArrayList<Master> masters;
     private Garage garage;
     private Place place;
     private String automaker;
@@ -18,7 +18,7 @@ public class OrderDto {
     private String registrationNumber;
     private BigDecimal price;
 
-    public OrderDto(String executionStartTime, String leadTime, ArrayList masters, Garage garage, Place place,
+    public OrderDto(String executionStartTime, String leadTime, ArrayList<Master> masters, Garage garage, Place place,
                     String automaker, String model, String registrationNumber, BigDecimal price) {
         this.executionStartTime = executionStartTime;
         this.leadTime = leadTime;
@@ -39,7 +39,7 @@ public class OrderDto {
         return leadTime;
     }
 
-    public ArrayList getMasters() {
+    public ArrayList<Master> getMasters() {
         return masters;
     }
 
@@ -75,7 +75,7 @@ public class OrderDto {
         this.leadTime = leadTime;
     }
 
-    public void setMasters(ArrayList masters) {
+    public void setMasters(ArrayList<Master> masters) {
         this.masters = masters;
     }
 

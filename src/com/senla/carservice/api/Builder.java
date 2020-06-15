@@ -58,15 +58,16 @@ public final class Builder {
                 new MenuItem("Previous menu", PassiveActionImpl.getInstance(), this.rootMenu)
         });
         listOrderMenu.setMenuItems(new MenuItem[]{
+                new MenuItem("Show orders", ShowOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Add order", AddOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Delete the order", DeleteOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Close the order", CloseOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Cancel the order", CancelOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Shift the lead time", ShiftLeadOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Sort by filing date", SortFilingOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Sort by execution date", SortExecutionOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Sort by planned start date", SortPlannedOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Sort by price", SortPriceOrderActionImpl.getInstance(), listOrderMenu),
+                new MenuItem("Show orders sort by filing date", SortFilingOrderActionImpl.getInstance(), listOrderMenu),
+                new MenuItem("Show orders sort by execution date", SortExecutionOrderActionImpl.getInstance(), listOrderMenu),
+                new MenuItem("Show orders sort by planned start date", SortPlannedOrderActionImpl.getInstance(), listOrderMenu),
+                new MenuItem("Show orders sort by price", SortPriceOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Get a master performing a specific order", MasterOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Previous menu", PassiveActionImpl.getInstance(), ordersMenu),
         });

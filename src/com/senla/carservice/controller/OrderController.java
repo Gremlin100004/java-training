@@ -33,9 +33,6 @@ public class OrderController {
             return "Error!!!, Lead time can't be early then planning time to start working!";
         }
         if (executionStartTime.compareTo(new Date()) < 1){
-            System.out.println(orderDto.getExecutionStartTime());
-            System.out.println(new Date().getTime());
-            System.out.println(executionStartTime.compareTo(new Date()));
             return "Error!!!, You can't start work at past!";
         }
         Car car = new Car(orderDto.getAutomaker(), orderDto.getModel(), orderDto.getRegistrationNumber());

@@ -3,6 +3,7 @@ package com.senla.carservice.api.action;
 import com.senla.carservice.api.action.util.Checker;
 import com.senla.carservice.api.printer.PrinterGarages;
 import com.senla.carservice.api.printer.PrinterMaster;
+import com.senla.carservice.controller.CarOfficeController;
 import com.senla.carservice.controller.GarageController;
 import com.senla.carservice.controller.MasterController;
 import com.senla.carservice.controller.OrderController;
@@ -34,71 +35,95 @@ public final class AddOrderActionImpl implements Action {
         OrderController orderController = new OrderController();
         MasterController masterController = new MasterController();
         GarageController garageController = new GarageController();
-        ArrayList<Master> masters = masterController.getMasters();
-        ArrayList<Garage> garages = garageController.getArrayGarages();
-        ArrayList<Master> orderMasters = new ArrayList<>();
+        CarOfficeController carOfficeController = new CarOfficeController();
         Garage garage;
         Place place;
-        String message;
+        String message = "";
         String automaker;
         String model;
         String registrationNumber;
         String executionStartTime;
         String leadTime;
         BigDecimal price;
-        while (true) {
+        if (masterController.getMasters().size() < 1){
+            System.out.println("There are no masters!");
+            return;
+        }
+        if (!isPlace(garageController.getArrayGarages())){
+            System.out.println("There are no Places!");
+            return;
+        }
+        while (true){
             System.out.println("Enter the automaker of car");
             automaker = scanner.nextLine();
             if (Checker.isSymbolsString(automaker)) {
                 System.out.println("You enter wrong value!!!");
                 continue;
             }
+            break;
+        }
+        while (true){
             System.out.println("Enter the model of car");
             model = scanner.nextLine();
             if (Checker.isSymbolsString(model)) {
                 System.out.println("You enter wrong value!!!");
                 continue;
             }
+            break;
+        }
+        while (true){
             System.out.println("Enter the registartion number of car, example: 1111 AB-7");
             registrationNumber = scanner.nextLine();
             if (Checker.isSymbolsStringNumber(registrationNumber)) {
                 System.out.println("You enter wrong value!!!");
                 continue;
             }
-            System.out.println("Enter the model of car");
-            model = scanner.nextLine();
-            if (Checker.isSymbolsString(model)) {
-                System.out.println("You enter wrong value!!!");
+            break;
+        }
+        System.out.println("Enter the price");
+        while (!scanner.hasNextBigDecimal()) {
+            System.out.println("You enter wrong value!!!");
+            System.out.println("Try again:");
+            scanner.next();
+        }
+        price = scanner.nextBigDecimal();
+        while (!message.equals("order add successfully!")) {
+            ArrayList<Master> orderMasters = new ArrayList<>();
+            scanner.skip("\n");
+            System.out.println("Enter the planing time start to execute the order in format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
+            executionStartTime = scanner.nextLine();
+            System.out.println("Enter the lead time the order in format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
+            leadTime = scanner.nextLine();
+            carOfficeController.getFreePlacesByDate(executionStartTime);
+            ArrayList<Garage> freeGarages = carOfficeController.getGarageFreePlace(executionStartTime, leadTime);
+            ArrayList<Master> freeMaster = carOfficeController.getFreeMasters(executionStartTime, leadTime);
+            if (freeMaster.size() < 1) {
+                System.out.println("No free masters on this time!");
                 continue;
             }
-            System.out.println("Enter the planing time start to execute the order in format dd.mm.yyyy \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
-            executionStartTime = scanner.nextLine();
-            System.out.println("Enter the lead time the order in format dd.mm.yyyy \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
-            leadTime = scanner.nextLine();
-            addMastersOrder(masters, orderMasters, scanner);
-            garage = addGarageOrder(garages, scanner, garageController);
-            place = garageController.getFreePlaceGarage(garage).get(0);
-            while (!scanner.hasNextInt()) {
-                System.out.println("You enter wrong value!!!");
-                System.out.println("Try again:");
-                scanner.next();
+            if (freeGarages.size() < 1) {
+                System.out.println("No free garages on this time!");
+                continue;
             }
-            System.out.println("Enter the price");
-            price = scanner.nextBigDecimal();
+            System.out.println("Free masters:");
+            PrinterMaster.printMasters(freeMaster);
+            addMastersOrder(freeMaster, orderMasters, scanner);
+            System.out.println("Garage with free places:");
+            for (Garage freeGarage : freeGarages) {
+                System.out.println(String.format("- %s", freeGarage.getName()));
+            }
+            garage = addGarageOrder(freeGarages, scanner, garageController);
+            place = garageController.getFreePlaceGarage(garage).get(0);
             OrderDto orderDto = new OrderDto(executionStartTime, leadTime,
                     orderMasters, garage, place, automaker, model,
                     registrationNumber, price);
             message = orderController.addOrder(orderDto);
             System.out.println(message);
-            if (message.equals("order add successfully!")) {
-                break;
-            }
         }
     }
 
-    private ArrayList<Master> addMastersOrder(ArrayList<Master> masters, ArrayList<Master> orderMaster, Scanner scanner) {
+    private void addMastersOrder(ArrayList<Master> masters, ArrayList<Master> orderMaster, Scanner scanner) {
         while (true) {
-            PrinterMaster.printMasters(masters);
             System.out.println("Enter the index number of the master to add:");
             while (!scanner.hasNextInt()) {
                 System.out.println("You enter wrong value!!!");
@@ -106,13 +131,18 @@ public final class AddOrderActionImpl implements Action {
                 scanner.next();
             }
             int index = scanner.nextInt();
+            scanner.skip("\n");
             if (index > masters.size() || index < 1) {
                 System.out.println("There is no such master");
                 continue;
             }
+            if (orderMaster.contains(masters.get(index - 1))) {
+                System.out.println("You have already add such master!");
+                continue;
+            }
             orderMaster.add(masters.get(index - 1));
             if (!isAnotherMaster(scanner)) {
-                return orderMaster;
+                return;
             }
         }
     }
@@ -133,7 +163,6 @@ public final class AddOrderActionImpl implements Action {
     }
 
     private Garage addGarageOrder(ArrayList<Garage> garages, Scanner scanner, GarageController garageController) {
-        PrinterGarages.printGarages(garages);
         while (true) {
             System.out.println("Enter the index number of the garage to add in order:");
             while (!scanner.hasNextInt()) {
@@ -154,11 +183,12 @@ public final class AddOrderActionImpl implements Action {
         }
     }
 
-    private boolean isPlace(Garage[] garages) {
-        int numberPlace = 0;
+    private boolean isPlace(ArrayList<Garage> garages) {
         for (Garage garage : garages) {
-            numberPlace += garage.getPlaces().size();
+            if (garage.getPlaces().size() > 0){
+                return true;
+            }
         }
-        return numberPlace >= 1;
+        return false;
     }
 }
