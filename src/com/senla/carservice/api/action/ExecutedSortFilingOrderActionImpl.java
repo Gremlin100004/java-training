@@ -1,5 +1,11 @@
 package com.senla.carservice.api.action;
 
+import com.senla.carservice.api.printer.PrinterOrder;
+import com.senla.carservice.controller.OrderController;
+import com.senla.carservice.domain.Order;
+
+import java.util.ArrayList;
+
 public final class ExecutedSortFilingOrderActionImpl implements Action {
     private static ExecutedSortFilingOrderActionImpl instance;
 
@@ -15,6 +21,13 @@ public final class ExecutedSortFilingOrderActionImpl implements Action {
 
     @Override
     public void execute() {
-        System.out.println("Go to item garages");
+        OrderController orderController = new OrderController();
+        ArrayList<Order> executedOrders = orderController.getExecuteOrder();
+        executedOrders = orderController.sortOrderByCreationTime(executedOrders);
+        if (executedOrders.size() == 0) {
+            System.out.println("There are no garages.");
+            return;
+        }
+        PrinterOrder.printOrder(executedOrders);
     }
 }

@@ -114,7 +114,6 @@ public final class OrderServiceImpl implements OrderService {
     @Override
     public ArrayList<Order> sortOrderCreationTime(ArrayList<Order> orders) {
         ArrayList<Order> sortArrayOrder = new ArrayList<>(orders);
-
         OrderCreationComparator orderCreationComparator = new OrderCreationComparator();
         sortArrayOrder.sort(orderCreationComparator);
         return sortArrayOrder;

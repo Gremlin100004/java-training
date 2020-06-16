@@ -64,17 +64,24 @@ public final class Builder {
                 new MenuItem("Close the order", CloseOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Cancel the order", CancelOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Shift the lead time", ShiftLeadOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Show orders sort by filing date", SortFilingOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Show orders sort by execution date", SortExecutionOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Show orders sort by planned start date", SortPlannedOrderActionImpl.getInstance(), listOrderMenu),
+                new MenuItem("Show orders sort by filing date",
+                        SortFilingOrderActionImpl.getInstance(), listOrderMenu),
+                new MenuItem("Show orders sort by execution date",
+                        SortExecutionOrderActionImpl.getInstance(), listOrderMenu),
+                new MenuItem("Show orders sort by planned start date",
+                        SortPlannedOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Show orders sort by price", SortPriceOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Get a master performing a specific order", MasterOrderActionImpl.getInstance(), listOrderMenu),
+                new MenuItem("Get a master performing a specific order",
+                        MasterOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Previous menu", PassiveActionImpl.getInstance(), ordersMenu),
         });
         executedOrderMenu.setMenuItems(new MenuItem[]{
-                new MenuItem("Sort by filing date", ExecutedSortFilingOrderActionImpl.getInstance(), executedOrderMenu),
-                new MenuItem("Sort by execution date", ExecutedSortExecutionOrderActionImpl.getInstance(), executedOrderMenu),
-                new MenuItem("Sort by price", ExecutedSortPriceOrderActionImpl.getInstance(), executedOrderMenu),
+                new MenuItem("Get list of orders executed at a given time sort by filing date",
+                        ExecutedSortFilingOrderActionImpl.getInstance(), executedOrderMenu),
+                new MenuItem("Get list of orders executed at a given time sort by execution date",
+                        ExecutedSortExecutionOrderActionImpl.getInstance(), executedOrderMenu),
+                new MenuItem("Get list of orders executed at a given time sort by price",
+                        ExecutedSortPriceOrderActionImpl.getInstance(), executedOrderMenu),
                 new MenuItem("Previous menu", PassiveActionImpl.getInstance(), ordersMenu)
         });
         periodOrderMenu.setMenuItems(new MenuItem[]{
