@@ -23,7 +23,7 @@ public final class BusyListMastersActionImpl implements Action {
     public void execute() {
         MasterController masterController = new MasterController();
         ArrayList<Master> sortArrayMasters = masterController.sortMasterByBusy();
-        if (sortArrayMasters.size() == 0){
+        if (sortArrayMasters.size() == 0) {
             System.out.println("There are no masters.");
             return;
         }

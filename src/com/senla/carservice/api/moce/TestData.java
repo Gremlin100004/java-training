@@ -1,9 +1,7 @@
-package com.senla.carservice;
+package com.senla.carservice.api.moce;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class TestData {
 

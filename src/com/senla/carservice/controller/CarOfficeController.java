@@ -3,14 +3,7 @@ package com.senla.carservice.controller;
 import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.service.CarOfficeService;
-import com.senla.carservice.service.CarOfficeServiceImpl;
-import com.senla.carservice.service.GarageService;
-import com.senla.carservice.service.GarageServiceImpl;
-import com.senla.carservice.service.MasterService;
-import com.senla.carservice.service.MasterServiceImpl;
-import com.senla.carservice.service.OrderService;
-import com.senla.carservice.service.OrderServiceImpl;
+import com.senla.carservice.service.*;
 import com.senla.carservice.util.DateUtil;
 
 import java.text.ParseException;
@@ -45,8 +38,8 @@ public class CarOfficeController {
         ArrayList<Order> orders = this.orderService.getOrders();
         orders = this.orderService.sortOrderByPeriod(orders, executeDate, leadDate);
         for (Order order : orders) {
-            for (Garage garage: freeGarages){
-                if (garage.equals(order.getGarage())){
+            for (Garage garage : freeGarages) {
+                if (garage.equals(order.getGarage())) {
                     garage.getPlaces().remove(order.getPlace());
                     break;
                 }
@@ -88,7 +81,7 @@ public class CarOfficeController {
         }
         Date currentDate = DateUtil.addHourMinutes(new Date(), startDayHour, startDayMinute);
         Date endDay = DateUtil.addHourMinutes(dateFree, endDayHour, endDayMinute);
-        if (currentDate.compareTo(endDay) > 0){
+        if (currentDate.compareTo(endDay) > 0) {
             return "past date";
         }
         ArrayList<Order> orders = this.orderService.getOrders();
@@ -103,7 +96,7 @@ public class CarOfficeController {
         final int minute = 59;
         Date dateFree = DateUtil.getDateWithoutTime();
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM yyyy");
-        if (this.masterService.getMasters().size() <2 || this.garageService.getNumberPlaces() < 1){
+        if (this.masterService.getMasters().size() < 2 || this.garageService.getNumberPlaces() < 1) {
             return "Error!!! Add masters, garage and place to service!\n" +
                     " At least should be 2 masters, 1 garage and 1 place.";
         }

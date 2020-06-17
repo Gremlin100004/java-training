@@ -1,6 +1,6 @@
 package com.senla.carservice.api.action;
 
-import com.senla.carservice.TestData;
+import com.senla.carservice.api.moce.TestData;
 import com.senla.carservice.api.printer.PrinterOrder;
 import com.senla.carservice.controller.GarageController;
 import com.senla.carservice.controller.MasterController;

@@ -3,16 +3,14 @@ package com.senla.carservice.api.printer;
 import com.senla.carservice.domain.Order;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 public class PrinterOrder {
 
     public static void printOrder(ArrayList<Order> orders) {
         final int LENGTH = 167;
-        char line = '-';
-        char [] arrayChar = new char[LENGTH];
-        Arrays.fill(arrayChar, line);
-        StringBuilder stringBuilder = new StringBuilder(String.format(" %s\n", String.valueOf(arrayChar)));
+        String line = String.format(" %s\n", String.join("", Collections.nCopies(LENGTH, "-")));
+        StringBuilder stringBuilder = new StringBuilder(line);
         stringBuilder.append(String.format("|%-4s|%-10s|%-12s|%-19s|%-28s|%-28s|%-28s|%-10s|%-12s|%-7s|\n",
                 "№",
                 "Automaker",
@@ -24,10 +22,10 @@ public class PrinterOrder {
                 "Price",
                 "Status",
                 "Deleted"));
-        stringBuilder.append(String.format("|%s|\n", String.valueOf(arrayChar)));
-        for (int i = 0; i < orders.size(); i++){
+        stringBuilder.append(line);
+        for (int i = 0; i < orders.size(); i++) {
             stringBuilder.append(String.format("|%-4s|%-10s|%-12s|%-19s|%s|%s|%s|%-10s|%-12s|%-7s|\n",
-                    i+1,
+                    i + 1,
                     orders.get(i).getCar().getAutomaker(),
                     orders.get(i).getCar().getModel(),
                     orders.get(i).getCar().getRegistrationNumber(),
@@ -38,7 +36,7 @@ public class PrinterOrder {
                     orders.get(i).getStatus(),
                     orders.get(i).isDeleteStatus()));
         }
-        stringBuilder.append(String.format(" %s", String.valueOf(arrayChar)));
+        stringBuilder.append(line);
         System.out.println(stringBuilder.toString());
-        }
     }
+}

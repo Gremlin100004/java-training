@@ -5,7 +5,7 @@ import com.senla.carservice.util.IdGenerator;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Garage {
+public class Garage extends AEntity {
     private Long id;
     private String name;
     private ArrayList<Place> places;
@@ -20,10 +20,6 @@ public class Garage {
         this.idGeneratorPlace = new IdGenerator();
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public IdGenerator getIdGeneratorPlace() {
         return idGeneratorPlace;
     }
@@ -34,10 +30,6 @@ public class Garage {
 
     public ArrayList<Place> getPlaces() {
         return places;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public void setName(String name) {
@@ -57,6 +49,16 @@ public class Garage {
         return "Garage{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

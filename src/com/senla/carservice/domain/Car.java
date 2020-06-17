@@ -2,7 +2,7 @@ package com.senla.carservice.domain;
 
 import java.util.Objects;
 
-public class Car {
+public class Car extends AEntity {
     private Long id;
     private String automaker;
     private String model;
@@ -17,10 +17,6 @@ public class Car {
         this.registrationNumber = registrationNumber;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getAutomaker() {
         return automaker;
     }
@@ -33,6 +29,12 @@ public class Car {
         return registrationNumber;
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

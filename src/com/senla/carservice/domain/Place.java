@@ -2,16 +2,12 @@ package com.senla.carservice.domain;
 
 import java.util.Objects;
 
-public class Place {
+public class Place extends AEntity {
     private Long id;
     private Boolean busyStatus;
 
     public Place() {
         this.busyStatus = false;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public Boolean isBusyStatus() {
@@ -22,6 +18,12 @@ public class Place {
         this.busyStatus = busyStatus;
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

@@ -2,7 +2,7 @@ package com.senla.carservice.domain;
 
 import java.util.Objects;
 
-public class Master {
+public class Master extends AEntity {
     private Long id;
     private String name;
     private Integer numberOrder;
@@ -12,10 +12,6 @@ public class Master {
 
     public Master(String name) {
         this.name = name;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {
@@ -28,10 +24,6 @@ public class Master {
 
     public void setNumberOrder(int numberOrder) {
         this.numberOrder = numberOrder;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public void setName(String name) {
@@ -48,6 +40,16 @@ public class Master {
                 "name='" + name + '\'' +
                 ", numberOrder=" + numberOrder +
                 '}';
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

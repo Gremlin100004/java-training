@@ -4,19 +4,17 @@ import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Place;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 public class PrinterGarages {
     public static void printGarages(ArrayList<Garage> garages){
         final int LENGTH = 57;
-        char line = '-';
-        char [] arrayChar = new char[LENGTH];
-        Arrays.fill(arrayChar, line);
-        StringBuilder stringBuilder = new StringBuilder(String.format(" %s\n", String.valueOf(arrayChar)));
+        String line = String.format(" %s\n", String.join("", Collections.nCopies(LENGTH, "-")));
+        StringBuilder stringBuilder = new StringBuilder(line);
         stringBuilder.append(String.format("|%-3s|%-20s|%-13s|%-18s|\n",
                 "№", "Name", "Number places", "Number free places"
         ));
-        stringBuilder.append(String.format("|%s|\n", String.valueOf(arrayChar)));
+        stringBuilder.append(line);
         for (int i=0; i < garages.size(); i++){
             stringBuilder.append(String.format("|%-3s|%-20s|%-13s|%-18s|\n",
                     i +1, garages.get(i).getName(),
@@ -24,7 +22,7 @@ public class PrinterGarages {
                     getnumberFreePlace(garages.get(i))
             ));
         }
-        stringBuilder.append(String.format(" %s", String.valueOf(arrayChar)));
+        stringBuilder.append(line);
         System.out.println(stringBuilder.toString());
     }
 

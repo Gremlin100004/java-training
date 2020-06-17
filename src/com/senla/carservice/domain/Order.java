@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
-public class Order {
+public class Order extends AEntity {
     private Long id;
     private final Date creationTime;
     private Date executionStartTime;
@@ -30,10 +30,6 @@ public class Order {
         this.price = price;
         this.status = Status.WAIT;
         this.deleteStatus = false;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public ArrayList<Master> getMasters() {
@@ -76,10 +72,6 @@ public class Order {
         return deleteStatus;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setLeadTime(Date leadTime) {
         this.leadTime = leadTime;
     }
@@ -114,6 +106,16 @@ public class Order {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

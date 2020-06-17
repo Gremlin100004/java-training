@@ -40,17 +40,16 @@ public final class AddPlaceActionImpl implements Action {
                 scanner.next();
             }
             int index = scanner.nextInt();
-            if (index == 0){
+            if (index == 0) {
                 return;
             }
             if (index > garages.size() || index < 0) {
                 System.out.println("There is no such garage");
                 continue;
             }
-            message = garageController.addGaragePlace(garages.get(index-1));
+            message = garageController.addGaragePlace(garages.get(index - 1));
             break;
         }
         System.out.println(message);
     }
 }
-

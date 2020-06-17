@@ -1,6 +1,5 @@
 package com.senla.carservice.api.action;
 
-import com.senla.carservice.api.printer.PrinterMaster;
 import com.senla.carservice.api.printer.PrinterOrder;
 import com.senla.carservice.controller.OrderController;
 import com.senla.carservice.domain.Order;
@@ -29,7 +28,7 @@ public final class ShiftLeadOrderActionImpl implements Action {
         OrderController orderController = new OrderController();
         Scanner scanner = new Scanner(System.in);
         ArrayList<Order> orders = orderController.getOrders();
-        if (orders.size() == 0){
+        if (orders.size() == 0) {
             System.out.println("There are no orders!");
             return;
         }
@@ -54,7 +53,7 @@ public final class ShiftLeadOrderActionImpl implements Action {
             executionStartTime = scanner.nextLine();
             System.out.println("Enter the lead time the order in format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
             leadTime = scanner.nextLine();
-            message = orderController.shiftLeadTime(orders.get(index-1), executionStartTime, leadTime);
+            message = orderController.shiftLeadTime(orders.get(index - 1), executionStartTime, leadTime);
             System.out.println(message);
         }
     }

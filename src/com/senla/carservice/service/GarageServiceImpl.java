@@ -49,7 +49,7 @@ public final class GarageServiceImpl implements GarageService {
     @Override
     public int getNumberPlaces() {
         int numberPlaces = 0;
-        for (Garage garage : this.carOfficeRepository.getGarages()){
+        for (Garage garage : this.carOfficeRepository.getGarages()) {
             numberPlaces += garage.getPlaces().size();
         }
         return numberPlaces;
@@ -57,7 +57,7 @@ public final class GarageServiceImpl implements GarageService {
 
     @Override
     public void deleteGaragePlace(Garage garage) {
-        garage.getPlaces().remove(garage.getPlaces().get(garage.getPlaces().size()-1));
+        garage.getPlaces().remove(garage.getPlaces().get(garage.getPlaces().size() - 1));
     }
 
     @Override

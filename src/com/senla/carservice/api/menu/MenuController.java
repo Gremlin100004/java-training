@@ -1,4 +1,4 @@
-package com.senla.carservice.api;
+package com.senla.carservice.api.menu;
 
 import java.util.Scanner;
 

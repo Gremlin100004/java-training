@@ -29,21 +29,21 @@ public class OrderController {
         } catch (ParseException e) {
             return "Error date, should be \"dd.MM.yyyy hh:mm\"";
         }
-        if (executionStartTime.compareTo(leadTime) > 0){
+        if (executionStartTime.compareTo(leadTime) > 0) {
             return "Error!!!, Lead time can't be early then planning time to start working!";
         }
-        if (executionStartTime.compareTo(new Date()) < 1){
+        if (executionStartTime.compareTo(new Date()) < 1) {
             return "Error!!!, You can't start work at past!";
         }
         ArrayList<Order> controlOrder = orderService.sortOrderByPeriod(orderService.getOrders(), executionStartTime, leadTime);
 
-        for (Order order : controlOrder){
-            for (Master master: orderDto.getMasters()){
-                if (order.getMasters().contains(master)){
+        for (Order order : controlOrder) {
+            for (Master master : orderDto.getMasters()) {
+                if (order.getMasters().contains(master)) {
                     return "Error!!!, Master is busy in this time!";
                 }
             }
-            if (order.getPlace().equals(orderDto.getPlace())){
+            if (order.getPlace().equals(orderDto.getPlace())) {
                 return "Error!!!, The place in garage is busy!";
             }
         }

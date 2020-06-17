@@ -31,8 +31,8 @@ public final class CompleteOrderActionImpl implements Action {
         }
         PrinterOrder.printOrder(orders);
         System.out.println("0. Previous menu");
-        String message;
-        while (true) {
+        String message = "";
+        do {
             System.out.println("Enter the index number of the order to change status:");
             while (!scanner.hasNextInt()) {
                 System.out.println("You enter wrong value!!!");
@@ -49,9 +49,6 @@ public final class CompleteOrderActionImpl implements Action {
             }
             message = orderController.completeOrder(orders.get(index - 1));
             System.out.println(message);
-            if (message.equals(" - the order has been transferred to execution status")) {
-                break;
-            }
-        }
+        } while (!message.equals(" - the order has been transferred to execution status"));
     }
 }

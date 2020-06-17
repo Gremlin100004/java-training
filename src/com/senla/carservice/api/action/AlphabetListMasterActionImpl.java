@@ -23,7 +23,7 @@ public final class AlphabetListMasterActionImpl implements Action {
     public void execute() {
         MasterController masterController = new MasterController();
         ArrayList<Master> sortArrayMasters = masterController.sortMasterByAlphabet();
-        if (sortArrayMasters.size() == 0){
+        if (sortArrayMasters.size() == 0) {
             System.out.println("There are no masters.");
             return;
         }

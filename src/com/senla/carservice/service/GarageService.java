@@ -1,7 +1,7 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.Garage;
+import com.senla.carservice.domain.Place;
 
 import java.util.ArrayList;
 

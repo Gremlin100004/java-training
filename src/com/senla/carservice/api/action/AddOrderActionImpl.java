@@ -1,7 +1,6 @@
 package com.senla.carservice.api.action;
 
-import com.senla.carservice.api.action.util.Checker;
-import com.senla.carservice.api.printer.PrinterGarages;
+import com.senla.carservice.api.util.Checker;
 import com.senla.carservice.api.printer.PrinterMaster;
 import com.senla.carservice.controller.CarOfficeController;
 import com.senla.carservice.controller.GarageController;
@@ -45,15 +44,15 @@ public final class AddOrderActionImpl implements Action {
         String executionStartTime;
         String leadTime;
         BigDecimal price;
-        if (masterController.getMasters().size() < 1){
+        if (masterController.getMasters().size() < 1) {
             System.out.println("There are no masters!");
             return;
         }
-        if (!isPlace(garageController.getArrayGarages())){
+        if (!isPlace(garageController.getArrayGarages())) {
             System.out.println("There are no Places!");
             return;
         }
-        while (true){
+        while (true) {
             System.out.println("Enter the automaker of car");
             automaker = scanner.nextLine();
             if (Checker.isSymbolsString(automaker)) {
@@ -62,7 +61,7 @@ public final class AddOrderActionImpl implements Action {
             }
             break;
         }
-        while (true){
+        while (true) {
             System.out.println("Enter the model of car");
             model = scanner.nextLine();
             if (Checker.isSymbolsString(model)) {
@@ -71,7 +70,7 @@ public final class AddOrderActionImpl implements Action {
             }
             break;
         }
-        while (true){
+        while (true) {
             System.out.println("Enter the registartion number of car, example: 1111 AB-7");
             registrationNumber = scanner.nextLine();
             if (Checker.isSymbolsStringNumber(registrationNumber)) {
@@ -111,7 +110,7 @@ public final class AddOrderActionImpl implements Action {
             addMastersOrder(freeMaster, orderMasters, scanner);
             System.out.println("Garage with free places:");
             for (int i = 0; i < freeGarages.size(); i++) {
-                System.out.println(String.format("%s. %s", i+1, freeGarages.get(i).getName()));
+                System.out.println(String.format("%s. %s", i + 1, freeGarages.get(i).getName()));
             }
             garage = addGarageOrder(freeGarages, scanner, garageController);
             place = garageController.getFreePlaceGarage(garage).get(0);
@@ -133,10 +132,10 @@ public final class AddOrderActionImpl implements Action {
             }
             int index = scanner.nextInt();
 
-            if (index == 0 && orderMaster.size() > 0){
+            if (index == 0 && orderMaster.size() > 0) {
                 return;
             }
-            if (index == 0){
+            if (index == 0) {
                 System.out.println("Add at least one master!");
                 continue;
             }
@@ -184,17 +183,17 @@ public final class AddOrderActionImpl implements Action {
                 System.out.println("There is no such garage");
                 continue;
             }
-            if (garageController.getNumberFreePlaceGarage(garages.get(index-1)) < 1) {
+            if (garageController.getNumberFreePlaceGarage(garages.get(index - 1)) < 1) {
                 System.out.println("There are no free place in garage");
                 continue;
             }
-            return garages.get(index-1);
+            return garages.get(index - 1);
         }
     }
 
     private boolean isPlace(ArrayList<Garage> garages) {
         for (Garage garage : garages) {
-            if (garage.getPlaces().size() > 0){
+            if (garage.getPlaces().size() > 0) {
                 return true;
             }
         }

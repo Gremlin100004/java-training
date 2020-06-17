@@ -1,4 +1,4 @@
-package com.senla.carservice.api.action.util;
+package com.senla.carservice.api.util;
 
 public class Checker {
     public static boolean isSymbolsString(String text) {

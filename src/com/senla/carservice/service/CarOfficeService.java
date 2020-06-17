@@ -6,5 +6,6 @@ import java.util.ArrayList;
 
 public interface CarOfficeService {
     int getNumberFreePlaceDate(ArrayList<Order> orders);
+
     int getNumberFreeMasters(ArrayList<Order> orders);
 }

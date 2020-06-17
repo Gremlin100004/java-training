@@ -1,8 +1,10 @@
-package com.senla.carservice.api;
+package com.senla.carservice.api.menu;
+
+import java.util.ArrayList;
 
 public class Menu {
     private String name;
-    private MenuItem [] menuItems;
+    private ArrayList<MenuItem> menuItems;
 
     public Menu() {
     }
@@ -15,7 +17,7 @@ public class Menu {
         return name;
     }
 
-    public MenuItem[] getMenuItems() {
+    public ArrayList<MenuItem> getMenuItems() {
         return menuItems;
     }
 
@@ -23,7 +25,7 @@ public class Menu {
         this.name = name;
     }
 
-    public void setMenuItems(MenuItem[] menuItems) {
+    public void setMenuItems(ArrayList<MenuItem> menuItems) {
         this.menuItems = menuItems;
     }
 }

@@ -32,28 +32,28 @@ public final class DeletePlaceActionImpl implements Action {
         PrinterGarages.printGarages(garages);
         System.out.println("0. Previous menu");
         String message;
-        while (true) {
+        int index = 0;
+        while (index == 0) {
             System.out.println("Enter the index number of the garage to delete:");
             while (!scanner.hasNextInt()) {
                 System.out.println("You enter wrong value!!!");
                 System.out.println("Try again:");
                 scanner.next();
             }
-            int index = scanner.nextInt();
-            if (index == 0){
+            index = scanner.nextInt();
+            if (index == 0) {
                 return;
             }
             if (index > garages.size() || index < 0) {
                 System.out.println("There is no such garage");
                 continue;
             }
-            if (garages.get(index-1).getPlaces().size() < 1) {
+            if (garages.get(index - 1).getPlaces().size() < 1) {
                 System.out.println("There are no places in garage!");
                 continue;
             }
             message = garageController.deleteGaragePlace(garages.get(index - 1));
-            break;
+            System.out.println(message);
         }
-        System.out.println(message);
     }
 }

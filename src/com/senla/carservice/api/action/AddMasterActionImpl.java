@@ -1,6 +1,6 @@
 package com.senla.carservice.api.action;
 
-import com.senla.carservice.api.action.util.Checker;
+import com.senla.carservice.api.util.Checker;
 import com.senla.carservice.controller.MasterController;
 
 import java.util.Scanner;
@@ -27,7 +27,7 @@ public final class AddMasterActionImpl implements Action {
         while (true) {
             System.out.println("Enter the name of master");
             name = scanner.nextLine();
-            if (Checker.isSymbolsString(name)){
+            if (Checker.isSymbolsString(name)) {
                 System.out.println("You enter wrong value!!!");
                 continue;
             }

@@ -16,7 +16,7 @@ public final class CarOfficeRepositoryImpl implements CarOfficeRepository {
     private final IdGenerator idGeneratorOrder;
     private final IdGenerator idGeneratorMaster;
 
-    public CarOfficeRepositoryImpl () {
+    public CarOfficeRepositoryImpl() {
         this.orders = new ArrayList<>();
         this.masters = new ArrayList<>();
         this.garages = new ArrayList<>();
