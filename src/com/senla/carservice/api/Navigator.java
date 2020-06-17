@@ -35,7 +35,7 @@ public final class Navigator {
 
     public void navigate(Integer index) {
         if (index > this.currentMenu.getMenuItems().length){
-            System.out.println("The is no such item!!!");
+            System.out.println("There is no such item!!!");
             return;
         }
         this.currentMenu.getMenuItems()[index-1].doAction();

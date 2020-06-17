@@ -33,8 +33,8 @@ public class GarageController {
         return String.format("Add place in garage \"%s\"", garage.getName());
     }
 
-    public int getNumberGaragePlaces(Garage garage) {
-        return this.garageService.getNumberGaragePlaces(garage);
+    public int getNumberFreePlaces() {
+        return this.garageService.getNumberPlaces();
     }
 
     public String deleteGaragePlace(Garage garage) {

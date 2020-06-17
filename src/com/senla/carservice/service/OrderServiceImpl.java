@@ -5,14 +5,12 @@ import com.senla.carservice.comporator.OrderLeadComparator;
 import com.senla.carservice.comporator.OrderPriceComparator;
 import com.senla.carservice.comporator.OrderStartComparator;
 import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Status;
 import com.senla.carservice.repository.CarOfficeRepository;
-import com.senla.carservice.domain.Order;
 import com.senla.carservice.repository.CarOfficeRepositoryImpl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 
 public final class OrderServiceImpl implements OrderService {
@@ -40,7 +38,7 @@ public final class OrderServiceImpl implements OrderService {
         order.setId(this.carOfficeRepository.getIdGeneratorOrder().getId());
         this.carOfficeRepository.getOrders().add(order);
         for (Master master : order.getMasters()) {
-            if (master.getNumberOrder()!= null){
+            if (master.getNumberOrder() != null) {
                 master.setNumberOrder(master.getNumberOrder() + 1);
             } else {
                 master.setNumberOrder(1);
@@ -50,7 +48,8 @@ public final class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean completeOrder(Order order) {
-        if (!order.isDeleteStatus()) {
+        if (!order.isDeleteStatus() && !order.getStatus().equals(Status.COMPLETED) &&
+                !order.getStatus().equals(Status.CANCELED) && !order.getStatus().equals(Status.PERFORM)) {
             order.setStatus(Status.PERFORM);
             order.setExecutionStartTime(new Date());
             order.getPlace().setBusyStatus(true);
@@ -62,7 +61,8 @@ public final class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean cancelOrder(Order order) {
-        if (!order.isDeleteStatus()) {
+        if (!order.isDeleteStatus() && !order.getStatus().equals(Status.COMPLETED) &&
+                !order.getStatus().equals(Status.CANCELED) && !order.getStatus().equals(Status.PERFORM)) {
             order.setStatus(Status.CANCELED);
             order.setLeadTime(new Date());
             for (Master master : order.getMasters()) {
@@ -77,7 +77,8 @@ public final class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean closeOrder(Order order) {
-        if (!order.isDeleteStatus()) {
+        if (!order.isDeleteStatus() && !order.getStatus().equals(Status.COMPLETED) &&
+                !order.getStatus().equals(Status.CANCELED) && !order.getStatus().equals(Status.PERFORM)) {
             order.setStatus(Status.COMPLETED);
             order.setLeadTime(new Date());
             for (Master master : order.getMasters()) {
@@ -92,7 +93,8 @@ public final class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean deleteOrder(Order order) {
-        if (order.getStatus().equals(Status.CANCELED) || order.getStatus().equals(Status.COMPLETED)) {
+        if (!order.isDeleteStatus() && !order.getStatus().equals(Status.PERFORM)
+                && !order.getStatus().equals(Status.WAIT)) {
             order.setDeleteStatus(true);
             return true;
         } else {
@@ -102,7 +104,7 @@ public final class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
-        if (!order.isDeleteStatus()) {
+        if (!order.isDeleteStatus() && !order.getStatus().equals(Status.COMPLETED) && !order.getStatus().equals(Status.CANCELED)) {
             order.setLeadTime(leadTime);
             order.setExecutionStartTime(executionStartTime);
             return true;
@@ -146,11 +148,11 @@ public final class OrderServiceImpl implements OrderService {
     @Override
     public ArrayList<Order> sortOrderByPeriod(ArrayList<Order> orders, Date startPeriod, Date endPeriod) {
         ArrayList<Order> sortArrayOrder = new ArrayList<>();
-        if (startPeriod == null || endPeriod == null){
+        if (startPeriod == null || endPeriod == null) {
             return sortArrayOrder;
         }
         for (Order order : orders) {
-            if (order.getLeadTime().compareTo(startPeriod) >= 0 & order.getLeadTime().compareTo(endPeriod) <= 0) {
+            if (order.getLeadTime().compareTo(startPeriod) >= 0 && order.getLeadTime().compareTo(endPeriod) <= 0) {
                 sortArrayOrder.add(order);
             }
         }

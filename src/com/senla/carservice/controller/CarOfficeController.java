@@ -75,8 +75,10 @@ public class CarOfficeController {
     }
 
     public String getFreePlacesByDate(String date) {
-        final int hour = 23;
-        final int minute = 59;
+        final int endDayHour = 23;
+        final int endDayMinute = 59;
+        final int startDayHour = 0;
+        final int startDayMinute = 0;
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         Date dateFree;
         try {
@@ -84,7 +86,11 @@ public class CarOfficeController {
         } catch (ParseException e) {
             return "error date";
         }
-        Date endDay = DateUtil.addHourMinutes(dateFree, hour, minute);
+        Date currentDate = DateUtil.addHourMinutes(new Date(), startDayHour, startDayMinute);
+        Date endDay = DateUtil.addHourMinutes(dateFree, endDayHour, endDayMinute);
+        if (currentDate.compareTo(endDay) > 0){
+            return "past date";
+        }
         ArrayList<Order> orders = this.orderService.getOrders();
         orders = this.orderService.sortOrderByPeriod(orders, dateFree, endDay);
         int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
@@ -97,8 +103,9 @@ public class CarOfficeController {
         final int minute = 59;
         Date dateFree = DateUtil.getDateWithoutTime();
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM yyyy");
-        if (this.masterService.getMasters().size() <2 &&  this.garageService.getGarages().size() < 1){
-            return "Error!!! Add masters, garage and place to service!";
+        if (this.masterService.getMasters().size() <2 || this.garageService.getNumberPlaces() < 1){
+            return "Error!!! Add masters, garage and place to service!\n" +
+                    " At least should be 2 masters, 1 garage and 1 place.";
         }
         while (true) {
             Date endDay = DateUtil.addHourMinutes(dateFree, hour, minute);

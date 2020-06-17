@@ -3,6 +3,7 @@ package com.senla.carservice.domain;
 import com.senla.carservice.util.IdGenerator;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Garage {
     private Long id;
@@ -56,5 +57,18 @@ public class Garage {
         return "Garage{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Garage garage = (Garage) o;
+        return id.equals(garage.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

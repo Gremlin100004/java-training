@@ -107,10 +107,11 @@ public final class AddOrderActionImpl implements Action {
             }
             System.out.println("Free masters:");
             PrinterMaster.printMasters(freeMaster);
+            System.out.println("0. Stop adding");
             addMastersOrder(freeMaster, orderMasters, scanner);
             System.out.println("Garage with free places:");
-            for (Garage freeGarage : freeGarages) {
-                System.out.println(String.format("- %s", freeGarage.getName()));
+            for (int i = 0; i < freeGarages.size(); i++) {
+                System.out.println(String.format("%s. %s", i+1, freeGarages.get(i).getName()));
             }
             garage = addGarageOrder(freeGarages, scanner, garageController);
             place = garageController.getFreePlaceGarage(garage).get(0);
@@ -131,8 +132,16 @@ public final class AddOrderActionImpl implements Action {
                 scanner.next();
             }
             int index = scanner.nextInt();
+
+            if (index == 0 && orderMaster.size() > 0){
+                return;
+            }
+            if (index == 0){
+                System.out.println("Add at least one master!");
+                continue;
+            }
             scanner.skip("\n");
-            if (index > masters.size() || index < 1) {
+            if (index > masters.size() || index < 0) {
                 System.out.println("There is no such master");
                 continue;
             }
@@ -179,7 +188,7 @@ public final class AddOrderActionImpl implements Action {
                 System.out.println("There are no free place in garage");
                 continue;
             }
-            return garages.get(index);
+            return garages.get(index-1);
         }
     }
 

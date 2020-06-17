@@ -47,8 +47,12 @@ public final class GarageServiceImpl implements GarageService {
     }
 
     @Override
-    public int getNumberGaragePlaces(Garage garage) {
-        return garage.getPlaces().size();
+    public int getNumberPlaces() {
+        int numberPlaces = 0;
+        for (Garage garage : this.carOfficeRepository.getGarages()){
+            numberPlaces += garage.getPlaces().size();
+        }
+        return numberPlaces;
     }
 
     @Override

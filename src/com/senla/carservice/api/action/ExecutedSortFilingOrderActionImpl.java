@@ -25,7 +25,7 @@ public final class ExecutedSortFilingOrderActionImpl implements Action {
         ArrayList<Order> executedOrders = orderController.getExecuteOrder();
         executedOrders = orderController.sortOrderByCreationTime(executedOrders);
         if (executedOrders.size() == 0) {
-            System.out.println("There are no garages.");
+            System.out.println("There are no orders!");
             return;
         }
         PrinterOrder.printOrder(executedOrders);

@@ -30,6 +30,7 @@ public final class DeleteGarageActionImpl implements Action {
             return;
         }
         PrinterGarages.printGarages(garages);
+        System.out.println("0. Previous menu");
         String message;
         while (true) {
             System.out.println("Enter the index number of the garage to delete:");
@@ -39,7 +40,10 @@ public final class DeleteGarageActionImpl implements Action {
                 scanner.next();
             }
             int index = scanner.nextInt();
-            if (index > garages.size() || index < 1) {
+            if (index == 0){
+                return;
+            }
+            if (index > garages.size() || index < 0) {
                 System.out.println("There is no such garage");
                 continue;
             }

@@ -2,8 +2,6 @@ package com.senla.carservice.api.action;
 
 import com.senla.carservice.controller.CarOfficeController;
 
-import java.util.Scanner;
-
 public final class FreeDateActionImpl implements Action {
     private static FreeDateActionImpl instance;
 

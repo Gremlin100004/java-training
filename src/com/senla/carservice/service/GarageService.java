@@ -14,7 +14,7 @@ public interface GarageService {
 
     void addGaragePlace(Garage garage);
 
-    int getNumberGaragePlaces(Garage garage);
+    int getNumberPlaces();
 
     void deleteGaragePlace(Garage garage);
 

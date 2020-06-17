@@ -7,15 +7,15 @@ import com.senla.carservice.domain.Order;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public final class CloseOrderActionImpl implements Action {
-    private static CloseOrderActionImpl instance;
+public final class CompleteOrderActionImpl implements Action {
+    private static CompleteOrderActionImpl instance;
 
-    public CloseOrderActionImpl() {
+    public CompleteOrderActionImpl() {
     }
 
-    public static CloseOrderActionImpl getInstance() {
+    public static CompleteOrderActionImpl getInstance() {
         if (instance == null) {
-            instance = new CloseOrderActionImpl();
+            instance = new CompleteOrderActionImpl();
         }
         return instance;
     }
@@ -33,7 +33,7 @@ public final class CloseOrderActionImpl implements Action {
         System.out.println("0. Previous menu");
         String message;
         while (true) {
-            System.out.println("Enter the index number of the order to close:");
+            System.out.println("Enter the index number of the order to change status:");
             while (!scanner.hasNextInt()) {
                 System.out.println("You enter wrong value!!!");
                 System.out.println("Try again:");
@@ -47,9 +47,9 @@ public final class CloseOrderActionImpl implements Action {
                 System.out.println("There is no such order");
                 continue;
             }
-            message = orderController.closeOrder(orders.get(index - 1));
+            message = orderController.completeOrder(orders.get(index - 1));
             System.out.println(message);
-            if (message.equals(" -the order has been completed.")) {
+            if (message.equals(" - the order has been transferred to execution status")) {
                 break;
             }
         }

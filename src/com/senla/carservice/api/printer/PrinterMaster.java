@@ -18,10 +18,16 @@ public class PrinterMaster {
                 ));
         stringBuilder.append(String.format("|%s|\n", String.valueOf(arrayChar)));
         for (int i=0; i < masters.size(); i++){
-            stringBuilder.append(String.format("|%-3s|%-20s|%-13s|\n",
-                    i +1, masters.get(i).getName(),
-                    masters.get(i).getNumberOrder()
-                    ));
+            if (masters.get(i).getNumberOrder() == null){
+                stringBuilder.append(String.format("|%-3s|%-20s|%-13s|\n",
+                        i +1, masters.get(i).getName(), "0"
+                ));
+            } else {
+                stringBuilder.append(String.format("|%-3s|%-20s|%-13s|\n",
+                        i +1, masters.get(i).getName(),
+                        masters.get(i).getNumberOrder()
+                ));
+            }
         }
         stringBuilder.append(String.format(" %s", String.valueOf(arrayChar)));
         System.out.println(stringBuilder.toString());

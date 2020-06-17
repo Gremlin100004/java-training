@@ -31,6 +31,7 @@ public final class DeleteMasterActionImpl implements Action {
             return;
         }
         PrinterMaster.printMasters(masters);
+        System.out.println("0. Previous menu");
         String message;
         while (true){
             System.out.println("Enter the index number of the master to delete:");
@@ -40,7 +41,10 @@ public final class DeleteMasterActionImpl implements Action {
                 scanner.next();
             }
             int index = scanner.nextInt();
-            if (index > masters.size() ||index < 1){
+            if (index == 0){
+                return;
+            }
+            if (index > masters.size() ||index < 0){
                 System.out.println("There is no such master");
                 continue;
             }

@@ -63,6 +63,7 @@ public final class Builder {
                 new MenuItem("Delete the order", DeleteOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Close the order", CloseOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Cancel the order", CancelOrderActionImpl.getInstance(), listOrderMenu),
+                new MenuItem("Transfer the order to execution status", CompleteOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Shift the lead time", ShiftLeadOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Show orders sort by filing date",
                         SortFilingOrderActionImpl.getInstance(), listOrderMenu),
@@ -71,8 +72,10 @@ public final class Builder {
                 new MenuItem("Show orders sort by planned start date",
                         SortPlannedOrderActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Show orders sort by price", SortPriceOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Get a master performing a specific order",
+                new MenuItem("Get orders executed concrete master.",
                         MasterOrderActionImpl.getInstance(), listOrderMenu),
+                new MenuItem("Get a master performing a specific order",
+                        OrderMastersActionImpl.getInstance(), listOrderMenu),
                 new MenuItem("Previous menu", PassiveActionImpl.getInstance(), ordersMenu),
         });
         executedOrderMenu.setMenuItems(new MenuItem[]{
@@ -85,9 +88,9 @@ public final class Builder {
                 new MenuItem("Previous menu", PassiveActionImpl.getInstance(), ordersMenu)
         });
         periodOrderMenu.setMenuItems(new MenuItem[]{
-                new MenuItem("Completed orders", PeriodCompletedOrderActionImpl.getInstance(), completedOrderMenu),
-                new MenuItem("Deleted orders", PeriodDeletedOrderActionImpl.getInstance(), deletedOrderMenu),
-                new MenuItem("Canceled orders", PeriodCanceledOrderActionImpl.getInstance(), canceledOrderMenu),
+                new MenuItem("Completed orders", PassiveActionImpl.getInstance(), completedOrderMenu),
+                new MenuItem("Deleted orders", PassiveActionImpl.getInstance(), deletedOrderMenu),
+                new MenuItem("Canceled orders", PassiveActionImpl.getInstance(), canceledOrderMenu),
                 new MenuItem("Previous menu", PassiveActionImpl.getInstance(), ordersMenu)
         });
         completedOrderMenu.setMenuItems(new MenuItem[]{
@@ -98,8 +101,8 @@ public final class Builder {
         });
         deletedOrderMenu.setMenuItems(new MenuItem[]{
                 new MenuItem("Sort by filing date", DeletedSortFilingOrderActionImpl.getInstance(), deletedOrderMenu),
-                new MenuItem("Sort by execution date", ExecutedSortExecutionOrderActionImpl.getInstance(), deletedOrderMenu),
-                new MenuItem("Sort by price", ExecutedSortPriceOrderActionImpl.getInstance(), deletedOrderMenu),
+                new MenuItem("Sort by execution date", DeletedSortExecutionOrderActionImpl.getInstance(), deletedOrderMenu),
+                new MenuItem("Sort by price", DeletedSortPriceOrderActionImpl.getInstance(), deletedOrderMenu),
                 new MenuItem("Previous menu", PassiveActionImpl.getInstance(), periodOrderMenu)
         });
         canceledOrderMenu.setMenuItems(new MenuItem[]{

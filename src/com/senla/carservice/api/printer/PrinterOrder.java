@@ -8,7 +8,7 @@ import java.util.Arrays;
 public class PrinterOrder {
 
     public static void printOrder(ArrayList<Order> orders) {
-        final int LENGTH = 162;
+        final int LENGTH = 167;
         char line = '-';
         char [] arrayChar = new char[LENGTH];
         Arrays.fill(arrayChar, line);

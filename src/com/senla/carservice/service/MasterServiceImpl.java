@@ -43,8 +43,7 @@ public final class MasterServiceImpl implements MasterService {
 
     @Override
     public ArrayList<Master> sortMasterByAlphabet(ArrayList<Master> masters) {
-        ArrayList<Master> sortArrayMaster = new ArrayList<>();
-        Collections.copy(sortArrayMaster, masters);
+        ArrayList<Master> sortArrayMaster = new ArrayList<>(masters);
         MasterAlphabetComparator masterAlphabetComparator = new MasterAlphabetComparator();
         sortArrayMaster.sort(masterAlphabetComparator);
         return sortArrayMaster;
@@ -52,8 +51,7 @@ public final class MasterServiceImpl implements MasterService {
 
     @Override
     public ArrayList<Master> sortMasterByBusy(ArrayList<Master> masters) {
-        ArrayList<Master> sortArrayMaster = new ArrayList<>();
-        Collections.copy(sortArrayMaster, masters);
+        ArrayList<Master> sortArrayMaster = new ArrayList<>(masters);
         MasterBusyComparator masterBusyComparator = new MasterBusyComparator();
         sortArrayMaster.sort(masterBusyComparator);
         return sortArrayMaster;

@@ -35,6 +35,7 @@ public final class MasterOrderActionImpl implements Action {
             return;
         }
         PrinterMaster.printMasters(masters);
+        System.out.println("0. Previous menu");
         ArrayList<Order> orders;
         while (true) {
             System.out.println("Enter the index number of the master to view orders:");
@@ -44,7 +45,10 @@ public final class MasterOrderActionImpl implements Action {
                 scanner.next();
             }
             index = scanner.nextInt();
-            if (index > masters.size() || index < 1) {
+            if (index == 0) {
+                return;
+            }
+            if (index > masters.size() || index < 0) {
                 System.out.println("There is no such master");
                 continue;
             }

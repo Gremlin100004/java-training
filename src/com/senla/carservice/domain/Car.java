@@ -1,5 +1,7 @@
 package com.senla.carservice.domain;
 
+import java.util.Objects;
+
 public class Car {
     private Long id;
     private String automaker;
@@ -42,5 +44,18 @@ public class Car {
                 ", model='" + model + '\'' +
                 ", registrationNumber='" + registrationNumber + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Car car = (Car) o;
+        return id.equals(car.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

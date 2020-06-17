@@ -35,6 +35,18 @@ public class OrderController {
         if (executionStartTime.compareTo(new Date()) < 1){
             return "Error!!!, You can't start work at past!";
         }
+        ArrayList<Order> controlOrder = orderService.sortOrderByPeriod(orderService.getOrders(), executionStartTime, leadTime);
+
+        for (Order order : controlOrder){
+            for (Master master: orderDto.getMasters()){
+                if (order.getMasters().contains(master)){
+                    return "Error!!!, Master is busy in this time!";
+                }
+            }
+            if (order.getPlace().equals(orderDto.getPlace())){
+                return "Error!!!, The place in garage is busy!";
+            }
+        }
         Car car = new Car(orderDto.getAutomaker(), orderDto.getModel(), orderDto.getRegistrationNumber());
         Order order = new Order(executionStartTime, leadTime, orderDto.getMasters(), orderDto.getGarage(),
                 orderDto.getPlace(), car, orderDto.getPrice());
@@ -60,7 +72,7 @@ public class OrderController {
         if (statusOperation) {
             return " -the order has been completed.";
         } else {
-            return " -the order is deleted.";
+            return " -the order can't change the status.";
         }
     }
 
@@ -69,7 +81,7 @@ public class OrderController {
         if (statusOperation) {
             return " -the order has been canceled.";
         } else {
-            return " -the order is deleted.";
+            return " -the order can't change the status.";
         }
     }
 
@@ -90,7 +102,7 @@ public class OrderController {
             executionStartTime = format.parse(stringStartTime);
             leadTime = format.parse(stringLeadTime);
         } catch (ParseException e) {
-            return "error date, shoud be dd.MM.yyyy";
+            return "error date, should be dd.MM.yyyy";
         }
         boolean statusOperation = this.orderService.shiftLeadTime(order, executionStartTime, leadTime);
         if (statusOperation) {
