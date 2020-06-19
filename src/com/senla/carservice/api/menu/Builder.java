@@ -9,6 +9,7 @@ public final class Builder {
     private static Builder instance;
     private Menu rootMenu;
 
+    // конструктор синглтона должен быть приватным
     public Builder() {
     }
 
@@ -19,6 +20,7 @@ public final class Builder {
         return instance;
     }
 
+    // можно использовать приватные методы, так читать легче и работать будет лучше
     public void buildMenu() {
         this.rootMenu = new Menu("Car Service Menu");
         Menu mastersMenu = new Menu("Masters");

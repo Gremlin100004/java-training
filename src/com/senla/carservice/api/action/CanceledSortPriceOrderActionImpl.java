@@ -22,6 +22,7 @@ public final class CanceledSortPriceOrderActionImpl implements Action {
 
     @Override
     public void execute() {
+        // не допускать дублирования кода
         String beginningPeriodTime;
         String endPeriodTime;
         OrderController orderController = new OrderController();

@@ -2,7 +2,9 @@ package com.senla.carservice.api.menu;
 
 import java.util.Scanner;
 
+// может быть это синглтон?
 public class MenuController {
+    // где модификаторы доступа?
     Builder builder;
     Navigator navigator;
 

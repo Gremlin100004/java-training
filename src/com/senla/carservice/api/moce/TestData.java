@@ -3,6 +3,7 @@ package com.senla.carservice.api.moce;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+// может быть утилитным (статические методы)
 public class TestData {
 
     public TestData() {

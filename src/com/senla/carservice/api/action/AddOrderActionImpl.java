@@ -28,6 +28,7 @@ public final class AddOrderActionImpl implements Action {
         return instance;
     }
 
+    // метод по размеру должен влезать в экран (по высоте), если больше - надо разбивать на приватные
     @Override
     public void execute() {
         Scanner scanner = new Scanner(System.in);
@@ -44,6 +45,8 @@ public final class AddOrderActionImpl implements Action {
         String executionStartTime;
         String leadTime;
         BigDecimal price;
+        // меньше единицы? это в смысле ноль?
+        // лучше так: masterController.getMasters().isEmpty()
         if (masterController.getMasters().size() < 1) {
             System.out.println("There are no masters!");
             return;
@@ -53,6 +56,7 @@ public final class AddOrderActionImpl implements Action {
             return;
         }
         while (true) {
+            // это все дубляж кода, можно вынести в утилиту
             System.out.println("Enter the automaker of car");
             automaker = scanner.nextLine();
             if (Checker.isSymbolsString(automaker)) {

@@ -1,9 +1,11 @@
+// ошибка в имени пакета
 package com.senla.carservice.comporator;
 
 import com.senla.carservice.domain.Master;
 
 import java.util.Comparator;
 
+// вместо компараторов можно было использовать лямбды
 public class MasterAlphabetComparator implements Comparator<Master> {
 
     @Override

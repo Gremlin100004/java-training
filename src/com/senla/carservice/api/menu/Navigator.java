@@ -7,6 +7,7 @@ public final class Navigator {
 
     private Menu currentMenu;
 
+    // это не синглтон, если у него публичный конструктор, да еще и два
     public Navigator() {
     }
 
@@ -24,9 +25,11 @@ public final class Navigator {
     public void printMenu() {
         StringBuilder stringBuilder = new StringBuilder(String.format("%s\n",
                 String.join("", Collections.nCopies(this.currentMenu.getName().length(), "~"))));
+        // зачем использовать стринг билдер и при это еще и стринг формат? да еще и в такой пустяковой строке?
         stringBuilder.append(String.format("%s\n", this.currentMenu.getName()));
         stringBuilder.append(String.format("%s\n",
                 String.join("", Collections.nCopies(this.currentMenu.getName().length(), "~"))));
+        // фигурные скобки надо ставить ВСЕГДА!!!!!!! и так метод не разберешь, еще и без скобок
         for (int i = 0; i < this.currentMenu.getMenuItems().size(); i++)
             stringBuilder.append(String.format("%s. %s\n", i + 1, this.currentMenu.getMenuItems().get(i)));
         stringBuilder.append("0. Exit program\n");

@@ -7,6 +7,7 @@ import com.senla.carservice.util.IdGenerator;
 
 import java.util.ArrayList;
 
+// для каждой сущности свой репозиторий
 public final class CarOfficeRepositoryImpl implements CarOfficeRepository {
     private static CarOfficeRepositoryImpl instance;
     private ArrayList<Order> orders;

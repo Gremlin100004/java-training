@@ -5,6 +5,7 @@ import com.senla.carservice.api.action.Action;
 public class MenuItem {
     private final String title;
     private final Action action;
+    // модификатор доступа?
     Menu nextMenu;
 
     public MenuItem(String title, Action action, Menu nextMenu) {

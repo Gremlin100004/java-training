@@ -7,6 +7,9 @@ import com.senla.carservice.domain.Place;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+// паттерн ДТО используется для обмена данными между юай и контроллерами
+// дто - это как модель, только облегченная, содержит только нужные поля
+// или реализуешь общение между юай и контроллерами только через ДТО, или не используешь ДТО вообще
 public class OrderDto {
     private String executionStartTime;
     private String leadTime;

@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+// синглтон!!!
 public class CarOfficeController {
     private final CarOfficeService carOfficeService;
     private final OrderService orderService;
@@ -24,7 +25,12 @@ public class CarOfficeController {
         this.garageService = GarageServiceImpl.getInstance();
     }
 
+    // использовать интерфейсы! List<> вместо ArrayList
+    // желательно не отдавать из контроллера модели, если предположить, что юай - другое приложение,
+    // то он может и не знать про класс гараж
+    // в настоящий момент твой контроллер ничем не отличается от сервиса
     public ArrayList<Garage> getGarageFreePlace(String stringExecuteDate, String stringLeadDate) {
+        // вынести в утилиту, у тебя же есть дейт утил
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         Date executeDate;
         Date leadDate;

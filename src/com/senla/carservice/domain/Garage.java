@@ -8,7 +8,9 @@ import java.util.Objects;
 public class Garage extends AEntity {
     private Long id;
     private String name;
+    // использовать интерфейс
     private ArrayList<Place> places;
+    // энтити не хранит генератор
     private IdGenerator idGeneratorPlace;
 
     public Garage() {

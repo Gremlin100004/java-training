@@ -7,14 +7,18 @@ import com.senla.carservice.repository.CarOfficeRepositoryImpl;
 
 import java.util.ArrayList;
 
+// все ошибки этого класса найдешь в других сервисах тоже
 public final class CarOfficeServiceImpl implements CarOfficeService {
+    // испольуем тип интерфейса
     private static CarOfficeServiceImpl instance;
     private final CarOfficeRepository carOfficeRepository;
 
+    // это не синглтон с публичным конструктором
     public CarOfficeServiceImpl() {
         this.carOfficeRepository = CarOfficeRepositoryImpl.getInstance();
     }
 
+    // испольуем тип интерфейса
     public static CarOfficeServiceImpl getInstance() {
         if (instance == null) {
             instance = new CarOfficeServiceImpl();
