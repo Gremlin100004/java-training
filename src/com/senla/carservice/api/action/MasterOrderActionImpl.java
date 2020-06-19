@@ -10,17 +10,9 @@ import com.senla.carservice.domain.Order;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public final class MasterOrderActionImpl implements Action {
-    private static MasterOrderActionImpl instance;
+public class MasterOrderActionImpl implements Action {
 
     public MasterOrderActionImpl() {
-    }
-
-    public static MasterOrderActionImpl getInstance() {
-        if (instance == null) {
-            instance = new MasterOrderActionImpl();
-        }
-        return instance;
     }
 
     @Override

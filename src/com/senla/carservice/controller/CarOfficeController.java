@@ -11,7 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class CarOfficeController {
+public final class CarOfficeController {
+    private static CarOfficeController instance;
     private final CarOfficeService carOfficeService;
     private final OrderService orderService;
     private final MasterService masterService;
@@ -22,6 +23,13 @@ public class CarOfficeController {
         this.orderService = OrderServiceImpl.getInstance();
         this.masterService = MasterServiceImpl.getInstance();
         this.garageService = GarageServiceImpl.getInstance();
+    }
+
+    public static CarOfficeController getInstance() {
+        if (instance == null) {
+            instance = new CarOfficeController();
+        }
+        return instance;
     }
 
     public ArrayList<Garage> getGarageFreePlace(String stringExecuteDate, String stringLeadDate) {

@@ -1,5 +1,6 @@
 package com.senla.carservice.controller;
 
+import com.senla.carservice.api.menu.MenuController;
 import com.senla.carservice.domain.Car;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
@@ -12,11 +13,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class OrderController {
+public final class OrderController {
+    private static OrderController instance;
     private final OrderService orderService;
 
     public OrderController() {
         this.orderService = new OrderServiceImpl();
+    }
+
+    public static OrderController getInstance() {
+        if (instance == null) {
+            instance = new OrderController();
+        }
+        return instance;
     }
 
     public String addOrder(OrderDto orderDto) {

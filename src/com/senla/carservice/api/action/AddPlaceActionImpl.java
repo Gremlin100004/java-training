@@ -7,17 +7,9 @@ import com.senla.carservice.domain.Garage;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public final class AddPlaceActionImpl implements Action {
-    private static AddPlaceActionImpl instance;
+public class AddPlaceActionImpl implements Action {
 
     public AddPlaceActionImpl() {
-    }
-
-    public static AddPlaceActionImpl getInstance() {
-        if (instance == null) {
-            instance = new AddPlaceActionImpl();
-        }
-        return instance;
     }
 
     @Override

@@ -13,7 +13,7 @@ import com.senla.carservice.repository.CarOfficeRepositoryImpl;
 import java.util.ArrayList;
 import java.util.Date;
 
-public final class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl implements OrderService {
     private static OrderServiceImpl instance;
     private final CarOfficeRepository carOfficeRepository;
 

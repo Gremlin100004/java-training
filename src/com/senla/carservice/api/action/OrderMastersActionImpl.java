@@ -9,17 +9,9 @@ import com.senla.carservice.domain.Order;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public final class OrderMastersActionImpl implements Action {
-    private static OrderMastersActionImpl instance;
+public class OrderMastersActionImpl implements Action {
 
     public OrderMastersActionImpl() {
-    }
-
-    public static OrderMastersActionImpl getInstance() {
-        if (instance == null) {
-            instance = new OrderMastersActionImpl();
-        }
-        return instance;
     }
 
     @Override

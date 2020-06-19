@@ -6,17 +6,9 @@ import com.senla.carservice.domain.Order;
 
 import java.util.ArrayList;
 
-public final class SortPlannedOrderActionImpl implements Action {
-    private static SortPlannedOrderActionImpl instance;
+public class SortPlannedOrderActionImpl implements Action {
 
     public SortPlannedOrderActionImpl() {
-    }
-
-    public static SortPlannedOrderActionImpl getInstance() {
-        if (instance == null) {
-            instance = new SortPlannedOrderActionImpl();
-        }
-        return instance;
     }
 
     @Override

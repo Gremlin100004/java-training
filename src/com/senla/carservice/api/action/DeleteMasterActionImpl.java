@@ -8,17 +8,9 @@ import com.senla.carservice.domain.Master;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public final class DeleteMasterActionImpl implements Action {
-    private static DeleteMasterActionImpl instance;
+public class DeleteMasterActionImpl implements Action {
 
     public DeleteMasterActionImpl() {
-    }
-
-    public static DeleteMasterActionImpl getInstance() {
-        if (instance == null) {
-            instance = new DeleteMasterActionImpl();
-        }
-        return instance;
     }
 
     @Override

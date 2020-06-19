@@ -15,17 +15,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public final class AddOrderActionImpl implements Action {
-    private static AddOrderActionImpl instance;
+public class AddOrderActionImpl implements Action {
 
     public AddOrderActionImpl() {
-    }
-
-    public static AddOrderActionImpl getInstance() {
-        if (instance == null) {
-            instance = new AddOrderActionImpl();
-        }
-        return instance;
     }
 
     @Override

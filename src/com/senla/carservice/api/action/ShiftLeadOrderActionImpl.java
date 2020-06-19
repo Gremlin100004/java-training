@@ -7,17 +7,9 @@ import com.senla.carservice.domain.Order;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public final class ShiftLeadOrderActionImpl implements Action {
-    private static ShiftLeadOrderActionImpl instance;
+public class ShiftLeadOrderActionImpl implements Action {
 
     public ShiftLeadOrderActionImpl() {
-    }
-
-    public static ShiftLeadOrderActionImpl getInstance() {
-        if (instance == null) {
-            instance = new ShiftLeadOrderActionImpl();
-        }
-        return instance;
     }
 
     @Override

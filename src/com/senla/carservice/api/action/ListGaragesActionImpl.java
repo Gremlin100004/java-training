@@ -6,17 +6,9 @@ import com.senla.carservice.domain.Garage;
 
 import java.util.ArrayList;
 
-public final class ListGaragesActionImpl implements Action {
-    private static ListGaragesActionImpl instance;
+public class ListGaragesActionImpl implements Action {
 
     public ListGaragesActionImpl() {
-    }
-
-    public static ListGaragesActionImpl getInstance() {
-        if (instance == null) {
-            instance = new ListGaragesActionImpl();
-        }
-        return instance;
     }
 
     @Override

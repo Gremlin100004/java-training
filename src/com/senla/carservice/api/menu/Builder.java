@@ -32,87 +32,87 @@ public final class Builder {
         Menu canceledOrderMenu = new Menu("Canceled orders");
 
         this.rootMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("Masters", PassiveActionImpl.getInstance(), mastersMenu),
-                new MenuItem("Orders", PassiveActionImpl.getInstance(), ordersMenu),
-                new MenuItem("Garages", PassiveActionImpl.getInstance(), garagesMenu),
-                new MenuItem("Get the number of available seats at the car service", AvailableSeatsActionImpl.getInstance(), this.rootMenu),
-                new MenuItem("Get the closest free date", FreeDateActionImpl.getInstance(), this.rootMenu),
-                new MenuItem("Fill in test data", DemoActionImpl.getInstance(), this.rootMenu)
+                new MenuItem("Masters", new PassiveActionImpl(), mastersMenu),
+                new MenuItem("Orders", new PassiveActionImpl(), ordersMenu),
+                new MenuItem("Garages", new PassiveActionImpl(), garagesMenu),
+                new MenuItem("Get the number of available seats at the car service", new AvailableSeatsActionImpl(), this.rootMenu),
+                new MenuItem("Get the closest free date", new FreeDateActionImpl(), this.rootMenu),
+                new MenuItem("Fill in test data", new DemoActionImpl(), this.rootMenu)
         )));
         mastersMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("Add master", AddMasterActionImpl.getInstance(), mastersMenu),
-                new MenuItem("Delete Master", DeleteMasterActionImpl.getInstance(), mastersMenu),
-                new MenuItem("Show a list of masters sorted alphabetically", AlphabetListMasterActionImpl.getInstance(), mastersMenu),
-                new MenuItem("Show list of masters sorted by busy", BusyListMastersActionImpl.getInstance(), mastersMenu),
-                new MenuItem("Previous menu", PassiveActionImpl.getInstance(), this.rootMenu)
+                new MenuItem("Add master", new AddMasterActionImpl(), mastersMenu),
+                new MenuItem("Delete Master", new DeleteMasterActionImpl(), mastersMenu),
+                new MenuItem("Show a list of masters sorted alphabetically", new AlphabetListMasterActionImpl(), mastersMenu),
+                new MenuItem("Show list of masters sorted by busy", new BusyListMastersActionImpl(), mastersMenu),
+                new MenuItem("Previous menu", new PassiveActionImpl(), this.rootMenu)
         )));
         garagesMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("Show list of garages", ListGaragesActionImpl.getInstance(), garagesMenu),
-                new MenuItem("Add garage", AddGarageActionImpl.getInstance(), garagesMenu),
-                new MenuItem("Delete garage", DeleteGarageActionImpl.getInstance(), garagesMenu),
-                new MenuItem("Add place in garage", AddPlaceActionImpl.getInstance(), garagesMenu),
-                new MenuItem("Delete place in garage", DeletePlaceActionImpl.getInstance(), garagesMenu),
-                new MenuItem("Previous menu", PassiveActionImpl.getInstance(), this.rootMenu)
+                new MenuItem("Show list of garages", new ListGaragesActionImpl(), garagesMenu),
+                new MenuItem("Add garage", new AddGarageActionImpl(), garagesMenu),
+                new MenuItem("Delete garage", new DeleteGarageActionImpl(), garagesMenu),
+                new MenuItem("Add place in garage", new AddPlaceActionImpl(), garagesMenu),
+                new MenuItem("Delete place in garage", new DeletePlaceActionImpl(), garagesMenu),
+                new MenuItem("Previous menu", new PassiveActionImpl(), this.rootMenu)
         )));
         ordersMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("List of orders", PassiveActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("List of orders executed at a given time", PassiveActionImpl.getInstance(), executedOrderMenu),
-                new MenuItem("List of orders for a period of time", PassiveActionImpl.getInstance(), periodOrderMenu),
-                new MenuItem("Previous menu", PassiveActionImpl.getInstance(), this.rootMenu)
+                new MenuItem("List of orders", new PassiveActionImpl(), listOrderMenu),
+                new MenuItem("List of orders executed at a given time", new PassiveActionImpl(), executedOrderMenu),
+                new MenuItem("List of orders for a period of time", new PassiveActionImpl(), periodOrderMenu),
+                new MenuItem("Previous menu", new PassiveActionImpl(), this.rootMenu)
         )));
         listOrderMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("Show orders", ShowOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Add order", AddOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Delete the order", DeleteOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Close the order", CloseOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Cancel the order", CancelOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Transfer the order to execution status", CompleteOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Shift the lead time", ShiftLeadOrderActionImpl.getInstance(), listOrderMenu),
+                new MenuItem("Show orders", new ShowOrderActionImpl(), listOrderMenu),
+                new MenuItem("Add order", new AddOrderActionImpl(), listOrderMenu),
+                new MenuItem("Delete the order", new DeleteOrderActionImpl(), listOrderMenu),
+                new MenuItem("Close the order", new CloseOrderActionImpl(), listOrderMenu),
+                new MenuItem("Cancel the order", new CancelOrderActionImpl(), listOrderMenu),
+                new MenuItem("Transfer the order to execution status", new CompleteOrderActionImpl(), listOrderMenu),
+                new MenuItem("Shift the lead time", new ShiftLeadOrderActionImpl(), listOrderMenu),
                 new MenuItem("Show orders sort by filing date",
-                        SortFilingOrderActionImpl.getInstance(), listOrderMenu),
+                        new SortFilingOrderActionImpl(), listOrderMenu),
                 new MenuItem("Show orders sort by execution date",
-                        SortExecutionOrderActionImpl.getInstance(), listOrderMenu),
+                        new SortExecutionOrderActionImpl(), listOrderMenu),
                 new MenuItem("Show orders sort by planned start date",
-                        SortPlannedOrderActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Show orders sort by price", SortPriceOrderActionImpl.getInstance(), listOrderMenu),
+                        new SortPlannedOrderActionImpl(), listOrderMenu),
+                new MenuItem("Show orders sort by price", new SortPriceOrderActionImpl(), listOrderMenu),
                 new MenuItem("Get orders executed concrete master.",
-                        MasterOrderActionImpl.getInstance(), listOrderMenu),
+                        new MasterOrderActionImpl(), listOrderMenu),
                 new MenuItem("Get a master performing a specific order",
-                        OrderMastersActionImpl.getInstance(), listOrderMenu),
-                new MenuItem("Previous menu", PassiveActionImpl.getInstance(), ordersMenu)
+                        new OrderMastersActionImpl(), listOrderMenu),
+                new MenuItem("Previous menu", new  PassiveActionImpl(), ordersMenu)
         )));
         executedOrderMenu.setMenuItems(new ArrayList<>(Arrays.asList(
                 new MenuItem("Get list of orders executed at a given time sort by filing date",
-                        ExecutedSortFilingOrderActionImpl.getInstance(), executedOrderMenu),
+                        new ExecutedSortFilingOrderActionImpl(), executedOrderMenu),
                 new MenuItem("Get list of orders executed at a given time sort by execution date",
-                        ExecutedSortExecutionOrderActionImpl.getInstance(), executedOrderMenu),
+                        new ExecutedSortExecutionOrderActionImpl(), executedOrderMenu),
                 new MenuItem("Get list of orders executed at a given time sort by price",
-                        ExecutedSortPriceOrderActionImpl.getInstance(), executedOrderMenu),
-                new MenuItem("Previous menu", PassiveActionImpl.getInstance(), ordersMenu)
+                        new ExecutedSortPriceOrderActionImpl(), executedOrderMenu),
+                new MenuItem("Previous menu", new PassiveActionImpl(), ordersMenu)
         )));
         periodOrderMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("Completed orders", PassiveActionImpl.getInstance(), completedOrderMenu),
-                new MenuItem("Deleted orders", PassiveActionImpl.getInstance(), deletedOrderMenu),
-                new MenuItem("Canceled orders", PassiveActionImpl.getInstance(), canceledOrderMenu),
-                new MenuItem("Previous menu", PassiveActionImpl.getInstance(), ordersMenu)
+                new MenuItem("Completed orders", new PassiveActionImpl(), completedOrderMenu),
+                new MenuItem("Deleted orders", new PassiveActionImpl(), deletedOrderMenu),
+                new MenuItem("Canceled orders", new PassiveActionImpl(), canceledOrderMenu),
+                new MenuItem("Previous menu", new PassiveActionImpl(), ordersMenu)
         )));
         completedOrderMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("Sort by filing date", CompletedSortFilingOrderActionImpl.getInstance(), completedOrderMenu),
-                new MenuItem("Sort by execution date", CompletedSortExecutionOrderActionImpl.getInstance(), completedOrderMenu),
-                new MenuItem("Sort by price", CompletedSortPriceOrderActionImpl.getInstance(), completedOrderMenu),
-                new MenuItem("Previous menu", PassiveActionImpl.getInstance(), periodOrderMenu)
+                new MenuItem("Sort by filing date", new CompletedSortFilingOrderActionImpl(), completedOrderMenu),
+                new MenuItem("Sort by execution date", new CompletedSortExecutionOrderActionImpl(), completedOrderMenu),
+                new MenuItem("Sort by price", new CompletedSortPriceOrderActionImpl(), completedOrderMenu),
+                new MenuItem("Previous menu", new PassiveActionImpl(), periodOrderMenu)
         )));
         deletedOrderMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("Sort by filing date", DeletedSortFilingOrderActionImpl.getInstance(), deletedOrderMenu),
-                new MenuItem("Sort by execution date", DeletedSortExecutionOrderActionImpl.getInstance(), deletedOrderMenu),
-                new MenuItem("Sort by price", DeletedSortPriceOrderActionImpl.getInstance(), deletedOrderMenu),
-                new MenuItem("Previous menu", PassiveActionImpl.getInstance(), periodOrderMenu)
+                new MenuItem("Sort by filing date", new DeletedSortFilingOrderActionImpl(), deletedOrderMenu),
+                new MenuItem("Sort by execution date", new DeletedSortExecutionOrderActionImpl(), deletedOrderMenu),
+                new MenuItem("Sort by price", new DeletedSortPriceOrderActionImpl(), deletedOrderMenu),
+                new MenuItem("Previous menu", new PassiveActionImpl(), periodOrderMenu)
         )));
         canceledOrderMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("Sort by filing date", CanceledSortFilingOrderActionImpl.getInstance(), canceledOrderMenu),
-                new MenuItem("Sort by execution date", CanceledSortExecutionOrderActionImpl.getInstance(), canceledOrderMenu),
-                new MenuItem("Sort by price", CanceledSortPriceOrderActionImpl.getInstance(), canceledOrderMenu),
-                new MenuItem("Previous menu", PassiveActionImpl.getInstance(), periodOrderMenu)
+                new MenuItem("Sort by filing date", new CanceledSortFilingOrderActionImpl(), canceledOrderMenu),
+                new MenuItem("Sort by execution date", new CanceledSortExecutionOrderActionImpl(), canceledOrderMenu),
+                new MenuItem("Sort by price", new CanceledSortPriceOrderActionImpl(), canceledOrderMenu),
+                new MenuItem("Previous menu", new PassiveActionImpl(), periodOrderMenu)
         )));
     }
 

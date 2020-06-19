@@ -12,17 +12,9 @@ import com.senla.carservice.dto.OrderDto;
 
 import java.util.ArrayList;
 
-public final class DemoActionImpl implements Action {
-    private static DemoActionImpl instance;
+public class DemoActionImpl implements Action {
 
     public DemoActionImpl() {
-    }
-
-    public static DemoActionImpl getInstance() {
-        if (instance == null) {
-            instance = new DemoActionImpl();
-        }
-        return instance;
     }
 
     @Override

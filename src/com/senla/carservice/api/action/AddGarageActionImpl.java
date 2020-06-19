@@ -5,17 +5,9 @@ import com.senla.carservice.controller.GarageController;
 
 import java.util.Scanner;
 
-public final class AddGarageActionImpl implements Action {
-    private static AddGarageActionImpl instance;
+public class AddGarageActionImpl implements Action {
 
     public AddGarageActionImpl() {
-    }
-
-    public static AddGarageActionImpl getInstance() {
-        if (instance == null) {
-            instance = new AddGarageActionImpl();
-        }
-        return instance;
     }
 
     @Override

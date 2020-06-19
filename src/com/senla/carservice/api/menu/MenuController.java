@@ -2,7 +2,8 @@ package com.senla.carservice.api.menu;
 
 import java.util.Scanner;
 
-public class MenuController {
+public final class MenuController {
+    private static MenuController instance;
     Builder builder;
     Navigator navigator;
 
@@ -10,6 +11,13 @@ public class MenuController {
         this.builder = Builder.getInstance();
         this.builder.buildMenu();
         this.navigator = Navigator.getInstance(this.builder.getRootMenu());
+    }
+
+    public static MenuController getInstance() {
+        if (instance == null) {
+            instance = new MenuController();
+        }
+        return instance;
     }
 
     public void run() {

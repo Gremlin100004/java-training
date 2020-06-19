@@ -7,17 +7,9 @@ import com.senla.carservice.domain.Garage;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public final class DeletePlaceActionImpl implements Action {
-    private static DeletePlaceActionImpl instance;
+public class DeletePlaceActionImpl implements Action {
 
     public DeletePlaceActionImpl() {
-    }
-
-    public static DeletePlaceActionImpl getInstance() {
-        if (instance == null) {
-            instance = new DeletePlaceActionImpl();
-        }
-        return instance;
     }
 
     @Override

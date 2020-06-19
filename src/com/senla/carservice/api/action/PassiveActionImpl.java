@@ -1,16 +1,8 @@
 package com.senla.carservice.api.action;
 
-public final class PassiveActionImpl implements Action {
-    private static PassiveActionImpl instance;
+public class PassiveActionImpl implements Action {
 
     public PassiveActionImpl() {
-    }
-
-    public static PassiveActionImpl getInstance() {
-        if (instance == null) {
-            instance = new PassiveActionImpl();
-        }
-        return instance;
     }
 
     @Override

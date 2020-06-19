@@ -6,17 +6,9 @@ import com.senla.carservice.domain.Master;
 
 import java.util.ArrayList;
 
-public final class AlphabetListMasterActionImpl implements Action {
-    private static AlphabetListMasterActionImpl instance;
+public class AlphabetListMasterActionImpl implements Action {
 
     public AlphabetListMasterActionImpl() {
-    }
-
-    public static AlphabetListMasterActionImpl getInstance() {
-        if (instance == null) {
-            instance = new AlphabetListMasterActionImpl();
-        }
-        return instance;
     }
 
     @Override

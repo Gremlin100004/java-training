@@ -2,17 +2,9 @@ package com.senla.carservice.api.action;
 
 import com.senla.carservice.controller.CarOfficeController;
 
-public final class FreeDateActionImpl implements Action {
-    private static FreeDateActionImpl instance;
+public class FreeDateActionImpl implements Action {
 
     public FreeDateActionImpl() {
-    }
-
-    public static FreeDateActionImpl getInstance() {
-        if (instance == null) {
-            instance = new FreeDateActionImpl();
-        }
-        return instance;
     }
 
     @Override

@@ -7,17 +7,9 @@ import com.senla.carservice.domain.Order;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public final class CanceledSortExecutionOrderActionImpl implements Action {
-    private static CanceledSortExecutionOrderActionImpl instance;
+public class CanceledSortExecutionOrderActionImpl implements Action {
 
     public CanceledSortExecutionOrderActionImpl() {
-    }
-
-    public static CanceledSortExecutionOrderActionImpl getInstance() {
-        if (instance == null) {
-            instance = new CanceledSortExecutionOrderActionImpl();
-        }
-        return instance;
     }
 
     @Override

@@ -5,17 +5,9 @@ import com.senla.carservice.controller.MasterController;
 
 import java.util.Scanner;
 
-public final class AddMasterActionImpl implements Action {
-    private static AddMasterActionImpl instance;
+public class AddMasterActionImpl implements Action {
 
     public AddMasterActionImpl() {
-    }
-
-    public static AddMasterActionImpl getInstance() {
-        if (instance == null) {
-            instance = new AddMasterActionImpl();
-        }
-        return instance;
     }
 
     @Override

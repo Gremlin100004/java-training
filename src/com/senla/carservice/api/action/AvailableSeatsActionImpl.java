@@ -6,17 +6,9 @@ import com.senla.carservice.controller.MasterController;
 
 import java.util.Scanner;
 
-public final class AvailableSeatsActionImpl implements Action {
-    private static AvailableSeatsActionImpl instance;
+public class AvailableSeatsActionImpl implements Action {
 
     public AvailableSeatsActionImpl() {
-    }
-
-    public static AvailableSeatsActionImpl getInstance() {
-        if (instance == null) {
-            instance = new AvailableSeatsActionImpl();
-        }
-        return instance;
     }
 
     @Override

@@ -6,17 +6,9 @@ import com.senla.carservice.domain.Master;
 
 import java.util.ArrayList;
 
-public final class BusyListMastersActionImpl implements Action {
-    private static BusyListMastersActionImpl instance;
+public class BusyListMastersActionImpl implements Action {
 
     public BusyListMastersActionImpl() {
-    }
-
-    public static BusyListMastersActionImpl getInstance() {
-        if (instance == null) {
-            instance = new BusyListMastersActionImpl();
-        }
-        return instance;
     }
 
     @Override

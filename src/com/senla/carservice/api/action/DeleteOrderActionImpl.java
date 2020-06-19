@@ -10,17 +10,9 @@ import com.senla.carservice.domain.Order;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public final class DeleteOrderActionImpl implements Action {
-    private static DeleteOrderActionImpl instance;
+public class DeleteOrderActionImpl implements Action {
 
     public DeleteOrderActionImpl() {
-    }
-
-    public static DeleteOrderActionImpl getInstance() {
-        if (instance == null) {
-            instance = new DeleteOrderActionImpl();
-        }
-        return instance;
     }
 
     @Override

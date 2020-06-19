@@ -6,11 +6,19 @@ import com.senla.carservice.service.MasterServiceImpl;
 
 import java.util.ArrayList;
 
-public class MasterController {
+public final class MasterController {
+    private static MasterController instance;
     private final MasterService masterService;
 
     public MasterController() {
         this.masterService = new MasterServiceImpl();
+    }
+
+    public static MasterController getInstance() {
+        if (instance == null) {
+            instance = new MasterController();
+        }
+        return instance;
     }
 
     public ArrayList<Master> getMasters() {

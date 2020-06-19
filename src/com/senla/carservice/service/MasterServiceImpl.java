@@ -8,7 +8,7 @@ import com.senla.carservice.repository.CarOfficeRepositoryImpl;
 
 import java.util.ArrayList;
 
-public final class MasterServiceImpl implements MasterService {
+public  class MasterServiceImpl implements MasterService {
     private static MasterServiceImpl instance;
     private final CarOfficeRepository carOfficeRepository;
 

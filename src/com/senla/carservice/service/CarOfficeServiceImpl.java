@@ -7,7 +7,7 @@ import com.senla.carservice.repository.CarOfficeRepositoryImpl;
 
 import java.util.ArrayList;
 
-public final class CarOfficeServiceImpl implements CarOfficeService {
+public class CarOfficeServiceImpl implements CarOfficeService {
     private static CarOfficeServiceImpl instance;
     private final CarOfficeRepository carOfficeRepository;
 
