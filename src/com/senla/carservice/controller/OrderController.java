@@ -2,19 +2,21 @@ package com.senla.carservice.controller;
 
 import com.senla.carservice.domain.Car;
 import com.senla.carservice.domain.Master;
-import com.senla.carservice.repository.Order;
-import com.senla.carservice.repository.OrderDto;
-import com.senla.carservice.service.IAdministrator;
+import com.senla.carservice.domain.Order;
+import com.senla.carservice.dto.OrderDto;
+import com.senla.carservice.service.OrderService;
+import com.senla.carservice.service.OrderServiceImpl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class OrderController {
-    private final IAdministrator carService;
+    private final OrderService orderService;
 
-    public OrderController(IAdministrator carService) {
-        this.carService = carService;
+    public OrderController() {
+        this.orderService = new OrderServiceImpl();
     }
 
     public String addOrder(OrderDto orderDto) {
@@ -25,21 +27,39 @@ public class OrderController {
             executionStartTime = format.parse(orderDto.getExecutionStartTime());
             leadTime = format.parse(orderDto.getLeadTime());
         } catch (ParseException e) {
-            return "error date, should be dd.MM.yyyy";
+            return "Error date, should be \"dd.MM.yyyy hh:mm\"";
+        }
+        if (executionStartTime.compareTo(leadTime) > 0) {
+            return "Error!!!, Lead time can't be early then planning time to start working!";
+        }
+        if (executionStartTime.compareTo(new Date()) < 1) {
+            return "Error!!!, You can't start work at past!";
+        }
+        ArrayList<Order> controlOrder = orderService.sortOrderByPeriod(orderService.getOrders(), executionStartTime, leadTime);
+
+        for (Order order : controlOrder) {
+            for (Master master : orderDto.getMasters()) {
+                if (order.getMasters().contains(master)) {
+                    return "Error!!!, Master is busy in this time!";
+                }
+            }
+            if (order.getPlace().equals(orderDto.getPlace())) {
+                return "Error!!!, The place in garage is busy!";
+            }
         }
         Car car = new Car(orderDto.getAutomaker(), orderDto.getModel(), orderDto.getRegistrationNumber());
         Order order = new Order(executionStartTime, leadTime, orderDto.getMasters(), orderDto.getGarage(),
                 orderDto.getPlace(), car, orderDto.getPrice());
-        this.carService.addOrder(order);
+        this.orderService.addOrder(order);
         return "order add successfully!";
     }
 
-    public Order[] getOrders() {
-        return this.carService.getOrders();
+    public ArrayList<Order> getOrders() {
+        return this.orderService.getOrders();
     }
 
     public String completeOrder(Order order) {
-        boolean statusOperation = this.carService.completeOrder(order);
+        boolean statusOperation = this.orderService.completeOrder(order);
         if (statusOperation) {
             return " - the order has been transferred to execution status";
         } else {
@@ -48,25 +68,25 @@ public class OrderController {
     }
 
     public String closeOrder(Order order) {
-        boolean statusOperation = this.carService.closeOrder(order);
+        boolean statusOperation = this.orderService.closeOrder(order);
         if (statusOperation) {
             return " -the order has been completed.";
         } else {
-            return " -the order is deleted.";
+            return " -the order can't change the status.";
         }
     }
 
     public String cancelOrder(Order order) {
-        boolean statusOperation = this.carService.cancelOrder(order);
+        boolean statusOperation = this.orderService.cancelOrder(order);
         if (statusOperation) {
             return " -the order has been canceled.";
         } else {
-            return " -the order is deleted.";
+            return " -the order can't change the status.";
         }
     }
 
     public String deleteOrder(Order order) {
-        boolean statusOperation = this.carService.deleteOrder(order);
+        boolean statusOperation = this.orderService.deleteOrder(order);
         if (statusOperation) {
             return " -the order has been deleted.";
         } else {
@@ -82,9 +102,9 @@ public class OrderController {
             executionStartTime = format.parse(stringStartTime);
             leadTime = format.parse(stringLeadTime);
         } catch (ParseException e) {
-            return "error date, shoud be dd.MM.yyyy";
+            return "error date, should be dd.MM.yyyy";
         }
-        boolean statusOperation = this.carService.shiftLeadTime(order, executionStartTime, leadTime);
+        boolean statusOperation = this.orderService.shiftLeadTime(order, executionStartTime, leadTime);
         if (statusOperation) {
             return " -the order lead time has been changed.";
         } else {
@@ -92,27 +112,27 @@ public class OrderController {
         }
     }
 
-    public Order[] sortOrderByCreationTime(Order[] orders) {
-        return this.carService.sortOrderCreationTime(orders);
+    public ArrayList<Order> sortOrderByCreationTime(ArrayList<Order> orders) {
+        return this.orderService.sortOrderCreationTime(orders);
     }
 
-    public Order[] sortOrderByLeadTime(Order[] orders) {
-        return this.carService.sortOrderByLeadTime(orders);
+    public ArrayList<Order> sortOrderByLeadTime(ArrayList<Order> orders) {
+        return this.orderService.sortOrderByLeadTime(orders);
     }
 
-    public Order[] sortOrderByStartTime(Order[] orders) {
-        return this.carService.sortOrderByStartTime(orders);
+    public ArrayList<Order> sortOrderByStartTime(ArrayList<Order> orders) {
+        return this.orderService.sortOrderByStartTime(orders);
     }
 
-    public Order[] sortOrderByPrice(Order[] orders) {
-        return this.carService.sortOrderByPrice(orders);
+    public ArrayList<Order> sortOrderByPrice(ArrayList<Order> orders) {
+        return this.orderService.sortOrderByPrice(orders);
     }
 
-    public Order[] getExecuteOrder() {
-        return this.carService.getCurrentRunningOrders();
+    public ArrayList<Order> getExecuteOrder() {
+        return this.orderService.getCurrentRunningOrders();
     }
 
-    public Order[] getOrdersByPeriod(String startPeriod, String endPeriod) {
+    public ArrayList<Order> getOrdersByPeriod(String startPeriod, String endPeriod) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date startPeriodDate;
         Date endPeriodDate;
@@ -123,28 +143,28 @@ public class OrderController {
             startPeriodDate = null;
             endPeriodDate = null;
         }
-        Order[] orders = this.carService.getOrders();
-        orders = this.carService.sortOrderByPeriod(orders, startPeriodDate, endPeriodDate);
+        ArrayList<Order> orders = this.orderService.getOrders();
+        orders = this.orderService.sortOrderByPeriod(orders, startPeriodDate, endPeriodDate);
         return orders;
     }
 
-    public Order[] getCompletedOrders(Order[] orders) {
-        return this.carService.getCompletedOrders(orders);
+    public ArrayList<Order> getCompletedOrders(ArrayList<Order> orders) {
+        return this.orderService.getCompletedOrders(orders);
     }
 
-    public Order[] getCanceledOrders(Order[] orders) {
-        return this.carService.getCanceledOrders(orders);
+    public ArrayList<Order> getCanceledOrders(ArrayList<Order> orders) {
+        return this.orderService.getCanceledOrders(orders);
     }
 
-    public Order[] getDeletedOrders(Order[] orders) {
-        return this.carService.getDeletedOrders(orders);
+    public ArrayList<Order> getDeletedOrders(ArrayList<Order> orders) {
+        return this.orderService.getDeletedOrders(orders);
     }
 
-    public Order[] getMasterOrders(Master master) {
-        return this.carService.getMasterOrders(master);
+    public ArrayList<Order> getMasterOrders(Master master) {
+        return this.orderService.getMasterOrders(master);
     }
 
-    public Master[] getOrderMasters(Order order) {
-        return this.carService.getOrderMasters(order);
+    public ArrayList<Master> getOrderMasters(Order order) {
+        return this.orderService.getOrderMasters(order);
     }
 }

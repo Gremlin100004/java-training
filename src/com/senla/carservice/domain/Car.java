@@ -1,9 +1,15 @@
 package com.senla.carservice.domain;
 
-public class Car {
+import java.util.Objects;
+
+public class Car extends AEntity {
+    private Long id;
     private String automaker;
     private String model;
     private String registrationNumber;
+
+    public Car() {
+    }
 
     public Car(String automaker, String model, String registrationNumber) {
         this.automaker = automaker;
@@ -24,11 +30,34 @@ public class Car {
     }
 
     @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
     public String toString() {
         return "Car{" +
                 "automaker='" + automaker + '\'' +
                 ", model='" + model + '\'' +
                 ", registrationNumber='" + registrationNumber + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Car car = (Car) o;
+        return id.equals(car.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
