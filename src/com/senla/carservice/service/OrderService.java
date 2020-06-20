@@ -3,11 +3,11 @@ package com.senla.carservice.service;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public interface OrderService {
-    ArrayList<Order> getOrders();
+    List<Order> getOrders();
 
     void addOrder(Order order);
 
@@ -22,25 +22,25 @@ public interface OrderService {
     boolean shiftLeadTime(Order order, Date executionStartTime,
                           Date leadTime);
 
-    ArrayList<Order> sortOrderCreationTime(ArrayList<Order> order);
+    List<Order> sortOrderCreationTime(List<Order> order);
 
-    ArrayList<Order> sortOrderByLeadTime(ArrayList<Order> order);
+    List<Order> sortOrderByLeadTime(List<Order> order);
 
-    ArrayList<Order> sortOrderByStartTime(ArrayList<Order> order);
+    List<Order> sortOrderByStartTime(List<Order> order);
 
-    ArrayList<Order> sortOrderByPrice(ArrayList<Order> order);
+    List<Order> sortOrderByPrice(List<Order> order);
 
-    ArrayList<Order> sortOrderByPeriod(ArrayList<Order> orders, Date startPeriod, Date endPeriod);
+    List<Order> sortOrderByPeriod(List<Order> orders, Date startPeriod, Date endPeriod);
 
-    ArrayList<Order> getCurrentRunningOrders();
+    List<Order> getCurrentRunningOrders();
 
-    ArrayList<Order> getMasterOrders(Master master);
+    List<Order> getMasterOrders(Master master);
 
-    ArrayList<Master> getOrderMasters(Order order);
+    List<Master> getOrderMasters(Order order);
 
-    ArrayList<Order> getCompletedOrders(ArrayList<Order> orders);
+    List<Order> getCompletedOrders(List<Order> orders);
 
-    ArrayList<Order> getCanceledOrders(ArrayList<Order> orders);
+    List<Order> getCanceledOrders(List<Order> orders);
 
-    ArrayList<Order> getDeletedOrders(ArrayList<Order> orders);
+    List<Order> getDeletedOrders(List<Order> orders);
 }

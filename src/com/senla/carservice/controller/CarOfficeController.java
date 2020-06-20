@@ -10,15 +10,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public final class CarOfficeController {
+public class CarOfficeController {
     private static CarOfficeController instance;
     private final CarOfficeService carOfficeService;
     private final OrderService orderService;
     private final MasterService masterService;
     private final GarageService garageService;
 
-    public CarOfficeController() {
+    private CarOfficeController() {
         this.carOfficeService = CarOfficeServiceImpl.getInstance();
         this.orderService = OrderServiceImpl.getInstance();
         this.masterService = MasterServiceImpl.getInstance();
@@ -32,7 +33,7 @@ public final class CarOfficeController {
         return instance;
     }
 
-    public ArrayList<Garage> getGarageFreePlace(String stringExecuteDate, String stringLeadDate) {
+    public List<Garage> getGarageFreePlace(String stringExecuteDate, String stringLeadDate) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         Date executeDate;
         Date leadDate;
@@ -42,8 +43,8 @@ public final class CarOfficeController {
         } catch (ParseException e) {
             return new ArrayList<>();
         }
-        ArrayList<Garage> freeGarages = new ArrayList<>(this.garageService.getGarages());
-        ArrayList<Order> orders = this.orderService.getOrders();
+        List<Garage> freeGarages = new ArrayList<>(this.garageService.getGarages());
+        List<Order> orders = this.orderService.getOrders();
         orders = this.orderService.sortOrderByPeriod(orders, executeDate, leadDate);
         for (Order order : orders) {
             for (Garage garage : freeGarages) {
@@ -56,7 +57,7 @@ public final class CarOfficeController {
         return freeGarages;
     }
 
-    public ArrayList<Master> getFreeMasters(String stringExecuteDate, String stringLeadDate) {
+    public List<Master> getFreeMasters(String stringExecuteDate, String stringLeadDate) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         Date executeDate;
         Date leadDate;
@@ -67,7 +68,7 @@ public final class CarOfficeController {
         } catch (ParseException e) {
             return freeMasters;
         }
-        ArrayList<Order> orders = this.orderService.getOrders();
+        List<Order> orders = this.orderService.getOrders();
         orders = this.orderService.sortOrderByPeriod(orders, executeDate, leadDate);
         for (Order order : orders) {
             order.getMasters().forEach(freeMasters::remove);
@@ -92,7 +93,7 @@ public final class CarOfficeController {
         if (currentDate.compareTo(endDay) > 0) {
             return "past date";
         }
-        ArrayList<Order> orders = this.orderService.getOrders();
+        List<Order> orders = this.orderService.getOrders();
         orders = this.orderService.sortOrderByPeriod(orders, dateFree, endDay);
         int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
         int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);
@@ -110,7 +111,7 @@ public final class CarOfficeController {
         }
         while (true) {
             Date endDay = DateUtil.addHourMinutes(dateFree, hour, minute);
-            ArrayList<Order> orders = this.orderService.getOrders();
+            List<Order> orders = this.orderService.getOrders();
             orders = this.orderService.sortOrderByPeriod(orders, dateFree, endDay);
             int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
             int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);

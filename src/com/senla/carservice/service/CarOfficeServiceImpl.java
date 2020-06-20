@@ -2,40 +2,40 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.repository.CarOfficeRepository;
-import com.senla.carservice.repository.CarOfficeRepositoryImpl;
+import com.senla.carservice.repository.*;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CarOfficeServiceImpl implements CarOfficeService {
-    private static CarOfficeServiceImpl instance;
-    private final CarOfficeRepository carOfficeRepository;
+    private static CarOfficeService instance;
+    private final MasterRepository masterRepository;
+    private final GarageRepository garageRepository;
 
-    public CarOfficeServiceImpl() {
-        this.carOfficeRepository = CarOfficeRepositoryImpl.getInstance();
+    private CarOfficeServiceImpl() {
+        this.masterRepository = MasterRepositoryImpl.getInstance();
+        this.garageRepository = GarageRepositoryImpl.getInstance();
     }
 
-    public static CarOfficeServiceImpl getInstance() {
+    public static CarOfficeService getInstance() {
         if (instance == null) {
             instance = new CarOfficeServiceImpl();
         }
         return instance;
     }
 
-
     @Override
-    public int getNumberFreePlaceDate(ArrayList<Order> orders) {
+    public int getNumberFreePlaceDate(List<Order> orders) {
         int numberGeneralPlace = 0;
         int numberPlaceOrders = orders.size();
-        for (Garage garage : this.carOfficeRepository.getGarages())
+        for (Garage garage : this.garageRepository.getGarages())
             numberGeneralPlace += garage.getPlaces().size();
         return numberGeneralPlace - numberPlaceOrders;
     }
 
     @Override
-    public int getNumberFreeMasters(ArrayList<Order> orders) {
+    public int getNumberFreeMasters(List<Order> orders) {
         int numberMastersOrders = 0;
-        int numberGeneralMasters = this.carOfficeRepository.getMasters().size();
+        int numberGeneralMasters = this.masterRepository.getMasters().size();
         for (Order order : orders)
             numberMastersOrders += order.getMasters().size();
         return numberGeneralMasters - numberMastersOrders;

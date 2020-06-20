@@ -1,6 +1,5 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.api.menu.MenuController;
 import com.senla.carservice.domain.Car;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
@@ -10,15 +9,15 @@ import com.senla.carservice.service.OrderServiceImpl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public final class OrderController {
+public class OrderController {
     private static OrderController instance;
     private final OrderService orderService;
 
-    public OrderController() {
-        this.orderService = new OrderServiceImpl();
+    private OrderController() {
+        this.orderService = OrderServiceImpl.getInstance();
     }
 
     public static OrderController getInstance() {
@@ -44,7 +43,7 @@ public final class OrderController {
         if (executionStartTime.compareTo(new Date()) < 1) {
             return "Error!!!, You can't start work at past!";
         }
-        ArrayList<Order> controlOrder = orderService.sortOrderByPeriod(orderService.getOrders(), executionStartTime, leadTime);
+        List<Order> controlOrder = orderService.sortOrderByPeriod(orderService.getOrders(), executionStartTime, leadTime);
 
         for (Order order : controlOrder) {
             for (Master master : orderDto.getMasters()) {
@@ -63,7 +62,7 @@ public final class OrderController {
         return "order add successfully!";
     }
 
-    public ArrayList<Order> getOrders() {
+    public List<Order> getOrders() {
         return this.orderService.getOrders();
     }
 
@@ -121,27 +120,27 @@ public final class OrderController {
         }
     }
 
-    public ArrayList<Order> sortOrderByCreationTime(ArrayList<Order> orders) {
+    public List<Order> sortOrderByCreationTime(List<Order> orders) {
         return this.orderService.sortOrderCreationTime(orders);
     }
 
-    public ArrayList<Order> sortOrderByLeadTime(ArrayList<Order> orders) {
+    public List<Order> sortOrderByLeadTime(List<Order> orders) {
         return this.orderService.sortOrderByLeadTime(orders);
     }
 
-    public ArrayList<Order> sortOrderByStartTime(ArrayList<Order> orders) {
+    public List<Order> sortOrderByStartTime(List<Order> orders) {
         return this.orderService.sortOrderByStartTime(orders);
     }
 
-    public ArrayList<Order> sortOrderByPrice(ArrayList<Order> orders) {
+    public List<Order> sortOrderByPrice(List<Order> orders) {
         return this.orderService.sortOrderByPrice(orders);
     }
 
-    public ArrayList<Order> getExecuteOrder() {
+    public List<Order> getExecuteOrder() {
         return this.orderService.getCurrentRunningOrders();
     }
 
-    public ArrayList<Order> getOrdersByPeriod(String startPeriod, String endPeriod) {
+    public List<Order> getOrdersByPeriod(String startPeriod, String endPeriod) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date startPeriodDate;
         Date endPeriodDate;
@@ -152,28 +151,28 @@ public final class OrderController {
             startPeriodDate = null;
             endPeriodDate = null;
         }
-        ArrayList<Order> orders = this.orderService.getOrders();
+        List<Order> orders = this.orderService.getOrders();
         orders = this.orderService.sortOrderByPeriod(orders, startPeriodDate, endPeriodDate);
         return orders;
     }
 
-    public ArrayList<Order> getCompletedOrders(ArrayList<Order> orders) {
+    public List<Order> getCompletedOrders(List<Order> orders) {
         return this.orderService.getCompletedOrders(orders);
     }
 
-    public ArrayList<Order> getCanceledOrders(ArrayList<Order> orders) {
+    public List<Order> getCanceledOrders(List<Order> orders) {
         return this.orderService.getCanceledOrders(orders);
     }
 
-    public ArrayList<Order> getDeletedOrders(ArrayList<Order> orders) {
+    public List<Order> getDeletedOrders(List<Order> orders) {
         return this.orderService.getDeletedOrders(orders);
     }
 
-    public ArrayList<Order> getMasterOrders(Master master) {
+    public List<Order> getMasterOrders(Master master) {
         return this.orderService.getMasterOrders(master);
     }
 
-    public ArrayList<Master> getOrderMasters(Order order) {
+    public List<Master> getOrderMasters(Order order) {
         return this.orderService.getOrderMasters(order);
     }
 }

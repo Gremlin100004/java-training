@@ -1,19 +1,18 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.api.menu.MenuController;
 import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.service.GarageService;
 import com.senla.carservice.service.GarageServiceImpl;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public final class GarageController {
+public class GarageController {
     private static GarageController instance;
     private final GarageService garageService;
 
-    public GarageController() {
-        this.garageService = new GarageServiceImpl();
+    private GarageController() {
+        this.garageService = GarageServiceImpl.getInstance();
     }
 
     public static GarageController getInstance() {
@@ -28,7 +27,7 @@ public final class GarageController {
         return String.format("-garage \"%s\" has been added to service", name);
     }
 
-    public ArrayList<Garage> getArrayGarages() {
+    public List<Garage> getArrayGarages() {
         return this.garageService.getGarages();
     }
 
@@ -55,7 +54,7 @@ public final class GarageController {
         return this.garageService.getFreePlaceGarage(garage).size();
     }
 
-    public ArrayList<Place> getFreePlaceGarage(Garage garage) {
+    public List<Place> getFreePlaceGarage(Garage garage) {
         return this.garageService.getFreePlaceGarage(garage);
     }
 }

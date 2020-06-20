@@ -1,27 +1,28 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.comporator.OrderCreationComparator;
-import com.senla.carservice.comporator.OrderLeadComparator;
-import com.senla.carservice.comporator.OrderPriceComparator;
-import com.senla.carservice.comporator.OrderStartComparator;
+import com.senla.carservice.comparator.OrderCreationComparator;
+import com.senla.carservice.comparator.OrderLeadComparator;
+import com.senla.carservice.comparator.OrderPriceComparator;
+import com.senla.carservice.comparator.OrderStartComparator;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Status;
-import com.senla.carservice.repository.CarOfficeRepository;
-import com.senla.carservice.repository.CarOfficeRepositoryImpl;
+import com.senla.carservice.repository.OrderRepository;
+import com.senla.carservice.repository.OrderRepositoryImpl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class OrderServiceImpl implements OrderService {
-    private static OrderServiceImpl instance;
-    private final CarOfficeRepository carOfficeRepository;
+    private static OrderService instance;
+    private final OrderRepository orderRepository;
 
-    public OrderServiceImpl() {
-        this.carOfficeRepository = CarOfficeRepositoryImpl.getInstance();
+    private OrderServiceImpl() {
+        this.orderRepository = OrderRepositoryImpl.getInstance();
     }
 
-    public static OrderServiceImpl getInstance() {
+    public static OrderService getInstance() {
         if (instance == null) {
             instance = new OrderServiceImpl();
         }
@@ -29,14 +30,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ArrayList<Order> getOrders() {
-        return this.carOfficeRepository.getOrders();
+    public List<Order> getOrders() {
+        return this.orderRepository.getOrders();
     }
 
     @Override
     public void addOrder(Order order) {
-        order.setId(this.carOfficeRepository.getIdGeneratorOrder().getId());
-        this.carOfficeRepository.getOrders().add(order);
+        order.setId(this.orderRepository.getIdGeneratorOrder().getId());
+        this.orderRepository.getOrders().add(order);
         for (Master master : order.getMasters()) {
             if (master.getNumberOrder() != null) {
                 master.setNumberOrder(master.getNumberOrder() + 1);
@@ -114,39 +115,39 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ArrayList<Order> sortOrderCreationTime(ArrayList<Order> orders) {
-        ArrayList<Order> sortArrayOrder = new ArrayList<>(orders);
+    public List<Order> sortOrderCreationTime(List<Order> orders) {
+        List<Order> sortArrayOrder = new ArrayList<>(orders);
         OrderCreationComparator orderCreationComparator = new OrderCreationComparator();
         sortArrayOrder.sort(orderCreationComparator);
         return sortArrayOrder;
     }
 
     @Override
-    public ArrayList<Order> sortOrderByLeadTime(ArrayList<Order> orders) {
-        ArrayList<Order> sortArrayOrder = new ArrayList<>(orders);
+    public List<Order> sortOrderByLeadTime(List<Order> orders) {
+        List<Order> sortArrayOrder = new ArrayList<>(orders);
         OrderLeadComparator orderLeadComparator = new OrderLeadComparator();
         sortArrayOrder.sort(orderLeadComparator);
         return sortArrayOrder;
     }
 
     @Override
-    public ArrayList<Order> sortOrderByPrice(ArrayList<Order> orders) {
-        ArrayList<Order> sortArrayOrder = new ArrayList<>(orders);
+    public List<Order> sortOrderByPrice(List<Order> orders) {
+        List<Order> sortArrayOrder = new ArrayList<>(orders);
         OrderPriceComparator orderPriceComparator = new OrderPriceComparator();
         sortArrayOrder.sort(orderPriceComparator);
         return sortArrayOrder;
     }
 
     @Override
-    public ArrayList<Order> sortOrderByStartTime(ArrayList<Order> orders) {
-        ArrayList<Order> sortArrayOrder = new ArrayList<>(orders);
+    public List<Order> sortOrderByStartTime(List<Order> orders) {
+        List<Order> sortArrayOrder = new ArrayList<>(orders);
         OrderStartComparator orderStartComparator = new OrderStartComparator();
         sortArrayOrder.sort(orderStartComparator);
         return sortArrayOrder;
     }
 
     @Override
-    public ArrayList<Order> sortOrderByPeriod(ArrayList<Order> orders, Date startPeriod, Date endPeriod) {
+    public List<Order> sortOrderByPeriod(List<Order> orders, Date startPeriod, Date endPeriod) {
         ArrayList<Order> sortArrayOrder = new ArrayList<>();
         if (startPeriod == null || endPeriod == null) {
             return sortArrayOrder;
@@ -160,9 +161,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ArrayList<Order> getCurrentRunningOrders() {
-        ArrayList<Order> arrayOder = new ArrayList<>();
-        for (Order order : this.carOfficeRepository.getOrders()) {
+    public List<Order> getCurrentRunningOrders() {
+        List<Order> arrayOder = new ArrayList<>();
+        for (Order order : this.orderRepository.getOrders()) {
             if (order.isDeleteStatus()) {
                 continue;
             }
@@ -174,9 +175,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ArrayList<Order> getMasterOrders(Master master) {
-        ArrayList<Order> orders = new ArrayList<>();
-        for (Order order : this.carOfficeRepository.getOrders()) {
+    public List<Order> getMasterOrders(Master master) {
+        List<Order> orders = new ArrayList<>();
+        for (Order order : this.orderRepository.getOrders()) {
             if (order.isDeleteStatus()) {
                 continue;
             }
@@ -191,13 +192,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ArrayList<Master> getOrderMasters(Order order) {
+    public List<Master> getOrderMasters(Order order) {
         return order.getMasters();
     }
 
     @Override
-    public ArrayList<Order> getCompletedOrders(ArrayList<Order> orders) {
-        ArrayList<Order> sortOrders = new ArrayList<>();
+    public List<Order> getCompletedOrders(List<Order> orders) {
+        List<Order> sortOrders = new ArrayList<>();
         for (Order order : orders) {
             if (order.isDeleteStatus()) {
                 continue;
@@ -210,8 +211,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ArrayList<Order> getCanceledOrders(ArrayList<Order> orders) {
-        ArrayList<Order> sortOrders = new ArrayList<>();
+    public List<Order> getCanceledOrders(List<Order> orders) {
+        List<Order> sortOrders = new ArrayList<>();
         for (Order order : orders) {
             if (order.isDeleteStatus()) {
                 continue;
@@ -224,8 +225,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ArrayList<Order> getDeletedOrders(ArrayList<Order> orders) {
-        ArrayList<Order> sortOrders = new ArrayList<>();
+    public List<Order> getDeletedOrders(List<Order> orders) {
+        List<Order> sortOrders = new ArrayList<>();
         for (Order order : orders) {
             if (order.isDeleteStatus()) {
                 sortOrders.add(order);

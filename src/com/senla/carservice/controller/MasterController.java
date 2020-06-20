@@ -5,13 +5,14 @@ import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.MasterServiceImpl;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public final class MasterController {
+public class MasterController {
     private static MasterController instance;
     private final MasterService masterService;
 
-    public MasterController() {
-        this.masterService = new MasterServiceImpl();
+    private MasterController() {
+        this.masterService = MasterServiceImpl.getInstance();
     }
 
     public static MasterController getInstance() {
@@ -21,7 +22,7 @@ public final class MasterController {
         return instance;
     }
 
-    public ArrayList<Master> getMasters() {
+    public List<Master> getMasters() {
         return this.masterService.getMasters();
     }
 
@@ -35,11 +36,11 @@ public final class MasterController {
         return String.format(" -master with name \"%s\" has been deleted", master.getName());
     }
 
-    public ArrayList<Master> sortMasterByAlphabet() {
+    public List<Master> sortMasterByAlphabet() {
         return this.masterService.sortMasterByAlphabet(this.masterService.getMasters());
     }
 
-    public ArrayList<Master> sortMasterByBusy() {
+    public List<Master> sortMasterByBusy() {
         return this.masterService.sortMasterByBusy(this.masterService.getMasters());
     }
 }
