@@ -4,16 +4,25 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.MasterServiceImpl;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MasterController {
+    private static MasterController instance;
     private final MasterService masterService;
 
-    public MasterController() {
-        this.masterService = new MasterServiceImpl();
+
+    private MasterController() {
+        this.masterService = MasterServiceImpl.getInstance();
     }
 
-    public ArrayList<Master> getMasters() {
+    public static MasterController getInstance() {
+        if (instance == null) {
+            instance = new MasterController();
+        }
+        return instance;
+    }
+
+    public List<Master> getMasters() {
         return this.masterService.getMasters();
     }
 
@@ -27,11 +36,19 @@ public class MasterController {
         return String.format(" -master with name \"%s\" has been deleted", master.getName());
     }
 
-    public ArrayList<Master> sortMasterByAlphabet() {
+    public List<Master> sortMasterByAlphabet() {
         return this.masterService.sortMasterByAlphabet(this.masterService.getMasters());
     }
 
-    public ArrayList<Master> sortMasterByBusy() {
+    public List<Master> sortMasterByBusy() {
         return this.masterService.sortMasterByBusy(this.masterService.getMasters());
+    }
+
+    public String exportMasters() {
+        if (this.masterService.exportMasters().equals("save successfully")) {
+            return "Masters have been export successfully!";
+        } else {
+            return "export problem.";
+        }
     }
 }

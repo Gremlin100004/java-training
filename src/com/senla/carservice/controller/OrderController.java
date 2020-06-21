@@ -1,31 +1,50 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.domain.Car;
+import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.dto.OrderDto;
+import com.senla.carservice.domain.Place;
+import com.senla.carservice.service.CarOfficeService;
+import com.senla.carservice.service.CarOfficeServiceImpl;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.OrderServiceImpl;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class OrderController {
+    private static OrderController instance;
     private final OrderService orderService;
+    private final CarOfficeService carOfficeService;
 
-    public OrderController() {
-        this.orderService = new OrderServiceImpl();
+    private OrderController() {
+        this.orderService = OrderServiceImpl.getInstance();
+        this.carOfficeService = CarOfficeServiceImpl.getInstance();
     }
 
-    public String addOrder(OrderDto orderDto) {
+    public static OrderController getInstance() {
+        if (instance == null) {
+            instance = new OrderController();
+        }
+        return instance;
+    }
+
+    public String addOrder(String automaker, String model, String registrationNumber) {
+        this.orderService.addOrder(automaker, model, registrationNumber);
+        return "order add successfully!";
+    }
+
+    public String addOrderDeadlines(String stringExecutionStartTime,  String stringLeadTime) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date executionStartTime;
         Date leadTime;
         try {
-            executionStartTime = format.parse(orderDto.getExecutionStartTime());
-            leadTime = format.parse(orderDto.getLeadTime());
+            executionStartTime = format.parse(stringExecutionStartTime);
+            leadTime = format.parse(stringLeadTime);
         } catch (ParseException e) {
             return "Error date, should be \"dd.MM.yyyy hh:mm\"";
         }
@@ -35,26 +54,48 @@ public class OrderController {
         if (executionStartTime.compareTo(new Date()) < 1) {
             return "Error!!!, You can't start work at past!";
         }
-        ArrayList<Order> controlOrder = orderService.sortOrderByPeriod(orderService.getOrders(), executionStartTime, leadTime);
 
-        for (Order order : controlOrder) {
-            for (Master master : orderDto.getMasters()) {
-                if (order.getMasters().contains(master)) {
-                    return "Error!!!, Master is busy in this time!";
-                }
-            }
-            if (order.getPlace().equals(orderDto.getPlace())) {
-                return "Error!!!, The place in garage is busy!";
-            }
+        List<Order> orders = new ArrayList<>(this.orderService.getOrders());
+        Order order = orders.get(orders.size()-1);
+        orders.remove(order);
+        orders = this.orderService.sortOrderByPeriod(orders, executionStartTime, leadTime);
+        int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
+        int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);
+        if (numberFreeMasters == 0){
+            return "Error!!!, All masters are busy at this time!";
         }
-        Car car = new Car(orderDto.getAutomaker(), orderDto.getModel(), orderDto.getRegistrationNumber());
-        Order order = new Order(executionStartTime, leadTime, orderDto.getMasters(), orderDto.getGarage(),
-                orderDto.getPlace(), car, orderDto.getPrice());
-        this.orderService.addOrder(order);
-        return "order add successfully!";
+        if (numberFreePlace == 0){
+            return "Error!!!, There are no free places at this time!";
+        }
+        order.setExecutionStartTime(executionStartTime);
+        order.setLeadTime(leadTime);
+        return "deadline add to order successfully";
     }
 
-    public ArrayList<Order> getOrders() {
+    public String addOrderMasters(List<Master> masters) {
+        for (Master master : masters) {
+            if (master.getNumberOrder() != null) {
+                master.setNumberOrder(master.getNumberOrder() + 1);
+            } else {
+                master.setNumberOrder(1);
+            }
+        }
+        orderService.getOrders().get(orderService.getOrders().size()-1).setMasters(masters);
+        return "masters add successfully";
+    }
+
+    public String addOrderPlaces(Garage garage, Place place) {
+        orderService.getOrders().get(orderService.getOrders().size()-1).setGarage(garage);
+        orderService.getOrders().get(orderService.getOrders().size()-1).setPlace(place);
+        return "place add to order successfully";
+    }
+
+    public String addOrderPrice(BigDecimal price){
+        orderService.getOrders().get(orderService.getOrders().size()-1).setPrice(price);
+        return "price add to order successfully";
+    }
+
+    public List<Order> getOrders() {
         return this.orderService.getOrders();
     }
 
@@ -112,27 +153,27 @@ public class OrderController {
         }
     }
 
-    public ArrayList<Order> sortOrderByCreationTime(ArrayList<Order> orders) {
+    public List<Order> sortOrderByCreationTime(List<Order> orders) {
         return this.orderService.sortOrderCreationTime(orders);
     }
 
-    public ArrayList<Order> sortOrderByLeadTime(ArrayList<Order> orders) {
+    public List<Order> sortOrderByLeadTime(List<Order> orders) {
         return this.orderService.sortOrderByLeadTime(orders);
     }
 
-    public ArrayList<Order> sortOrderByStartTime(ArrayList<Order> orders) {
+    public List<Order> sortOrderByStartTime(List<Order> orders) {
         return this.orderService.sortOrderByStartTime(orders);
     }
 
-    public ArrayList<Order> sortOrderByPrice(ArrayList<Order> orders) {
+    public List<Order> sortOrderByPrice(List<Order> orders) {
         return this.orderService.sortOrderByPrice(orders);
     }
 
-    public ArrayList<Order> getExecuteOrder() {
+    public List<Order> getExecuteOrder() {
         return this.orderService.getCurrentRunningOrders();
     }
 
-    public ArrayList<Order> getOrdersByPeriod(String startPeriod, String endPeriod) {
+    public List<Order> getOrdersByPeriod(String startPeriod, String endPeriod) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date startPeriodDate;
         Date endPeriodDate;
@@ -143,28 +184,36 @@ public class OrderController {
             startPeriodDate = null;
             endPeriodDate = null;
         }
-        ArrayList<Order> orders = this.orderService.getOrders();
+        List<Order> orders = this.orderService.getOrders();
         orders = this.orderService.sortOrderByPeriod(orders, startPeriodDate, endPeriodDate);
         return orders;
     }
 
-    public ArrayList<Order> getCompletedOrders(ArrayList<Order> orders) {
+    public List<Order> getCompletedOrders(List<Order> orders) {
         return this.orderService.getCompletedOrders(orders);
     }
 
-    public ArrayList<Order> getCanceledOrders(ArrayList<Order> orders) {
+    public List<Order> getCanceledOrders(List<Order> orders) {
         return this.orderService.getCanceledOrders(orders);
     }
 
-    public ArrayList<Order> getDeletedOrders(ArrayList<Order> orders) {
+    public List<Order> getDeletedOrders(List<Order> orders) {
         return this.orderService.getDeletedOrders(orders);
     }
 
-    public ArrayList<Order> getMasterOrders(Master master) {
+    public List<Order> getMasterOrders(Master master) {
         return this.orderService.getMasterOrders(master);
     }
 
-    public ArrayList<Master> getOrderMasters(Order order) {
+    public List<Master> getOrderMasters(Order order) {
         return this.orderService.getOrderMasters(order);
+    }
+
+    public String exportOrders(){
+        if (this.orderService.exportOrder().equals("save successfully")) {
+            return "Orders have been export successfully!";
+        } else {
+            return "export problem.";
+        }
     }
 }

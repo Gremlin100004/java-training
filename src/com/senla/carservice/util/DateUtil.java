@@ -1,7 +1,8 @@
 package com.senla.carservice.util;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class DateUtil {
     public static Date addDays(Date date, int days) {
@@ -26,5 +27,19 @@ public class DateUtil {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
+    }
+    public static Date getDatesFromString(String stringDate){
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        Date date;
+        try {
+            date = format.parse(stringDate);
+        } catch (ParseException e) {
+            date = null;
+        }
+        return date;
+    }
+    public static String getStringFromDate(Date date){
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+        return format.format(date);
     }
 }

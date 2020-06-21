@@ -1,11 +1,16 @@
 package com.senla.carservice.domain;
 
 public abstract class AEntity {
+    private Long id;
 
     public AEntity() {
     }
 
-    public abstract Long getId();
+    public Long getId() {
+        return id;
+    }
 
-    public abstract void setId(Long id);
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

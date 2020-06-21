@@ -3,14 +3,14 @@ package com.senla.carservice.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class Order extends AEntity {
-    private Long id;
     private final Date creationTime;
     private Date executionStartTime;
     private Date leadTime;
-    private ArrayList<Master> masters;
+    private List<Master> masters;
     private Garage garage;
     private Place place;
     private Car car;
@@ -18,21 +18,15 @@ public class Order extends AEntity {
     private Status status;
     private boolean deleteStatus;
 
-    public Order(Date executionStartTime, Date leadTime, ArrayList<Master> masters, Garage garage, Place place,
-                 Car car, BigDecimal price) {
+    public Order(Long id, Car car) {
+        super.setId(id);
         this.creationTime = new Date();
-        this.executionStartTime = executionStartTime;
-        this.leadTime = leadTime;
-        this.masters = masters;
-        this.garage = garage;
-        this.place = place;
         this.car = car;
-        this.price = price;
         this.status = Status.WAIT;
         this.deleteStatus = false;
     }
 
-    public ArrayList<Master> getMasters() {
+    public List<Master> getMasters() {
         return masters;
     }
 
@@ -80,7 +74,7 @@ public class Order extends AEntity {
         this.garage = garage;
     }
 
-    public void setMasters(ArrayList<Master> masters) {
+    public void setMasters(List<Master> masters) {
         this.masters = masters;
     }
 
@@ -109,25 +103,15 @@ public class Order extends AEntity {
     }
 
     @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return id.equals(order.id);
+        return super.getId().equals(order.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(super.getId());
     }
 }
