@@ -1,12 +1,11 @@
 package com.senla.carservice.ui.action;
 
-import com.senla.carservice.ui.printer.PrinterGarages;
 import com.senla.carservice.controller.GarageController;
 import com.senla.carservice.domain.Garage;
+import com.senla.carservice.ui.printer.PrinterGarages;
+import com.senla.carservice.ui.util.ScannerUtil;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class DeleteGarageActionImpl implements Action {
 
@@ -16,24 +15,18 @@ public class DeleteGarageActionImpl implements Action {
     @Override
     public void execute() {
         GarageController garageController = GarageController.getInstance();
-        Scanner scanner = new Scanner(System.in);
         List<Garage> garages = garageController.getArrayGarages();
-        if (garages.size() == 0) {
+        if (garages.isEmpty()) {
             System.out.println("There are no garages to delete!");
             return;
         }
         PrinterGarages.printGarages(garages);
         System.out.println("0. Previous menu");
-        String message;
-        while (true) {
-            System.out.println("Enter the index number of the garage to delete:");
-            while (!scanner.hasNextInt()) {
-                System.out.println("You enter wrong value!!!");
-                System.out.println("Try again:");
-                scanner.next();
-            }
-            int index = scanner.nextInt();
-            if (index == 0){
+        String message = null;
+        int index;
+        while (message == null) {
+            index = ScannerUtil.getIntUser("Enter the index number of the garage to delete:");
+            if (index == 0) {
                 return;
             }
             if (index > garages.size() || index < 0) {
@@ -41,7 +34,6 @@ public class DeleteGarageActionImpl implements Action {
                 continue;
             }
             message = garageController.deleteGarage(garages.get(index - 1));
-            break;
         }
         System.out.println(message);
     }

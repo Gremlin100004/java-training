@@ -10,7 +10,8 @@ public class Car extends AEntity {
     public Car() {
     }
 
-    public Car(String automaker, String model, String registrationNumber) {
+    public Car(Long id, String automaker, String model, String registrationNumber) {
+        super.setId(id);
         this.automaker = automaker;
         this.model = model;
         this.registrationNumber = registrationNumber;

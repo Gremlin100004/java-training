@@ -4,11 +4,13 @@ import com.senla.carservice.comparator.OrderCreationComparator;
 import com.senla.carservice.comparator.OrderLeadComparator;
 import com.senla.carservice.comparator.OrderPriceComparator;
 import com.senla.carservice.comparator.OrderStartComparator;
-import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Order;
-import com.senla.carservice.domain.Status;
+import com.senla.carservice.domain.*;
+import com.senla.carservice.repository.GarageRepository;
+import com.senla.carservice.repository.GarageRepositoryImpl;
 import com.senla.carservice.repository.OrderRepository;
 import com.senla.carservice.repository.OrderRepositoryImpl;
+import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.util.ExportUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,16 +37,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void addOrder(Order order) {
-        order.setId(this.orderRepository.getIdGeneratorOrder().getId());
+    public void addOrder(String automaker, String model, String registrationNumber) {
+        Order order = new Order(this.orderRepository.getIdGeneratorOrder().getId(),
+                new Car(this.orderRepository.getIdGeneratorCar().getId(), automaker, model, registrationNumber));
         this.orderRepository.getOrders().add(order);
-        for (Master master : order.getMasters()) {
-            if (master.getNumberOrder() != null) {
-                master.setNumberOrder(master.getNumberOrder() + 1);
-            } else {
-                master.setNumberOrder(1);
-            }
-        }
     }
 
     @Override
@@ -233,5 +229,71 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return sortOrders;
+    }
+
+    @Override
+    public String exportOrder(){
+        OrderRepository orderRepository = OrderRepositoryImpl.getInstance();
+        List<Order> orders = orderRepository.getOrders();
+        List<Car> cars = orderRepository.getCars();
+        StringBuilder valueOrderCsv = new StringBuilder();
+        StringBuilder valueCarCsv = new StringBuilder();
+        String message;
+        for (int i = 0; i < orders.size(); i++){
+            if (i == orders.size()-1){
+                valueOrderCsv.append(convertOrderToCsv(orders.get(i), false));
+            } else {
+                valueOrderCsv.append(convertOrderToCsv(orders.get(i), true));
+            }
+        }
+        for (int i = 0; i < cars.size(); i++){
+            if (i == cars.size()-1){
+                valueCarCsv.append(convertCarToCsv(cars.get(i), false));
+            } else {
+                valueCarCsv.append(convertCarToCsv(cars.get(i), true));
+            }
+        }
+        message = ExportUtil.SaveCsv(valueOrderCsv, "csv//order.csv");
+        if (!message.equals("save successfully")){
+            return message;
+        }
+        message = ExportUtil.SaveCsv(valueCarCsv, "csv//car.csv");
+        if (!message.equals("save successfully")){
+            return message;
+        }
+        return message;
+    }
+
+    private String convertCarToCsv(Car car, boolean isLineFeed){
+        if(isLineFeed){
+            return String.format("%s,%s,%s,%s\n", car.getId(),
+                    car.getAutomaker(), car.getModel(), car.getRegistrationNumber());
+        } else {
+            return String.format("%s,%s,%s,%s", car.getId(),
+                    car.getAutomaker(), car.getModel(), car.getRegistrationNumber());
+        }
+    }
+
+    private String convertOrderToCsv(Order order, boolean isLineFeed){
+        StringBuilder stringValue = new StringBuilder();
+        stringValue.append(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,\"",order.getId(),
+                DateUtil.getStringFromDate(order.getCreationTime()),
+                DateUtil.getStringFromDate(order.getExecutionStartTime()),
+                DateUtil.getStringFromDate(order.getLeadTime()),
+                order.getGarage().getId(), order.getPlace().getId(),
+                order.getCar().getId(), order.getPrice(), order.getStatus(),
+                order.isDeleteStatus()));
+        for (int i = 0; i < order.getMasters().size(); i++){
+            if (i == order.getMasters().size()-1){
+                stringValue.append(order.getMasters().get(i).getId());
+            } else {
+                stringValue.append(order.getMasters().get(i).getId()).append(",");
+            }
+        }
+        stringValue.append("\"");
+        if(isLineFeed){
+            stringValue.append("\n");
+        }
+        return stringValue.toString();
     }
 }

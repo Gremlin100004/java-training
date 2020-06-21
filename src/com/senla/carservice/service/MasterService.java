@@ -1,7 +1,9 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
 
+import java.util.Date;
 import java.util.List;
 
 public interface MasterService {
@@ -9,9 +11,13 @@ public interface MasterService {
 
     void addMaster(String name);
 
+    List<Master> getFreeMasters(Date executeDate, Date leadDate, List<Order> sortOrder);
+
     void deleteMaster(Master master);
 
     List<Master> sortMasterByAlphabet(List<Master> masters);
 
     List<Master> sortMasterByBusy(List<Master> masters);
+
+    String exportMasters();
 }

@@ -22,14 +22,17 @@ public class MasterRepositoryImpl implements MasterRepository {
         }
         return instance;
     }
+
     @Override
     public List<Master> getMasters() {
         return masters;
     }
+
     @Override
     public IdGenerator getIdGeneratorMaster() {
         return idGeneratorMaster;
     }
+
     @Override
     public void setMasters(List<Master> masters) {
         this.masters = masters;

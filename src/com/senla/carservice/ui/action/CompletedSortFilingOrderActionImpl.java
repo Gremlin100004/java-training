@@ -1,12 +1,12 @@
 package com.senla.carservice.ui.action;
 
-import com.senla.carservice.ui.printer.PrinterOrder;
 import com.senla.carservice.controller.OrderController;
 import com.senla.carservice.domain.Order;
+import com.senla.carservice.ui.printer.PrinterOrder;
+import com.senla.carservice.ui.util.OrderUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class CompletedSortFilingOrderActionImpl implements Action {
 
@@ -15,29 +15,15 @@ public class CompletedSortFilingOrderActionImpl implements Action {
 
     @Override
     public void execute() {
-        String beginningPeriodTime;
-        String endPeriodTime;
-        OrderController orderController = OrderController.getInstance();
-        Scanner scanner = new Scanner(System.in);
-        List<Order> testOrders = orderController.getOrders();
         List<Order> orders = new ArrayList<>();
-        if (testOrders.size() == 0){
-            System.out.println("There are no orders in service!");
-            return;
-        }
-        while (orders.size() == 0) {
-            System.out.println("Enter the start of period in format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
-            beginningPeriodTime = scanner.nextLine();
-            System.out.println("Enter the end of period in format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
-            endPeriodTime = scanner.nextLine();
-            orders = orderController.getOrdersByPeriod(beginningPeriodTime, endPeriodTime);
-            System.out.println(String.format("Period of time: %s - %s", beginningPeriodTime, endPeriodTime));
-            if (orders.size() == 0){
-                System.out.println("There are no orders for this period of time!");
+        OrderController orderController = OrderController.getInstance();
+        while (orders.isEmpty()) {
+            orders = OrderUtil.getSortPeriodOrders();
+            if (orders.isEmpty()) {
                 return;
             }
             orders = orderController.getCompletedOrders(orders);
-            if (orders.size() == 0){
+            if (orders.isEmpty()) {
                 System.out.println("There are no completed orders for this period of time!");
                 return;
             }

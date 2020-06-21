@@ -1,23 +1,29 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.domain.Car;
+import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.dto.OrderDto;
+import com.senla.carservice.domain.Place;
+import com.senla.carservice.service.CarOfficeService;
+import com.senla.carservice.service.CarOfficeServiceImpl;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.OrderServiceImpl;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class OrderController {
     private static OrderController instance;
     private final OrderService orderService;
+    private final CarOfficeService carOfficeService;
 
     private OrderController() {
         this.orderService = OrderServiceImpl.getInstance();
+        this.carOfficeService = CarOfficeServiceImpl.getInstance();
     }
 
     public static OrderController getInstance() {
@@ -27,13 +33,18 @@ public class OrderController {
         return instance;
     }
 
-    public String addOrder(OrderDto orderDto) {
+    public String addOrder(String automaker, String model, String registrationNumber) {
+        this.orderService.addOrder(automaker, model, registrationNumber);
+        return "order add successfully!";
+    }
+
+    public String addOrderDeadlines(String stringExecutionStartTime,  String stringLeadTime) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date executionStartTime;
         Date leadTime;
         try {
-            executionStartTime = format.parse(orderDto.getExecutionStartTime());
-            leadTime = format.parse(orderDto.getLeadTime());
+            executionStartTime = format.parse(stringExecutionStartTime);
+            leadTime = format.parse(stringLeadTime);
         } catch (ParseException e) {
             return "Error date, should be \"dd.MM.yyyy hh:mm\"";
         }
@@ -43,23 +54,45 @@ public class OrderController {
         if (executionStartTime.compareTo(new Date()) < 1) {
             return "Error!!!, You can't start work at past!";
         }
-        List<Order> controlOrder = orderService.sortOrderByPeriod(orderService.getOrders(), executionStartTime, leadTime);
 
-        for (Order order : controlOrder) {
-            for (Master master : orderDto.getMasters()) {
-                if (order.getMasters().contains(master)) {
-                    return "Error!!!, Master is busy in this time!";
-                }
-            }
-            if (order.getPlace().equals(orderDto.getPlace())) {
-                return "Error!!!, The place in garage is busy!";
+        List<Order> orders = new ArrayList<>(this.orderService.getOrders());
+        Order order = orders.get(orders.size()-1);
+        orders.remove(order);
+        orders = this.orderService.sortOrderByPeriod(orders, executionStartTime, leadTime);
+        int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
+        int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);
+        if (numberFreeMasters == 0){
+            return "Error!!!, All masters are busy at this time!";
+        }
+        if (numberFreePlace == 0){
+            return "Error!!!, There are no free places at this time!";
+        }
+        order.setExecutionStartTime(executionStartTime);
+        order.setLeadTime(leadTime);
+        return "deadline add to order successfully";
+    }
+
+    public String addOrderMasters(List<Master> masters) {
+        for (Master master : masters) {
+            if (master.getNumberOrder() != null) {
+                master.setNumberOrder(master.getNumberOrder() + 1);
+            } else {
+                master.setNumberOrder(1);
             }
         }
-        Car car = new Car(orderDto.getAutomaker(), orderDto.getModel(), orderDto.getRegistrationNumber());
-        Order order = new Order(executionStartTime, leadTime, orderDto.getMasters(), orderDto.getGarage(),
-                orderDto.getPlace(), car, orderDto.getPrice());
-        this.orderService.addOrder(order);
-        return "order add successfully!";
+        orderService.getOrders().get(orderService.getOrders().size()-1).setMasters(masters);
+        return "masters add successfully";
+    }
+
+    public String addOrderPlaces(Garage garage, Place place) {
+        orderService.getOrders().get(orderService.getOrders().size()-1).setGarage(garage);
+        orderService.getOrders().get(orderService.getOrders().size()-1).setPlace(place);
+        return "place add to order successfully";
+    }
+
+    public String addOrderPrice(BigDecimal price){
+        orderService.getOrders().get(orderService.getOrders().size()-1).setPrice(price);
+        return "price add to order successfully";
     }
 
     public List<Order> getOrders() {
@@ -174,5 +207,13 @@ public class OrderController {
 
     public List<Master> getOrderMasters(Order order) {
         return this.orderService.getOrderMasters(order);
+    }
+
+    public String exportOrders(){
+        if (this.orderService.exportOrder().equals("save successfully")) {
+            return "Orders have been export successfully!";
+        } else {
+            return "export problem.";
+        }
     }
 }

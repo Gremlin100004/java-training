@@ -3,8 +3,7 @@ package com.senla.carservice.ui.action;
 import com.senla.carservice.controller.CarOfficeController;
 import com.senla.carservice.controller.GarageController;
 import com.senla.carservice.controller.MasterController;
-
-import java.util.Scanner;
+import com.senla.carservice.ui.util.ScannerUtil;
 
 public class AvailableSeatsActionImpl implements Action {
 
@@ -13,13 +12,12 @@ public class AvailableSeatsActionImpl implements Action {
 
     @Override
     public void execute() {
-        Scanner scanner = new Scanner(System.in);
         CarOfficeController carOfficeController = CarOfficeController.getInstance();
         GarageController garageController = GarageController.getInstance();
         MasterController masterController = MasterController.getInstance();
-        String message;
+        String message = null;
         String date;
-        if (masterController.getMasters().size() == 0) {
+        if (masterController.getMasters().isEmpty()) {
             System.out.println("Add masters to service!!!");
             return;
         }
@@ -27,9 +25,10 @@ public class AvailableSeatsActionImpl implements Action {
             System.out.println("Add places to garages!!!");
             return;
         }
-        while (true) {
-            System.out.println("Enter the date in format dd.mm.yyyy, example:\"10.10.2010\"");
-            date = scanner.nextLine();
+
+        while (message == null) {
+            date = ScannerUtil.getStringDateUser(
+                    "Enter the date in format dd.mm.yyyy, example:\"10.10.2010\"");
             message = carOfficeController.getFreePlacesByDate(date);
             if (message.equals("error date")) {
                 System.out.println("You enter wrong value!!!");
@@ -37,9 +36,8 @@ public class AvailableSeatsActionImpl implements Action {
             }
             if (message.equals("past date")) {
                 System.out.println("Entered date cannot be in the past!!!");
-                continue;
+                message = null;
             }
-            break;
         }
         System.out.println(message);
     }

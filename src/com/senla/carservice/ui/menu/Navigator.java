@@ -40,6 +40,6 @@ public final class Navigator {
             return;
         }
         this.currentMenu.getMenuItems().get(index - 1).doAction();
-        this.currentMenu = this.currentMenu.getMenuItems().get(index - 1).nextMenu;
+        this.currentMenu = this.currentMenu.getMenuItems().get(index - 1).getNextMenu();
     }
 }

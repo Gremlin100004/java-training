@@ -18,13 +18,13 @@ public class Checker {
         char [] symbols = new char[]{
                 '~','!','@','#','$','%','^','&','*','(',')',
                 '_','+','=','[',']','{','}','\n','\\',
-                '\"',';',',','.','/','|','<','>','`'
+                '\"',';',',','/','|','<','>','`'
         };
         for (char symbol: symbols){
             if (text.contains(String.valueOf(symbol))){
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }

@@ -16,7 +16,7 @@ public class AlphabetListMasterActionImpl implements Action {
     public void execute() {
         MasterController masterController = MasterController.getInstance();
         List<Master> sortArrayMasters = masterController.sortMasterByAlphabet();
-        if (sortArrayMasters.size() == 0) {
+        if (sortArrayMasters.isEmpty()) {
             System.out.println("There are no masters.");
             return;
         }

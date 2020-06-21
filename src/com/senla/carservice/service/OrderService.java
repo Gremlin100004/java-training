@@ -9,7 +9,7 @@ import java.util.List;
 public interface OrderService {
     List<Order> getOrders();
 
-    void addOrder(Order order);
+    void addOrder(String automaker, String model, String registrationNumber);
 
     boolean completeOrder(Order order);
 
@@ -43,4 +43,6 @@ public interface OrderService {
     List<Order> getCanceledOrders(List<Order> orders);
 
     List<Order> getDeletedOrders(List<Order> orders);
+
+    String exportOrder();
 }

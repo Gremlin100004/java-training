@@ -1,12 +1,11 @@
 package com.senla.carservice.ui.action;
 
-import com.senla.carservice.ui.printer.PrinterOrder;
 import com.senla.carservice.controller.OrderController;
 import com.senla.carservice.domain.Order;
+import com.senla.carservice.ui.printer.PrinterOrder;
+import com.senla.carservice.ui.util.ScannerUtil;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class ShiftLeadOrderActionImpl implements Action {
 
@@ -19,22 +18,15 @@ public class ShiftLeadOrderActionImpl implements Action {
         String leadTime;
         String message = "";
         OrderController orderController = OrderController.getInstance();
-        Scanner scanner = new Scanner(System.in);
         List<Order> orders = orderController.getOrders();
-        if (orders.size() == 0) {
+        if (orders.isEmpty()) {
             System.out.println("There are no orders!");
             return;
         }
         PrinterOrder.printOrder(orders);
-        System.out.println("Enter the index number of the order to shift time:");
-        int index;
-        while (true) {
-            while (!scanner.hasNextInt()) {
-                System.out.println("You enter wrong value!!!");
-                System.out.println("Try again:");
-                scanner.next();
-            }
-            index = scanner.nextInt();
+        int index = 0;
+        while (index == 0) {
+            index = ScannerUtil.getIntUser("Enter the index number of the order to shift time:");
             if (index > orders.size() || index < 1) {
                 System.out.println("There is no such master");
                 continue;
@@ -42,10 +34,12 @@ public class ShiftLeadOrderActionImpl implements Action {
             break;
         }
         while (!message.equals(" -the order lead time has been changed.")) {
-            System.out.println("Enter the planing time start to execute the order in format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
-            executionStartTime = scanner.nextLine();
-            System.out.println("Enter the lead time the order in format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
-            leadTime = scanner.nextLine();
+            executionStartTime = ScannerUtil.getStringDateUser(
+                    "Enter the planing time start to execute the order in format " +
+                            "\"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
+            leadTime = ScannerUtil.getStringDateUser(
+                    "Enter the lead time the order in format \"dd.MM.yyyy hh:mm\"," +
+                            " example:\"10.10.2010 10:00\"");
             message = orderController.shiftLeadTime(orders.get(index - 1), executionStartTime, leadTime);
             System.out.println(message);
         }

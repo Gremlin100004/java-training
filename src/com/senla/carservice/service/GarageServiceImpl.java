@@ -1,11 +1,15 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Garage;
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.repository.GarageRepository;
 import com.senla.carservice.repository.GarageRepositoryImpl;
+import com.senla.carservice.util.ExportUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class GarageServiceImpl implements GarageService {
@@ -62,6 +66,23 @@ public class GarageServiceImpl implements GarageService {
     }
 
     @Override
+    public List<Garage> getGaragesFreePlace(Date executeDate, Date leadDate, List<Order> orders){
+        if (executeDate == null || leadDate == null){
+            return new ArrayList<>();
+        }
+        List<Garage> freeGarages = new ArrayList<>(this.garageRepository.getGarages());
+        for (Order order : orders) {
+            for (Garage garage : freeGarages) {
+                if (garage.equals(order.getGarage())) {
+                    garage.getPlaces().remove(order.getPlace());
+                    break;
+                }
+            }
+        }
+        return freeGarages;
+    }
+
+    @Override
     public List<Place> getFreePlaceGarage(Garage garage) {
         List<Place> freePlaces = new ArrayList<>();
         for (Place place : garage.getPlaces())
@@ -69,5 +90,63 @@ public class GarageServiceImpl implements GarageService {
                 freePlaces.add(place);
             }
         return freePlaces;
+    }
+
+    @Override
+    public String exportGarages(){
+        GarageRepository garageRepository = GarageRepositoryImpl.getInstance();
+        List<Garage> garages = garageRepository.getGarages();
+        List<Place> places = garageRepository.getPlaces();
+        StringBuilder valueGarageCsv = new StringBuilder();
+        StringBuilder valuePlaceCsv = new StringBuilder();
+        String message;
+        for (int i = 0; i < garages.size(); i++){
+            if (i == garages.size()-1){
+                valueGarageCsv.append(convertGarageToCsv(garages.get(i), false));
+            } else {
+                valueGarageCsv.append(convertGarageToCsv(garages.get(i), true));
+            }
+        }
+        for (int i = 0; i < places.size(); i++){
+            if (i == places.size()-1){
+                valuePlaceCsv.append(convertPlaceToCsv(places.get(i), false));
+            } else {
+                valuePlaceCsv.append(convertPlaceToCsv(places.get(i), true));
+            }
+        }
+        message = ExportUtil.SaveCsv(valueGarageCsv, "csv//garage.csv");
+        if (!message.equals("save successfully")){
+            return message;
+        }
+        message = ExportUtil.SaveCsv(valuePlaceCsv, "csv//place.csv");
+        if (!message.equals("save successfully")){
+            return message;
+        }
+        return message;
+    }
+
+    private String convertGarageToCsv(Garage garage, boolean isLineFeed){
+        StringBuilder stringValue = new StringBuilder();
+        stringValue.append(String.format("%s,%s,\"",garage.getId(), garage.getName()));
+        for (int i = 0; i < garage.getPlaces().size(); i++){
+            if (i == garage.getPlaces().size()-1){
+                stringValue.append(garage.getPlaces().get(i).getId());
+            } else {
+                stringValue.append(garage.getPlaces().get(i).getId()).append(",");
+            }
+        }
+        stringValue.append("\"");
+        if(isLineFeed){
+            stringValue.append("\n");
+        }
+        return stringValue.toString();
+    }
+
+    private String convertPlaceToCsv(Place place, boolean isLineFeed){
+        if(isLineFeed){
+            return String.format("%s,%s\n", place.getId(), place.isBusyStatus());
+        } else {
+            return String.format("%s,%s", place.getId(), place.isBusyStatus());
+        }
     }
 }

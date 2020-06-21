@@ -1,9 +1,7 @@
 package com.senla.carservice.ui.action;
 
-import com.senla.carservice.ui.util.Checker;
 import com.senla.carservice.controller.GarageController;
-
-import java.util.Scanner;
+import com.senla.carservice.ui.util.ScannerUtil;
 
 public class AddGarageActionImpl implements Action {
 
@@ -12,20 +10,8 @@ public class AddGarageActionImpl implements Action {
 
     @Override
     public void execute() {
-        Scanner scanner = new Scanner(System.in);
         GarageController garageController = GarageController.getInstance();
-        String message;
-        String name;
-        while (true) {
-            System.out.println("Enter the name of garage");
-            name = scanner.nextLine();
-            if (Checker.isSymbolsString(name)) {
-                System.out.println("You enter wrong value!!!");
-                continue;
-            }
-            message = garageController.addGarage(name);
-            break;
-        }
-        System.out.println(message);
+        String name = ScannerUtil.getStringUser("Enter the name of garage");
+        System.out.println(garageController.addGarage(name));
     }
 }

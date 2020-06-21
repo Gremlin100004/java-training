@@ -1,16 +1,15 @@
 package com.senla.carservice.ui.menu;
 
-import java.util.Scanner;
+import com.senla.carservice.ui.util.ScannerUtil;
 
 public class MenuController {
     private static MenuController instance;
-    private final Builder builder;
     private final Navigator navigator;
 
     private MenuController() {
-        this.builder = Builder.getInstance();
-        this.builder.buildMenu();
-        this.navigator = Navigator.getInstance(this.builder.getRootMenu());
+        Builder builder = Builder.getInstance();
+        builder.buildMenu();
+        this.navigator = Navigator.getInstance(builder.getRootMenu());
     }
 
     public static MenuController getInstance() {
@@ -21,21 +20,13 @@ public class MenuController {
     }
 
     public void run() {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
+        int answer = 1;
+        while (answer != 0) {
             this.navigator.printMenu();
-            System.out.println("Enter number item menu:");
-            while (!scanner.hasNextInt()) {
-                System.out.println("You enter wrong value!!!");
-                System.out.println("Try again:");
-                scanner.skip("\n");
-                scanner.next();
+            answer = ScannerUtil.getIntUser("Enter number item menu:");
+            if (answer != 0){
+                navigator.navigate(answer);
             }
-            int answer = scanner.nextInt();
-            if (answer == 0) {
-                break;
-            }
-            navigator.navigate(answer);
         }
     }
 }

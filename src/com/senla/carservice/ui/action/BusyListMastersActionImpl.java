@@ -16,7 +16,7 @@ public class BusyListMastersActionImpl implements Action {
     public void execute() {
         MasterController masterController = MasterController.getInstance();
         List<Master> sortArrayMasters = masterController.sortMasterByBusy();
-        if (sortArrayMasters.size() == 0) {
+        if (sortArrayMasters.isEmpty()) {
             System.out.println("There are no masters.");
             return;
         }

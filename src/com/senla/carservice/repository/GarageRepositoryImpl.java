@@ -1,6 +1,7 @@
 package com.senla.carservice.repository;
 
 import com.senla.carservice.domain.Garage;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.util.IdGenerator;
 
 import java.util.ArrayList;
@@ -25,19 +26,30 @@ public class GarageRepositoryImpl implements GarageRepository {
         return instance;
     }
 
+    @Override
     public List<Garage> getGarages() {
         return garages;
     }
 
+    @Override
     public IdGenerator getIdGeneratorGarage() {
         return idGeneratorGarage;
     }
 
+    @Override
     public IdGenerator getIdGeneratorPlace() {
         return idGeneratorPlace;
     }
 
+    @Override
     public void setGarages(List<Garage> garages) {
         this.garages = garages;
+    }
+
+    @Override
+    public List<Place> getPlaces(){
+        List<Place> places = new ArrayList<>();
+        this.garages.forEach(garage -> places.addAll(garage.getPlaces()));
+        return places;
     }
 }

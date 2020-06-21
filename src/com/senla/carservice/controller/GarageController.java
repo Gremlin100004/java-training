@@ -57,4 +57,12 @@ public class GarageController {
     public List<Place> getFreePlaceGarage(Garage garage) {
         return this.garageService.getFreePlaceGarage(garage);
     }
+
+    public String exportGarages(){
+        if (this.garageService.exportGarages().equals("save successfully")) {
+            return "Garages have been export successfully!";
+        } else {
+            return "export problem.";
+        }
+    }
 }
