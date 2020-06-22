@@ -76,6 +76,7 @@ public class Builder {
                 new MenuItem("Add place in garage", new AddPlaceActionImpl(), garagesMenu),
                 new MenuItem("Delete place in garage", new DeletePlaceActionImpl(), garagesMenu),
                 new MenuItem("Export garages", new ExportGarageActionImpl(), garagesMenu),
+                new MenuItem("Import garages", new ImportGarageActionImpl(), garagesMenu),
                 new MenuItem("Previous menu", new PassiveActionImpl(), rootMenu)
         )));
     }

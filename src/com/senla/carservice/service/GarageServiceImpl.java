@@ -1,7 +1,6 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Garage;
-import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.repository.GarageRepository;
@@ -9,6 +8,7 @@ import com.senla.carservice.repository.GarageRepositoryImpl;
 import com.senla.carservice.util.ExportUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -123,6 +123,14 @@ public class GarageServiceImpl implements GarageService {
             return message;
         }
         return message;
+    }
+
+    @Override
+    public void importGarage(){
+        String path = "csv//garage.csv";
+        List<String> csvLines = ExportUtil.GetCsv(path);
+        csvLines.forEach(line-> Arrays.asList(line.split("\"")).forEach(line1->Arrays.asList(line1.split(",")).forEach(System.out::println)));
+//        csvLines.forEach(line-> System.out.println(line.substring(line.indexOf("\"")).replaceAll("\"", "")));
     }
 
     private String convertGarageToCsv(Garage garage, boolean isLineFeed){
