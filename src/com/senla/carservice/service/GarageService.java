@@ -26,5 +26,5 @@ public interface GarageService {
 
     String exportGarages();
 
-    void importGarage();
+    String importGarage();
 }

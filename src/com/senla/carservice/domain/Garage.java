@@ -1,13 +1,12 @@
 package com.senla.carservice.domain;
 
-import com.senla.carservice.util.IdGenerator;
-
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Garage extends AEntity {
     private String name;
-    private ArrayList<Place> places;
+    private List<Place> places;
 
     public Garage() {
     }
@@ -21,7 +20,7 @@ public class Garage extends AEntity {
         return name;
     }
 
-    public ArrayList<Place> getPlaces() {
+    public List<Place> getPlaces() {
         return places;
     }
 
@@ -29,7 +28,7 @@ public class Garage extends AEntity {
         this.name = name;
     }
 
-    public void setPlaces(ArrayList<Place> places) {
+    public void setPlaces(List<Place> places) {
         this.places = places;
     }
 

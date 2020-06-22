@@ -67,12 +67,10 @@ public class GarageController {
     }
 
     public String importGarages(){
-        this.garageService.importGarage();
-            return "eGarages have been import successfully!";
-//        if (this.garageService.exportGarages().equals("save successfully")) {
-//            return "Garages have been export successfully!";
-//        } else {
-//            return "export problem.";
-//        }
+        if (this.garageService.importGarage().equals("import successfully")) {
+            return "Garages have been import successfully!";
+        } else {
+            return "export problem.";
+        }
     }
 }

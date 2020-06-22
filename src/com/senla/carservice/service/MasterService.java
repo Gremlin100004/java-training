@@ -20,4 +20,6 @@ public interface MasterService {
     List<Master> sortMasterByBusy(List<Master> masters);
 
     String exportMasters();
+
+    String importMasters();
 }
