@@ -45,4 +45,6 @@ public interface OrderService {
     List<Order> getDeletedOrders(List<Order> orders);
 
     String exportOrder();
+
+    String importOrder();
 }

@@ -1,5 +1,9 @@
 package com.senla.carservice.ui.menu;
 
+import com.senla.carservice.controller.GarageController;
+import com.senla.carservice.controller.MasterController;
+import com.senla.carservice.controller.OrderController;
+import com.senla.carservice.domain.Order;
 import com.senla.carservice.ui.action.*;
 
 import java.util.ArrayList;
@@ -38,7 +42,16 @@ public class Builder {
                 new MenuItem("Get the number of available seats at the car service", new AvailableSeatsActionImpl(), this.rootMenu),
                 new MenuItem("Get the closest free date", new FreeDateActionImpl(), this.rootMenu),
                 new MenuItem("Fill in test data", new DemoActionImpl(), this.rootMenu),
-                new MenuItem("Export of all entities", new ExportAllActionImpl(), this.rootMenu)
+                new MenuItem("Export of all entities", ()->{
+                    System.out.println(MasterController.getInstance().exportMasters());
+                    System.out.println(GarageController.getInstance().exportGarages());
+                    System.out.println(OrderController.getInstance().exportOrders());
+                }, this.rootMenu),
+                new MenuItem("Import of all entities", ()->{
+                    System.out.println(MasterController.getInstance().importMasters());
+                    System.out.println(GarageController.getInstance().importGarages());
+                    System.out.println(OrderController.getInstance().importOrders());
+                }, this.rootMenu)
         )));
         createItemMastersMenu(mastersMenu);
         createItemGaragesMenu(garagesMenu, this.rootMenu);
@@ -63,7 +76,10 @@ public class Builder {
                 new MenuItem("Delete Master", new DeleteMasterActionImpl(), mastersMenu),
                 new MenuItem("Show a list of masters sorted alphabetically", new AlphabetListMasterActionImpl(), mastersMenu),
                 new MenuItem("Show list of masters sorted by busy", new BusyListMastersActionImpl(), mastersMenu),
-                new MenuItem("Export masters", new ExportMastersActionImpl(), mastersMenu),
+                new MenuItem("Export masters",
+                        ()->System.out.println(MasterController.getInstance().exportMasters()), mastersMenu),
+                new MenuItem("Import masters",
+                        ()->System.out.println(MasterController.getInstance().importMasters()), mastersMenu),
                 new MenuItem("Previous menu", new PassiveActionImpl(), this.rootMenu)
         )));
     }
@@ -76,7 +92,8 @@ public class Builder {
                 new MenuItem("Add place in garage", new AddPlaceActionImpl(), garagesMenu),
                 new MenuItem("Delete place in garage", new DeletePlaceActionImpl(), garagesMenu),
                 new MenuItem("Export garages", new ExportGarageActionImpl(), garagesMenu),
-                new MenuItem("Import garages", new ImportGarageActionImpl(), garagesMenu),
+                new MenuItem("Import garages",
+                        ()->System.out.println(GarageController.getInstance().importGarages()), garagesMenu),
                 new MenuItem("Previous menu", new PassiveActionImpl(), rootMenu)
         )));
     }
@@ -113,6 +130,8 @@ public class Builder {
                         new OrderMastersActionImpl(), listOrderMenu),
                 new MenuItem("Export orders",
                         new ExportOrderActionImpl(), listOrderMenu),
+                new MenuItem("Import orders",
+                        ()->System.out.println(OrderController.getInstance().importOrders()), listOrderMenu),
                 new MenuItem("Previous menu", new PassiveActionImpl(), ordersMenu)
         )));
     }

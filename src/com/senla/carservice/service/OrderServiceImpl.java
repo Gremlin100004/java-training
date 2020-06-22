@@ -1,24 +1,26 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.domain.Car;
-import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Order;
-import com.senla.carservice.domain.Status;
-import com.senla.carservice.repository.OrderRepository;
-import com.senla.carservice.repository.OrderRepositoryImpl;
+import com.senla.carservice.domain.*;
+import com.senla.carservice.repository.*;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.ExportUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 public class OrderServiceImpl implements OrderService {
     private static OrderService instance;
     private final OrderRepository orderRepository;
+    private final GarageRepository garageRepository;
+    private final String ORDER_PATH = "csv//order.csv";
+    private final String CAR_PATH = "csv//car.csv";
 
     private OrderServiceImpl() {
         this.orderRepository = OrderRepositoryImpl.getInstance();
+        this.garageRepository = GarageRepositoryImpl.getInstance();
     }
 
     public static OrderService getInstance() {
@@ -266,15 +268,54 @@ public class OrderServiceImpl implements OrderService {
                 valueCarCsv.append(convertCarToCsv(cars.get(i), true));
             }
         }
-        message = ExportUtil.SaveCsv(valueOrderCsv, "csv//order.csv");
+        message = ExportUtil.SaveCsv(valueOrderCsv, ORDER_PATH);
         if (!message.equals("save successfully")){
             return message;
         }
-        message = ExportUtil.SaveCsv(valueCarCsv, "csv//car.csv");
+        message = ExportUtil.SaveCsv(valueCarCsv, CAR_PATH);
         if (!message.equals("save successfully")){
             return message;
         }
         return message;
+    }
+
+    @Override
+    public String importOrder(){
+        List<String> csvLinesOrder = ExportUtil.GetCsv(ORDER_PATH);
+        List<Car> cars = importCar();
+        if (cars.isEmpty() || csvLinesOrder.isEmpty()){
+            return "import problem";
+        }
+        List<Order> orders = this.orderRepository.getOrders();
+            for (String line: csvLinesOrder){
+                Order order = getOrderFromCsv(line, cars);
+                if (order.getMasters().isEmpty()){
+                    return "you don't import masters!!!";
+                }
+                if (order.getGarage() == null){
+                    return "you don't import garages!!!";
+                }
+                orders.remove(order);
+                orders.add(order);
+            }
+        return "import successfully";
+    }
+
+    private List<Car> importCar(){
+        List<String> csvLinesPlace = ExportUtil.GetCsv(CAR_PATH);
+        List<Car> cars = new ArrayList<>();
+        csvLinesPlace.forEach(line->cars.add(getCarFromCsv(line)));
+        return cars;
+    }
+
+    private Car getCarFromCsv(String line){
+        List<String> values = Arrays.asList(line.split(","));
+        Car car = new Car();
+        car.setId(Long.valueOf(values.get(0)));
+        car.setAutomaker(values.get(1));
+        car.setModel(values.get(2));
+        car.setRegistrationNumber(values.get(3));
+        return car;
     }
 
     private String convertCarToCsv(Car car, boolean isLineFeed){
@@ -285,6 +326,62 @@ public class OrderServiceImpl implements OrderService {
             return String.format("%s,%s,%s,%s", car.getId(),
                     car.getAutomaker(), car.getModel(), car.getRegistrationNumber());
         }
+    }
+
+    private Order getOrderFromCsv(String line, List<Car> cars){
+        List<String> values = Arrays.asList((line.split("\""))[0].split(","));
+        List<String> arrayIdMaster = Arrays.asList(line.split("\"")[1].replaceAll("\"", "").split(","));
+        Car car = getCarById(cars, Long.valueOf(values.get(6)));
+        Order order = new Order(Long.valueOf(values.get(0)),car);
+        order.setCreationTime(DateUtil.getDatesFromString(values.get(1)));
+        order.setExecutionStartTime(DateUtil.getDatesFromString(values.get(2)));
+        order.setLeadTime(DateUtil.getDatesFromString(values.get(3)));
+        order.setGarage(getGarageById(this.garageRepository.getGarages(), Long.valueOf(values.get(4))));
+        order.setPlace(getPlaceById(this.garageRepository.getPlaces(), Long.valueOf(values.get(5))));
+        order.setPrice(new BigDecimal(values.get(7)));
+        order.setStatus(Status.valueOf(values.get(8)));
+        order.setDeleteStatus(Boolean.parseBoolean(values.get(9)));
+        order.setMasters(getMastersById(MasterRepositoryImpl.getInstance().getMasters(), arrayIdMaster));
+        return order;
+    }
+
+    private List<Master> getMastersById(List<Master> masters, List<String>arrayIdMaster){
+        List<Master> orderMasters = new ArrayList<>();
+        for (String stringIndex : arrayIdMaster){
+            masters.forEach(master -> {
+                if (master.getId().equals(Long.valueOf(stringIndex))){
+                    orderMasters.add(master);
+                }
+            });
+        }
+        return orderMasters;
+    }
+
+    private Garage getGarageById(List<Garage> garages, Long id){
+        for (Garage garage : garages){
+            if (garage.getId().equals(id)){
+                return garage;
+            }
+        }
+        return null;
+    }
+
+    private Place getPlaceById(List<Place> places, Long id){
+        for (Place place : places){
+            if (place.getId().equals(id)){
+                return place;
+            }
+        }
+        return null;
+    }
+
+    private Car getCarById(List<Car> cars, Long id){
+        for (Car importCar : cars){
+            if (importCar.getId().equals(id)){
+                return importCar;
+            }
+        }
+        return null;
     }
 
     private String convertOrderToCsv(Order order, boolean isLineFeed){
@@ -307,6 +404,7 @@ public class OrderServiceImpl implements OrderService {
         if(isLineFeed){
             stringValue.append("\n");
         }
+        System.out.println(stringValue.toString());
         return stringValue.toString();
     }
 }

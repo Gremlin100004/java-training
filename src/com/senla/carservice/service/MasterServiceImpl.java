@@ -118,10 +118,13 @@ public class MasterServiceImpl implements MasterService {
         Master master = new Master();
         master.setId(Long.valueOf(values.get(0)));
         master.setName(values.get(1));
-        master.setNumberOrder(Integer.valueOf(values.get(2)));
+        if (values.get(2).equals("null")){
+            master.setNumberOrder(null);
+        } else {
+            master.setNumberOrder(Integer.valueOf(values.get(2)));
+        }
         return master;
     }
-
 
     private String convertToCsv(Master master, boolean isLineFeed) {
         if (isLineFeed) {

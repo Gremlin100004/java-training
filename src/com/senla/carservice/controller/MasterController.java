@@ -51,4 +51,12 @@ public class MasterController {
             return "export problem.";
         }
     }
+    public String importMasters() {
+        if (this.masterService.importMasters().equals("import successfully")) {
+            return "Masters have been import successfully!";
+        } else {
+            return "export problem.";
+        }
+    }
+
 }

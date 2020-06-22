@@ -157,13 +157,13 @@ public class GarageServiceImpl implements GarageService {
     }
 
     private Garage getGarageFromCsv(String line, List<Place> places){
-        String NameId = Arrays.asList(line.split("\"")).get(0);
-        String IdPlace = Arrays.asList(line.split("\"")).get(1);
+        String values = Arrays.asList(line.split("\"")).get(0);
+        String idPlace = Arrays.asList(line.split("\"")).get(1);
         Garage garage = new Garage();
-        garage.setId(Long.valueOf(Arrays.asList(NameId.split(",")).get(0)));
-        garage.setName(Arrays.asList(NameId.split(",")).get(1));
+        garage.setId(Long.valueOf(Arrays.asList(values.split(",")).get(0)));
+        garage.setName(Arrays.asList(values.split(",")).get(1));
         List<Place> garagePlace = new ArrayList<>();
-        for (String stringIndex : IdPlace.replaceAll("\"", "").split(",")){
+        for (String stringIndex : idPlace.replaceAll("\"", "").split(",")){
             places.forEach(place -> {
                 if (place.getId().equals(Long.valueOf(stringIndex))){
                     garagePlace.add(place);

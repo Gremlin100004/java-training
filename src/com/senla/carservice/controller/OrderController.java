@@ -38,7 +38,7 @@ public class OrderController {
         return "order add successfully!";
     }
 
-    public String addOrderDeadlines(String stringExecutionStartTime,  String stringLeadTime) {
+    public String addOrderDeadlines(String stringExecutionStartTime, String stringLeadTime) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date executionStartTime;
         Date leadTime;
@@ -56,15 +56,15 @@ public class OrderController {
         }
 
         List<Order> orders = new ArrayList<>(this.orderService.getOrders());
-        Order order = orders.get(orders.size()-1);
+        Order order = orders.get(orders.size() - 1);
         orders.remove(order);
         orders = this.orderService.sortOrderByPeriod(orders, executionStartTime, leadTime);
         int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
         int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);
-        if (numberFreeMasters == 0){
+        if (numberFreeMasters == 0) {
             return "Error!!!, All masters are busy at this time!";
         }
-        if (numberFreePlace == 0){
+        if (numberFreePlace == 0) {
             return "Error!!!, There are no free places at this time!";
         }
         order.setExecutionStartTime(executionStartTime);
@@ -80,18 +80,18 @@ public class OrderController {
                 master.setNumberOrder(1);
             }
         }
-        orderService.getOrders().get(orderService.getOrders().size()-1).setMasters(masters);
+        orderService.getOrders().get(orderService.getOrders().size() - 1).setMasters(masters);
         return "masters add successfully";
     }
 
     public String addOrderPlaces(Garage garage, Place place) {
-        orderService.getOrders().get(orderService.getOrders().size()-1).setGarage(garage);
-        orderService.getOrders().get(orderService.getOrders().size()-1).setPlace(place);
+        orderService.getOrders().get(orderService.getOrders().size() - 1).setGarage(garage);
+        orderService.getOrders().get(orderService.getOrders().size() - 1).setPlace(place);
         return "place add to order successfully";
     }
 
-    public String addOrderPrice(BigDecimal price){
-        orderService.getOrders().get(orderService.getOrders().size()-1).setPrice(price);
+    public String addOrderPrice(BigDecimal price) {
+        orderService.getOrders().get(orderService.getOrders().size() - 1).setPrice(price);
         return "price add to order successfully";
     }
 
@@ -209,11 +209,20 @@ public class OrderController {
         return this.orderService.getOrderMasters(order);
     }
 
-    public String exportOrders(){
+    public String exportOrders() {
         if (this.orderService.exportOrder().equals("save successfully")) {
             return "Orders have been export successfully!";
         } else {
             return "export problem.";
+        }
+    }
+
+    public String importOrders() {
+        String message = this.orderService.importOrder();
+        if (message.equals("import successfully")) {
+            return "Orders have been import successfully!";
+        } else {
+            return message;
         }
     }
 }

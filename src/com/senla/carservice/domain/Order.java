@@ -1,13 +1,12 @@
 package com.senla.carservice.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 public class Order extends AEntity {
-    private final Date creationTime;
+    private Date creationTime;
     private Date executionStartTime;
     private Date leadTime;
     private List<Master> masters;
@@ -64,6 +63,10 @@ public class Order extends AEntity {
 
     public boolean isDeleteStatus() {
         return deleteStatus;
+    }
+
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
     }
 
     public void setLeadTime(Date leadTime) {
