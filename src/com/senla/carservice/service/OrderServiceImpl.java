@@ -1,12 +1,9 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.comparator.OrderCreationComparator;
-import com.senla.carservice.comparator.OrderLeadComparator;
-import com.senla.carservice.comparator.OrderPriceComparator;
-import com.senla.carservice.comparator.OrderStartComparator;
-import com.senla.carservice.domain.*;
-import com.senla.carservice.repository.GarageRepository;
-import com.senla.carservice.repository.GarageRepositoryImpl;
+import com.senla.carservice.domain.Car;
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
+import com.senla.carservice.domain.Status;
 import com.senla.carservice.repository.OrderRepository;
 import com.senla.carservice.repository.OrderRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
@@ -113,32 +110,48 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> sortOrderCreationTime(List<Order> orders) {
         List<Order> sortArrayOrder = new ArrayList<>(orders);
-        OrderCreationComparator orderCreationComparator = new OrderCreationComparator();
-        sortArrayOrder.sort(orderCreationComparator);
+        sortArrayOrder.sort((orderOne, orderTwo)->{
+            if (orderOne.getCreationTime() == null && orderTwo.getCreationTime() == null) return 0;
+            if (orderOne.getCreationTime() == null) return -1;
+            if (orderTwo.getCreationTime() == null) return 1;
+            return orderOne.getCreationTime().compareTo(orderTwo.getCreationTime());
+        });
         return sortArrayOrder;
     }
 
     @Override
     public List<Order> sortOrderByLeadTime(List<Order> orders) {
         List<Order> sortArrayOrder = new ArrayList<>(orders);
-        OrderLeadComparator orderLeadComparator = new OrderLeadComparator();
-        sortArrayOrder.sort(orderLeadComparator);
+        sortArrayOrder.sort((orderOne, orderTwo)->{
+            if (orderOne.getLeadTime() == null && orderTwo.getLeadTime() == null) return 0;
+            if (orderOne.getLeadTime() == null) return -1;
+            if (orderTwo.getLeadTime() == null) return 1;
+            return orderOne.getLeadTime().compareTo(orderTwo.getLeadTime());
+        });
         return sortArrayOrder;
     }
 
     @Override
     public List<Order> sortOrderByPrice(List<Order> orders) {
         List<Order> sortArrayOrder = new ArrayList<>(orders);
-        OrderPriceComparator orderPriceComparator = new OrderPriceComparator();
-        sortArrayOrder.sort(orderPriceComparator);
+        sortArrayOrder.sort((orderOne, orderTwo) -> {
+            if (orderOne.getPrice() == null && orderTwo.getPrice() == null) return 0;
+            if (orderOne.getPrice() == null) return -1;
+            if (orderTwo.getPrice() == null) return 1;
+            return orderOne.getPrice().compareTo(orderTwo.getPrice());
+        });
         return sortArrayOrder;
     }
 
     @Override
     public List<Order> sortOrderByStartTime(List<Order> orders) {
         List<Order> sortArrayOrder = new ArrayList<>(orders);
-        OrderStartComparator orderStartComparator = new OrderStartComparator();
-        sortArrayOrder.sort(orderStartComparator);
+        sortArrayOrder.sort((orderOne, orderTwo)->{
+            if (orderOne.getExecutionStartTime() == null && orderTwo.getExecutionStartTime() == null) return 0;
+            if (orderOne.getExecutionStartTime() == null) return -1;
+            if (orderTwo.getExecutionStartTime() == null) return 1;
+            return orderOne.getExecutionStartTime().compareTo(orderTwo.getExecutionStartTime());
+        });
         return sortArrayOrder;
     }
 

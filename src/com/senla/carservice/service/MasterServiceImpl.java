@@ -1,17 +1,12 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.comparator.MasterAlphabetComparator;
-import com.senla.carservice.comparator.MasterBusyComparator;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
-import com.senla.carservice.repository.OrderRepository;
-import com.senla.carservice.repository.OrderRepositoryImpl;
 import com.senla.carservice.util.ExportUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -62,16 +57,24 @@ public  class MasterServiceImpl implements MasterService {
     @Override
     public List<Master> sortMasterByAlphabet(List<Master> masters) {
         List<Master> sortArrayMaster = new ArrayList<>(masters);
-        MasterAlphabetComparator masterAlphabetComparator = new MasterAlphabetComparator();
-        sortArrayMaster.sort(masterAlphabetComparator);
+        sortArrayMaster.sort((masterOne, masterTwo)->{
+            if (masterOne.getName() == null && masterTwo.getName() == null) return 0;
+            if (masterOne.getName() == null) return -1;
+            if (masterTwo.getName() == null) return 1;
+            return masterOne.getName().compareTo(masterTwo.getName());
+        });
         return sortArrayMaster;
     }
 
     @Override
     public List<Master> sortMasterByBusy(List<Master> masters) {
         List<Master> sortArrayMaster = new ArrayList<>(masters);
-        MasterBusyComparator masterBusyComparator = new MasterBusyComparator();
-        sortArrayMaster.sort(masterBusyComparator);
+        sortArrayMaster.sort((masterOne, masterTwo)->{
+            if (masterOne.getNumberOrder() == null && masterTwo.getNumberOrder() == null) return 0;
+            if (masterOne.getNumberOrder() == null) return -1;
+            if (masterTwo.getNumberOrder() == null) return 1;
+            return masterOne.getNumberOrder() - masterTwo.getNumberOrder();
+        });
         return sortArrayMaster;
     }
 
