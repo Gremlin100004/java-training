@@ -1,4 +1,4 @@
-package com.senla.carservice.ui.action;
+package com.senla.carservice.ui.menu;
 
 @FunctionalInterface
 public interface Action {

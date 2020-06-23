@@ -29,6 +29,18 @@ public class Car extends AEntity {
         return registrationNumber;
     }
 
+    public void setAutomaker(String automaker) {
+        this.automaker = automaker;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
     @Override
     public String toString() {
         return "Car{" +

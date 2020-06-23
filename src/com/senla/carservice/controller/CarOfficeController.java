@@ -7,7 +7,6 @@ import com.senla.carservice.service.*;
 import com.senla.carservice.util.DateUtil;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

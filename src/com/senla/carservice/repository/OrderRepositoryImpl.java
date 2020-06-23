@@ -47,7 +47,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Car> getCars(){
+    public List<Car> getCars() {
         List<Car> cars = new ArrayList<>();
         this.getOrders().forEach(order -> cars.add(order.getCar()));
         return cars;

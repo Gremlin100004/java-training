@@ -1,10 +1,11 @@
 package com.senla.carservice.ui.menu;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Menu {
     private String name;
-    private ArrayList<MenuItem> menuItems;
+    private List<MenuItem> menuItems = new ArrayList<>();
 
     public Menu() {
     }
@@ -17,7 +18,7 @@ public class Menu {
         return name;
     }
 
-    public ArrayList<MenuItem> getMenuItems() {
+    public List<MenuItem> getMenuItems() {
         return menuItems;
     }
 
@@ -25,7 +26,7 @@ public class Menu {
         this.name = name;
     }
 
-    public void setMenuItems(ArrayList<MenuItem> menuItems) {
+    public void setMenuItems(List<MenuItem> menuItems) {
         this.menuItems = menuItems;
     }
 }

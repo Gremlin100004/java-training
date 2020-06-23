@@ -25,4 +25,6 @@ public interface GarageService {
     List<Place> getFreePlaceGarage(Garage garage);
 
     String exportGarages();
+
+    String importGarage();
 }

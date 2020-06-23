@@ -2,7 +2,6 @@ package com.senla.carservice.ui.printer;
 
 import com.senla.carservice.domain.Order;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

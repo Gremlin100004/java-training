@@ -58,11 +58,19 @@ public class GarageController {
         return this.garageService.getFreePlaceGarage(garage);
     }
 
-    public String exportGarages(){
+    public String exportGarages() {
         if (this.garageService.exportGarages().equals("save successfully")) {
             return "Garages have been export successfully!";
         } else {
             return "export problem.";
+        }
+    }
+
+    public String importGarages() {
+        if (this.garageService.importGarage().equals("import successfully")) {
+            return "Garages have been import successfully!";
+        } else {
+            return "import problem.";
         }
     }
 }
