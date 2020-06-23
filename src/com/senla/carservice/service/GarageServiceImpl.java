@@ -6,6 +6,7 @@ import com.senla.carservice.domain.Place;
 import com.senla.carservice.repository.GarageRepository;
 import com.senla.carservice.repository.GarageRepositoryImpl;
 import com.senla.carservice.util.ExportUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,6 +17,7 @@ public class GarageServiceImpl implements GarageService {
     private final GarageRepository garageRepository;
     private final String GARAGE_PATH = "csv//garage.csv";
     private final String PLACE_PATH = "csv//place.csv";
+
     private GarageServiceImpl() {
         this.garageRepository = GarageRepositoryImpl.getInstance();
     }
@@ -126,14 +128,14 @@ public class GarageServiceImpl implements GarageService {
     }
 
     @Override
-    public String importGarage(){
+    public String importGarage() {
         List<String> csvLinesGarage = ExportUtil.GetCsv(GARAGE_PATH);
         List<Place> places = importPlace();
-        if (places.isEmpty() || csvLinesGarage.isEmpty()){
+        if (places.isEmpty() || csvLinesGarage.isEmpty()) {
             return "import problem";
         }
         List<Garage> garages = this.garageRepository.getGarages();
-        csvLinesGarage.forEach(line->{
+        csvLinesGarage.forEach(line -> {
             Garage garage = getGarageFromCsv(line, places);
             garages.remove(garage);
             garages.add(garage);
@@ -141,14 +143,14 @@ public class GarageServiceImpl implements GarageService {
         return "import successfully";
     }
 
-    private List<Place> importPlace(){
+    private List<Place> importPlace() {
         List<String> csvLinesPlace = ExportUtil.GetCsv(PLACE_PATH);
         List<Place> places = new ArrayList<>();
-        csvLinesPlace.forEach(line->places.add(getPlaceFromCsv(line)));
+        csvLinesPlace.forEach(line -> places.add(getPlaceFromCsv(line)));
         return places;
     }
 
-    private Place getPlaceFromCsv(String line){
+    private Place getPlaceFromCsv(String line) {
         List<String> values = Arrays.asList(line.split(","));
         Place place = new Place();
         place.setId(Long.valueOf(values.get(0)));
@@ -156,16 +158,16 @@ public class GarageServiceImpl implements GarageService {
         return place;
     }
 
-    private Garage getGarageFromCsv(String line, List<Place> places){
+    private Garage getGarageFromCsv(String line, List<Place> places) {
         String values = Arrays.asList(line.split("\"")).get(0);
         String idPlace = Arrays.asList(line.split("\"")).get(1);
         Garage garage = new Garage();
         garage.setId(Long.valueOf(Arrays.asList(values.split(",")).get(0)));
         garage.setName(Arrays.asList(values.split(",")).get(1));
         List<Place> garagePlace = new ArrayList<>();
-        for (String stringIndex : idPlace.replaceAll("\"", "").split(",")){
+        for (String stringIndex : idPlace.replaceAll("\"", "").split(",")) {
             places.forEach(place -> {
-                if (place.getId().equals(Long.valueOf(stringIndex))){
+                if (place.getId().equals(Long.valueOf(stringIndex))) {
                     garagePlace.add(place);
                 }
             });
@@ -173,7 +175,6 @@ public class GarageServiceImpl implements GarageService {
         garage.setPlaces(garagePlace);
         return garage;
     }
-
 
     private String convertGarageToCsv(Garage garage, boolean isLineFeed) {
         StringBuilder stringValue = new StringBuilder();

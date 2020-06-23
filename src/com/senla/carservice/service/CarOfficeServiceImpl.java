@@ -2,7 +2,10 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.repository.*;
+import com.senla.carservice.repository.GarageRepository;
+import com.senla.carservice.repository.GarageRepositoryImpl;
+import com.senla.carservice.repository.MasterRepository;
+import com.senla.carservice.repository.MasterRepositoryImpl;
 
 import java.util.List;
 

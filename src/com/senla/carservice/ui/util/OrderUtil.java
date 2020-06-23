@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderUtil {
-    public static List<Order> getSortPeriodOrders(){
+    public static List<Order> getSortPeriodOrders() {
         String beginningPeriodTime;
         String endPeriodTime;
         OrderController orderController = OrderController.getInstance();

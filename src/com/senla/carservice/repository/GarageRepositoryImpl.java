@@ -11,7 +11,7 @@ public class GarageRepositoryImpl implements GarageRepository {
     private static GarageRepository instance;
     private List<Garage> garages;
     private final IdGenerator idGeneratorGarage;
-    private IdGenerator idGeneratorPlace;
+    private final IdGenerator idGeneratorPlace;
 
     private GarageRepositoryImpl() {
         this.garages = new ArrayList<>();
@@ -47,7 +47,7 @@ public class GarageRepositoryImpl implements GarageRepository {
     }
 
     @Override
-    public List<Place> getPlaces(){
+    public List<Place> getPlaces() {
         List<Place> places = new ArrayList<>();
         this.garages.forEach(garage -> places.addAll(garage.getPlaces()));
         return places;

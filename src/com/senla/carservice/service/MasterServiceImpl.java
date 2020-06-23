@@ -1,9 +1,7 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.domain.Place;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.util.ExportUtil;
@@ -105,10 +103,10 @@ public class MasterServiceImpl implements MasterService {
         }
         List<Master> masters = this.masterRepository.getMasters();
         csvLinesMaster.forEach(line -> {
-            Master master = getMasterFromCsv(line);
-            masters.remove(master);
-            masters.add(master);
-        }
+                    Master master = getMasterFromCsv(line);
+                    masters.remove(master);
+                    masters.add(master);
+                }
         );
         return "import successfully";
     }
@@ -118,7 +116,7 @@ public class MasterServiceImpl implements MasterService {
         Master master = new Master();
         master.setId(Long.valueOf(values.get(0)));
         master.setName(values.get(1));
-        if (values.get(2).equals("null")){
+        if (values.get(2).equals("null")) {
             master.setNumberOrder(null);
         } else {
             master.setNumberOrder(Integer.valueOf(values.get(2)));

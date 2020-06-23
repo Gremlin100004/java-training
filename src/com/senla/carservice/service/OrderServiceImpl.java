@@ -112,7 +112,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> sortOrderCreationTime(List<Order> orders) {
         List<Order> sortArrayOrder = new ArrayList<>(orders);
-        sortArrayOrder.sort((orderOne, orderTwo)->{
+        sortArrayOrder.sort((orderOne, orderTwo) -> {
             if (orderOne.getCreationTime() == null && orderTwo.getCreationTime() == null) return 0;
             if (orderOne.getCreationTime() == null) return -1;
             if (orderTwo.getCreationTime() == null) return 1;
@@ -124,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> sortOrderByLeadTime(List<Order> orders) {
         List<Order> sortArrayOrder = new ArrayList<>(orders);
-        sortArrayOrder.sort((orderOne, orderTwo)->{
+        sortArrayOrder.sort((orderOne, orderTwo) -> {
             if (orderOne.getLeadTime() == null && orderTwo.getLeadTime() == null) return 0;
             if (orderOne.getLeadTime() == null) return -1;
             if (orderTwo.getLeadTime() == null) return 1;
@@ -148,7 +148,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> sortOrderByStartTime(List<Order> orders) {
         List<Order> sortArrayOrder = new ArrayList<>(orders);
-        sortArrayOrder.sort((orderOne, orderTwo)->{
+        sortArrayOrder.sort((orderOne, orderTwo) -> {
             if (orderOne.getExecutionStartTime() == null && orderTwo.getExecutionStartTime() == null) return 0;
             if (orderOne.getExecutionStartTime() == null) return -1;
             if (orderTwo.getExecutionStartTime() == null) return 1;
@@ -247,68 +247,68 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String exportOrder(){
+    public String exportOrder() {
         OrderRepository orderRepository = OrderRepositoryImpl.getInstance();
         List<Order> orders = orderRepository.getOrders();
         List<Car> cars = orderRepository.getCars();
         StringBuilder valueOrderCsv = new StringBuilder();
         StringBuilder valueCarCsv = new StringBuilder();
         String message;
-        for (int i = 0; i < orders.size(); i++){
-            if (i == orders.size()-1){
+        for (int i = 0; i < orders.size(); i++) {
+            if (i == orders.size() - 1) {
                 valueOrderCsv.append(convertOrderToCsv(orders.get(i), false));
             } else {
                 valueOrderCsv.append(convertOrderToCsv(orders.get(i), true));
             }
         }
-        for (int i = 0; i < cars.size(); i++){
-            if (i == cars.size()-1){
+        for (int i = 0; i < cars.size(); i++) {
+            if (i == cars.size() - 1) {
                 valueCarCsv.append(convertCarToCsv(cars.get(i), false));
             } else {
                 valueCarCsv.append(convertCarToCsv(cars.get(i), true));
             }
         }
         message = ExportUtil.SaveCsv(valueOrderCsv, ORDER_PATH);
-        if (!message.equals("save successfully")){
+        if (!message.equals("save successfully")) {
             return message;
         }
         message = ExportUtil.SaveCsv(valueCarCsv, CAR_PATH);
-        if (!message.equals("save successfully")){
+        if (!message.equals("save successfully")) {
             return message;
         }
         return message;
     }
 
     @Override
-    public String importOrder(){
+    public String importOrder() {
         List<String> csvLinesOrder = ExportUtil.GetCsv(ORDER_PATH);
         List<Car> cars = importCar();
-        if (cars.isEmpty() || csvLinesOrder.isEmpty()){
+        if (cars.isEmpty() || csvLinesOrder.isEmpty()) {
             return "import problem";
         }
         List<Order> orders = this.orderRepository.getOrders();
-            for (String line: csvLinesOrder){
-                Order order = getOrderFromCsv(line, cars);
-                if (order.getMasters().isEmpty()){
-                    return "you don't import masters!!!";
-                }
-                if (order.getGarage() == null){
-                    return "you don't import garages!!!";
-                }
-                orders.remove(order);
-                orders.add(order);
+        for (String line : csvLinesOrder) {
+            Order order = getOrderFromCsv(line, cars);
+            if (order.getMasters().isEmpty()) {
+                return "you don't import masters!!!";
             }
+            if (order.getGarage() == null) {
+                return "you don't import garages!!!";
+            }
+            orders.remove(order);
+            orders.add(order);
+        }
         return "import successfully";
     }
 
-    private List<Car> importCar(){
+    private List<Car> importCar() {
         List<String> csvLinesPlace = ExportUtil.GetCsv(CAR_PATH);
         List<Car> cars = new ArrayList<>();
-        csvLinesPlace.forEach(line->cars.add(getCarFromCsv(line)));
+        csvLinesPlace.forEach(line -> cars.add(getCarFromCsv(line)));
         return cars;
     }
 
-    private Car getCarFromCsv(String line){
+    private Car getCarFromCsv(String line) {
         List<String> values = Arrays.asList(line.split(","));
         Car car = new Car();
         car.setId(Long.valueOf(values.get(0)));
@@ -318,8 +318,8 @@ public class OrderServiceImpl implements OrderService {
         return car;
     }
 
-    private String convertCarToCsv(Car car, boolean isLineFeed){
-        if(isLineFeed){
+    private String convertCarToCsv(Car car, boolean isLineFeed) {
+        if (isLineFeed) {
             return String.format("%s,%s,%s,%s\n", car.getId(),
                     car.getAutomaker(), car.getModel(), car.getRegistrationNumber());
         } else {
@@ -328,11 +328,11 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private Order getOrderFromCsv(String line, List<Car> cars){
+    private Order getOrderFromCsv(String line, List<Car> cars) {
         List<String> values = Arrays.asList((line.split("\""))[0].split(","));
         List<String> arrayIdMaster = Arrays.asList(line.split("\"")[1].replaceAll("\"", "").split(","));
         Car car = getCarById(cars, Long.valueOf(values.get(6)));
-        Order order = new Order(Long.valueOf(values.get(0)),car);
+        Order order = new Order(Long.valueOf(values.get(0)), car);
         order.setCreationTime(DateUtil.getDatesFromString(values.get(1)));
         order.setExecutionStartTime(DateUtil.getDatesFromString(values.get(2)));
         order.setLeadTime(DateUtil.getDatesFromString(values.get(3)));
@@ -345,11 +345,11 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    private List<Master> getMastersById(List<Master> masters, List<String>arrayIdMaster){
+    private List<Master> getMastersById(List<Master> masters, List<String> arrayIdMaster) {
         List<Master> orderMasters = new ArrayList<>();
-        for (String stringIndex : arrayIdMaster){
+        for (String stringIndex : arrayIdMaster) {
             masters.forEach(master -> {
-                if (master.getId().equals(Long.valueOf(stringIndex))){
+                if (master.getId().equals(Long.valueOf(stringIndex))) {
                     orderMasters.add(master);
                 }
             });
@@ -357,54 +357,53 @@ public class OrderServiceImpl implements OrderService {
         return orderMasters;
     }
 
-    private Garage getGarageById(List<Garage> garages, Long id){
-        for (Garage garage : garages){
-            if (garage.getId().equals(id)){
+    private Garage getGarageById(List<Garage> garages, Long id) {
+        for (Garage garage : garages) {
+            if (garage.getId().equals(id)) {
                 return garage;
             }
         }
         return null;
     }
 
-    private Place getPlaceById(List<Place> places, Long id){
-        for (Place place : places){
-            if (place.getId().equals(id)){
+    private Place getPlaceById(List<Place> places, Long id) {
+        for (Place place : places) {
+            if (place.getId().equals(id)) {
                 return place;
             }
         }
         return null;
     }
 
-    private Car getCarById(List<Car> cars, Long id){
-        for (Car importCar : cars){
-            if (importCar.getId().equals(id)){
+    private Car getCarById(List<Car> cars, Long id) {
+        for (Car importCar : cars) {
+            if (importCar.getId().equals(id)) {
                 return importCar;
             }
         }
         return null;
     }
 
-    private String convertOrderToCsv(Order order, boolean isLineFeed){
+    private String convertOrderToCsv(Order order, boolean isLineFeed) {
         StringBuilder stringValue = new StringBuilder();
-        stringValue.append(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,\"",order.getId(),
+        stringValue.append(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,\"", order.getId(),
                 DateUtil.getStringFromDate(order.getCreationTime()),
                 DateUtil.getStringFromDate(order.getExecutionStartTime()),
                 DateUtil.getStringFromDate(order.getLeadTime()),
                 order.getGarage().getId(), order.getPlace().getId(),
                 order.getCar().getId(), order.getPrice(), order.getStatus(),
                 order.isDeleteStatus()));
-        for (int i = 0; i < order.getMasters().size(); i++){
-            if (i == order.getMasters().size()-1){
+        for (int i = 0; i < order.getMasters().size(); i++) {
+            if (i == order.getMasters().size() - 1) {
                 stringValue.append(order.getMasters().get(i).getId());
             } else {
                 stringValue.append(order.getMasters().get(i).getId()).append(",");
             }
         }
         stringValue.append("\"");
-        if(isLineFeed){
+        if (isLineFeed) {
             stringValue.append("\n");
         }
-        System.out.println(stringValue.toString());
         return stringValue.toString();
     }
 }

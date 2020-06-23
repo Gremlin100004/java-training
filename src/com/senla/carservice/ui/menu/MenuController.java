@@ -24,7 +24,7 @@ public class MenuController {
         while (answer != 0) {
             this.navigator.printMenu();
             answer = ScannerUtil.getIntUser("Enter number item menu:");
-            if (answer != 0){
+            if (answer != 0) {
                 navigator.navigate(answer);
             }
         }
