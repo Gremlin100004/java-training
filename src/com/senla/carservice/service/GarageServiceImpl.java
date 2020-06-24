@@ -5,7 +5,7 @@ import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.repository.GarageRepository;
 import com.senla.carservice.repository.GarageRepositoryImpl;
-import com.senla.carservice.util.ExportUtil;
+import com.senla.carservice.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,11 +116,11 @@ public class GarageServiceImpl implements GarageService {
                 valuePlaceCsv.append(convertPlaceToCsv(places.get(i), true));
             }
         }
-        message = ExportUtil.SaveCsv(valueGarageCsv, GARAGE_PATH);
+        message = FileUtil.SaveCsv(valueGarageCsv, GARAGE_PATH);
         if (!message.equals("save successfully")) {
             return message;
         }
-        message = ExportUtil.SaveCsv(valuePlaceCsv, PLACE_PATH);
+        message = FileUtil.SaveCsv(valuePlaceCsv, PLACE_PATH);
         if (!message.equals("save successfully")) {
             return message;
         }
@@ -129,7 +129,7 @@ public class GarageServiceImpl implements GarageService {
 
     @Override
     public String importGarage() {
-        List<String> csvLinesGarage = ExportUtil.GetCsv(GARAGE_PATH);
+        List<String> csvLinesGarage = FileUtil.GetCsv(GARAGE_PATH);
         List<Place> places = importPlace();
         if (places.isEmpty() || csvLinesGarage.isEmpty()) {
             return "import problem";
@@ -144,7 +144,7 @@ public class GarageServiceImpl implements GarageService {
     }
 
     private List<Place> importPlace() {
-        List<String> csvLinesPlace = ExportUtil.GetCsv(PLACE_PATH);
+        List<String> csvLinesPlace = FileUtil.GetCsv(PLACE_PATH);
         List<Place> places = new ArrayList<>();
         csvLinesPlace.forEach(line -> places.add(getPlaceFromCsv(line)));
         return places;

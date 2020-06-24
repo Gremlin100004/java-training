@@ -8,7 +8,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExportUtil {
+public class FileUtil {
     public static String SaveCsv(StringBuilder value, String path) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(path)) {
             PrintStream printStream = new PrintStream(fileOutputStream);

@@ -3,7 +3,7 @@ package com.senla.carservice.service;
 import com.senla.carservice.domain.*;
 import com.senla.carservice.repository.*;
 import com.senla.carservice.util.DateUtil;
-import com.senla.carservice.util.ExportUtil;
+import com.senla.carservice.util.FileUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -268,11 +268,11 @@ public class OrderServiceImpl implements OrderService {
                 valueCarCsv.append(convertCarToCsv(cars.get(i), true));
             }
         }
-        message = ExportUtil.SaveCsv(valueOrderCsv, ORDER_PATH);
+        message = FileUtil.SaveCsv(valueOrderCsv, ORDER_PATH);
         if (!message.equals("save successfully")) {
             return message;
         }
-        message = ExportUtil.SaveCsv(valueCarCsv, CAR_PATH);
+        message = FileUtil.SaveCsv(valueCarCsv, CAR_PATH);
         if (!message.equals("save successfully")) {
             return message;
         }
@@ -281,7 +281,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String importOrder() {
-        List<String> csvLinesOrder = ExportUtil.GetCsv(ORDER_PATH);
+        List<String> csvLinesOrder = FileUtil.GetCsv(ORDER_PATH);
         List<Car> cars = importCar();
         if (cars.isEmpty() || csvLinesOrder.isEmpty()) {
             return "import problem";
@@ -302,7 +302,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private List<Car> importCar() {
-        List<String> csvLinesPlace = ExportUtil.GetCsv(CAR_PATH);
+        List<String> csvLinesPlace = FileUtil.GetCsv(CAR_PATH);
         List<Car> cars = new ArrayList<>();
         csvLinesPlace.forEach(line -> cars.add(getCarFromCsv(line)));
         return cars;

@@ -4,7 +4,7 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
-import com.senla.carservice.util.ExportUtil;
+import com.senla.carservice.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,12 +92,12 @@ public class MasterServiceImpl implements MasterService {
                 valueCsv.append(convertToCsv(masters.get(i), true));
             }
         }
-        return ExportUtil.SaveCsv(valueCsv, MASTER_PATH);
+        return FileUtil.SaveCsv(valueCsv, MASTER_PATH);
     }
 
     @Override
     public String importMasters() {
-        List<String> csvLinesMaster = ExportUtil.GetCsv(MASTER_PATH);
+        List<String> csvLinesMaster = FileUtil.GetCsv(MASTER_PATH);
         if (csvLinesMaster.isEmpty()) {
             return "export problem";
         }
