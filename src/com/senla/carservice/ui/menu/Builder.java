@@ -11,7 +11,6 @@ import com.senla.carservice.domain.Place;
 import com.senla.carservice.ui.printer.PrinterGarages;
 import com.senla.carservice.ui.printer.PrinterMaster;
 import com.senla.carservice.ui.printer.PrinterOrder;
-import com.senla.carservice.ui.util.OrderUtil;
 import com.senla.carservice.ui.util.ScannerUtil;
 import com.senla.carservice.ui.util.TestData;
 
@@ -496,7 +495,7 @@ public class Builder {
         completedOrderMenu.getMenuItems().add(new MenuItem("Sort by filing date", () -> {
             List<Order> orders = new ArrayList<>();
             while (orders.isEmpty()) {
-                orders = OrderUtil.getSortPeriodOrders();
+                orders = getSortPeriodOrders();
                 if (orders.isEmpty()) {
                     return;
                 }
@@ -512,7 +511,7 @@ public class Builder {
         completedOrderMenu.getMenuItems().add(new MenuItem("Sort by execution date", () -> {
             List<Order> orders = new ArrayList<>();
             while (orders.isEmpty()) {
-                orders = OrderUtil.getSortPeriodOrders();
+                orders = getSortPeriodOrders();
                 if (orders.isEmpty()) {
                     return;
                 }
@@ -531,7 +530,7 @@ public class Builder {
         completedOrderMenu.getMenuItems().add(new MenuItem("Sort by price", () -> {
             List<Order> orders = new ArrayList<>();
             while (orders.isEmpty()) {
-                orders = OrderUtil.getSortPeriodOrders();
+                orders = getSortPeriodOrders();
                 if (orders.isEmpty()) {
                     return;
                 }
@@ -557,7 +556,7 @@ public class Builder {
         deletedOrderMenu.getMenuItems().add(new MenuItem("Sort by filing date", () -> {
             List<Order> orders = new ArrayList<>();
             while (orders.isEmpty()) {
-                orders = OrderUtil.getSortPeriodOrders();
+                orders = getSortPeriodOrders();
                 if (orders.isEmpty()) {
                     return;
                 }
@@ -573,7 +572,7 @@ public class Builder {
         deletedOrderMenu.getMenuItems().add(new MenuItem("Sort by execution date", () -> {
             List<Order> orders = new ArrayList<>();
             while (orders.isEmpty()) {
-                orders = OrderUtil.getSortPeriodOrders();
+                orders = getSortPeriodOrders();
                 if (orders.isEmpty()) {
                     return;
                 }
@@ -592,7 +591,7 @@ public class Builder {
         deletedOrderMenu.getMenuItems().add(new MenuItem("Sort by price", () -> {
             List<Order> orders = new ArrayList<>();
             while (orders.isEmpty()) {
-                orders = OrderUtil.getSortPeriodOrders();
+                orders = getSortPeriodOrders();
                 if (orders.isEmpty()) {
                     return;
                 }
@@ -618,7 +617,7 @@ public class Builder {
         canceledOrderMenu.getMenuItems().add(new MenuItem("Sort by filing date", () -> {
             List<Order> orders = new ArrayList<>();
             while (orders.isEmpty()) {
-                orders = OrderUtil.getSortPeriodOrders();
+                orders = getSortPeriodOrders();
                 if (orders.isEmpty()) {
                     return;
                 }
@@ -634,7 +633,7 @@ public class Builder {
         canceledOrderMenu.getMenuItems().add(new MenuItem("Sort by execution date", () -> {
             List<Order> orders = new ArrayList<>();
             while (orders.isEmpty()) {
-                orders = OrderUtil.getSortPeriodOrders();
+                orders = getSortPeriodOrders();
                 if (orders.isEmpty()) {
                     return;
                 }
@@ -653,7 +652,7 @@ public class Builder {
         canceledOrderMenu.getMenuItems().add(new MenuItem("Sort by price", () -> {
             List<Order> orders = new ArrayList<>();
             while (orders.isEmpty()) {
-                orders = OrderUtil.getSortPeriodOrders();
+                orders = getSortPeriodOrders();
                 if (orders.isEmpty()) {
                     return;
                 }
@@ -997,5 +996,27 @@ public class Builder {
             }
         }
         return false;
+    }
+
+    private List<Order> getSortPeriodOrders() {
+        String beginningPeriodTime;
+        String endPeriodTime;
+        OrderController orderController = OrderController.getInstance();
+        List<Order> testOrders = orderController.getOrders();
+        List<Order> orders = new ArrayList<>();
+        if (testOrders.isEmpty()) {
+            System.out.println("There are no orders in service!");
+            return orders;
+        }
+        beginningPeriodTime = ScannerUtil.getStringDateUser(
+                "Enter the start of period in format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
+        endPeriodTime = ScannerUtil.getStringDateUser(
+                "Enter the end of period in format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
+        orders = orderController.getOrdersByPeriod(beginningPeriodTime, endPeriodTime);
+        System.out.println(String.format("Period of time: %s - %s", beginningPeriodTime, endPeriodTime));
+        if (orders.isEmpty()) {
+            System.out.println("There are no orders for this period of time!");
+        }
+        return orders;
     }
 }
