@@ -30,7 +30,7 @@ public interface OrderService {
 
     List<Order> sortOrderByPrice(List<Order> order);
 
-    List<Order> sortOrderByPeriod(List<Order> orders, Date startPeriod, Date endPeriod);
+    List<Order> getOrderByPeriod(List<Order> orders, Date startPeriod, Date endPeriod);
 
     List<Order> getCurrentRunningOrders();
 

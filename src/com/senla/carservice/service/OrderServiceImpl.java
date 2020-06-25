@@ -1,15 +1,26 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.domain.*;
-import com.senla.carservice.repository.*;
+import com.senla.carservice.domain.Car;
+import com.senla.carservice.domain.Garage;
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
+import com.senla.carservice.domain.Place;
+import com.senla.carservice.domain.Status;
+import com.senla.carservice.repository.GarageRepository;
+import com.senla.carservice.repository.GarageRepositoryImpl;
+import com.senla.carservice.repository.MasterRepositoryImpl;
+import com.senla.carservice.repository.OrderRepository;
+import com.senla.carservice.repository.OrderRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.FileUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderServiceImpl implements OrderService {
     private static OrderService instance;
@@ -111,54 +122,30 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> sortOrderCreationTime(List<Order> orders) {
-        List<Order> sortArrayOrder = new ArrayList<>(orders);
-        sortArrayOrder.sort((orderOne, orderTwo) -> {
-            if (orderOne.getCreationTime() == null && orderTwo.getCreationTime() == null) return 0;
-            if (orderOne.getCreationTime() == null) return -1;
-            if (orderTwo.getCreationTime() == null) return 1;
-            return orderOne.getCreationTime().compareTo(orderTwo.getCreationTime());
-        });
-        return sortArrayOrder;
+        return orders.stream().sorted(Comparator.comparing(Order::getCreationTime,
+                Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByLeadTime(List<Order> orders) {
-        List<Order> sortArrayOrder = new ArrayList<>(orders);
-        sortArrayOrder.sort((orderOne, orderTwo) -> {
-            if (orderOne.getLeadTime() == null && orderTwo.getLeadTime() == null) return 0;
-            if (orderOne.getLeadTime() == null) return -1;
-            if (orderTwo.getLeadTime() == null) return 1;
-            return orderOne.getLeadTime().compareTo(orderTwo.getLeadTime());
-        });
-        return sortArrayOrder;
+        return orders.stream().sorted(Comparator.comparing(Order::getLeadTime,
+                Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByPrice(List<Order> orders) {
-        List<Order> sortArrayOrder = new ArrayList<>(orders);
-        sortArrayOrder.sort((orderOne, orderTwo) -> {
-            if (orderOne.getPrice() == null && orderTwo.getPrice() == null) return 0;
-            if (orderOne.getPrice() == null) return -1;
-            if (orderTwo.getPrice() == null) return 1;
-            return orderOne.getPrice().compareTo(orderTwo.getPrice());
-        });
-        return sortArrayOrder;
+        return orders.stream().sorted(Comparator.comparing(Order::getPrice,
+                Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByStartTime(List<Order> orders) {
-        List<Order> sortArrayOrder = new ArrayList<>(orders);
-        sortArrayOrder.sort((orderOne, orderTwo) -> {
-            if (orderOne.getExecutionStartTime() == null && orderTwo.getExecutionStartTime() == null) return 0;
-            if (orderOne.getExecutionStartTime() == null) return -1;
-            if (orderTwo.getExecutionStartTime() == null) return 1;
-            return orderOne.getExecutionStartTime().compareTo(orderTwo.getExecutionStartTime());
-        });
-        return sortArrayOrder;
+        return orders.stream().sorted(Comparator.comparing(Order::getExecutionStartTime,
+                Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 
     @Override
-    public List<Order> sortOrderByPeriod(List<Order> orders, Date startPeriod, Date endPeriod) {
+    public List<Order> getOrderByPeriod(List<Order> orders, Date startPeriod, Date endPeriod) {
         ArrayList<Order> sortArrayOrder = new ArrayList<>();
         if (startPeriod == null || endPeriod == null) {
             return sortArrayOrder;

@@ -8,8 +8,10 @@ import com.senla.carservice.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MasterServiceImpl implements MasterService {
     private static MasterService instance;
@@ -58,26 +60,14 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> sortMasterByAlphabet(List<Master> masters) {
-        List<Master> sortArrayMaster = new ArrayList<>(masters);
-        sortArrayMaster.sort((masterOne, masterTwo) -> {
-            if (masterOne.getName() == null && masterTwo.getName() == null) return 0;
-            if (masterOne.getName() == null) return -1;
-            if (masterTwo.getName() == null) return 1;
-            return masterOne.getName().compareTo(masterTwo.getName());
-        });
-        return sortArrayMaster;
+        return masters.stream().sorted(Comparator.comparing(Master::getName,
+                Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 
     @Override
     public List<Master> sortMasterByBusy(List<Master> masters) {
-        List<Master> sortArrayMaster = new ArrayList<>(masters);
-        sortArrayMaster.sort((masterOne, masterTwo) -> {
-            if (masterOne.getNumberOrder() == null && masterTwo.getNumberOrder() == null) return 0;
-            if (masterOne.getNumberOrder() == null) return -1;
-            if (masterTwo.getNumberOrder() == null) return 1;
-            return masterOne.getNumberOrder() - masterTwo.getNumberOrder();
-        });
-        return sortArrayMaster;
+        return masters.stream().sorted(Comparator.comparing(Master::getNumberOrder,
+                Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 
     @Override

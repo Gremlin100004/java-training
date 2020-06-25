@@ -3,7 +3,14 @@ package com.senla.carservice.controller;
 import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.service.*;
+import com.senla.carservice.service.CarOfficeService;
+import com.senla.carservice.service.CarOfficeServiceImpl;
+import com.senla.carservice.service.GarageService;
+import com.senla.carservice.service.GarageServiceImpl;
+import com.senla.carservice.service.MasterService;
+import com.senla.carservice.service.MasterServiceImpl;
+import com.senla.carservice.service.OrderService;
+import com.senla.carservice.service.OrderServiceImpl;
 import com.senla.carservice.util.DateUtil;
 
 import java.text.SimpleDateFormat;
@@ -35,7 +42,7 @@ public class CarOfficeController {
         Date executeDate = DateUtil.getDatesFromString(stringExecuteDate);
         Date leadDate = DateUtil.getDatesFromString(stringLeadDate);
         List<Order> orders = this.orderService.getOrders();
-        orders = this.orderService.sortOrderByPeriod(orders, executeDate, leadDate);
+        orders = this.orderService.getOrderByPeriod(orders, executeDate, leadDate);
         return this.garageService.getGaragesFreePlace(executeDate, leadDate, orders);
     }
 
@@ -43,7 +50,7 @@ public class CarOfficeController {
         Date executeDate = DateUtil.getDatesFromString(stringExecuteDate);
         Date leadDate = DateUtil.getDatesFromString(stringLeadDate);
         List<Order> orders = this.orderService.getOrders();
-        orders = this.orderService.sortOrderByPeriod(orders, executeDate, leadDate);
+        orders = this.orderService.getOrderByPeriod(orders, executeDate, leadDate);
         return this.masterService.getFreeMasters(executeDate, leadDate, orders);
     }
 
@@ -62,16 +69,18 @@ public class CarOfficeController {
             return "past date";
         }
         List<Order> orders = this.orderService.getOrders();
-        orders = this.orderService.sortOrderByPeriod(orders, dateFree, endDay);
+        orders = this.orderService.getOrderByPeriod(orders, dateFree, endDay);
         int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
         int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);
         return String.format("- number free places in service: %s\n- number free masters in service: %s", numberFreePlace, numberFreeMasters);
     }
 
     public String getNearestFreeDate() {
-        final int hour = 23;
-        final int minute = 59;
-        Date dateFree = DateUtil.getDateWithoutTime();
+        final int startHour = 23;
+        final int startMinute = 59;
+        final int endHour = 23;
+        final int endMinute = 59;
+        Date dateFree = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM yyyy");
         if (this.masterService.getMasters().size() < 2 || this.garageService.getNumberPlaces() < 1) {
             return "Error!!! Add masters, garage and place to service!\n" +
@@ -80,13 +89,14 @@ public class CarOfficeController {
         int numberFreeMasters = 0;
         int numberFreePlace = 0;
         while (numberFreeMasters == 0 && numberFreePlace == 0) {
-            Date endDay = DateUtil.addHourMinutes(dateFree, hour, minute);
+            Date endDay = DateUtil.addHourMinutes(dateFree, endHour, endMinute);
             List<Order> orders = this.orderService.getOrders();
-            orders = this.orderService.sortOrderByPeriod(orders, dateFree, endDay);
+            orders = this.orderService.getOrderByPeriod(orders, dateFree, endDay);
             numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
             numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);
             dateFree = DateUtil.addDays(dateFree, 1);
         }
-        return String.format("Nearest free date: %s", dateFormat.format(dateFree.getTime()));
+        dateFree = DateUtil.addDays(dateFree, -1);
+        return String.format("Nearest free date: %s", dateFormat.format(DateUtil.addHourMinutes(dateFree, startHour, startMinute).getTime()));
     }
 }

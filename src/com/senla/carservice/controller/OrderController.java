@@ -58,7 +58,7 @@ public class OrderController {
         List<Order> orders = new ArrayList<>(this.orderService.getOrders());
         Order order = orders.get(orders.size() - 1);
         orders.remove(order);
-        orders = this.orderService.sortOrderByPeriod(orders, executionStartTime, leadTime);
+        orders = this.orderService.getOrderByPeriod(orders, executionStartTime, leadTime);
         int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
         int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);
         if (numberFreeMasters == 0) {
@@ -185,7 +185,7 @@ public class OrderController {
             endPeriodDate = null;
         }
         List<Order> orders = this.orderService.getOrders();
-        orders = this.orderService.sortOrderByPeriod(orders, startPeriodDate, endPeriodDate);
+        orders = this.orderService.getOrderByPeriod(orders, startPeriodDate, endPeriodDate);
         return orders;
     }
 
