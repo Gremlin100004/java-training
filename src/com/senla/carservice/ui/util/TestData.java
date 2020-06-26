@@ -5,9 +5,13 @@ import java.util.ArrayList;
 
 public class TestData {
 
+    // в классе со статическими методами обязательно должен быть пустой конструктор? для чего?
+    // если его и делают в утилитных классах, то только с приватным доступом
     public TestData() {
     }
 
+    // почему такой порядок ключевых слов? первым ВСЕГДА пишется модификатор доступа
+    // почему ArrayList, а не List?
     static public ArrayList<String> getArrayMasterNames() {
         ArrayList<String> arrayName = new ArrayList<>();
         arrayName.add("Petya");

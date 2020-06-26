@@ -7,6 +7,8 @@ import java.util.List;
 
 public class PrinterMaster {
     public static void printMasters(List<Master> masters) {
+        // это не константа, это локальная переменная, у нее не может быть такой нейминг
+        // константа - это "публичная/приватная статическая финальная переменная КЛАССА"
         final int LENGTH = 38;
         String line = String.format(" %s\n", String.join("", Collections.nCopies(LENGTH, "-")));
         StringBuilder stringBuilder = new StringBuilder(line);

@@ -9,8 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtil {
+    // НЕЙМИНГ!!!!
+    // почему принимает СтрингБилдер на вход? Почему не просто стринг?
+    // я не уверен, но мне кажется не очень оптимальным передавать в метод большую многострочную строку
+    // лучше записывать в файл построчно (я могу ошибаться)
     public static String SaveCsv(StringBuilder value, String path) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(path)) {
+            // эту строчку тоже нужно разместить в try-with-resources
+            //try (PrintStream printStream = new PrintStream(new FileOutputStream(path))) {
+
             PrintStream printStream = new PrintStream(fileOutputStream);
             printStream.print(value);
             return "save successfully";
@@ -19,6 +26,8 @@ public class FileUtil {
         }
     }
 
+    // НЕЙМИНГ!!!!
+    // неоптимальное построение метода - в кэтче и вне трай одинаковые ретурны, это можно упростить
     public static List<String> GetCsv(String path) {
         String line;
         List<String> csvLines = new ArrayList<>();

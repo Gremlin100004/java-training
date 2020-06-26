@@ -50,6 +50,7 @@ public class Car extends AEntity {
                 '}';
     }
 
+    // можно вынести в AEntity
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,6 +59,7 @@ public class Car extends AEntity {
         return super.getId().equals(car.getId());
     }
 
+    // можно вынести в AEntity
     @Override
     public int hashCode() {
         return Objects.hash(super.getId());

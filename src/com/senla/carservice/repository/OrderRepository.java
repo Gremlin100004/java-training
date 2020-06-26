@@ -13,6 +13,7 @@ public interface OrderRepository {
 
     List<Order> getOrders();
 
+    // такого метода быть здесь не должно
     void setOrders(List<Order> orders);
 
     List<Car> getCars();

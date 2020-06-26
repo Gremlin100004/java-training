@@ -38,6 +38,7 @@ public class CarOfficeController {
         return instance;
     }
 
+    // контроллер отдает модель на юай - это нежелательно, это должны быть разные приложения (бэк и юай-фронт)
     public List<Garage> getGaragesFreePlace(String stringExecuteDate, String stringLeadDate) {
         Date executeDate = DateUtil.getDatesFromString(stringExecuteDate);
         Date leadDate = DateUtil.getDatesFromString(stringLeadDate);
@@ -55,6 +56,7 @@ public class CarOfficeController {
     }
 
     public String getFreePlacesByDate(String date) {
+        // у тебя есть утилита для работы с датами, не нужно держать тут эту логику
         final int endDayHour = 23;
         final int endDayMinute = 59;
         final int startDayHour = 0;
@@ -68,6 +70,9 @@ public class CarOfficeController {
         if (currentDate.compareTo(endDay) > 0) {
             return "past date";
         }
+        // обычно this не пишут при обращении к полям сервиса (в контроллере) или к полю репозиторию (в сервисе) -
+        // это и так понятно
+        // не понимаю, зачем доставать два раза заказы и перезаписывать
         List<Order> orders = this.orderService.getOrders();
         orders = this.orderService.getOrderByPeriod(orders, dateFree, endDay);
         int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
@@ -80,14 +85,22 @@ public class CarOfficeController {
         final int startMinute = 59;
         final int endHour = 23;
         final int endMinute = 59;
+        // у тебя есть утилита для работы с датами
         Date dateFree = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM yyyy");
+        // это бизнес логика, она должна быть в сервисе
+        // контроллер может валидировать запрос, преобразовывать данные от ЮАЙ и преобразовывать данные
+        // от сервиса для ЮАЙ, но логики здесь быть не должно
+        //  кроме того, прошла тема исключений, почему бы не использовать их?
+        // например, перенести все эти проверки в сервис, и в случае непрохождения проверки генерировать свое исключение
+        // с каким-то месседжем, а здесь ловить и отдавать месседж на фронт
         if (this.masterService.getMasters().size() < 2 || this.garageService.getNumberPlaces() < 1) {
             return "Error!!! Add masters, garage and place to service!\n" +
                     " At least should be 2 masters, 1 garage and 1 place.";
         }
         int numberFreeMasters = 0;
         int numberFreePlace = 0;
+        // бизнес логика не должна быть в контроллере
         while (numberFreeMasters == 0 && numberFreePlace == 0) {
             Date endDay = DateUtil.addHourMinutes(dateFree, endHour, endMinute);
             List<Order> orders = this.orderService.getOrders();

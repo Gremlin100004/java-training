@@ -72,6 +72,7 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public String exportMasters() {
+        // у тебя есть переменная класса для этого
         MasterRepository masterRepository = MasterRepositoryImpl.getInstance();
         List<Master> masters = masterRepository.getMasters();
         StringBuilder valueCsv = new StringBuilder();

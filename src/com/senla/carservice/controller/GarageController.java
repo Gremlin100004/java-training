@@ -36,6 +36,7 @@ public class GarageController {
         return String.format(" -delete garage in service with name \"%s\"", garage.getName());
     }
 
+    // из юай не может придти гараж, может придти его айди
     public String addGaragePlace(Garage garage) {
         this.garageService.addGaragePlace(garage);
         return String.format("Add place in garage \"%s\"", garage.getName());
@@ -59,6 +60,7 @@ public class GarageController {
     }
 
     public String exportGarages() {
+        // использовать исключения
         if (this.garageService.exportGarages().equals("save successfully")) {
             return "Garages have been export successfully!";
         } else {

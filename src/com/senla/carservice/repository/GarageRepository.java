@@ -13,6 +13,7 @@ public interface GarageRepository {
 
     IdGenerator getIdGeneratorPlace();
 
+    // метод не используется
     void setGarages(List<Garage> garages);
 
     List<Place> getPlaces();

@@ -22,7 +22,18 @@ public class DateUtil {
     }
 
     public static Date getDatesFromString(String stringDate) {
+        // можно вынести в константу
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+
+        // проще вот так:
+        /*
+        try {
+            return format.parse(stringDate);
+        } catch (ParseException e) {
+            return null;
+        }
+        */
+
         Date date;
         try {
             date = format.parse(stringDate);

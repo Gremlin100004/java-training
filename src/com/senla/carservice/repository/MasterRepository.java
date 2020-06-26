@@ -10,5 +10,6 @@ public interface MasterRepository {
 
     IdGenerator getIdGeneratorMaster();
 
+    // такого метода быть не должно
     void setMasters(List<Master> masters);
 }

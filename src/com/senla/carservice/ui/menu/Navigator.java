@@ -2,6 +2,7 @@ package com.senla.carservice.ui.menu;
 
 import java.util.Collections;
 
+// почему класс финальный? какая цель?
 public final class Navigator {
     private static Navigator instance;
 
@@ -22,6 +23,7 @@ public final class Navigator {
     }
 
     public void printMenu() {
+        // может быть, это можно вынести в туСтринг у меню?
         System.out.printf("%s\n",
                 String.join("", Collections.nCopies(this.currentMenu.getName().length(), "~")));
         System.out.printf("%s\n", this.currentMenu.getName());

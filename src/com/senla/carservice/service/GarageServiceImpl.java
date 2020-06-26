@@ -15,6 +15,7 @@ import java.util.List;
 public class GarageServiceImpl implements GarageService {
     private static GarageService instance;
     private final GarageRepository garageRepository;
+    // чтобы это стало константой, надо стелать поле статик
     private final String GARAGE_PATH = "csv//garage.csv";
     private final String PLACE_PATH = "csv//place.csv";
 
@@ -38,11 +39,15 @@ public class GarageServiceImpl implements GarageService {
     public void addGarage(String name) {
         Garage garage = new Garage(name);
         garage.setId(this.garageRepository.getIdGeneratorGarage().getId());
+        // метод добавления должен быть не здесь, а в репозитории
+        // туда же можно перенести генерацию айди, здесь она не нужна
         this.garageRepository.getGarages().add(garage);
     }
 
     @Override
     public void deleteGarage(Garage garage) {
+        // метод удаления должен быть в репозитории
+        // this в сервисе обычно не пишут
         this.garageRepository.getGarages().remove(garage);
     }
 
@@ -50,6 +55,7 @@ public class GarageServiceImpl implements GarageService {
     public void addGaragePlace(Garage garage) {
         Place place = new Place();
         place.setId(this.garageRepository.getIdGeneratorPlace().getId());
+        // один из конструкторов Гаража не содержит инициализацию коллекции - будет НПЕ
         garage.getPlaces().add(place);
     }
 
@@ -64,6 +70,7 @@ public class GarageServiceImpl implements GarageService {
 
     @Override
     public void deleteGaragePlace(Garage garage) {
+        // я не понимаю, что тут происходит - getPlaces вызывается 3!!! раза в одной строчке
         garage.getPlaces().remove(garage.getPlaces().get(garage.getPlaces().size() - 1));
     }
 
@@ -72,6 +79,8 @@ public class GarageServiceImpl implements GarageService {
         if (executeDate == null || leadDate == null) {
             return new ArrayList<>();
         }
+
+        // метод получения выборки только свободных гаражей может быть в репозитории
         List<Garage> freeGarages = new ArrayList<>(this.garageRepository.getGarages());
         for (Order order : orders) {
             for (Garage garage : freeGarages) {
@@ -94,8 +103,10 @@ public class GarageServiceImpl implements GarageService {
         return freePlaces;
     }
 
+    // метод называется экпорт гаражей, но экспортирует он не только гаражи
     @Override
     public String exportGarages() {
+        // у тебя есть такое поле в классе, зачем получать еще раз?
         GarageRepository garageRepository = GarageRepositoryImpl.getInstance();
         List<Garage> garages = garageRepository.getGarages();
         List<Place> places = garageRepository.getPlaces();
@@ -103,6 +114,9 @@ public class GarageServiceImpl implements GarageService {
         StringBuilder valuePlaceCsv = new StringBuilder();
         String message;
         for (int i = 0; i < garages.size(); i++) {
+            // вот эти проверки можно не делать, если в чтение из файла добавить проверку на пустую линию
+            // это обезопасит чтение от проблем пустых строк в середине файла
+            // и уберет лишние аргументы и проверки при сохранении
             if (i == garages.size() - 1) {
                 valueGarageCsv.append(convertGarageToCsv(garages.get(i), false));
             } else {
@@ -116,6 +130,8 @@ public class GarageServiceImpl implements GarageService {
                 valuePlaceCsv.append(convertPlaceToCsv(places.get(i), true));
             }
         }
+
+        // тема исключения - ипользуй их, это лучше, чем сравнивать строки (это надежней)
         message = FileUtil.SaveCsv(valueGarageCsv, GARAGE_PATH);
         if (!message.equals("save successfully")) {
             return message;
@@ -151,6 +167,7 @@ public class GarageServiceImpl implements GarageService {
     }
 
     private Place getPlaceFromCsv(String line) {
+        // разделители в константы
         List<String> values = Arrays.asList(line.split(","));
         Place place = new Place();
         place.setId(Long.valueOf(values.get(0)));
@@ -160,8 +177,10 @@ public class GarageServiceImpl implements GarageService {
 
     private Garage getGarageFromCsv(String line, List<Place> places) {
         String values = Arrays.asList(line.split("\"")).get(0);
+        // placeId
         String idPlace = Arrays.asList(line.split("\"")).get(1);
         Garage garage = new Garage();
+        // желательно предусмотреть падения при некорректном формате - тема задания Исключения
         garage.setId(Long.valueOf(Arrays.asList(values.split(",")).get(0)));
         garage.setName(Arrays.asList(values.split(",")).get(1));
         List<Place> garagePlace = new ArrayList<>();
@@ -178,6 +197,8 @@ public class GarageServiceImpl implements GarageService {
 
     private String convertGarageToCsv(Garage garage, boolean isLineFeed) {
         StringBuilder stringValue = new StringBuilder();
+        // неэффективно использовать стринг формат и стринг билдер на такой строчке
+        // разделители должны быть в константах
         stringValue.append(String.format("%s,%s,\"", garage.getId(), garage.getName()));
         for (int i = 0; i < garage.getPlaces().size(); i++) {
             if (i == garage.getPlaces().size() - 1) {

@@ -30,6 +30,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     public int getNumberFreePlaceDate(List<Order> orders) {
         int numberGeneralPlace = 0;
         int numberPlaceOrders = orders.size();
+        // фигурные скобки ставить ВСЕГДА!!!
         for (Garage garage : this.garageRepository.getGarages())
             numberGeneralPlace += garage.getPlaces().size();
         return numberGeneralPlace - numberPlaceOrders;
@@ -37,6 +38,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     @Override
     public int getNumberFreeMasters(List<Order> orders) {
+        // можно использовать Стрим АПИ
         int numberMastersOrders = 0;
         int numberGeneralMasters = this.masterRepository.getMasters().size();
         for (Order order : orders)

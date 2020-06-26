@@ -38,7 +38,9 @@ public class OrderController {
         return "order add successfully!";
     }
 
+    // слишком большой метод для контроллера, много бизнес логики
     public String addOrderDeadlines(String stringExecutionStartTime, String stringLeadTime) {
+        // у тебя есть утилита для работы с датами
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date executionStartTime;
         Date leadTime;

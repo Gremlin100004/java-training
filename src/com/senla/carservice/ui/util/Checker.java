@@ -1,5 +1,6 @@
 package com.senla.carservice.ui.util;
 
+// удобнее и быстрее использовать регулярные выражения для таких проверок
 public class Checker {
     public static boolean isSymbolsString(String text) {
         char[] symbols = new char[]{

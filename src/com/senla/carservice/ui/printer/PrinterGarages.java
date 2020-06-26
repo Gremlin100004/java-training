@@ -26,6 +26,7 @@ public class PrinterGarages {
         System.out.println(stringBuilder.toString());
     }
 
+    // нейминг
     private static int getnumberFreePlace(Garage garage) {
         int numberFreePlace = 0;
         for (Place place : garage.getPlaces()) {

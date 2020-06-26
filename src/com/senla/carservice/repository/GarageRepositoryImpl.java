@@ -46,6 +46,7 @@ public class GarageRepositoryImpl implements GarageRepository {
         this.garages = garages;
     }
 
+    // этот метод должен быть в PlaceRepository
     @Override
     public List<Place> getPlaces() {
         List<Place> places = new ArrayList<>();
