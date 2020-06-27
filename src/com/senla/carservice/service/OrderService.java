@@ -2,7 +2,13 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
+import com.senla.carservice.domain.Place;
+import com.senla.carservice.exception.DateException;
+import com.senla.carservice.exception.NullDateException;
+import com.senla.carservice.exception.NumberObjectZeroException;
+import com.senla.carservice.util.DateUtil;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +16,14 @@ public interface OrderService {
     List<Order> getOrders();
 
     void addOrder(String automaker, String model, String registrationNumber);
+
+    void addOrderDeadlines(Date executionStartTime, Date leadTime) throws NullDateException, DateException, NumberObjectZeroException;
+
+    void addOrderMasters(List<Master> masters) throws NumberObjectZeroException;
+
+    void addOrderPlaces(Place place);
+
+    void addOrderPrice(BigDecimal price);
 
     boolean completeOrder(Order order);
 
@@ -30,7 +44,7 @@ public interface OrderService {
 
     List<Order> sortOrderByPrice(List<Order> order);
 
-    List<Order> getOrderByPeriod(List<Order> orders, Date startPeriod, Date endPeriod);
+    List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod) throws NullDateException;
 
     List<Order> getCurrentRunningOrders();
 
@@ -44,7 +58,7 @@ public interface OrderService {
 
     List<Order> getDeletedOrders(List<Order> orders);
 
-    String exportOrder();
+//    String exportOrder();
 
-    String importOrder();
+//    String importOrder();
 }

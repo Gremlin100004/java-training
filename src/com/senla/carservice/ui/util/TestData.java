@@ -2,18 +2,11 @@ package com.senla.carservice.ui.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TestData {
-
-    // в классе со статическими методами обязательно должен быть пустой конструктор? для чего?
-    // если его и делают в утилитных классах, то только с приватным доступом
-    public TestData() {
-    }
-
-    // почему такой порядок ключевых слов? первым ВСЕГДА пишется модификатор доступа
-    // почему ArrayList, а не List?
-    static public ArrayList<String> getArrayMasterNames() {
-        ArrayList<String> arrayName = new ArrayList<>();
+    public static List<String> getArrayMasterNames() {
+        List<String> arrayName = new ArrayList<>();
         arrayName.add("Petya");
         arrayName.add("Vasya");
         arrayName.add("Georgiy");
@@ -39,8 +32,8 @@ public class TestData {
         return arrayName;
     }
 
-    static public ArrayList<String> getArrayGarageNames() {
-        ArrayList<String> arrayName = new ArrayList<>();
+    static public List<String> getArrayGarageNames() {
+        List<String> arrayName = new ArrayList<>();
         arrayName.add("Box One");
         arrayName.add("Box Two");
         arrayName.add("Box Three");
@@ -49,8 +42,8 @@ public class TestData {
         return arrayName;
     }
 
-    static public ArrayList<String> getArrayAutomaker() {
-        ArrayList<String> arrayName = new ArrayList<>();
+    static public List<String> getArrayAutomaker() {
+        List<String> arrayName = new ArrayList<>();
         arrayName.add("lexus");
         arrayName.add("Mercedes");
         arrayName.add("BMW");
@@ -66,8 +59,8 @@ public class TestData {
         return arrayName;
     }
 
-    static public ArrayList<String> getArrayModel() {
-        ArrayList<String> arrayName = new ArrayList<>();
+    static public List<String> getArrayModel() {
+        List<String> arrayName = new ArrayList<>();
         arrayName.add("LS");
         arrayName.add("A 200");
         arrayName.add("X6");
@@ -83,8 +76,8 @@ public class TestData {
         return arrayName;
     }
 
-    static public ArrayList<String> getArrayRegistrationNumber() {
-        ArrayList<String> arrayName = new ArrayList<>();
+    static public List<String> getArrayRegistrationNumber() {
+        List<String> arrayName = new ArrayList<>();
         arrayName.add("1234 AB-7");
         arrayName.add("3234 AB-7");
         arrayName.add("4444 AB-7");
@@ -100,8 +93,8 @@ public class TestData {
         return arrayName;
     }
 
-    static public ArrayList<BigDecimal> getArrayPrice() {
-        ArrayList<BigDecimal> arrayPrice = new ArrayList<>();
+    static public List<BigDecimal> getArrayPrice() {
+        List<BigDecimal> arrayPrice = new ArrayList<>();
         arrayPrice.add(new BigDecimal("360.99"));
         arrayPrice.add(new BigDecimal("600.23"));
         arrayPrice.add(new BigDecimal("457.34"));
@@ -117,8 +110,8 @@ public class TestData {
         return arrayPrice;
     }
 
-    static public ArrayList<String> getArrayExecutionStartTime() {
-        ArrayList<String> arrayDate = new ArrayList<>();
+    static public List<String> getArrayExecutionStartTime() {
+        List<String> arrayDate = new ArrayList<>();
         arrayDate.add("11.07.2020 10:00");
         arrayDate.add("11.07.2020 10:00");
         arrayDate.add("12.07.2020 14:00");
@@ -134,7 +127,7 @@ public class TestData {
         return arrayDate;
     }
 
-    static public ArrayList<String> getArrayLeadTime() {
+    static public List<String> getArrayLeadTime() {
         ArrayList<String> arrayDate = new ArrayList<>();
         arrayDate.add("11.07.2020 18:00");
         arrayDate.add("11.07.2020 18:00");

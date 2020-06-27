@@ -1,13 +1,16 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
+import com.senla.carservice.exception.DateException;
+import com.senla.carservice.exception.NullDateException;
+import com.senla.carservice.exception.NumberObjectZeroException;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.CarOfficeServiceImpl;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.OrderServiceImpl;
+import com.senla.carservice.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -22,8 +25,8 @@ public class OrderController {
     private final CarOfficeService carOfficeService;
 
     private OrderController() {
-        this.orderService = OrderServiceImpl.getInstance();
-        this.carOfficeService = CarOfficeServiceImpl.getInstance();
+        orderService = OrderServiceImpl.getInstance();
+        carOfficeService = CarOfficeServiceImpl.getInstance();
     }
 
     public static OrderController getInstance() {
@@ -34,60 +37,35 @@ public class OrderController {
     }
 
     public String addOrder(String automaker, String model, String registrationNumber) {
-        this.orderService.addOrder(automaker, model, registrationNumber);
+        orderService.addOrder(automaker, model, registrationNumber);
         return "order add successfully!";
     }
 
-    // слишком большой метод для контроллера, много бизнес логики
     public String addOrderDeadlines(String stringExecutionStartTime, String stringLeadTime) {
-        // у тебя есть утилита для работы с датами
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
-        Date executionStartTime;
-        Date leadTime;
+        Date executionStartTime = DateUtil.getDatesFromString(stringExecutionStartTime);
+        Date leadTime = DateUtil.getDatesFromString(stringLeadTime);
         try {
-            executionStartTime = format.parse(stringExecutionStartTime);
-            leadTime = format.parse(stringLeadTime);
-        } catch (ParseException e) {
-            return "Error date, should be \"dd.MM.yyyy hh:mm\"";
+            orderService.addOrderDeadlines(executionStartTime, leadTime);
+            return "deadline add to order successfully";
+        } catch (NullDateException e) {
+            return "Error date format, should be \"dd.MM.yyyy hh:mm\"";
+        } catch (DateException | NumberObjectZeroException e) {
+            return String.valueOf(e);
         }
-        if (executionStartTime.compareTo(leadTime) > 0) {
-            return "Error!!!, Lead time can't be early then planning time to start working!";
-        }
-        if (executionStartTime.compareTo(new Date()) < 1) {
-            return "Error!!!, You can't start work at past!";
-        }
-
-        List<Order> orders = new ArrayList<>(this.orderService.getOrders());
-        Order order = orders.get(orders.size() - 1);
-        orders.remove(order);
-        orders = this.orderService.getOrderByPeriod(orders, executionStartTime, leadTime);
-        int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
-        int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);
-        if (numberFreeMasters == 0) {
-            return "Error!!!, All masters are busy at this time!";
-        }
-        if (numberFreePlace == 0) {
-            return "Error!!!, There are no free places at this time!";
-        }
-        order.setExecutionStartTime(executionStartTime);
-        order.setLeadTime(leadTime);
-        return "deadline add to order successfully";
     }
 
     public String addOrderMasters(List<Master> masters) {
-        for (Master master : masters) {
-            if (master.getNumberOrder() != null) {
-                master.setNumberOrder(master.getNumberOrder() + 1);
-            } else {
-                master.setNumberOrder(1);
-            }
+        try {
+            orderService.addOrderMasters(masters);
+            return "masters add successfully";
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
         }
-        orderService.getOrders().get(orderService.getOrders().size() - 1).setMasters(masters);
-        return "masters add successfully";
     }
+//--------------------------------------------------
+    public String addOrderPlaces(Place place) {
+        orderService.getOrders().get(orderService.getOrders().size() - 1).setPlace(place);
 
-    public String addOrderPlaces(Garage garage, Place place) {
-        orderService.getOrders().get(orderService.getOrders().size() - 1).setGarage(garage);
         orderService.getOrders().get(orderService.getOrders().size() - 1).setPlace(place);
         return "place add to order successfully";
     }

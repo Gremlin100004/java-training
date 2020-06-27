@@ -11,7 +11,7 @@ public interface MasterService {
 
     void addMaster(String name);
 
-    List<Master> getFreeMasters(Date executeDate, Date leadDate, List<Order> sortOrder);
+    List<Master> getFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrder);
 
     void deleteMaster(Master master);
 

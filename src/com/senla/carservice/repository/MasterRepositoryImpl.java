@@ -23,18 +23,31 @@ public class MasterRepositoryImpl implements MasterRepository {
         return instance;
     }
 
+
+    @Override
+    public void addMaster(Master master) {
+        master.setId(this.idGeneratorMaster.getId());
+        this.masters.add(master);
+    }
+
+    @Override
+    public void updateMaster(Master master) {
+        this.masters.remove(master);
+        this.masters.add(master);
+    }
+
+    @Override
+    public void deleteMaster(Master master) {
+        this.masters.remove(master);
+    }
+
     @Override
     public List<Master> getMasters() {
-        return masters;
+        return new ArrayList<>(this.masters);
     }
 
     @Override
     public IdGenerator getIdGeneratorMaster() {
         return idGeneratorMaster;
-    }
-
-    @Override
-    public void setMasters(List<Master> masters) {
-        this.masters = masters;
     }
 }

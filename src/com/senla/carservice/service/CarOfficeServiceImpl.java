@@ -1,22 +1,21 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.repository.GarageRepository;
-import com.senla.carservice.repository.GarageRepositoryImpl;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
+import com.senla.carservice.repository.PlaceRepository;
+import com.senla.carservice.repository.PlaceRepositoryImpl;
 
 import java.util.List;
 
 public class CarOfficeServiceImpl implements CarOfficeService {
     private static CarOfficeService instance;
     private final MasterRepository masterRepository;
-    private final GarageRepository garageRepository;
+    private final PlaceRepository placeRepository;
 
     private CarOfficeServiceImpl() {
-        this.masterRepository = MasterRepositoryImpl.getInstance();
-        this.garageRepository = GarageRepositoryImpl.getInstance();
+        masterRepository = MasterRepositoryImpl.getInstance();
+        placeRepository = PlaceRepositoryImpl.getInstance();
     }
 
     public static CarOfficeService getInstance() {
@@ -28,21 +27,13 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     @Override
     public int getNumberFreePlaceDate(List<Order> orders) {
-        int numberGeneralPlace = 0;
-        int numberPlaceOrders = orders.size();
-        // фигурные скобки ставить ВСЕГДА!!!
-        for (Garage garage : this.garageRepository.getGarages())
-            numberGeneralPlace += garage.getPlaces().size();
-        return numberGeneralPlace - numberPlaceOrders;
+        return placeRepository.getPlaces().size() - orders.size();
     }
 
     @Override
     public int getNumberFreeMasters(List<Order> orders) {
-        // можно использовать Стрим АПИ
-        int numberMastersOrders = 0;
-        int numberGeneralMasters = this.masterRepository.getMasters().size();
-        for (Order order : orders)
-            numberMastersOrders += order.getMasters().size();
+        int numberGeneralMasters = masterRepository.getMasters().size();
+        int numberMastersOrders = orders.stream().mapToInt(order -> order.getMasters().size()).sum();
         return numberGeneralMasters - numberMastersOrders;
     }
 }

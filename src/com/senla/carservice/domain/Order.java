@@ -3,24 +3,26 @@ package com.senla.carservice.domain;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 public class Order extends AEntity {
     private Date creationTime;
     private Date executionStartTime;
     private Date leadTime;
     private List<Master> masters;
-    private Garage garage;
     private Place place;
-    private Car car;
+    private String automarket;
+    private String model;
+    private String registrationNumber;
     private BigDecimal price;
     private Status status;
     private boolean deleteStatus;
 
-    public Order(Long id, Car car) {
+    public Order(Long id, String automarket, String model, String registrationNumber) {
         super.setId(id);
         this.creationTime = new Date();
-        this.car = car;
+        this.automarket = automarket;
+        this.model = model;
+        this.registrationNumber = registrationNumber;
         this.status = Status.WAIT;
         this.deleteStatus = false;
     }
@@ -29,16 +31,20 @@ public class Order extends AEntity {
         return masters;
     }
 
-    public Car getCar() {
-        return car;
+    public String getAutomarket() {
+        return automarket;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
     }
 
     public Status getStatus() {
         return status;
-    }
-
-    public Garage getGarage() {
-        return this.garage;
     }
 
     public Place getPlace() {
@@ -73,10 +79,6 @@ public class Order extends AEntity {
         this.leadTime = leadTime;
     }
 
-    public void setGarage(Garage garage) {
-        this.garage = garage;
-    }
-
     public void setMasters(List<Master> masters) {
         this.masters = masters;
     }
@@ -85,8 +87,16 @@ public class Order extends AEntity {
         this.place = place;
     }
 
-    public void setCar(Car car) {
-        this.car = car;
+    public void setAutomarket(String automarket) {
+        this.automarket = automarket;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
     }
 
     public void setDeleteStatus(boolean deleteStatus) {
@@ -103,18 +113,5 @@ public class Order extends AEntity {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
-        return super.getId().equals(order.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.getId());
     }
 }

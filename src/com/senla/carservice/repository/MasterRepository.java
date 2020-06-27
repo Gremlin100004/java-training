@@ -6,10 +6,14 @@ import com.senla.carservice.util.IdGenerator;
 import java.util.List;
 
 public interface MasterRepository {
+    void addMaster(Master master);
+
+    void updateMaster(Master master);
+
+    void deleteMaster(Master master);
+
     List<Master> getMasters();
 
     IdGenerator getIdGeneratorMaster();
 
-    // такого метода быть не должно
-    void setMasters(List<Master> masters);
 }

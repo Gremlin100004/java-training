@@ -40,17 +40,4 @@ public class Master extends AEntity {
                 ", numberOrder=" + numberOrder +
                 '}';
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Master master = (Master) o;
-        return super.getId().equals(master.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.getId());
-    }
 }

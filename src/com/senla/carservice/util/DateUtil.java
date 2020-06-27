@@ -6,10 +6,17 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
+    private static final SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd.MM.yyyy");
+    private static final int END_DAY_HOUR = 23;
+    private static final int END_DAY_MINUTE = 59;
+    private static final int START_DAY_HOUR = 0;
+    private static final int START_DAY_MINUTE = 0;
+
     public static Date addDays(Date date, int days) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.DATE, days);
+
         return calendar.getTime();
     }
 
@@ -22,29 +29,22 @@ public class DateUtil {
     }
 
     public static Date getDatesFromString(String stringDate) {
-        // можно вынести в константу
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-
-        // проще вот так:
-        /*
         try {
-            return format.parse(stringDate);
+            return FORMAT_DATE.parse(stringDate);
         } catch (ParseException e) {
             return null;
         }
-        */
-
-        Date date;
-        try {
-            date = format.parse(stringDate);
-        } catch (ParseException e) {
-            date = null;
-        }
-        return date;
     }
 
     public static String getStringFromDate(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
-        return format.format(date);
+        return FORMAT_DATE.format(date);
+    }
+
+    public static Date getCurrentDayDate(){
+        return addHourMinutes(new Date(), START_DAY_HOUR, START_DAY_MINUTE);
+    }
+
+    public static Date getEndOfDayDate(Date date){
+        return addHourMinutes(date, END_DAY_HOUR, END_DAY_MINUTE);
     }
 }

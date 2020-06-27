@@ -1,10 +1,9 @@
 package com.senla.carservice.ui.menu;
 
 import com.senla.carservice.controller.CarOfficeController;
-import com.senla.carservice.controller.GarageController;
+import com.senla.carservice.controller.PlaceController;
 import com.senla.carservice.controller.MasterController;
 import com.senla.carservice.controller.OrderController;
-import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
@@ -77,7 +76,7 @@ public class Builder {
                         System.out.println("Add masters to service!!!");
                         return;
                     }
-                    if (GarageController.getInstance().getNumberFreePlaces() == 0) {
+                    if (PlaceController.getInstance().getNumberFreePlaces() == 0) {
                         System.out.println("Add places to garages!!!");
                         return;
                     }
@@ -105,19 +104,19 @@ public class Builder {
             String delimiter = "***********************************************************************";
             System.out.println(delimiter);
             addMaster(delimiter, MasterController.getInstance());
-            addGarage(delimiter, GarageController.getInstance());
-            addPlaceGarage(delimiter, GarageController.getInstance());
+            addGarage(delimiter, PlaceController.getInstance());
+            addPlaceGarage(delimiter, PlaceController.getInstance());
             System.out.println("Add new orders to car service.");
-            addOrder(MasterController.getInstance(), OrderController.getInstance(), GarageController.getInstance());
+            addOrder(MasterController.getInstance(), OrderController.getInstance(), PlaceController.getInstance());
         }, this.rootMenu));
         this.rootMenu.getMenuItems().add(new MenuItem("Export of all entities", () -> {
             System.out.println(MasterController.getInstance().exportMasters());
-            System.out.println(GarageController.getInstance().exportGarages());
+            System.out.println(PlaceController.getInstance().exportGarages());
             System.out.println(OrderController.getInstance().exportOrders());
         }, this.rootMenu));
         this.rootMenu.getMenuItems().add(new MenuItem("Import of all entities", () -> {
             System.out.println(MasterController.getInstance().importMasters());
-            System.out.println(GarageController.getInstance().importGarages());
+            System.out.println(PlaceController.getInstance().importGarages());
             System.out.println(OrderController.getInstance().importOrders());
         }, this.rootMenu));
     }
@@ -160,21 +159,21 @@ public class Builder {
 
     private void createItemGaragesMenu(Menu garagesMenu, Menu rootMenu) {
         garagesMenu.getMenuItems().add(new MenuItem("Show list of garages", () -> {
-            if (GarageController.getInstance().getArrayGarages().isEmpty()) {
+            if (PlaceController.getInstance().getArrayPlace().isEmpty()) {
                 System.out.println("There are no garages.");
                 return;
             }
-            PrinterGarages.printGarages(GarageController.getInstance().getArrayGarages());
+            PrinterGarages.printGarages(PlaceController.getInstance().getArrayPlace());
         }, garagesMenu));
         garagesMenu.getMenuItems().add(new MenuItem("Add garage",
-                () -> System.out.println(GarageController.getInstance()
-                        .addGarage(ScannerUtil.getStringUser("Enter the name of garage"))), garagesMenu));
+                () -> System.out.println(PlaceController.getInstance()
+                        .addPlace(ScannerUtil.getStringUser("Enter the name of garage"))), garagesMenu));
         garagesMenu.getMenuItems().add(new MenuItem("Delete garage", () -> {
-            if (GarageController.getInstance().getArrayGarages().isEmpty()) {
+            if (PlaceController.getInstance().getArrayPlace().isEmpty()) {
                 System.out.println("There are no garages to delete!");
                 return;
             }
-            PrinterGarages.printGarages(GarageController.getInstance().getArrayGarages());
+            PrinterGarages.printGarages(PlaceController.getInstance().getArrayPlace());
             System.out.println("0. Previous menu");
             deleteGarage();
         }, garagesMenu));
@@ -183,27 +182,27 @@ public class Builder {
 
     private void addItemGarageMenu(Menu garagesMenu, Menu rootMenu) {
         garagesMenu.getMenuItems().add(new MenuItem("Add place in garage", () -> {
-            if (GarageController.getInstance().getArrayGarages().isEmpty()) {
+            if (PlaceController.getInstance().getArrayPlace().isEmpty()) {
                 System.out.println("There are no garages!");
                 return;
             }
-            PrinterGarages.printGarages(GarageController.getInstance().getArrayGarages());
+            PrinterGarages.printGarages(PlaceController.getInstance().getArrayPlace());
             System.out.println("0. Previous menu");
             addPlace();
         }, garagesMenu));
         garagesMenu.getMenuItems().add(new MenuItem("Delete place in garage", () -> {
-            if (GarageController.getInstance().getArrayGarages().isEmpty()) {
+            if (PlaceController.getInstance().getArrayPlace().isEmpty()) {
                 System.out.println("There are no garages to delete place!");
                 return;
             }
-            PrinterGarages.printGarages(GarageController.getInstance().getArrayGarages());
+            PrinterGarages.printGarages(PlaceController.getInstance().getArrayPlace());
             System.out.println("0. Previous menu");
             deletePlace();
         }, garagesMenu));
         garagesMenu.getMenuItems().add(new MenuItem("Export garages", () -> System.out.println
-                (GarageController.getInstance().exportGarages()), garagesMenu));
+                (PlaceController.getInstance().exportGarages()), garagesMenu));
         garagesMenu.getMenuItems().add(new MenuItem("Import garages",
-                () -> System.out.println(GarageController.getInstance().importGarages()), garagesMenu));
+                () -> System.out.println(PlaceController.getInstance().importGarages()), garagesMenu));
         garagesMenu.getMenuItems().add(new MenuItem("Previous menu",
                 () -> System.out.println("Go to menu"), rootMenu));
     }
@@ -244,7 +243,7 @@ public class Builder {
                 System.out.println("There are no masters!");
                 return;
             }
-            if (!isPlace(GarageController.getInstance().getArrayGarages())) {
+            if (!isPlace(PlaceController.getInstance().getArrayPlace())) {
                 System.out.println("There are no Places!");
                 return;
             }
@@ -691,34 +690,34 @@ public class Builder {
         System.out.println(delimiter);
     }
 
-    private void addGarage(String delimiter, GarageController garageController) {
+    private void addGarage(String delimiter, PlaceController placeController) {
         System.out.println("Add garage to service:");
         for (String garageName : TestData.getArrayGarageNames()) {
             System.out.println(String.format(" -garage \"%s\" has been added to service",
-                    garageController.addGarage(garageName)));
+                    placeController.addPlace(garageName)));
         }
         System.out.println(delimiter);
     }
 
-    private void addPlaceGarage(String delimiter, GarageController garageController) {
-        List<Garage> garages = garageController.getArrayGarages();
+    private void addPlaceGarage(String delimiter, PlaceController placeController) {
+        List<Garage> garages = placeController.getArrayPlace();
         System.out.println("Add places in garages.");
         for (Garage garage : garages) {
             for (int j = 0; j < 4; j++) {
                 System.out.println(String.format("Add place in garage \"%s\"",
-                        garageController.addGaragePlace(garage)));
+                        placeController.addGaragePlace(garage)));
             }
         }
         System.out.println(delimiter);
     }
 
     private void addOrder(MasterController masterController,
-                          OrderController orderController, GarageController garageController) {
+                          OrderController orderController, PlaceController placeController) {
         int indexMaster = 0;
         int indexGarage = 0;
         int indexPlace = 0;
         String message;
-        List<Garage> garages = garageController.getArrayGarages();
+        List<Garage> garages = placeController.getArrayPlace();
         for (int i = 0; i < TestData.getArrayAutomaker().size(); i++) {
             ArrayList<Master> mastersOrder = new ArrayList<>();
             for (int j = 0; j < 2; j++) {
@@ -759,16 +758,16 @@ public class Builder {
             if (index == 0) {
                 return;
             }
-            if (index > GarageController.getInstance().getArrayGarages().size() || index < 0) {
+            if (index > PlaceController.getInstance().getArrayPlace().size() || index < 0) {
                 System.out.println("There is no such garage");
                 continue;
             }
-            if (GarageController.getInstance().getArrayGarages().get(index - 1).getPlaces().size() < 1) {
+            if (PlaceController.getInstance().getArrayPlace().get(index - 1).getPlaces().size() < 1) {
                 System.out.println("There are no places in garage!");
                 continue;
             }
-            message = GarageController.getInstance().deleteGaragePlace
-                    (GarageController.getInstance().getArrayGarages().get(index - 1));
+            message = PlaceController.getInstance().deleteGaragePlace
+                    (PlaceController.getInstance().getArrayPlace().get(index - 1));
             System.out.println(message);
         }
     }
@@ -818,12 +817,12 @@ public class Builder {
             if (index == 0) {
                 return;
             }
-            if (index > GarageController.getInstance().getArrayGarages().size() || index < 0) {
+            if (index > PlaceController.getInstance().getArrayPlace().size() || index < 0) {
                 System.out.println("There is no such garage");
                 continue;
             }
-            message = GarageController.getInstance()
-                    .deleteGarage(GarageController.getInstance().getArrayGarages().get(index - 1));
+            message = PlaceController.getInstance()
+                    .deleteGarage(PlaceController.getInstance().getArrayPlace().get(index - 1));
         }
         System.out.println(message);
     }
@@ -872,12 +871,12 @@ public class Builder {
             if (index == 0) {
                 return;
             }
-            if (index > GarageController.getInstance().getArrayGarages().size() || index < 0) {
+            if (index > PlaceController.getInstance().getArrayPlace().size() || index < 0) {
                 System.out.println("There is no such garage!");
                 continue;
             }
-            message = GarageController.getInstance().addGaragePlace
-                    (GarageController.getInstance().getArrayGarages().get(index - 1));
+            message = PlaceController.getInstance().addGaragePlace
+                    (PlaceController.getInstance().getArrayPlace().get(index - 1));
         }
         System.out.println(message);
     }
@@ -893,13 +892,13 @@ public class Builder {
         String executionStartTime = deadline.get(0);
         String leadTime = deadline.get(1);
         addMastersOrder(executionStartTime, leadTime);
-        List<Garage> freeGarages = CarOfficeController.getInstance().getGaragesFreePlace(executionStartTime, leadTime);
+        List<Garage> freeGarages = CarOfficeController.getInstance().getFreePlace(executionStartTime, leadTime);
         System.out.println("Garage with free places:");
         for (int i = 0; i < freeGarages.size(); i++) {
             System.out.println(String.format("%s. %s", i + 1, freeGarages.get(i).getName()));
         }
-        Garage garage = addGarageOrder(freeGarages, GarageController.getInstance());
-        Place place = GarageController.getInstance().getFreePlaceGarage(garage).get(0);
+        Garage garage = addGarageOrder(freeGarages, PlaceController.getInstance());
+        Place place = PlaceController.getInstance().getFreePlaceGarage(garage).get(0);
         message = OrderController.getInstance().addOrderPlaces(garage, place);
         System.out.println(message);
         message = OrderController.getInstance()
@@ -974,13 +973,13 @@ public class Builder {
         return answer.equals("n");
     }
 
-    private Garage addGarageOrder(List<Garage> garages, GarageController garageController) {
+    private Garage addGarageOrder(List<Garage> garages, PlaceController placeController) {
         boolean isFreePlaceGarage = false;
         int index = 0;
         while (!isFreePlaceGarage) {
             System.out.println();
             index = ScannerUtil.getIntUser("Enter the index number of the garage to add in order:");
-            if (garageController.getNumberFreePlaceGarage(garages.get(index - 1)) < 1) {
+            if (placeController.getNumberFreePlaceGarage(garages.get(index - 1)) < 1) {
                 System.out.println("There are no free place in garage");
                 continue;
             }

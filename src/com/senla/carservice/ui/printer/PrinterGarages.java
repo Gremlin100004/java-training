@@ -1,6 +1,5 @@
 package com.senla.carservice.ui.printer;
 
-import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Place;
 
 import java.util.Collections;

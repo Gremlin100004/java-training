@@ -36,14 +36,12 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public void addMaster(String name) {
-        Master master = new Master(name);
-        master.setId(this.masterRepository.getIdGeneratorMaster().getId());
-        this.masterRepository.getMasters().add(master);
+        masterRepository.addMaster(new Master(name));
     }
 
     @Override
-    public List<Master> getFreeMasters(Date executeDate, Date leadDate, List<Order> sortOrders) {
-        List<Master> freeMasters = new ArrayList<>(this.masterRepository.getMasters());
+    public List<Master> getFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders) {
+        List<Master> freeMasters = new ArrayList<>(masterRepository.getMasters());
         if (executeDate == null || leadDate == null) {
             return freeMasters;
         }
@@ -55,7 +53,7 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public void deleteMaster(Master master) {
-        this.masterRepository.getMasters().remove(master);
+        masterRepository.deleteMaster(master);
     }
 
     @Override
@@ -72,8 +70,6 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public String exportMasters() {
-        // у тебя есть переменная класса для этого
-        MasterRepository masterRepository = MasterRepositoryImpl.getInstance();
         List<Master> masters = masterRepository.getMasters();
         StringBuilder valueCsv = new StringBuilder();
         for (int i = 0; i < masters.size(); i++) {
@@ -92,7 +88,7 @@ public class MasterServiceImpl implements MasterService {
         if (csvLinesMaster.isEmpty()) {
             return "export problem";
         }
-        List<Master> masters = this.masterRepository.getMasters();
+        List<Master> masters = masterRepository.getMasters();
         csvLinesMaster.forEach(line -> {
                     Master master = getMasterFromCsv(line);
                     masters.remove(master);

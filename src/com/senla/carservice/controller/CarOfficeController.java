@@ -1,12 +1,11 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.domain.Garage;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.CarOfficeServiceImpl;
-import com.senla.carservice.service.GarageService;
-import com.senla.carservice.service.GarageServiceImpl;
+import com.senla.carservice.service.PlaceService;
+import com.senla.carservice.service.PlaceServiceImpl;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.MasterServiceImpl;
 import com.senla.carservice.service.OrderService;
@@ -22,13 +21,13 @@ public class CarOfficeController {
     private final CarOfficeService carOfficeService;
     private final OrderService orderService;
     private final MasterService masterService;
-    private final GarageService garageService;
+    private final PlaceService placeService;
 
     private CarOfficeController() {
         this.carOfficeService = CarOfficeServiceImpl.getInstance();
         this.orderService = OrderServiceImpl.getInstance();
         this.masterService = MasterServiceImpl.getInstance();
-        this.garageService = GarageServiceImpl.getInstance();
+        this.placeService = PlaceServiceImpl.getInstance();
     }
 
     public static CarOfficeController getInstance() {
@@ -39,20 +38,20 @@ public class CarOfficeController {
     }
 
     // контроллер отдает модель на юай - это нежелательно, это должны быть разные приложения (бэк и юай-фронт)
-    public List<Garage> getGaragesFreePlace(String stringExecuteDate, String stringLeadDate) {
-        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate);
-        Date leadDate = DateUtil.getDatesFromString(stringLeadDate);
-        List<Order> orders = this.orderService.getOrders();
-        orders = this.orderService.getOrderByPeriod(orders, executeDate, leadDate);
-        return this.garageService.getGaragesFreePlace(executeDate, leadDate, orders);
-    }
+//    public List<Garage> getFreePlace(String stringExecuteDate, String stringLeadDate) {
+//        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate);
+//        Date leadDate = DateUtil.getDatesFromString(stringLeadDate);
+//        List<Order> orders = orderService.getOrders();
+//        orders = orderService.getOrderByPeriod(orders, executeDate, leadDate);
+//        return placeService.getNumberFreePlaceByDate(executeDate, leadDate, orders);
+//    }
 
     public List<Master> getFreeMasters(String stringExecuteDate, String stringLeadDate) {
         Date executeDate = DateUtil.getDatesFromString(stringExecuteDate);
         Date leadDate = DateUtil.getDatesFromString(stringLeadDate);
-        List<Order> orders = this.orderService.getOrders();
-        orders = this.orderService.getOrderByPeriod(orders, executeDate, leadDate);
-        return this.masterService.getFreeMasters(executeDate, leadDate, orders);
+        List<Order> orders = orderService.getOrders();
+        orders = orderService.getOrderByPeriod(orders, executeDate, leadDate);
+        return masterService.getFreeMastersByDate(executeDate, leadDate, orders);
     }
 
     public String getFreePlacesByDate(String date) {
@@ -70,13 +69,11 @@ public class CarOfficeController {
         if (currentDate.compareTo(endDay) > 0) {
             return "past date";
         }
-        // обычно this не пишут при обращении к полям сервиса (в контроллере) или к полю репозиторию (в сервисе) -
         // это и так понятно
         // не понимаю, зачем доставать два раза заказы и перезаписывать
-        List<Order> orders = this.orderService.getOrders();
-        orders = this.orderService.getOrderByPeriod(orders, dateFree, endDay);
-        int numberFreeMasters = this.carOfficeService.getNumberFreeMasters(orders);
-        int numberFreePlace = this.carOfficeService.getNumberFreePlaceDate(orders);
+        List<Order> orders = orderService.getOrderByPeriod(orderService.getOrders(), dateFree, endDay);
+        int numberFreeMasters = carOfficeService.getNumberFreeMasters(orders);
+        int numberFreePlace = carOfficeService.getNumberFreePlaceDate(orders);
         return String.format("- number free places in service: %s\n- number free masters in service: %s", numberFreePlace, numberFreeMasters);
     }
 
@@ -94,7 +91,7 @@ public class CarOfficeController {
         //  кроме того, прошла тема исключений, почему бы не использовать их?
         // например, перенести все эти проверки в сервис, и в случае непрохождения проверки генерировать свое исключение
         // с каким-то месседжем, а здесь ловить и отдавать месседж на фронт
-        if (this.masterService.getMasters().size() < 2 || this.garageService.getNumberPlaces() < 1) {
+        if (masterService.getMasters().size() < 2 || placeService.getPlaces().size() < 1) {
             return "Error!!! Add masters, garage and place to service!\n" +
                     " At least should be 2 masters, 1 garage and 1 place.";
         }
