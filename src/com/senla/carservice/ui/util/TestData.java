@@ -32,13 +32,20 @@ public class TestData {
         return arrayName;
     }
 
-    static public List<String> getArrayGarageNames() {
-        List<String> arrayName = new ArrayList<>();
-        arrayName.add("Box One");
-        arrayName.add("Box Two");
-        arrayName.add("Box Three");
-        arrayName.add("Box Four");
-        arrayName.add("Box Five");
+    static public List<Integer> getArrayPlaceNumber() {
+        List<Integer> arrayName = new ArrayList<>();
+        arrayName.add(1);
+        arrayName.add(2);
+        arrayName.add(3);
+        arrayName.add(4);
+        arrayName.add(5);
+        arrayName.add(6);
+        arrayName.add(7);
+        arrayName.add(8);
+        arrayName.add(9);
+        arrayName.add(10);
+        arrayName.add(11);
+        arrayName.add(12);
         return arrayName;
     }
 

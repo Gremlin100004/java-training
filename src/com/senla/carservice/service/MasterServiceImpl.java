@@ -2,8 +2,12 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
+import com.senla.carservice.exception.DateException;
+import com.senla.carservice.exception.NullDateException;
+import com.senla.carservice.exception.NumberObjectZeroException;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
+import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.FileUtil;
 
 import java.util.ArrayList;
@@ -30,7 +34,8 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public List<Master> getMasters() {
+    public List<Master> getMasters() throws NumberObjectZeroException {
+        checkMasters();
         return this.masterRepository.getMasters();
     }
 
@@ -40,63 +45,78 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public List<Master> getFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders) {
-        List<Master> freeMasters = new ArrayList<>(masterRepository.getMasters());
-        if (executeDate == null || leadDate == null) {
-            return freeMasters;
-        }
-        for (Order order : sortOrders) {
-            order.getMasters().forEach(freeMasters::remove);
-        }
-        return freeMasters;
+    public List<Master> getFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders)
+            throws DateException, NullDateException, NumberObjectZeroException {
+        if (getFreeMaster(sortOrders, executeDate, leadDate).isEmpty())
+            throw new NumberObjectZeroException("There are no free masters", 0);
+        return masterRepository.getFreeMasters(sortOrders);
     }
 
     @Override
-    public void deleteMaster(Master master) {
+    public int getNumberFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders) throws NumberObjectZeroException, DateException, NullDateException {
+        return getFreeMaster(sortOrders, executeDate, leadDate).size();
+    }
+
+    @Override
+    public void deleteMaster(Master master) throws NumberObjectZeroException {
+        checkMasters();
         masterRepository.deleteMaster(master);
     }
 
     @Override
-    public List<Master> sortMasterByAlphabet(List<Master> masters) {
-        return masters.stream().sorted(Comparator.comparing(Master::getName,
+    public List<Master> getMasterByAlphabet() throws NumberObjectZeroException {
+        checkMasters();
+        return masterRepository.getMasters().stream().sorted(Comparator.comparing(Master::getName,
                 Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 
     @Override
-    public List<Master> sortMasterByBusy(List<Master> masters) {
-        return masters.stream().sorted(Comparator.comparing(Master::getNumberOrder,
+    public List<Master> getMasterByBusy() throws NumberObjectZeroException {
+        checkMasters();
+        return masterRepository.getMasters().stream().sorted(Comparator.comparing(Master::getNumberOrder,
                 Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 
-    @Override
-    public String exportMasters() {
-        List<Master> masters = masterRepository.getMasters();
-        StringBuilder valueCsv = new StringBuilder();
-        for (int i = 0; i < masters.size(); i++) {
-            if (i == masters.size() - 1) {
-                valueCsv.append(convertToCsv(masters.get(i), false));
-            } else {
-                valueCsv.append(convertToCsv(masters.get(i), true));
-            }
-        }
-        return FileUtil.SaveCsv(valueCsv, MASTER_PATH);
+    private void checkMasters() throws NumberObjectZeroException {
+        if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters", 0);
     }
 
-    @Override
-    public String importMasters() {
-        List<String> csvLinesMaster = FileUtil.GetCsv(MASTER_PATH);
-        if (csvLinesMaster.isEmpty()) {
-            return "export problem";
-        }
-        List<Master> masters = masterRepository.getMasters();
-        csvLinesMaster.forEach(line -> {
-                    Master master = getMasterFromCsv(line);
-                    masters.remove(master);
-                    masters.add(master);
-                }
-        );
-        return "import successfully";
+    private List<Master> getFreeMaster(List<Order> orders, Date executeDate, Date leadDate) throws NumberObjectZeroException, DateException, NullDateException {
+        checkMasters();
+        DateUtil.checkDateTime(executeDate, leadDate);
+        return masterRepository.getFreeMasters(orders);
     }
+
+//    @Override
+//    public String exportMasters() {
+//        List<Master> masters = masterRepository.getMasters();
+//        StringBuilder valueCsv = new StringBuilder();
+//        for (int i = 0; i < masters.size(); i++) {
+//            if (i == masters.size() - 1) {
+//                valueCsv.append(convertToCsv(masters.get(i), false));
+//            } else {
+//                valueCsv.append(convertToCsv(masters.get(i), true));
+//            }
+//        }
+//        return FileUtil.SaveCsv(valueCsv, MASTER_PATH);
+//    }
+
+//    @Override
+//    public String importMasters() {
+//        List<String> csvLinesMaster = FileUtil.GetCsv(MASTER_PATH);
+//        if (csvLinesMaster.isEmpty()) {
+//            return "export problem";
+//        }
+//        List<Master> masters = masterRepository.getMasters();
+//        csvLinesMaster.forEach(line -> {
+//                    Master master = getMasterFromCsv(line);
+//                    masters.remove(master);
+//                    masters.add(master);
+//                }
+//        );
+//        return "import successfully";
+//    }
+
 
     private Master getMasterFromCsv(String line) {
         List<String> values = Arrays.asList(line.split(","));

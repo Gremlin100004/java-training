@@ -7,6 +7,7 @@ import com.senla.carservice.util.IdGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderRepositoryImpl implements OrderRepository {
     private static OrderRepository instance;
@@ -74,7 +75,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Order> getCurrentRunningOrders() {
+    public List<Order> getRunningOrders() {
         List<Order> arrayOder = new ArrayList<>();
         this.orders.forEach(order -> {
             if (order.getStatus().equals(Status.PERFORM) && !order.isDeleteStatus()) {
@@ -82,6 +83,13 @@ public class OrderRepositoryImpl implements OrderRepository {
             }
         });
         return arrayOder;
+    }
+
+    @Override
+    public List<Order> getMasterOrders(Master master) {
+        return this.orders.stream().filter(order -> !order.isDeleteStatus() &&
+                order.getMasters().stream().anyMatch(masterService ->
+                        masterService.equals(master))).collect(Collectors.toList());
     }
 
     @Override
@@ -107,8 +115,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public void updateOrder(Order order) {
-        this.orders.remove(order);
-        this.orders.add(order);
+        this.orders.set(this.orders.indexOf(order), order);
     }
 
 }

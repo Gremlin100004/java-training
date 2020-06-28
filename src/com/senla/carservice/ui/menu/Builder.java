@@ -7,9 +7,9 @@ import com.senla.carservice.controller.OrderController;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.ui.printer.PrinterGarages;
-import com.senla.carservice.ui.printer.PrinterMaster;
-import com.senla.carservice.ui.printer.PrinterOrder;
+import com.senla.carservice.ui.string.StringMaster;
+import com.senla.carservice.ui.string.StringOrder;
+import com.senla.carservice.ui.util.Printer;
 import com.senla.carservice.ui.util.ScannerUtil;
 import com.senla.carservice.ui.util.TestData;
 
@@ -35,17 +35,17 @@ public class Builder {
         this.rootMenu = new Menu("Car Service Menu");
         Menu mastersMenu = new Menu("Masters");
         Menu ordersMenu = new Menu("Orders");
-        Menu garagesMenu = new Menu("Garages");
+        Menu placesMenu = new Menu("Places");
         Menu listOrderMenu = new Menu("Orders list");
         Menu executedOrderMenu = new Menu("list of orders currently being executed");
         Menu periodOrderMenu = new Menu("Orders list for a period of time");
         Menu completedOrderMenu = new Menu("Completed orders");
         Menu deletedOrderMenu = new Menu("Deleted orders");
         Menu canceledOrderMenu = new Menu("Canceled orders");
-        setMenuItemRootMenu(mastersMenu, ordersMenu, garagesMenu);
+        setMenuItemRootMenu(mastersMenu, ordersMenu, placesMenu);
         setMenuItemRootMenuPart();
         createItemMastersMenu(mastersMenu);
-        createItemGaragesMenu(garagesMenu, this.rootMenu);
+        createItemPlacesMenu(placesMenu, this.rootMenu);
         createItemOrderMenu(new ArrayList<>(Arrays.asList(ordersMenu, listOrderMenu,
                 executedOrderMenu, periodOrderMenu)));
         createItemListOrderMenu(listOrderMenu, ordersMenu);
@@ -61,162 +61,88 @@ public class Builder {
         return this.rootMenu;
     }
 
-    private void setMenuItemRootMenu(Menu mastersMenu, Menu ordersMenu, Menu garagesMenu) {
+    private void setMenuItemRootMenu(Menu mastersMenu, Menu ordersMenu, Menu placesMenu) {
         this.rootMenu.getMenuItems().add(new MenuItem
-                ("Masters", () -> System.out.println("Go to menu"), mastersMenu));
+                ("Masters", () -> Printer.printInfo("Go to menu"), mastersMenu));
         this.rootMenu.getMenuItems().add(new MenuItem
-                ("Orders", () -> System.out.println("Go to menu"), ordersMenu));
+                ("Orders", () -> Printer.printInfo("Go to menu"), ordersMenu));
         this.rootMenu.getMenuItems().add(new MenuItem
-                ("Garages", () -> System.out.println("Go to menu"), garagesMenu));
+                ("Places", () -> Printer.printInfo("Go to menu"), placesMenu));
         this.rootMenu.getMenuItems().add(new MenuItem
                 ("Get the number of available seats at the car service", () -> {
-                    String message = null;
-                    String date;
-                    if (MasterController.getInstance().getMasters().isEmpty()) {
-                        System.out.println("Add masters to service!!!");
-                        return;
-                    }
-                    if (PlaceController.getInstance().getNumberFreePlaces() == 0) {
-                        System.out.println("Add places to garages!!!");
-                        return;
-                    }
-                    while (message == null) {
-                        date = ScannerUtil.getStringDateUser(
-                                "Enter the date in format dd.mm.yyyy, example:\"10.10.2010\"");
-                        message = CarOfficeController.getInstance().getFreePlacesByDate(date);
-                        if (message.equals("error date")) {
-                            System.out.println("You enter wrong value!!!");
-                            continue;
-                        }
-                        if (message.equals("past date")) {
-                            System.out.println("Entered date cannot be in the past!!!");
-                            message = null;
-                        }
-                    }
-                    System.out.println(message);
+                    String date = ScannerUtil.getStringDateUser
+                            ("Enter the date in format dd.mm.yyyy, example:\"10.10.2010\"");
+                    Printer.printInfo(CarOfficeController.getInstance().getFreePlacesByDate(date));
                 }, this.rootMenu));
     }
 
     private void setMenuItemRootMenuPart() {
         this.rootMenu.getMenuItems().add(new MenuItem("Get the closest free date",
-                () -> System.out.println(CarOfficeController.getInstance().getNearestFreeDate()), this.rootMenu));
+                () -> Printer.printInfo(CarOfficeController.getInstance().getNearestFreeDate()), this.rootMenu));
         this.rootMenu.getMenuItems().add(new MenuItem("Fill in test data", () -> {
             String delimiter = "***********************************************************************";
-            System.out.println(delimiter);
+            Printer.printInfo(delimiter);
             addMaster(delimiter, MasterController.getInstance());
-            addGarage(delimiter, PlaceController.getInstance());
-            addPlaceGarage(delimiter, PlaceController.getInstance());
-            System.out.println("Add new orders to car service.");
+            addPlace(delimiter, PlaceController.getInstance());
+            Printer.printInfo("Add new orders to car service.");
             addOrder(MasterController.getInstance(), OrderController.getInstance(), PlaceController.getInstance());
         }, this.rootMenu));
-        this.rootMenu.getMenuItems().add(new MenuItem("Export of all entities", () -> {
-            System.out.println(MasterController.getInstance().exportMasters());
-            System.out.println(PlaceController.getInstance().exportGarages());
-            System.out.println(OrderController.getInstance().exportOrders());
-        }, this.rootMenu));
-        this.rootMenu.getMenuItems().add(new MenuItem("Import of all entities", () -> {
-            System.out.println(MasterController.getInstance().importMasters());
-            System.out.println(PlaceController.getInstance().importGarages());
-            System.out.println(OrderController.getInstance().importOrders());
-        }, this.rootMenu));
+//        this.rootMenu.getMenuItems().add(new MenuItem("Export of all entities", () -> {
+//            Printer.printInfo(MasterController.getInstance().exportMasters());
+//            Printer.printInfo(PlaceController.getInstance().exportGarages());
+//            Printer.printInfo(OrderController.getInstance().exportOrders());
+//        }, this.rootMenu));
+//        this.rootMenu.getMenuItems().add(new MenuItem("Import of all entities", () -> {
+//            Printer.printInfo(MasterController.getInstance().importMasters());
+//            Printer.printInfo(PlaceController.getInstance().importGarages());
+//            Printer.printInfo(OrderController.getInstance().importOrders());
+//        }, this.rootMenu));
     }
 
     private void createItemMastersMenu(Menu mastersMenu) {
         mastersMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("Add master", () -> System.out.println(MasterController.getInstance().
+                new MenuItem("Add master", () -> Printer.printInfo(MasterController.getInstance().
                         addMaster(ScannerUtil.getStringUser("Enter the name of master"))), mastersMenu),
                 new MenuItem("Delete Master", () -> {
-                    if (MasterController.getInstance().getMasters().isEmpty()) {
-                        System.out.println("There are no masters to delete!");
-                        return;
-                    }
-                    PrinterMaster.printMasters(MasterController.getInstance().getMasters());
-                    System.out.println("0. Previous menu");
+                    Printer.printInfo(MasterController.getInstance().getMasters());
                     deleteMaster();
                 }, mastersMenu),
                 new MenuItem("Show a list of masters sorted alphabetically", () -> {
-                    if (MasterController.getInstance().sortMasterByAlphabet().isEmpty()) {
-                        System.out.println("There are no masters.");
-                        return;
-                    }
-                    PrinterMaster.printMasters(MasterController.getInstance().sortMasterByAlphabet());
+                    Printer.printInfo(MasterController.getInstance().getMasterByAlphabet());
                 }, mastersMenu),
                 new MenuItem("Show list of masters sorted by busy", () -> {
-                    if (MasterController.getInstance().sortMasterByBusy().isEmpty()) {
-                        System.out.println("There are no masters.");
-                        return;
-                    }
-                    PrinterMaster.printMasters(MasterController.getInstance().sortMasterByBusy());
+                    Printer.printInfo(MasterController.getInstance().getMasterByBusy());
                 }, mastersMenu),
-                new MenuItem("Export masters",
-                        () -> System.out.println(MasterController.getInstance().exportMasters()), mastersMenu),
-                new MenuItem("Import masters",
-                        () -> System.out.println(MasterController.getInstance().importMasters()), mastersMenu),
-                new MenuItem("Previous menu", () -> System.out.println("Go to menu"), this.rootMenu)
+//                new MenuItem("Export masters",
+//                        () -> Printer.printInfo(MasterController.getInstance().exportMasters()), mastersMenu),
+//                new MenuItem("Import masters",
+//                        () -> Printer.printInfo(MasterController.getInstance().importMasters()), mastersMenu),
+                new MenuItem("Previous menu", () -> Printer.printInfo("Go to menu"), this.rootMenu)
         )));
     }
 
-
-    private void createItemGaragesMenu(Menu garagesMenu, Menu rootMenu) {
-        garagesMenu.getMenuItems().add(new MenuItem("Show list of garages", () -> {
-            if (PlaceController.getInstance().getArrayPlace().isEmpty()) {
-                System.out.println("There are no garages.");
-                return;
-            }
-            PrinterGarages.printGarages(PlaceController.getInstance().getArrayPlace());
-        }, garagesMenu));
-        garagesMenu.getMenuItems().add(new MenuItem("Add garage",
-                () -> System.out.println(PlaceController.getInstance()
-                        .addPlace(ScannerUtil.getStringUser("Enter the name of garage"))), garagesMenu));
-        garagesMenu.getMenuItems().add(new MenuItem("Delete garage", () -> {
-            if (PlaceController.getInstance().getArrayPlace().isEmpty()) {
-                System.out.println("There are no garages to delete!");
-                return;
-            }
-            PrinterGarages.printGarages(PlaceController.getInstance().getArrayPlace());
-            System.out.println("0. Previous menu");
+    private void createItemPlacesMenu(Menu placesMenu, Menu rootMenu) {
+        placesMenu.getMenuItems().add(new MenuItem("Show list of places",
+                () -> Printer.printInfo(PlaceController.getInstance().getArrayPlace()), placesMenu));
+        placesMenu.getMenuItems().add(new MenuItem("Add place",
+                () -> Printer.printInfo(PlaceController.getInstance()
+                        .addPlace(ScannerUtil.getIntUser("Enter the number of place"))), placesMenu));
+        placesMenu.getMenuItems().add(new MenuItem("Delete place", () -> {
+            Printer.printInfo(PlaceController.getInstance().getArrayPlace());
             deleteGarage();
-        }, garagesMenu));
-        addItemGarageMenu(garagesMenu, rootMenu);
-    }
-
-    private void addItemGarageMenu(Menu garagesMenu, Menu rootMenu) {
-        garagesMenu.getMenuItems().add(new MenuItem("Add place in garage", () -> {
-            if (PlaceController.getInstance().getArrayPlace().isEmpty()) {
-                System.out.println("There are no garages!");
-                return;
-            }
-            PrinterGarages.printGarages(PlaceController.getInstance().getArrayPlace());
-            System.out.println("0. Previous menu");
-            addPlace();
-        }, garagesMenu));
-        garagesMenu.getMenuItems().add(new MenuItem("Delete place in garage", () -> {
-            if (PlaceController.getInstance().getArrayPlace().isEmpty()) {
-                System.out.println("There are no garages to delete place!");
-                return;
-            }
-            PrinterGarages.printGarages(PlaceController.getInstance().getArrayPlace());
-            System.out.println("0. Previous menu");
-            deletePlace();
-        }, garagesMenu));
-        garagesMenu.getMenuItems().add(new MenuItem("Export garages", () -> System.out.println
-                (PlaceController.getInstance().exportGarages()), garagesMenu));
-        garagesMenu.getMenuItems().add(new MenuItem("Import garages",
-                () -> System.out.println(PlaceController.getInstance().importGarages()), garagesMenu));
-        garagesMenu.getMenuItems().add(new MenuItem("Previous menu",
-                () -> System.out.println("Go to menu"), rootMenu));
+        }, placesMenu));
     }
 
     private void createItemOrderMenu(List<Menu> menus) {
         menus.get(0).setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("List of orders", () -> System.out.println("Go to menu"), menus.get(1)),
+                new MenuItem("List of orders", () -> Printer.printInfo("Go to menu"), menus.get(1)),
                 new MenuItem("List of orders executed at a given time",
-                        () -> System.out.println("Go to menu"), menus.get(2)),
+                        () -> Printer.printInfo("Go to menu"), menus.get(2)),
                 new MenuItem("List of orders for a period of time",
-                        () -> System.out.println("Go to menu"), menus.get(3)),
+                        () -> Printer.printInfo("Go to menu"), menus.get(3)),
                 new MenuItem("List of orders for a period of time",
-                        () -> System.out.println("Go to menu"), menus.get(3)),
-                new MenuItem("Previous menu", () -> System.out.println("Go to menu"), this.rootMenu)
+                        () -> Printer.printInfo("Go to menu"), menus.get(3)),
+                new MenuItem("Previous menu", () -> Printer.printInfo("Go to menu"), this.rootMenu)
         )));
     }
 
@@ -232,30 +158,18 @@ public class Builder {
 
     private void addItemListOrderMenuPartOne(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(new MenuItem("Show orders", () -> {
-            if (OrderController.getInstance().getOrders().isEmpty()) {
-                System.out.println("There are no orders.");
-                return;
-            }
-            PrinterOrder.printOrder(OrderController.getInstance().getOrders());
+            Printer.printInfo(OrderController.getInstance().getOrders());
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Add order", () -> {
-            if (MasterController.getInstance().getMasters().isEmpty()) {
-                System.out.println("There are no masters!");
-                return;
-            }
-            if (!isPlace(PlaceController.getInstance().getArrayPlace())) {
-                System.out.println("There are no Places!");
-                return;
-            }
             addOrder();
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Delete the order", () -> {
             if (OrderController.getInstance().getOrders().isEmpty()) {
-                System.out.println("There are no orders to delete!");
+                Printer.printInfo("There are no orders to delete!");
                 return;
             }
-            PrinterOrder.printOrder(OrderController.getInstance().getOrders());
-            System.out.println("0. Previous menu");
+            StringOrder.getStringFromOrder(OrderController.getInstance().getOrders());
+            Printer.printInfo("0. Previous menu");
             deleteOrder();
         }, listOrderMenu));
     }
@@ -263,11 +177,11 @@ public class Builder {
     private void addItemListOrderMenuPartTwo(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(new MenuItem("Close the order", () -> {
             if (OrderController.getInstance().getOrders().isEmpty()) {
-                System.out.println("There are no orders!");
+                Printer.printInfo("There are no orders!");
                 return;
             }
-            PrinterOrder.printOrder(OrderController.getInstance().getOrders());
-            System.out.println("0. Previous menu");
+            StringOrder.getStringFromOrder(OrderController.getInstance().getOrders());
+            Printer.printInfo("0. Previous menu");
             String message = "";
             int index;
             while (!message.equals(" -the order has been completed.")) {
@@ -276,21 +190,21 @@ public class Builder {
                     return;
                 }
                 if (index > OrderController.getInstance().getOrders().size() || index < 0) {
-                    System.out.println("There is no such order");
+                    Printer.printInfo("There is no such order");
                     continue;
                 }
                 message = OrderController.getInstance()
                         .closeOrder(OrderController.getInstance().getOrders().get(index - 1));
-                System.out.println(message);
+                Printer.printInfo(message);
             }
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Cancel the order", () -> {
             if (OrderController.getInstance().getOrders().isEmpty()) {
-                System.out.println("There are no orders!");
+                Printer.printInfo("There are no orders!");
                 return;
             }
-            PrinterOrder.printOrder(OrderController.getInstance().getOrders());
-            System.out.println("0. Previous menu");
+            StringOrder.getStringFromOrder(OrderController.getInstance().getOrders());
+            Printer.printInfo("0. Previous menu");
             cancelOrder();
         }, listOrderMenu));
     }
@@ -298,25 +212,25 @@ public class Builder {
     private void addItemListOrderMenuPartThree(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(new MenuItem("Transfer the order to execution status", () -> {
             if (OrderController.getInstance().getOrders().isEmpty()) {
-                System.out.println("There are no orders!");
+                Printer.printInfo("There are no orders!");
                 return;
             }
-            PrinterOrder.printOrder(OrderController.getInstance().getOrders());
-            System.out.println("0. Previous menu");
+            StringOrder.getStringFromOrder(OrderController.getInstance().getOrders());
+            Printer.printInfo("0. Previous menu");
             completeOrder();
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Shift the lead time", () -> {
             String message = "";
             if (OrderController.getInstance().getOrders().isEmpty()) {
-                System.out.println("There are no orders!");
+                Printer.printInfo("There are no orders!");
                 return;
             }
-            PrinterOrder.printOrder(OrderController.getInstance().getOrders());
+            StringOrder.getStringFromOrder(OrderController.getInstance().getOrders());
             int index = 0;
             while (index == 0) {
                 index = ScannerUtil.getIntUser("Enter the index number of the order to shift time:");
                 if (index > OrderController.getInstance().getOrders().size() || index < 1) {
-                    System.out.println("There is no such master");
+                    Printer.printInfo("There is no such master");
                     continue;
                 }
                 break;
@@ -328,7 +242,7 @@ public class Builder {
                                 "\"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\""),
                         ScannerUtil.getStringDateUser("Enter the lead time the order in format" +
                                 " \"dd.MM.yyyy hh:mm\"," + " example:\"10.10.2010 10:00\""));
-                System.out.println(message);
+                Printer.printInfo(message);
             }
         }, listOrderMenu));
     }
@@ -336,37 +250,37 @@ public class Builder {
     private void addItemListOrderMenuPartFour(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(new MenuItem("Show orders sort by filing date", () -> {
             if (OrderController.getInstance().getOrders().isEmpty()) {
-                System.out.println("There are no orders.");
+                Printer.printInfo("There are no orders.");
                 return;
             }
-            PrinterOrder.printOrder(OrderController.getInstance().
+            StringOrder.getStringFromOrder(OrderController.getInstance().
                     sortOrderByCreationTime(OrderController.getInstance().getOrders()));
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Show orders sort by execution date", () -> {
             if (OrderController.getInstance().getOrders().isEmpty()) {
-                System.out.println("There are no orders.");
+                Printer.printInfo("There are no orders.");
                 return;
             }
-            PrinterOrder.printOrder(OrderController.getInstance()
+            StringOrder.getStringFromOrder(OrderController.getInstance()
                     .sortOrderByLeadTime(OrderController.getInstance().getOrders()));
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Show orders sort by planned start date", () -> {
             if (OrderController.getInstance().getOrders().isEmpty()) {
-                System.out.println("There are no orders.");
+                Printer.printInfo("There are no orders.");
                 return;
             }
             List<Order> sortArrayOrders = OrderController
                     .getInstance().sortOrderByStartTime(OrderController.getInstance().getOrders());
-            PrinterOrder.printOrder(sortArrayOrders);
+            StringOrder.getStringFromOrder(sortArrayOrders);
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Show orders sort by price", () -> {
             List<Order> orders = OrderController.getInstance().getOrders();
             if (orders.isEmpty()) {
-                System.out.println("There are no orders.");
+                Printer.printInfo("There are no orders.");
                 return;
             }
             List<Order> sortArrayOrders = OrderController.getInstance().sortOrderByPrice(orders);
-            PrinterOrder.printOrder(sortArrayOrders);
+            StringOrder.getStringFromOrder(sortArrayOrders);
         }, listOrderMenu));
     }
 
@@ -374,11 +288,11 @@ public class Builder {
         listOrderMenu.getMenuItems().add(new MenuItem("Get orders executed concrete master.", () -> {
             int index;
             if (MasterController.getInstance().getMasters().isEmpty()) {
-                System.out.println("There are no masters.");
+                Printer.printInfo("There are no masters.");
                 return;
             }
-            PrinterMaster.printMasters(MasterController.getInstance().getMasters());
-            System.out.println("0. Previous menu");
+            StringMaster.getStringFromMasters(MasterController.getInstance().getMasters());
+            Printer.printInfo("0. Previous menu");
             List<Order> orders = new ArrayList<>();
             while (orders.isEmpty()) {
                 index = ScannerUtil.getIntUser("Enter the index number of the master to view orders:");
@@ -386,17 +300,17 @@ public class Builder {
                     return;
                 }
                 if (index > MasterController.getInstance().getMasters().size() || index < 0) {
-                    System.out.println("There is no such master");
+                    Printer.printInfo("There is no such master");
                     continue;
                 }
                 orders = OrderController.getInstance()
                         .getMasterOrders(MasterController.getInstance().getMasters().get(index - 1));
                 if (OrderController.getInstance()
                         .getMasterOrders(MasterController.getInstance().getMasters().get(index - 1)).isEmpty()) {
-                    System.out.println("Such master has no orders!");
+                    Printer.printInfo("Such master has no orders!");
                     continue;
                 }
-                PrinterOrder.printOrder(OrderController
+                StringOrder.getStringFromOrder(OrderController
                         .getInstance().getMasterOrders(MasterController.getInstance().getMasters().get(index - 1)));
                 break;
             }
@@ -407,11 +321,11 @@ public class Builder {
         listOrderMenu.getMenuItems().add(new MenuItem("Get a master performing a specific order", () -> {
             int index;
             if (OrderController.getInstance().getOrders().isEmpty()) {
-                System.out.println("There are no orders.");
+                Printer.printInfo("There are no orders.");
                 return;
             }
-            PrinterOrder.printOrder(OrderController.getInstance().getOrders());
-            System.out.println("0. Previous menu");
+            StringOrder.getStringFromOrder(OrderController.getInstance().getOrders());
+            Printer.printInfo("0. Previous menu");
             List<Master> masters = new ArrayList<>();
             while (masters.isEmpty()) {
                 index = ScannerUtil.getIntUser("Enter the index number of the order to view masters:");
@@ -419,12 +333,12 @@ public class Builder {
                     return;
                 }
                 if (index > OrderController.getInstance().getOrders().size() || index < 0) {
-                    System.out.println("There is no such order");
+                    Printer.printInfo("There is no such order");
                     continue;
                 }
                 masters = OrderController.getInstance().getOrderMasters
                         (OrderController.getInstance().getOrders().get(index - 1));
-                PrinterMaster.printMasters(masters);
+                StringMaster.getStringFromMasters(masters);
             }
         }, listOrderMenu));
     }
@@ -433,13 +347,13 @@ public class Builder {
         listOrderMenu.getMenuItems().add(new MenuItem("Export orders", () -> {
             OrderController orderController = OrderController.getInstance();
             if (isContinue()) {
-                System.out.println(orderController.exportOrders());
+                Printer.printInfo(orderController.exportOrders());
             }
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Import orders",
-                () -> System.out.println(OrderController.getInstance().importOrders()), listOrderMenu));
+                () -> Printer.printInfo(OrderController.getInstance().importOrders()), listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Previous menu",
-                () -> System.out.println("Go to menu"), ordersMenu));
+                () -> Printer.printInfo("Go to menu"), ordersMenu));
     }
 
     private void createItemExecutedOrderMenu(Menu executedOrderMenu, Menu ordersMenu) {
@@ -448,40 +362,40 @@ public class Builder {
                     List<Order> executedOrders = OrderController.getInstance().
                             sortOrderByCreationTime(OrderController.getInstance().getExecuteOrder());
                     if (executedOrders.isEmpty()) {
-                        System.out.println("There are no orders!");
+                        Printer.printInfo("There are no orders!");
                         return;
                     }
-                    PrinterOrder.printOrder(executedOrders);
+                    StringOrder.getStringFromOrder(executedOrders);
                 }, executedOrderMenu),
                 new MenuItem("Get list of orders executed at a given time sort by execution date",
                         () -> {
                             List<Order> executedOrders = OrderController
                                     .getInstance().sortOrderByLeadTime(OrderController.getInstance().getExecuteOrder());
                             if (executedOrders.isEmpty()) {
-                                System.out.println("There are no orders!");
+                                Printer.printInfo("There are no orders!");
                                 return;
                             }
-                            PrinterOrder.printOrder(executedOrders);
+                            StringOrder.getStringFromOrder(executedOrders);
                         }, executedOrderMenu),
                 new MenuItem("Get list of orders executed at a given time sort by price", () -> {
                     List<Order> executedOrders = OrderController.getInstance().
                             sortOrderByPrice(OrderController.getInstance().getExecuteOrder());
                     if (executedOrders.isEmpty()) {
-                        System.out.println("There are no orders!");
+                        Printer.printInfo("There are no orders!");
                         return;
                     }
-                    PrinterOrder.printOrder(executedOrders);
+                    StringOrder.getStringFromOrder(executedOrders);
                 }, executedOrderMenu),
-                new MenuItem("Previous menu", () -> System.out.println("Go to menu"), ordersMenu)
+                new MenuItem("Previous menu", () -> Printer.printInfo("Go to menu"), ordersMenu)
         )));
     }
 
     private void createItemPeriodOrderMenu(List<Menu> menus) {
         menus.get(0).setMenuItems(new ArrayList<>(Arrays.asList(
-                new MenuItem("Completed orders", () -> System.out.println("Go to menu"), menus.get(1)),
-                new MenuItem("Deleted orders", () -> System.out.println("Go to menu"), menus.get(2)),
-                new MenuItem("Canceled orders", () -> System.out.println("Go to menu"), menus.get(3)),
-                new MenuItem("Previous menu", () -> System.out.println("Go to menu"), menus.get(4))
+                new MenuItem("Completed orders", () -> Printer.printInfo("Go to menu"), menus.get(1)),
+                new MenuItem("Deleted orders", () -> Printer.printInfo("Go to menu"), menus.get(2)),
+                new MenuItem("Canceled orders", () -> Printer.printInfo("Go to menu"), menus.get(3)),
+                new MenuItem("Previous menu", () -> Printer.printInfo("Go to menu"), menus.get(4))
         )));
     }
 
@@ -500,11 +414,11 @@ public class Builder {
                 }
                 orders = OrderController.getInstance().getCompletedOrders(orders);
                 if (orders.isEmpty()) {
-                    System.out.println("There are no completed orders for this period of time!");
+                    Printer.printInfo("There are no completed orders for this period of time!");
                     return;
                 }
                 orders = OrderController.getInstance().sortOrderByCreationTime(orders);
-                PrinterOrder.printOrder(orders);
+                StringOrder.getStringFromOrder(orders);
             }
         }, completedOrderMenu));
         completedOrderMenu.getMenuItems().add(new MenuItem("Sort by execution date", () -> {
@@ -516,11 +430,11 @@ public class Builder {
                 }
                 orders = OrderController.getInstance().getCompletedOrders(orders);
                 if (orders.isEmpty()) {
-                    System.out.println("There are no completed orders for this period of time!");
+                    Printer.printInfo("There are no completed orders for this period of time!");
                     return;
                 }
                 orders = OrderController.getInstance().sortOrderByStartTime(orders);
-                PrinterOrder.printOrder(orders);
+                StringOrder.getStringFromOrder(orders);
             }
         }, completedOrderMenu));
     }
@@ -535,15 +449,15 @@ public class Builder {
                 }
                 orders = OrderController.getInstance().getCompletedOrders(orders);
                 if (orders.isEmpty()) {
-                    System.out.println("There are no completed orders for this period of time!");
+                    Printer.printInfo("There are no completed orders for this period of time!");
                     return;
                 }
                 orders = OrderController.getInstance().sortOrderByPrice(orders);
-                PrinterOrder.printOrder(orders);
+                StringOrder.getStringFromOrder(orders);
             }
         }, completedOrderMenu));
         completedOrderMenu.getMenuItems().add(new MenuItem("Previous menu",
-                () -> System.out.println("Go to menu"), periodOrderMenu));
+                () -> Printer.printInfo("Go to menu"), periodOrderMenu));
     }
 
     private void createItemDeletedOrderMenu(Menu deletedOrderMenu, Menu periodOrderMenu) {
@@ -561,11 +475,11 @@ public class Builder {
                 }
                 orders = OrderController.getInstance().getDeletedOrders(orders);
                 if (orders.isEmpty()) {
-                    System.out.println("There are no deleted orders for this period of time!");
+                    Printer.printInfo("There are no deleted orders for this period of time!");
                     return;
                 }
                 orders = OrderController.getInstance().sortOrderByCreationTime(orders);
-                PrinterOrder.printOrder(orders);
+                StringOrder.getStringFromOrder(orders);
             }
         }, deletedOrderMenu));
         deletedOrderMenu.getMenuItems().add(new MenuItem("Sort by execution date", () -> {
@@ -577,11 +491,11 @@ public class Builder {
                 }
                 orders = OrderController.getInstance().getDeletedOrders(orders);
                 if (orders.isEmpty()) {
-                    System.out.println("There are no deleted orders for this period of time!");
+                    Printer.printInfo("There are no deleted orders for this period of time!");
                     return;
                 }
                 orders = OrderController.getInstance().sortOrderByStartTime(orders);
-                PrinterOrder.printOrder(orders);
+                StringOrder.getStringFromOrder(orders);
             }
         }, deletedOrderMenu));
     }
@@ -596,15 +510,15 @@ public class Builder {
                 }
                 orders = OrderController.getInstance().getDeletedOrders(orders);
                 if (orders.isEmpty()) {
-                    System.out.println("There are no deleted orders for this period of time!");
+                    Printer.printInfo("There are no deleted orders for this period of time!");
                     return;
                 }
                 orders = OrderController.getInstance().sortOrderByPrice(orders);
-                PrinterOrder.printOrder(orders);
+                StringOrder.getStringFromOrder(orders);
             }
         }, deletedOrderMenu));
         deletedOrderMenu.getMenuItems().add(new MenuItem("Previous menu",
-                () -> System.out.println("Go to menu"), periodOrderMenu));
+                () -> Printer.printInfo("Go to menu"), periodOrderMenu));
     }
 
     private void createItemCanceledOrderMenu(Menu canceledOrderMenu, Menu periodOrderMenu) {
@@ -622,11 +536,11 @@ public class Builder {
                 }
                 orders = OrderController.getInstance().getCanceledOrders(orders);
                 if (orders.isEmpty()) {
-                    System.out.println("There are no canceled orders for this period of time!");
+                    Printer.printInfo("There are no canceled orders for this period of time!");
                     return;
                 }
                 orders = OrderController.getInstance().sortOrderByCreationTime(orders);
-                PrinterOrder.printOrder(orders);
+                StringOrder.getStringFromOrder(orders);
             }
         }, canceledOrderMenu));
         canceledOrderMenu.getMenuItems().add(new MenuItem("Sort by execution date", () -> {
@@ -638,11 +552,11 @@ public class Builder {
                 }
                 orders = OrderController.getInstance().getCanceledOrders(orders);
                 if (orders.isEmpty()) {
-                    System.out.println("There are no canceled orders for this period of time!");
+                    Printer.printInfo("There are no canceled orders for this period of time!");
                     return;
                 }
                 orders = OrderController.getInstance().sortOrderByStartTime(orders);
-                PrinterOrder.printOrder(orders);
+                StringOrder.getStringFromOrder(orders);
             }
         }, canceledOrderMenu));
     }
@@ -657,15 +571,15 @@ public class Builder {
                 }
                 orders = OrderController.getInstance().getCanceledOrders(orders);
                 if (orders.isEmpty()) {
-                    System.out.println("There are no canceled orders for this period of time!");
+                    Printer.printInfo("There are no canceled orders for this period of time!");
                     return;
                 }
                 orders = OrderController.getInstance().sortOrderByPrice(orders);
-                PrinterOrder.printOrder(orders);
+                StringOrder.getStringFromOrder(orders);
             }
         }, canceledOrderMenu));
         canceledOrderMenu.getMenuItems().add(new MenuItem("Previous menu",
-                () -> System.out.println("Go to menu"), periodOrderMenu));
+                () -> Printer.printInfo("Go to menu"), periodOrderMenu));
     }
 
     private boolean isContinue() {
@@ -675,40 +589,26 @@ public class Builder {
                     "For proper import, do not forget to export \"masters\" and \" " +
                             "garages\"!\n Would you like to continue export? y/n");
             if (!answer.equals("y") && !answer.equals("n")) {
-                System.out.println("You have entered wrong answer!");
+                Printer.printInfo("You have entered wrong answer!");
             }
         }
         return answer.equals("y");
     }
 
     private void addMaster(String delimiter, MasterController masterController) {
-        System.out.println("Add master:");
+        Printer.printInfo("Add master:");
         for (String masterName : TestData.getArrayMasterNames()) {
-            System.out.println(String.format(" -master \"%s\" has been added to service.",
-                    masterController.addMaster(masterName)));
+            Printer.printInfo(masterController.addMaster(masterName));
         }
-        System.out.println(delimiter);
+        Printer.printInfo(delimiter);
     }
 
-    private void addGarage(String delimiter, PlaceController placeController) {
-        System.out.println("Add garage to service:");
-        for (String garageName : TestData.getArrayGarageNames()) {
-            System.out.println(String.format(" -garage \"%s\" has been added to service",
-                    placeController.addPlace(garageName)));
+    private void addPlace(String delimiter, PlaceController placeController) {
+        Printer.printInfo("Add place to service:");
+        for (int placeNumber : TestData.getArrayPlaceNumber()) {
+            Printer.printInfo(placeController.addPlace(placeNumber));
         }
-        System.out.println(delimiter);
-    }
-
-    private void addPlaceGarage(String delimiter, PlaceController placeController) {
-        List<Garage> garages = placeController.getArrayPlace();
-        System.out.println("Add places in garages.");
-        for (Garage garage : garages) {
-            for (int j = 0; j < 4; j++) {
-                System.out.println(String.format("Add place in garage \"%s\"",
-                        placeController.addGaragePlace(garage)));
-            }
-        }
-        System.out.println(delimiter);
+        Printer.printInfo(delimiter);
     }
 
     private void addOrder(MasterController masterController,
@@ -717,11 +617,11 @@ public class Builder {
         int indexGarage = 0;
         int indexPlace = 0;
         String message;
-        List<Garage> garages = placeController.getArrayPlace();
         for (int i = 0; i < TestData.getArrayAutomaker().size(); i++) {
             ArrayList<Master> mastersOrder = new ArrayList<>();
             for (int j = 0; j < 2; j++) {
-                mastersOrder.add(masterController.getMasters().get(indexMaster));
+                orderController.addOrderMasters()
+                mastersOrder.add(indexMaster);
                 indexMaster++;
                 if (indexMaster == masterController.getMasters().size() - 1) {
                     indexMaster = 0;
@@ -729,17 +629,17 @@ public class Builder {
             }
             message = orderController.addOrder(TestData.getArrayAutomaker().get(i),
                     TestData.getArrayModel().get(i), TestData.getArrayRegistrationNumber().get(i));
-            System.out.println(message);
+            Printer.printInfo(message);
             message = orderController.addOrderDeadlines(TestData.getArrayExecutionStartTime().get(i),
                     TestData.getArrayLeadTime().get(i));
-            System.out.println(message);
+            Printer.printInfo(message);
             message = orderController.addOrderMasters(mastersOrder);
-            System.out.println(message);
-            message = orderController.addOrderPlaces(garages.get(indexGarage),
-                    garages.get(indexGarage).getPlaces().get(indexPlace));
-            System.out.println(message);
+            Printer.printInfo(message);
+            message = orderController.addOrderPlaces(garages.(indexGarage),
+                    garages.(indexGarage).getPlaces().(indexPlace));
+            Printer.printInfo(message);
             message = orderController.addOrderPrice(TestData.getArrayPrice().get(i));
-            System.out.println(message);
+            Printer.printInfo(message);
             indexPlace++;
             if (indexPlace == 3) {
                 indexPlace = 0;
@@ -747,7 +647,7 @@ public class Builder {
             }
         }
         List<Order> orders = orderController.getOrders();
-        PrinterOrder.printOrder(orders);
+        StringOrder.getStringFromOrder(orders);
     }
 
     private void deletePlace() {
@@ -759,16 +659,16 @@ public class Builder {
                 return;
             }
             if (index > PlaceController.getInstance().getArrayPlace().size() || index < 0) {
-                System.out.println("There is no such garage");
+                Printer.printInfo("There is no such garage");
                 continue;
             }
             if (PlaceController.getInstance().getArrayPlace().get(index - 1).getPlaces().size() < 1) {
-                System.out.println("There are no places in garage!");
+                Printer.printInfo("There are no places in garage!");
                 continue;
             }
             message = PlaceController.getInstance().deleteGaragePlace
                     (PlaceController.getInstance().getArrayPlace().get(index - 1));
-            System.out.println(message);
+            Printer.printInfo(message);
         }
     }
 
@@ -781,50 +681,23 @@ public class Builder {
                 return;
             }
             if (index > OrderController.getInstance().getOrders().size() || index < 0) {
-                System.out.println("There is no such order");
+                Printer.printInfo("There is no such order");
                 continue;
             }
             message = OrderController.getInstance()
                     .deleteOrder(OrderController.getInstance().getOrders().get(index - 1));
-            System.out.println(message);
+            Printer.printInfo(message);
         }
     }
 
     private void deleteMaster() {
-        String message = null;
-        int index;
-        while (message == null) {
-            System.out.println();
-            index = ScannerUtil.getIntUser("Enter the index number of the master to delete:");
-            if (index == 0) {
-                return;
-            }
-            if (index > MasterController.getInstance().getMasters().size() || index < 0) {
-                System.out.println("There is no such master");
-                continue;
-            }
-            message = MasterController.getInstance()
-                    .deleteMaster(MasterController.getInstance().getMasters().get(index - 1));
-        }
-        System.out.println(message);
+        int index = ScannerUtil.getIntUser("Enter the index number of the master to delete:");
+        Printer.printInfo(MasterController.getInstance().deleteMaster(index - 1));
     }
 
     private void deleteGarage() {
-        String message = null;
-        int index;
-        while (message == null) {
-            index = ScannerUtil.getIntUser("Enter the index number of the garage to delete:");
-            if (index == 0) {
-                return;
-            }
-            if (index > PlaceController.getInstance().getArrayPlace().size() || index < 0) {
-                System.out.println("There is no such garage");
-                continue;
-            }
-            message = PlaceController.getInstance()
-                    .deleteGarage(PlaceController.getInstance().getArrayPlace().get(index - 1));
-        }
-        System.out.println(message);
+        int index = ScannerUtil.getIntUser("Enter the index number of the place to delete:");
+        Printer.printInfo(PlaceController.getInstance().deletePlace(index - 1));
     }
 
     private void completeOrder() {
@@ -836,12 +709,12 @@ public class Builder {
                 return;
             }
             if (index > OrderController.getInstance().getOrders().size() || index < 0) {
-                System.out.println("There is no such order");
+                Printer.printInfo("There is no such order");
                 continue;
             }
             message = OrderController.getInstance()
                     .completeOrder(OrderController.getInstance().getOrders().get(index - 1));
-            System.out.println(message);
+            Printer.printInfo(message);
         } while (!message.equals(" - the order has been transferred to execution status"));
     }
 
@@ -854,12 +727,12 @@ public class Builder {
                 return;
             }
             if (index > OrderController.getInstance().getOrders().size() || index < 0) {
-                System.out.println("There is no such order");
+                Printer.printInfo("There is no such order");
                 continue;
             }
             message = OrderController.getInstance()
                     .cancelOrder(OrderController.getInstance().getOrders().get(index - 1));
-            System.out.println(message);
+            Printer.printInfo(message);
         }
     }
 
@@ -872,13 +745,13 @@ public class Builder {
                 return;
             }
             if (index > PlaceController.getInstance().getArrayPlace().size() || index < 0) {
-                System.out.println("There is no such garage!");
+                Printer.printInfo("There is no such garage!");
                 continue;
             }
             message = PlaceController.getInstance().addGaragePlace
                     (PlaceController.getInstance().getArrayPlace().get(index - 1));
         }
-        System.out.println(message);
+        Printer.printInfo(message);
     }
 
     private void addOrder() {
@@ -886,24 +759,19 @@ public class Builder {
         String model = ScannerUtil.getStringUser("Enter the model of car");
         String registrationNumber = ScannerUtil.getStringUser
                 ("Enter the registration number of car, example: 1111 AB-7");
-        String message = OrderController.getInstance().addOrder(automaker, model, registrationNumber);
-        System.out.println(message);
+        Printer.printInfo(OrderController.getInstance().addOrder(automaker, model, registrationNumber));
         List<String> deadline = addOrderDeadline();
         String executionStartTime = deadline.get(0);
         String leadTime = deadline.get(1);
         addMastersOrder(executionStartTime, leadTime);
-        List<Garage> freeGarages = CarOfficeController.getInstance().getFreePlace(executionStartTime, leadTime);
-        System.out.println("Garage with free places:");
-        for (int i = 0; i < freeGarages.size(); i++) {
-            System.out.println(String.format("%s. %s", i + 1, freeGarages.get(i).getName()));
-        }
-        Garage garage = addGarageOrder(freeGarages, PlaceController.getInstance());
+        Printer.printInfo(PlaceController.getInstance().getFreePlacesByDate(executionStartTime, leadTime));
+        Garage garage = addPlaceOrder(freeGarages, PlaceController.getInstance());
         Place place = PlaceController.getInstance().getFreePlaceGarage(garage).get(0);
         message = OrderController.getInstance().addOrderPlaces(garage, place);
-        System.out.println(message);
+        Printer.printInfo(message);
         message = OrderController.getInstance()
                 .addOrderPrice(ScannerUtil.getBigDecimalUser("Enter the price"));
-        System.out.println(message);
+        Printer.printInfo(message);
     }
 
     private List<String> addOrderDeadline() {
@@ -912,7 +780,7 @@ public class Builder {
         String executionStartTime = "";
         OrderController orderController = OrderController.getInstance();
         while (!message.equals("deadline add to order successfully")) {
-            System.out.println(message);
+            Printer.printInfo(message);
             executionStartTime = ScannerUtil.getStringDateUser(
                     "Enter the planing time start to execute the order in " +
                             "format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
@@ -926,39 +794,20 @@ public class Builder {
 
     private void addMastersOrder(String executionStartTime, String leadTime) {
         String message = "";
-        CarOfficeController carOfficeController = CarOfficeController.getInstance();
-        OrderController orderController = OrderController.getInstance();
-        List<Master> freeMaster = carOfficeController.getFreeMasters(executionStartTime, leadTime);
-        List<Master> orderMasters = new ArrayList<>();
-        PrinterMaster.printMasters(freeMaster);
-        System.out.println("0. Stop adding");
-        while (!message.equals("masters add successfully")) {
-            addMasters(freeMaster, orderMasters);
-            message = orderController.addOrderMasters(orderMasters);
+        Printer.printInfo(MasterController.getInstance().getFreeMasters(executionStartTime, leadTime));
+        Printer.printInfo("0. Stop adding");
+        boolean userAnswer = false;
+        while (!userAnswer) {
+            addMasters(message);
+            message = OrderController.getInstance().addOrderMasters(index);
+            userAnswer = isAnotherMaster();
         }
     }
 
-    private void addMasters(List<Master> masters, List<Master> orderMaster) {
-        boolean userAnswer = false;
-        while (!userAnswer) {
+    private void addMasters(String message) {
+        while (!message.equals("masters add successfully")) {
             int index = ScannerUtil.getIntUser("Enter the index number of the master to add:");
-            if (index == 0 && orderMaster.size() > 0) {
-                return;
-            }
-            if (index == 0) {
-                System.out.println("Add at least one master!");
-                continue;
-            }
-            if (index > masters.size() || index < 0) {
-                System.out.println("There is no such master");
-                continue;
-            }
-            if (orderMaster.contains(masters.get(index - 1))) {
-                System.out.println("You have already add such master!");
-                continue;
-            }
-            orderMaster.add(masters.get(index - 1));
-            userAnswer = isAnotherMaster();
+            Printer.printInfo(OrderController.getInstance().addOrderMasters(index));
         }
     }
 
@@ -967,23 +816,20 @@ public class Builder {
         while (!answer.equals("y") && !answer.equals("n")) {
             answer = ScannerUtil.getStringUser("Add another master to the order? y/n");
             if (!answer.equals("y") && !answer.equals("n")) {
-                System.out.println("You have entered wrong answer!");
+                Printer.printInfo("You have entered wrong answer!");
             }
         }
         return answer.equals("n");
     }
 
-    private Garage addGarageOrder(List<Garage> garages, PlaceController placeController) {
-        boolean isFreePlaceGarage = false;
+    private void addPlaceOrder() {
+        String message = "";
         int index = 0;
-        while (!isFreePlaceGarage) {
-            System.out.println();
-            index = ScannerUtil.getIntUser("Enter the index number of the garage to add in order:");
-            if (placeController.getNumberFreePlaceGarage(garages.get(index - 1)) < 1) {
-                System.out.println("There are no free place in garage");
-                continue;
-            }
-            isFreePlaceGarage = true;
+        StringMaster.getStringFromMasters(freeMaster);
+        Printer.printInfo("0. Stop adding");
+        while (!message.equals("place add to order successfully")) {
+            index = ScannerUtil.getIntUser("Enter the index number of the place to add in order:");
+            message = OrderController.getInstance().ge
         }
         return garages.get(index - 1);
     }
@@ -1004,7 +850,7 @@ public class Builder {
         List<Order> testOrders = orderController.getOrders();
         List<Order> orders = new ArrayList<>();
         if (testOrders.isEmpty()) {
-            System.out.println("There are no orders in service!");
+            Printer.printInfo("There are no orders in service!");
             return orders;
         }
         beginningPeriodTime = ScannerUtil.getStringDateUser(
@@ -1012,9 +858,9 @@ public class Builder {
         endPeriodTime = ScannerUtil.getStringDateUser(
                 "Enter the end of period in format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
         orders = orderController.getOrdersByPeriod(beginningPeriodTime, endPeriodTime);
-        System.out.println(String.format("Period of time: %s - %s", beginningPeriodTime, endPeriodTime));
+        Printer.printInfo(String.format("Period of time: %s - %s", beginningPeriodTime, endPeriodTime));
         if (orders.isEmpty()) {
-            System.out.println("There are no orders for this period of time!");
+            Printer.printInfo("There are no orders for this period of time!");
         }
         return orders;
     }

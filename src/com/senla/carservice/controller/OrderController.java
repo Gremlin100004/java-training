@@ -3,31 +3,24 @@ package com.senla.carservice.controller;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.exception.DateException;
-import com.senla.carservice.exception.NullDateException;
-import com.senla.carservice.exception.NumberObjectZeroException;
-import com.senla.carservice.exception.OrderStatusException;
-import com.senla.carservice.service.CarOfficeService;
-import com.senla.carservice.service.CarOfficeServiceImpl;
-import com.senla.carservice.service.OrderService;
-import com.senla.carservice.service.OrderServiceImpl;
+import com.senla.carservice.exception.*;
+import com.senla.carservice.service.*;
+import com.senla.carservice.ui.string.StringOrder;
 import com.senla.carservice.util.DateUtil;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class OrderController {
     private static OrderController instance;
     private final OrderService orderService;
+    private final MasterService masterService;
     private final CarOfficeService carOfficeService;
 
     private OrderController() {
         orderService = OrderServiceImpl.getInstance();
         carOfficeService = CarOfficeServiceImpl.getInstance();
+        masterService = MasterServiceImpl.getInstance();
     }
 
     public static OrderController getInstance() {
@@ -38,8 +31,12 @@ public class OrderController {
     }
 
     public String addOrder(String automaker, String model, String registrationNumber) {
-        orderService.addOrder(automaker, model, registrationNumber);
-        return "order add successfully!";
+        try {
+            orderService.addOrder(automaker, model, registrationNumber);
+            return "order add successfully!";
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
     public String addOrderDeadlines(String stringExecutionStartTime, String stringLeadTime) {
@@ -55,27 +52,39 @@ public class OrderController {
         }
     }
 
-    public String addOrderMasters(List<Master> masters) {
+    public String addOrderMasters(int index) {
         try {
-            orderService.addOrderMasters(masters);
+            orderService.addOrderMasters(masterService.getMasters().get(index));
             return "masters add successfully";
-        } catch (NumberObjectZeroException e) {
+        } catch (NumberObjectZeroException | EqualObjectsException e) {
             return String.valueOf(e);
         }
     }
 
     public String addOrderPlaces(Place place) {
-        orderService.addOrderPlace(place);
-        return "place add to order successfully";
+        try {
+            orderService.addOrderPlace(place);
+            return "place add to order successfully";
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
     public String addOrderPrice(BigDecimal price) {
-        orderService.addOrderPrice(price);
-        return "price add to order successfully";
+        try {
+            orderService.addOrderPrice(price);
+            return "price add to order successfully";
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
-    public List<Order> getOrders() {
-        return orderService.getOrders();
+    public String getOrders() {
+        try {
+            return StringOrder.getStringFromOrder(orderService.getOrders());
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
     public String completeOrder(Order order) {
@@ -126,58 +135,97 @@ public class OrderController {
             return "Error date format, should be \"dd.MM.yyyy hh:mm\"";
         }
     }
-    //--------------------------------------------------
-    public List<Order> sortOrderByCreationTime(List<Order> orders) {
-        return this.orderService.sortOrderCreationTime(orders);
+
+    public String sortOrderByCreationTime() {
+        try {
+            return StringOrder.getStringFromOrder(orderService.sortOrderCreationTime(orderService.getOrders()));
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
-    public List<Order> sortOrderByLeadTime(List<Order> orders) {
-        return this.orderService.sortOrderByLeadTime(orders);
+    public String sortOrderByLeadTime() {
+        try {
+            return StringOrder.getStringFromOrder(orderService.sortOrderByLeadTime(orderService.getOrders()));
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
-    public List<Order> sortOrderByStartTime(List<Order> orders) {
-        return this.orderService.sortOrderByStartTime(orders);
+    public String sortOrderByStartTime() {
+        try {
+            return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime(orderService.getOrders()));
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
-    public List<Order> sortOrderByPrice(List<Order> orders) {
-        return this.orderService.sortOrderByPrice(orders);
+    public String sortOrderByPrice() {
+        try {
+            return StringOrder.getStringFromOrder(orderService.sortOrderByPrice(orderService.getOrders()));
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
-    public List<Order> getExecuteOrder() {
-        return this.orderService.getCurrentRunningOrders();
+    public String getExecuteOrder() {
+        try {
+            return StringOrder.getStringFromOrder(orderService.getCurrentRunningOrders());
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
     public String getOrdersByPeriod(String startPeriod, String endPeriod) {
         Date startPeriodDate = DateUtil.getDatesFromString(startPeriod);
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod);
-        List<Order> orders = null;
-        String stringOrders = "";
         try {
-            orders = this.orderService.getOrderByPeriod(startPeriodDate, endPeriodDate);
+            return StringOrder.getStringFromOrder(orderService.getOrderByPeriod(startPeriodDate, endPeriodDate));
         } catch (NullDateException e) {
             return "Error date format, should be \"dd.MM.yyyy hh:mm\"";
+        } catch (NumberObjectZeroException | DateException e) {
+            return String.valueOf(e);
         }
-        return stringOrders;
     }
 
-    public List<Order> getCompletedOrders(List<Order> orders) {
-        return this.orderService.getCompletedOrders(orders);
+    public String getCompletedOrders() {
+        try {
+            return StringOrder.getStringFromOrder(orderService.getCompletedOrders());
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
-    public List<Order> getCanceledOrders(List<Order> orders) {
-        return this.orderService.getCanceledOrders(orders);
+    public String getCanceledOrders() {
+        try {
+            return StringOrder.getStringFromOrder(orderService.getCanceledOrders());
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
-    public List<Order> getDeletedOrders(List<Order> orders) {
-        return this.orderService.getDeletedOrders(orders);
+    public String getDeletedOrders() {
+        try {
+            return StringOrder.getStringFromOrder(orderService.getDeletedOrders());
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
-    public List<Order> getMasterOrders(Master master) {
-        return this.orderService.getMasterOrders(master);
+    public String getMasterOrders(Master master) {
+        try {
+            return StringOrder.getStringFromOrder(orderService.getMasterOrders(master));
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
-    public List<Master> getOrderMasters(Order order) {
-        return this.orderService.getOrderMasters(order);
+    public String getOrderMasters(Order order) {
+        try {
+            return String.valueOf(orderService.getOrderMasters(order));
+        } catch (NumberObjectZeroException e) {
+            return String.valueOf(e);
+        }
     }
 
 //    public String exportOrders() {

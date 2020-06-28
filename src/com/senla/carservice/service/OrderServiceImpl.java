@@ -4,11 +4,9 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.Status;
-import com.senla.carservice.exception.DateException;
-import com.senla.carservice.exception.NullDateException;
-import com.senla.carservice.exception.NumberObjectZeroException;
-import com.senla.carservice.exception.OrderStatusException;
+import com.senla.carservice.exception.*;
 import com.senla.carservice.repository.*;
+import com.senla.carservice.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -39,12 +37,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getOrders() {
+    public List<Order> getOrders() throws NumberObjectZeroException {
+        checkOrders();
         return orderRepository.getOrders();
     }
 
     @Override
-    public void addOrder(String automaker, String model, String registrationNumber) {
+    public void addOrder(String automaker, String model, String registrationNumber) throws NumberObjectZeroException {
+        checkMasters();
+        checkPlaces();
         orderRepository.addOrder(new Order(this.orderRepository.getIdGeneratorOrder().getId(),
                 automaker, model, registrationNumber));
     }
@@ -52,7 +53,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void addOrderDeadlines(Date executionStartTime, Date leadTime) throws NullDateException,
             DateException, NumberObjectZeroException {
-        checkDateTime(executionStartTime, leadTime);
+        DateUtil.checkDateTime(executionStartTime, leadTime);
+        checkOrders();
         Order currentOrder = orderRepository.getLastOrder();
         List<Order> orders = new ArrayList<>(orderRepository.getOrders());
         orders.remove(currentOrder);
@@ -69,30 +71,31 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.updateOrder(currentOrder);
     }
     @Override
-    public void addOrderMasters(List<Master> masters) throws NumberObjectZeroException {
-        if (masters.size() == 0) throw new
-                NumberObjectZeroException("The number of masters is zero", masters.size());
-        for (Master master : masters) {
-            if (master.getNumberOrder() != null) {
-                master.setNumberOrder(master.getNumberOrder() + 1);
-            } else {
-                master.setNumberOrder(1);
-            }
-        }
+    public void addOrderMasters(Master master) throws NumberObjectZeroException, EqualObjectsException {
+        checkOrders();
         Order currentOrder = orderRepository.getLastOrder();
+        List<Master> masters = currentOrder.getMasters();
+        for (Master orderMaster : masters) {
+            if (orderMaster.equals(master)) throw new EqualObjectsException("This master already exists", orderMaster, master);
+        }
+        masters.add(master);
         currentOrder.setMasters(masters);
         orderRepository.updateOrder(currentOrder);
+        master.setNumberOrder(master.getNumberOrder() != null ? master.getNumberOrder() + 1 : 1);
+        masterRepository.updateMaster(master);
     }
 
     @Override
-    public void addOrderPlace(Place place) {
+    public void addOrderPlace(Place place) throws NumberObjectZeroException {
+        checkOrders();
         Order currentOrder = orderRepository.getLastOrder();
         currentOrder.setPlace(place);
         orderRepository.updateOrder(currentOrder);
     }
 
     @Override
-    public void addOrderPrice(BigDecimal price) {
+    public void addOrderPrice(BigDecimal price) throws NumberObjectZeroException {
+        checkOrders();
         Order currentOrder = orderRepository.getLastOrder();
         currentOrder.setPrice(price);
         orderRepository.updateOrder(currentOrder);
@@ -113,8 +116,10 @@ public class OrderServiceImpl implements OrderService {
         order.setLeadTime(new Date());
         for (Master master : order.getMasters()) {
             master.setNumberOrder(master.getNumberOrder() - 1);
+            masterRepository.updateMaster(master);
         }
         order.getPlace().setBusyStatus(false);
+        placeRepository.updatePlace(order.getPlace());
         orderRepository.updateOrder(order);
     }
 
@@ -138,7 +143,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) throws NullDateException, OrderStatusException, DateException {
-        checkDateTime(executionStartTime, leadTime);
+        DateUtil.checkDateTime(executionStartTime, leadTime);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(leadTime);
         order.setExecutionStartTime(executionStartTime);
@@ -170,52 +175,69 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod) throws NullDateException {
-        if(startPeriod == null) throw new NullDateException("The date is null", startPeriod);
-        if(endPeriod == null) throw new NullDateException("The date is null", endPeriod);
+    public List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod)
+            throws NullDateException, NumberObjectZeroException, DateException {
+        checkOrders();
+        DateUtil.checkPeriodTime(startPeriod, endPeriod);
+        if (sortOrderByPeriod(orderRepository.getOrders(), startPeriod, endPeriod).isEmpty())
+            throw new NumberObjectZeroException("There are no orders in this period", 0);
         return sortOrderByPeriod(orderRepository.getOrders(), startPeriod, endPeriod);
     }
 
     @Override
-    public List<Order> getCurrentRunningOrders() {
-        return orderRepository.getCurrentRunningOrders();
+    public List<Order> getCurrentRunningOrders() throws NumberObjectZeroException {
+        checkOrders();
+        if (orderRepository.getRunningOrders().isEmpty())
+            throw new NumberObjectZeroException("There are no orders with status PERFORM", 0);
+        return orderRepository.getRunningOrders();
     }
 
     @Override
-    public List<Order> getMasterOrders(Master master) {
-        List<Order> orders = new ArrayList<>();
-        for (Order order : this.orderRepository.getOrders()) {
-            if (order.isDeleteStatus()) {
-                continue;
-            }
-            for (Master masterService : order.getMasters()) {
-                if (masterService.equals(master)) {
-                    orders.add(order);
-                    break;
-                }
-            }
-        }
-        return orders;
+    public List<Order> getMasterOrders(Master master) throws NumberObjectZeroException {
+        checkOrders();
+        if (orderRepository.getMasterOrders(master).isEmpty())
+            throw new NumberObjectZeroException("Master doesn't have any ordes", 0);
+        return orderRepository.getMasterOrders(master);
     }
 
     @Override
-    public List<Master> getOrderMasters(Order order) {
+    public List<Master> getOrderMasters(Order order) throws NumberObjectZeroException {
+        if (orderRepository.getOrderMasters(order).isEmpty())
+            throw new NumberObjectZeroException("There are no masters in order", 0);
         return orderRepository.getOrderMasters(order);
     }
 
     @Override
-    public List<Order> getCompletedOrders(List<Order> orders) {
+    public List<Order> getCompletedOrders() throws NumberObjectZeroException {
+        if (orderRepository.getCompletedOrders().isEmpty())
+            throw new NumberObjectZeroException("There are no orders with status COMPLETED", 0);
         return orderRepository.getCompletedOrders();
     }
 
     @Override
-    public List<Order> getCanceledOrders(List<Order> orders) {
+    public List<Order> getCanceledOrders() throws NumberObjectZeroException {
+        if (orderRepository.getCanceledOrders().isEmpty())
+            throw new NumberObjectZeroException("There are no orders with status CANCELED", 0);
         return orderRepository.getCanceledOrders();
     }
 
     @Override
-    public List<Order> getDeletedOrders(List<Order> orders) {
+    public List<Order> getDeletedOrders() throws NumberObjectZeroException {
+        if (orderRepository.getDeletedOrders().isEmpty())
+            throw new NumberObjectZeroException("There are no deleted orders", 0);
         return orderRepository.getDeletedOrders();
+    }
+
+    private void checkOrders() throws NumberObjectZeroException {
+        if (orderRepository.getOrders().isEmpty()) throw new NumberObjectZeroException("There are no orders", 0);
+    }
+
+    private void checkMasters() throws NumberObjectZeroException {
+        if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters", 0);
+    }
+
+    private void checkPlaces() throws NumberObjectZeroException {
+        if (placeRepository.getPlaces().isEmpty()) throw new NumberObjectZeroException("There are no places", 0);
     }
 
     private List<Order> sortOrderByPeriod(List<Order> orders, Date startPeriod, Date endPeriod){
@@ -257,14 +279,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderStatusException("The order has been canceled", order.getStatus());
     }
 
-    private void checkDateTime(Date executionStartTime, Date leadTime) throws NullDateException, DateException {
-        if(executionStartTime == null) throw new NullDateException("The date is null", executionStartTime);
-        if(leadTime == null) throw new NullDateException("The date is null", leadTime);
-        if (executionStartTime.compareTo(leadTime) > 0) throw new
-                DateException("The execution start time is greater than lead time", executionStartTime, leadTime);
-        if (executionStartTime.compareTo(new Date()) < 1) throw new
-                DateException("The execution start time is less than current Date", executionStartTime, new Date());
-    }
+
 
 //    @Override
 //    public String exportOrder() {

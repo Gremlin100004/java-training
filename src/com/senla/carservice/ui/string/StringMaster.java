@@ -1,15 +1,14 @@
-package com.senla.carservice.ui.printer;
+package com.senla.carservice.ui.string;
 
 import com.senla.carservice.domain.Master;
 
 import java.util.Collections;
 import java.util.List;
 
-public class PrinterMaster {
-    public static void printMasters(List<Master> masters) {
-        // это не константа, это локальная переменная, у нее не может быть такой нейминг
-        // константа - это "публичная/приватная статическая финальная переменная КЛАССА"
-        final int LENGTH = 38;
+public class StringMaster {
+    private static final int LENGTH = 38;
+
+    public static String getStringFromMasters(List<Master> masters) {
         String line = String.format(" %s\n", String.join("", Collections.nCopies(LENGTH, "-")));
         StringBuilder stringBuilder = new StringBuilder(line);
         stringBuilder.append(String.format("|%-3s|%-20s|%-13s|\n",
@@ -30,6 +29,6 @@ public class PrinterMaster {
             }
         }
         stringBuilder.append(line);
-        System.out.println(stringBuilder.toString());
+        return stringBuilder.toString();
     }
 }

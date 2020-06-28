@@ -19,7 +19,9 @@ public interface OrderRepository {
 
     List<Order> getCanceledOrders();
 
-    List<Order> getCurrentRunningOrders();
+    List<Order> getRunningOrders();
+
+    List<Order> getMasterOrders(Master master);
 
     List<Master> getOrderMasters(Order order);
 

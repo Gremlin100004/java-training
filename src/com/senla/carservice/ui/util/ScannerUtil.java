@@ -4,6 +4,10 @@ import java.math.BigDecimal;
 import java.util.Scanner;
 
 public class ScannerUtil {
+
+    private ScannerUtil() {
+    }
+
     public static String getStringUser(String textForUser) {
         Scanner scanner = new Scanner(System.in);
         String textUser = null;

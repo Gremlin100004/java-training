@@ -2,24 +2,30 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
+import com.senla.carservice.exception.DateException;
+import com.senla.carservice.exception.NullDateException;
+import com.senla.carservice.exception.NumberObjectZeroException;
 
 import java.util.Date;
 import java.util.List;
 
 public interface MasterService {
-    List<Master> getMasters();
+    List<Master> getMasters() throws NumberObjectZeroException;
 
     void addMaster(String name);
 
-    List<Master> getFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrder);
+    List<Master> getFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrder)
+            throws DateException, NullDateException, NumberObjectZeroException;
 
-    void deleteMaster(Master master);
+    int getNumberFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders) throws NumberObjectZeroException, DateException, NullDateException;
 
-    List<Master> sortMasterByAlphabet(List<Master> masters);
+    void deleteMaster(Master master) throws NumberObjectZeroException;
 
-    List<Master> sortMasterByBusy(List<Master> masters);
+    List<Master> getMasterByAlphabet() throws NumberObjectZeroException;
 
-    String exportMasters();
+    List<Master> getMasterByBusy() throws NumberObjectZeroException;
 
-    String importMasters();
+//    String exportMasters();
+
+//    String importMasters();
 }

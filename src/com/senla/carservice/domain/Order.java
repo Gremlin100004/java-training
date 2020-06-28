@@ -1,6 +1,7 @@
 package com.senla.carservice.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,29 +11,30 @@ public class Order extends AEntity {
     private Date leadTime;
     private List<Master> masters;
     private Place place;
-    private String automarket;
+    private String automaker;
     private String model;
     private String registrationNumber;
     private BigDecimal price;
     private Status status;
     private boolean deleteStatus;
 
-    public Order(Long id, String automarket, String model, String registrationNumber) {
+    public Order(Long id, String automaker, String model, String registrationNumber) {
         super.setId(id);
         this.creationTime = new Date();
-        this.automarket = automarket;
+        this.automaker = automaker;
         this.model = model;
         this.registrationNumber = registrationNumber;
         this.status = Status.WAIT;
         this.deleteStatus = false;
+        this.masters = new ArrayList<>();
     }
 
     public List<Master> getMasters() {
         return masters;
     }
 
-    public String getAutomarket() {
-        return automarket;
+    public String getAutomaker() {
+        return automaker;
     }
 
     public String getModel() {
@@ -87,8 +89,8 @@ public class Order extends AEntity {
         this.place = place;
     }
 
-    public void setAutomarket(String automarket) {
-        this.automarket = automarket;
+    public void setAutomaker(String automaker) {
+        this.automaker = automaker;
     }
 
     public void setModel(String model) {

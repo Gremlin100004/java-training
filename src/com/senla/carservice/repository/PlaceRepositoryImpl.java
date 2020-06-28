@@ -6,6 +6,7 @@ import com.senla.carservice.util.IdGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlaceRepositoryImpl implements PlaceRepository {
     private static PlaceRepository instance;
@@ -30,9 +31,21 @@ public class PlaceRepositoryImpl implements PlaceRepository {
     }
 
     @Override
+    public List<Place> getFreePlaces(List<Order> orders) {
+        List<Place> freePlaces = new ArrayList<>(this.places);
+        orders.forEach(order -> freePlaces.remove(order.getPlace()));
+        return freePlaces;
+    }
+
+    @Override
     public void addPlace(Place place) {
         place.setId(this.idGeneratorPlace.getId());
         this.places.add(place);
+    }
+
+    @Override
+    public void updatePlace(Place place) {
+        this.places.set(this.places.indexOf(place), place);
     }
 
     @Override
@@ -41,13 +54,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
     }
 
     @Override
-    public List<Place> getFreePlaces() {
-        List<Place> freePlaces = new ArrayList<>();
-        this.places.forEach(place -> {
-            if (!place.isBusyStatus()){
-                freePlaces.add(place);
-            }
-        });
-       return freePlaces;
+    public List<Place> getCurrentFreePlaces() {
+        return this.places.stream().filter(place -> !place.isBusyStatus()).collect(Collectors.toList());
     }
 }

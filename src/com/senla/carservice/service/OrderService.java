@@ -3,10 +3,7 @@ package com.senla.carservice.service;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.exception.DateException;
-import com.senla.carservice.exception.NullDateException;
-import com.senla.carservice.exception.NumberObjectZeroException;
-import com.senla.carservice.exception.OrderStatusException;
+import com.senla.carservice.exception.*;
 import com.senla.carservice.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -14,17 +11,17 @@ import java.util.Date;
 import java.util.List;
 
 public interface OrderService {
-    List<Order> getOrders();
+    List<Order> getOrders() throws NumberObjectZeroException;
 
-    void addOrder(String automaker, String model, String registrationNumber);
+    void addOrder(String automaker, String model, String registrationNumber) throws NumberObjectZeroException;
 
     void addOrderDeadlines(Date executionStartTime, Date leadTime) throws NullDateException, DateException, NumberObjectZeroException;
 
-    void addOrderMasters(List<Master> masters) throws NumberObjectZeroException;
+    void addOrderMasters(Master masters) throws NumberObjectZeroException, EqualObjectsException;
 
-    void addOrderPlace(Place place);
+    void addOrderPlace(Place place) throws NumberObjectZeroException;
 
-    void addOrderPrice(BigDecimal price);
+    void addOrderPrice(BigDecimal price) throws NumberObjectZeroException;
 
     void completeOrder(Order order) throws OrderStatusException;
 
@@ -45,19 +42,19 @@ public interface OrderService {
 
     List<Order> sortOrderByPrice(List<Order> order);
 
-    List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod) throws NullDateException;
+    List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod) throws NullDateException, NumberObjectZeroException, DateException;
 
-    List<Order> getCurrentRunningOrders();
+    List<Order> getCurrentRunningOrders() throws NumberObjectZeroException;
 
-    List<Order> getMasterOrders(Master master);
+    List<Order> getMasterOrders(Master master) throws NumberObjectZeroException;
 
-    List<Master> getOrderMasters(Order order);
+    List<Master> getOrderMasters(Order order) throws NumberObjectZeroException;
 
-    List<Order> getCompletedOrders(List<Order> orders);
+    List<Order> getCompletedOrders() throws NumberObjectZeroException;
 
-    List<Order> getCanceledOrders(List<Order> orders);
+    List<Order> getCanceledOrders() throws NumberObjectZeroException;
 
-    List<Order> getDeletedOrders(List<Order> orders);
+    List<Order> getDeletedOrders() throws NumberObjectZeroException;
 
 //    String exportOrder();
 

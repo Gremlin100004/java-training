@@ -1,13 +1,13 @@
-package com.senla.carservice.ui.printer;
+package com.senla.carservice.ui.string;
 
 import com.senla.carservice.domain.Order;
 
 import java.util.Collections;
 import java.util.List;
 
-public class PrinterOrder {
+public class StringOrder {
 
-    public static void printOrder(List<Order> orders) {
+    public static String getStringFromOrder(List<Order> orders) {
         final int LENGTH = 167;
         String line = String.format(" %s\n", String.join("", Collections.nCopies(LENGTH, "-")));
         StringBuilder stringBuilder = new StringBuilder(line);
@@ -26,9 +26,9 @@ public class PrinterOrder {
         for (int i = 0; i < orders.size(); i++) {
             stringBuilder.append(String.format("|%-4s|%-10s|%-12s|%-19s|%s|%s|%s|%-10s|%-12s|%-7s|\n",
                     i + 1,
-                    orders.get(i).getCar().getAutomaker(),
-                    orders.get(i).getCar().getModel(),
-                    orders.get(i).getCar().getRegistrationNumber(),
+                    orders.get(i).getAutomaker(),
+                    orders.get(i).getModel(),
+                    orders.get(i).getRegistrationNumber(),
                     orders.get(i).getCreationTime(),
                     orders.get(i).getExecutionStartTime(),
                     orders.get(i).getLeadTime(),
@@ -37,6 +37,6 @@ public class PrinterOrder {
                     orders.get(i).isDeleteStatus()));
         }
         stringBuilder.append(line);
-        System.out.println(stringBuilder.toString());
+        return stringBuilder.toString();
     }
 }

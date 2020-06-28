@@ -2,27 +2,27 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
+import com.senla.carservice.exception.DateException;
+import com.senla.carservice.exception.NullDateException;
+import com.senla.carservice.exception.NumberObjectZeroException;
 import com.senla.carservice.repository.OrderRepository;
 import com.senla.carservice.repository.OrderRepositoryImpl;
 import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.repository.PlaceRepositoryImpl;
-import com.senla.carservice.util.FileUtil;
+import com.senla.carservice.util.DateUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 public class PlaceServiceImpl implements PlaceService {
     private static PlaceService instance;
     private final PlaceRepository placeRepository;
-    private final OrderRepository orderRepository;
     private static final String GARAGE_PATH = "csv//garage.csv";
     private static final String PLACE_PATH = "csv//place.csv";
 
     private PlaceServiceImpl() {
         placeRepository = PlaceRepositoryImpl.getInstance();
-        orderRepository = OrderRepositoryImpl.getInstance();
     }
 
     public static PlaceService getInstance() {
@@ -33,7 +33,8 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public List<Place> getPlaces() {
+    public List<Place> getPlaces() throws NumberObjectZeroException {
+        checkPlaces();
         return placeRepository.getPlaces();
     }
 
@@ -48,19 +49,33 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public List<Place> getFreePlaces() {
-        return placeRepository.getFreePlaces();
+    public List<Place> getFreePlaces() throws NumberObjectZeroException {
+        if (placeRepository.getCurrentFreePlaces().isEmpty()) throw new NumberObjectZeroException("There are no places", 0);
+        return placeRepository.getCurrentFreePlaces();
     }
 
     @Override
-    public int getNumberFreePlaceByDate(Date executeDate, Date leadDate, List<Order> orders) {
-        if (executeDate == null || leadDate == null) {
-            return 0;
-        }
-        List<Place> freePlaces = new ArrayList<>(placeRepository.getFreePlaces());
-        orders.forEach(order -> freePlaces.remove(order.getPlace()));
-        return freePlaces.size();
+    public int getNumberFreePlaceByDate(Date executeDate, Date leadDate, List<Order> orders)
+            throws DateException, NullDateException, NumberObjectZeroException {
+        DateUtil.checkDateTime(executeDate, leadDate);
+        checkPlaces();
+        return placeRepository.getFreePlaces(orders).size();
     }
+
+    @Override
+    public List<Place> getFreePlaceByDate(Date executeDate, Date leadDate, List<Order> orders)
+            throws DateException, NullDateException, NumberObjectZeroException {
+        DateUtil.checkDateTime(executeDate, leadDate);
+        checkPlaces();
+        if (placeRepository.getFreePlaces(orders).isEmpty()) throw new NumberObjectZeroException("There are no free places", 0);
+        return placeRepository.getFreePlaces(orders);
+    }
+
+    private void checkPlaces() throws NumberObjectZeroException {
+        if (placeRepository.getPlaces().isEmpty()) throw new NumberObjectZeroException("There are no places", 0);
+    }
+
+
 
 
     // метод называется экпорт гаражей, но экспортирует он не только гаражи

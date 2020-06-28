@@ -1,6 +1,7 @@
 package com.senla.carservice.repository;
 
 import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
 import com.senla.carservice.util.IdGenerator;
 
 import java.util.ArrayList;
@@ -32,8 +33,7 @@ public class MasterRepositoryImpl implements MasterRepository {
 
     @Override
     public void updateMaster(Master master) {
-        this.masters.remove(master);
-        this.masters.add(master);
+        this.masters.set(this.masters.indexOf(master), master);
     }
 
     @Override
@@ -44,6 +44,13 @@ public class MasterRepositoryImpl implements MasterRepository {
     @Override
     public List<Master> getMasters() {
         return new ArrayList<>(this.masters);
+    }
+
+    @Override
+    public List<Master> getFreeMasters(List<Order> orders) {
+        List<Master> freeMasters = new ArrayList<>(this.masters);
+        orders.forEach(order -> order.getMasters().forEach(freeMasters::remove));
+        return freeMasters;
     }
 
     @Override
