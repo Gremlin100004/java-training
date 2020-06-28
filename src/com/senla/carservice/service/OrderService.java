@@ -6,6 +6,7 @@ import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.exception.NullDateException;
 import com.senla.carservice.exception.NumberObjectZeroException;
+import com.senla.carservice.exception.OrderStatusException;
 import com.senla.carservice.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -21,20 +22,20 @@ public interface OrderService {
 
     void addOrderMasters(List<Master> masters) throws NumberObjectZeroException;
 
-    void addOrderPlaces(Place place);
+    void addOrderPlace(Place place);
 
     void addOrderPrice(BigDecimal price);
 
-    boolean completeOrder(Order order);
+    void completeOrder(Order order) throws OrderStatusException;
 
-    boolean cancelOrder(Order order);
+    void cancelOrder(Order order) throws OrderStatusException;
 
-    boolean closeOrder(Order order);
+    void closeOrder(Order order) throws OrderStatusException;
 
-    boolean deleteOrder(Order order);
+    void deleteOrder(Order order) throws OrderStatusException;
 
-    boolean shiftLeadTime(Order order, Date executionStartTime,
-                          Date leadTime);
+    void shiftLeadTime(Order order, Date executionStartTime,
+                          Date leadTime) throws NullDateException, OrderStatusException, DateException;
 
     List<Order> sortOrderCreationTime(List<Order> order);
 

@@ -1,5 +1,6 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Status;
 import com.senla.carservice.util.IdGenerator;
@@ -70,6 +71,22 @@ public class OrderRepositoryImpl implements OrderRepository {
             }
         });
         return canceledOrders;
+    }
+
+    @Override
+    public List<Order> getCurrentRunningOrders() {
+        List<Order> arrayOder = new ArrayList<>();
+        this.orders.forEach(order -> {
+            if (order.getStatus().equals(Status.PERFORM) && !order.isDeleteStatus()) {
+                arrayOder.add(order);
+            }
+        });
+        return arrayOder;
+    }
+
+    @Override
+    public List<Master> getOrderMasters(Order order) {
+        return order.getMasters();
     }
 
     @Override

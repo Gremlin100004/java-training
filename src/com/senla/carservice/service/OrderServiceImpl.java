@@ -7,6 +7,7 @@ import com.senla.carservice.domain.Status;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.exception.NullDateException;
 import com.senla.carservice.exception.NumberObjectZeroException;
+import com.senla.carservice.exception.OrderStatusException;
 import com.senla.carservice.repository.*;
 
 import java.math.BigDecimal;
@@ -49,18 +50,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void addOrderDeadlines(Date executionStartTime, Date leadTime) throws NullDateException, DateException, NumberObjectZeroException {
-        if(executionStartTime == null) throw new NullDateException("The date is null", executionStartTime);
-        if(leadTime == null) throw new NullDateException("The date is null", leadTime);
-        if (executionStartTime.compareTo(leadTime) > 0) throw new
-                DateException("The execution start time is greater than lead time", executionStartTime, leadTime);
-        if (executionStartTime.compareTo(new Date()) < 1) throw new
-                DateException("The execution start time is less than current Date", executionStartTime, new Date());
+    public void addOrderDeadlines(Date executionStartTime, Date leadTime) throws NullDateException,
+            DateException, NumberObjectZeroException {
+        checkDateTime(executionStartTime, leadTime);
         Order currentOrder = orderRepository.getLastOrder();
         List<Order> orders = new ArrayList<>(orderRepository.getOrders());
         orders.remove(currentOrder);
         orders = sortOrderByPeriod(orders, executionStartTime, leadTime);
-        int numberFreeMasters = masterRepository.getMasters().size() - orders.stream().mapToInt(order -> order.getMasters().size()).sum();
+        int numberFreeMasters = masterRepository.getMasters().size() -
+                orders.stream().mapToInt(order -> order.getMasters().size()).sum();
         int numberFreePlace = orderRepository.getOrders().size() - orders.size();
         if (numberFreeMasters == 0) throw new
                NumberObjectZeroException("The number of masters is zero", numberFreeMasters);
@@ -87,85 +85,64 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void addOrderPlaces(Place place) {
-
+    public void addOrderPlace(Place place) {
+        Order currentOrder = orderRepository.getLastOrder();
+        currentOrder.setPlace(place);
+        orderRepository.updateOrder(currentOrder);
     }
 
     @Override
     public void addOrderPrice(BigDecimal price) {
-
+        Order currentOrder = orderRepository.getLastOrder();
+        currentOrder.setPrice(price);
+        orderRepository.updateOrder(currentOrder);
     }
 
     @Override
-    public boolean completeOrder(Order order) {
-        if (!order.isDeleteStatus() && !order.getStatus().equals(Status.COMPLETED) &&
-                !order.getStatus().equals(Status.CANCELED) && !order.getStatus().equals(Status.PERFORM)) {
-            order.setStatus(Status.PERFORM);
-            order.setExecutionStartTime(new Date());
-            order.getPlace().setBusyStatus(true);
-            orderRepository.updateOrder(order);
-            return true;
-        } else {
-            return false;
-        }
+    public void completeOrder(Order order) throws OrderStatusException {
+        checkStatusOrder(order);
+        order.setStatus(Status.PERFORM);
+        order.setExecutionStartTime(new Date());
+        order.getPlace().setBusyStatus(true);
+        orderRepository.updateOrder(order);
     }
 
     @Override
-    public boolean cancelOrder(Order order) {
-        if (!order.isDeleteStatus() && !order.getStatus().equals(Status.COMPLETED) &&
-                !order.getStatus().equals(Status.CANCELED) && !order.getStatus().equals(Status.PERFORM)) {
-            order.setStatus(Status.CANCELED);
-            order.setLeadTime(new Date());
-            for (Master master : order.getMasters()) {
-                master.setNumberOrder(master.getNumberOrder() - 1);
-            }
-            order.getPlace().setBusyStatus(false);
-            orderRepository.updateOrder(order);
-            return true;
-        } else {
-            return false;
+    public void cancelOrder(Order order) throws OrderStatusException {
+        checkStatusOrder(order);
+        order.setLeadTime(new Date());
+        for (Master master : order.getMasters()) {
+            master.setNumberOrder(master.getNumberOrder() - 1);
         }
+        order.getPlace().setBusyStatus(false);
+        orderRepository.updateOrder(order);
     }
 
     @Override
-    public boolean closeOrder(Order order) {
-        if (!order.isDeleteStatus() && !order.getStatus().equals(Status.COMPLETED) &&
-                !order.getStatus().equals(Status.CANCELED) && !order.getStatus().equals(Status.PERFORM)) {
-            order.setStatus(Status.COMPLETED);
-            order.setLeadTime(new Date());
-            for (Master master : order.getMasters()) {
-                master.setNumberOrder(master.getNumberOrder() - 1);
-            }
-            order.getPlace().setBusyStatus(false);
-            orderRepository.updateOrder(order);
-            return true;
-        } else {
-            return false;
+    public void closeOrder(Order order) throws OrderStatusException {
+        checkStatusOrder(order);
+        order.setLeadTime(new Date());
+        for (Master master : order.getMasters()) {
+            master.setNumberOrder(master.getNumberOrder() - 1);
         }
+        order.getPlace().setBusyStatus(false);
+        orderRepository.updateOrder(order);
     }
 
     @Override
-    public boolean deleteOrder(Order order) {
-        if (!order.isDeleteStatus() && !order.getStatus().equals(Status.PERFORM)
-                && !order.getStatus().equals(Status.WAIT)) {
-            order.setDeleteStatus(true);
-            orderRepository.updateOrder(order);
-            return true;
-        } else {
-            return false;
-        }
+    public void deleteOrder(Order order) throws OrderStatusException {
+        checkStatusOrderDelete(order);
+        order.setDeleteStatus(true);
+        orderRepository.updateOrder(order);
     }
 
     @Override
-    public boolean shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
-        if (!order.isDeleteStatus() && !order.getStatus().equals(Status.COMPLETED) && !order.getStatus().equals(Status.CANCELED)) {
-            order.setLeadTime(leadTime);
-            order.setExecutionStartTime(executionStartTime);
-            orderRepository.updateOrder(order);
-            return true;
-        } else {
-            return false;
-        }
+    public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) throws NullDateException, OrderStatusException, DateException {
+        checkDateTime(executionStartTime, leadTime);
+        checkStatusOrderShiftTime(order);
+        order.setLeadTime(leadTime);
+        order.setExecutionStartTime(executionStartTime);
+        orderRepository.updateOrder(order);
     }
 
     @Override
@@ -201,16 +178,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getCurrentRunningOrders() {
-        List<Order> arrayOder = new ArrayList<>();
-        for (Order order : this.orderRepository.getOrders()) {
-            if (order.isDeleteStatus()) {
-                continue;
-            }
-            if (order.getStatus().equals(Status.PERFORM)) {
-                arrayOder.add(order);
-            }
-        }
-        return arrayOder;
+        return orderRepository.getCurrentRunningOrders();
     }
 
     @Override
@@ -232,46 +200,22 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Master> getOrderMasters(Order order) {
-        return order.getMasters();
+        return orderRepository.getOrderMasters(order);
     }
 
     @Override
     public List<Order> getCompletedOrders(List<Order> orders) {
-        List<Order> sortOrders = new ArrayList<>();
-        for (Order order : orders) {
-            if (order.isDeleteStatus()) {
-                continue;
-            }
-            if (order.getStatus().equals(Status.COMPLETED)) {
-                sortOrders.add(order);
-            }
-        }
-        return sortOrders;
+        return orderRepository.getCompletedOrders();
     }
 
     @Override
     public List<Order> getCanceledOrders(List<Order> orders) {
-        List<Order> sortOrders = new ArrayList<>();
-        for (Order order : orders) {
-            if (order.isDeleteStatus()) {
-                continue;
-            }
-            if (order.getStatus().equals(Status.CANCELED)) {
-                sortOrders.add(order);
-            }
-        }
-        return sortOrders;
+        return orderRepository.getCanceledOrders();
     }
 
     @Override
     public List<Order> getDeletedOrders(List<Order> orders) {
-        List<Order> sortOrders = new ArrayList<>();
-        for (Order order : orders) {
-            if (order.isDeleteStatus()) {
-                sortOrders.add(order);
-            }
-        }
-        return sortOrders;
+        return orderRepository.getDeletedOrders();
     }
 
     private List<Order> sortOrderByPeriod(List<Order> orders, Date startPeriod, Date endPeriod){
@@ -282,6 +226,44 @@ public class OrderServiceImpl implements OrderService {
             }
         });
         return sortArrayOrder;
+    }
+
+    private void checkStatusOrder(Order order) throws OrderStatusException {
+        if (order.isDeleteStatus()) throw new
+                OrderStatusException("The order has been deleted", order.getStatus());
+        if (order.getStatus().equals(Status.COMPLETED)) throw new
+                OrderStatusException("The order has been completed", order.getStatus());
+        if (order.getStatus().equals(Status.PERFORM)) throw new
+                OrderStatusException("Order is being executed", order.getStatus());
+        if (order.getStatus().equals(Status.CANCELED)) throw new
+                OrderStatusException("The order has been canceled", order.getStatus());
+    }
+
+    private void checkStatusOrderDelete(Order order) throws OrderStatusException {
+        if (order.isDeleteStatus()) throw new
+                OrderStatusException("The order has been deleted", order.getStatus());
+        if (order.getStatus().equals(Status.PERFORM)) throw new
+                OrderStatusException("Order is being executed", order.getStatus());
+        if (order.getStatus().equals(Status.WAIT)) throw new
+                OrderStatusException("The order is being waited", order.getStatus());
+    }
+
+    private void checkStatusOrderShiftTime(Order order) throws OrderStatusException {
+        if (order.isDeleteStatus()) throw new
+                OrderStatusException("The order has been deleted", order.getStatus());
+        if (order.getStatus().equals(Status.COMPLETED)) throw new
+                OrderStatusException("The order has been completed", order.getStatus());
+        if (order.getStatus().equals(Status.CANCELED)) throw new
+                OrderStatusException("The order has been canceled", order.getStatus());
+    }
+
+    private void checkDateTime(Date executionStartTime, Date leadTime) throws NullDateException, DateException {
+        if(executionStartTime == null) throw new NullDateException("The date is null", executionStartTime);
+        if(leadTime == null) throw new NullDateException("The date is null", leadTime);
+        if (executionStartTime.compareTo(leadTime) > 0) throw new
+                DateException("The execution start time is greater than lead time", executionStartTime, leadTime);
+        if (executionStartTime.compareTo(new Date()) < 1) throw new
+                DateException("The execution start time is less than current Date", executionStartTime, new Date());
     }
 
 //    @Override

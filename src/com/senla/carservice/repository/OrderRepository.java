@@ -1,5 +1,6 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.util.IdGenerator;
 
@@ -17,6 +18,10 @@ public interface OrderRepository {
     List<Order> getDeletedOrders();
 
     List<Order> getCanceledOrders();
+
+    List<Order> getCurrentRunningOrders();
+
+    List<Master> getOrderMasters(Order order);
 
     void addOrder(Order order);
 

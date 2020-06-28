@@ -6,6 +6,7 @@ import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.exception.NullDateException;
 import com.senla.carservice.exception.NumberObjectZeroException;
+import com.senla.carservice.exception.OrderStatusException;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.CarOfficeServiceImpl;
 import com.senla.carservice.service.OrderService;
@@ -62,77 +63,70 @@ public class OrderController {
             return String.valueOf(e);
         }
     }
-//--------------------------------------------------
-    public String addOrderPlaces(Place place) {
-        orderService.getOrders().get(orderService.getOrders().size() - 1).setPlace(place);
 
-        orderService.getOrders().get(orderService.getOrders().size() - 1).setPlace(place);
+    public String addOrderPlaces(Place place) {
+        orderService.addOrderPlace(place);
         return "place add to order successfully";
     }
 
     public String addOrderPrice(BigDecimal price) {
-        orderService.getOrders().get(orderService.getOrders().size() - 1).setPrice(price);
+        orderService.addOrderPrice(price);
         return "price add to order successfully";
     }
 
     public List<Order> getOrders() {
-        return this.orderService.getOrders();
+        return orderService.getOrders();
     }
 
     public String completeOrder(Order order) {
-        boolean statusOperation = this.orderService.completeOrder(order);
-        if (statusOperation) {
+        try {
+            orderService.completeOrder(order);
             return " - the order has been transferred to execution status";
-        } else {
-            return " -the order is deleted.";
+        } catch (OrderStatusException e) {
+            return String.valueOf(e);
         }
     }
 
     public String closeOrder(Order order) {
-        boolean statusOperation = this.orderService.closeOrder(order);
-        if (statusOperation) {
+        try {
+            orderService.closeOrder(order);
             return " -the order has been completed.";
-        } else {
-            return " -the order can't change the status.";
+        } catch (OrderStatusException e) {
+            return String.valueOf(e);
         }
     }
 
     public String cancelOrder(Order order) {
-        boolean statusOperation = this.orderService.cancelOrder(order);
-        if (statusOperation) {
+        try {
+            orderService.cancelOrder(order);
             return " -the order has been canceled.";
-        } else {
-            return " -the order can't change the status.";
+        } catch (OrderStatusException e) {
+            return String.valueOf(e);
         }
     }
 
     public String deleteOrder(Order order) {
-        boolean statusOperation = this.orderService.deleteOrder(order);
-        if (statusOperation) {
+        try {
+            orderService.deleteOrder(order);
             return " -the order has been deleted.";
-        } else {
-            return " -the order is on a mission.";
+        } catch (OrderStatusException e) {
+            return String.valueOf(e);
         }
     }
 
     public String shiftLeadTime(Order order, String stringStartTime, String stringLeadTime) {
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
-        Date executionStartTime;
-        Date leadTime;
+        Date executionStartTime = DateUtil.getDatesFromString(stringStartTime);
+        Date leadTime = DateUtil.getDatesFromString(stringLeadTime);
         try {
-            executionStartTime = format.parse(stringStartTime);
-            leadTime = format.parse(stringLeadTime);
-        } catch (ParseException e) {
-            return "error date, should be dd.MM.yyyy";
-        }
-        boolean statusOperation = this.orderService.shiftLeadTime(order, executionStartTime, leadTime);
-        if (statusOperation) {
+            orderService.shiftLeadTime(order, executionStartTime, leadTime);
             return " -the order lead time has been changed.";
-        } else {
-            return " -the order is deleted.";
+        } catch (OrderStatusException | DateException e) {
+            return String.valueOf(e);
+        } catch (NullDateException e) {
+            return "Error date format, should be \"dd.MM.yyyy hh:mm\"";
         }
     }
-
+    //--------------------------------------------------
     public List<Order> sortOrderByCreationTime(List<Order> orders) {
         return this.orderService.sortOrderCreationTime(orders);
     }
@@ -153,20 +147,17 @@ public class OrderController {
         return this.orderService.getCurrentRunningOrders();
     }
 
-    public List<Order> getOrdersByPeriod(String startPeriod, String endPeriod) {
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
-        Date startPeriodDate;
-        Date endPeriodDate;
+    public String getOrdersByPeriod(String startPeriod, String endPeriod) {
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod);
+        List<Order> orders = null;
+        String stringOrders = "";
         try {
-            startPeriodDate = format.parse(startPeriod);
-            endPeriodDate = format.parse(endPeriod);
-        } catch (ParseException e) {
-            startPeriodDate = null;
-            endPeriodDate = null;
+            orders = this.orderService.getOrderByPeriod(startPeriodDate, endPeriodDate);
+        } catch (NullDateException e) {
+            return "Error date format, should be \"dd.MM.yyyy hh:mm\"";
         }
-        List<Order> orders = this.orderService.getOrders();
-        orders = this.orderService.getOrderByPeriod(orders, startPeriodDate, endPeriodDate);
-        return orders;
+        return stringOrders;
     }
 
     public List<Order> getCompletedOrders(List<Order> orders) {
@@ -189,20 +180,20 @@ public class OrderController {
         return this.orderService.getOrderMasters(order);
     }
 
-    public String exportOrders() {
-        if (this.orderService.exportOrder().equals("save successfully")) {
-            return "Orders have been export successfully!";
-        } else {
-            return "export problem.";
-        }
-    }
-
-    public String importOrders() {
-        String message = this.orderService.importOrder();
-        if (message.equals("import successfully")) {
-            return "Orders have been import successfully!";
-        } else {
-            return message;
-        }
-    }
+//    public String exportOrders() {
+//        if (this.orderService.exportOrder().equals("save successfully")) {
+//            return "Orders have been export successfully!";
+//        } else {
+//            return "export problem.";
+//        }
+//    }
+//
+//    public String importOrders() {
+//        String message = this.orderService.importOrder();
+//        if (message.equals("import successfully")) {
+//            return "Orders have been import successfully!";
+//        } else {
+//            return message;
+//        }
+//    }
 }
