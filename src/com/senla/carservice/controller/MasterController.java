@@ -36,7 +36,7 @@ public class MasterController {
         try {
             return StringMaster.getStringFromMasters(masterService.getMasters());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -51,7 +51,7 @@ public class MasterController {
             return String.format(" -master with name \"%s\" has been deleted",
                     masterService.getMasters().get(index).getName());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         } catch (IndexOutOfBoundsException e){
             return "There are no such master";
         }
@@ -61,7 +61,7 @@ public class MasterController {
         try {
             return StringMaster.getStringFromMasters(masterService.getMasterByAlphabet());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -69,7 +69,7 @@ public class MasterController {
         try {
             return StringMaster.getStringFromMasters(masterService.getMasterByBusy());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -80,7 +80,7 @@ public class MasterController {
             List<Order> orders = orderService.getOrderByPeriod(executeDate, leadDate);
             return StringMaster.getStringFromMasters(masterService.getFreeMastersByDate(executeDate, leadDate, orders));
         } catch (NumberObjectZeroException | DateException | NullDateException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 //    public String exportMasters() {

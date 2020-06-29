@@ -40,7 +40,7 @@ public class PlaceController {
         try {
             return StringPlaces.getStringFromPlaces(placeService.getPlaces());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -49,7 +49,7 @@ public class PlaceController {
             placeService.deletePlace(placeService.getPlaces().get(index));
             return String.format(" -delete place in service number \"%s\"", placeService.getPlaces().get(index).getNumber());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         } catch (IndexOutOfBoundsException e){
             return "There are no such place";
         }
@@ -59,7 +59,7 @@ public class PlaceController {
         try {
             return StringPlaces.getStringFromPlaces(placeService.getFreePlaces());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -70,7 +70,7 @@ public class PlaceController {
             List<Order> orders = orderService.getOrderByPeriod(executeDate, leadDate);
             return StringPlaces.getStringFromPlaces(placeService.getFreePlaceByDate(executeDate, leadDate, orders));
         } catch (NumberObjectZeroException | DateException | NullDateException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 

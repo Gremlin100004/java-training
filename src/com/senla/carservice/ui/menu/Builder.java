@@ -160,15 +160,9 @@ public class Builder {
         listOrderMenu.getMenuItems().add(new MenuItem("Show orders", () -> {
             Printer.printInfo(OrderController.getInstance().getOrders());
         }, listOrderMenu));
-        listOrderMenu.getMenuItems().add(new MenuItem("Add order", () -> {
-            addOrder();
-        }, listOrderMenu));
+        listOrderMenu.getMenuItems().add(new MenuItem("Add order", this::addOrder, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Delete the order", () -> {
-            if (OrderController.getInstance().getOrders().isEmpty()) {
-                Printer.printInfo("There are no orders to delete!");
-                return;
-            }
-            StringOrder.getStringFromOrder(OrderController.getInstance().getOrders());
+            Printer.printInfo(OrderController.getInstance().getOrders());
             Printer.printInfo("0. Previous menu");
             deleteOrder();
         }, listOrderMenu));
@@ -176,11 +170,7 @@ public class Builder {
 
     private void addItemListOrderMenuPartTwo(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(new MenuItem("Close the order", () -> {
-            if (OrderController.getInstance().getOrders().isEmpty()) {
-                Printer.printInfo("There are no orders!");
-                return;
-            }
-            StringOrder.getStringFromOrder(OrderController.getInstance().getOrders());
+            Printer.printInfo(OrderController.getInstance().getOrders());
             Printer.printInfo("0. Previous menu");
             String message = "";
             int index;
@@ -189,21 +179,13 @@ public class Builder {
                 if (index == 0) {
                     return;
                 }
-                if (index > OrderController.getInstance().getOrders().size() || index < 0) {
-                    Printer.printInfo("There is no such order");
-                    continue;
-                }
                 message = OrderController.getInstance()
-                        .closeOrder(OrderController.getInstance().getOrders().get(index - 1));
+                        .closeOrder(index - 1);
                 Printer.printInfo(message);
             }
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Cancel the order", () -> {
-            if (OrderController.getInstance().getOrders().isEmpty()) {
-                Printer.printInfo("There are no orders!");
-                return;
-            }
-            StringOrder.getStringFromOrder(OrderController.getInstance().getOrders());
+            Printer.printInfo(OrderController.getInstance().getOrders());
             Printer.printInfo("0. Previous menu");
             cancelOrder();
         }, listOrderMenu));
@@ -211,33 +193,23 @@ public class Builder {
 
     private void addItemListOrderMenuPartThree(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(new MenuItem("Transfer the order to execution status", () -> {
-            if (OrderController.getInstance().getOrders().isEmpty()) {
-                Printer.printInfo("There are no orders!");
-                return;
-            }
-            StringOrder.getStringFromOrder(OrderController.getInstance().getOrders());
+            Printer.printInfo(OrderController.getInstance().getOrders());
             Printer.printInfo("0. Previous menu");
             completeOrder();
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Shift the lead time", () -> {
             String message = "";
-            if (OrderController.getInstance().getOrders().isEmpty()) {
-                Printer.printInfo("There are no orders!");
-                return;
+            while (!message.equals("There are no orders")) {
+                message = OrderController.getInstance().getOrders();
+                Printer.printInfo(message);
             }
-            StringOrder.getStringFromOrder(OrderController.getInstance().getOrders());
-            int index = 0;
-            while (index == 0) {
-                index = ScannerUtil.getIntUser("Enter the index number of the order to shift time:");
-                if (index > OrderController.getInstance().getOrders().size() || index < 1) {
-                    Printer.printInfo("There is no such master");
-                    continue;
-                }
-                break;
-            }
+            Printer.printInfo("0. Previous menu");
             while (!message.equals(" -the order lead time has been changed.")) {
-                message = OrderController.getInstance().shiftLeadTime(OrderController.
-                                getInstance().getOrders().get(index - 1), ScannerUtil.getStringDateUser(
+                int index = ScannerUtil.getIntUser("Enter the index number of the order to shift time:");
+                if (index == 0){
+                    return;
+                }
+                message = OrderController.getInstance().shiftLeadTime(index - 1, ScannerUtil.getStringDateUser(
                         "Enter the planing time start to execute the order in format " +
                                 "\"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\""),
                         ScannerUtil.getStringDateUser("Enter the lead time the order in format" +
@@ -248,30 +220,12 @@ public class Builder {
     }
 
     private void addItemListOrderMenuPartFour(Menu listOrderMenu) {
-        listOrderMenu.getMenuItems().add(new MenuItem("Show orders sort by filing date", () -> {
-            if (OrderController.getInstance().getOrders().isEmpty()) {
-                Printer.printInfo("There are no orders.");
-                return;
-            }
-            StringOrder.getStringFromOrder(OrderController.getInstance().
-                    sortOrderByCreationTime(OrderController.getInstance().getOrders()));
-        }, listOrderMenu));
-        listOrderMenu.getMenuItems().add(new MenuItem("Show orders sort by execution date", () -> {
-            if (OrderController.getInstance().getOrders().isEmpty()) {
-                Printer.printInfo("There are no orders.");
-                return;
-            }
-            StringOrder.getStringFromOrder(OrderController.getInstance()
-                    .sortOrderByLeadTime(OrderController.getInstance().getOrders()));
-        }, listOrderMenu));
+        listOrderMenu.getMenuItems().add(new MenuItem("Show orders sort by filing date",
+                () -> Printer.printInfo(OrderController.getInstance().getOrdersSortByFilingDate()), listOrderMenu));
+        listOrderMenu.getMenuItems().add(new MenuItem("Show orders sort by execution date",
+                () -> Printer.printInfo(OrderController.getInstance().getOrdersSortByExecutionDate()), listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Show orders sort by planned start date", () -> {
-            if (OrderController.getInstance().getOrders().isEmpty()) {
-                Printer.printInfo("There are no orders.");
-                return;
-            }
-            List<Order> sortArrayOrders = OrderController
-                    .getInstance().sortOrderByStartTime(OrderController.getInstance().getOrders());
-            StringOrder.getStringFromOrder(sortArrayOrders);
+            Printer.printInfo(OrderController.getInstance().getOrdersSortByPlannedStartDate());
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Show orders sort by price", () -> {
             List<Order> orders = OrderController.getInstance().getOrders();
@@ -635,7 +589,7 @@ public class Builder {
             Printer.printInfo(message);
             message = orderController.addOrderMasters(mastersOrder);
             Printer.printInfo(message);
-            message = orderController.addOrderPlaces(garages.(indexGarage),
+            message = orderController.addOrderPlace(garages.(indexGarage),
                     garages.(indexGarage).getPlaces().(indexPlace));
             Printer.printInfo(message);
             message = orderController.addOrderPrice(TestData.getArrayPrice().get(i));
@@ -680,12 +634,7 @@ public class Builder {
             if (index == 0) {
                 return;
             }
-            if (index > OrderController.getInstance().getOrders().size() || index < 0) {
-                Printer.printInfo("There is no such order");
-                continue;
-            }
-            message = OrderController.getInstance()
-                    .deleteOrder(OrderController.getInstance().getOrders().get(index - 1));
+            message = OrderController.getInstance().deleteOrder(index-1);
             Printer.printInfo(message);
         }
     }
@@ -703,19 +652,14 @@ public class Builder {
     private void completeOrder() {
         String message = "";
         int index;
-        do {
+        while (!message.equals(" - the order has been transferred to execution status")) {
             index = ScannerUtil.getIntUser("Enter the index number of the order to change status:");
             if (index == 0) {
                 return;
             }
-            if (index > OrderController.getInstance().getOrders().size() || index < 0) {
-                Printer.printInfo("There is no such order");
-                continue;
-            }
-            message = OrderController.getInstance()
-                    .completeOrder(OrderController.getInstance().getOrders().get(index - 1));
+            message = OrderController.getInstance().completeOrder(index - 1);
             Printer.printInfo(message);
-        } while (!message.equals(" - the order has been transferred to execution status"));
+        }
     }
 
     private void cancelOrder() {
@@ -726,12 +670,7 @@ public class Builder {
             if (index == 0) {
                 return;
             }
-            if (index > OrderController.getInstance().getOrders().size() || index < 0) {
-                Printer.printInfo("There is no such order");
-                continue;
-            }
-            message = OrderController.getInstance()
-                    .cancelOrder(OrderController.getInstance().getOrders().get(index - 1));
+            message = OrderController.getInstance().cancelOrder(index - 1);
             Printer.printInfo(message);
         }
     }
@@ -764,14 +703,10 @@ public class Builder {
         String executionStartTime = deadline.get(0);
         String leadTime = deadline.get(1);
         addMastersOrder(executionStartTime, leadTime);
-        Printer.printInfo(PlaceController.getInstance().getFreePlacesByDate(executionStartTime, leadTime));
-        Garage garage = addPlaceOrder(freeGarages, PlaceController.getInstance());
-        Place place = PlaceController.getInstance().getFreePlaceGarage(garage).get(0);
-        message = OrderController.getInstance().addOrderPlaces(garage, place);
-        Printer.printInfo(message);
-        message = OrderController.getInstance()
-                .addOrderPrice(ScannerUtil.getBigDecimalUser("Enter the price"));
-        Printer.printInfo(message);
+//        Printer.printInfo(PlaceController.getInstance().getFreePlacesByDate(executionStartTime, leadTime));
+        addPlaceOrder(executionStartTime, leadTime);
+        Printer.printInfo(OrderController.getInstance()
+                .addOrderPrice(ScannerUtil.getBigDecimalUser("Enter the price")));
     }
 
     private List<String> addOrderDeadline() {
@@ -780,7 +715,6 @@ public class Builder {
         String executionStartTime = "";
         OrderController orderController = OrderController.getInstance();
         while (!message.equals("deadline add to order successfully")) {
-            Printer.printInfo(message);
             executionStartTime = ScannerUtil.getStringDateUser(
                     "Enter the planing time start to execute the order in " +
                             "format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
@@ -788,6 +722,7 @@ public class Builder {
                     "Enter the lead time the order in format " +
                             "\"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"");
             message = orderController.addOrderDeadlines(executionStartTime, leadTime);
+            Printer.printInfo(message);
         }
         return Arrays.asList(executionStartTime, leadTime);
     }
@@ -796,19 +731,37 @@ public class Builder {
         String message = "";
         Printer.printInfo(MasterController.getInstance().getFreeMasters(executionStartTime, leadTime));
         Printer.printInfo("0. Stop adding");
-        boolean userAnswer = false;
-        while (!userAnswer) {
-            addMasters(message);
-            message = OrderController.getInstance().addOrderMasters(index);
-            userAnswer = isAnotherMaster();
+        int quit = 0;
+        int index = 999;
+        while (quit == 0 && index == 999) {
+            List<Integer> statusInt = addMasters(quit);
+            quit = statusInt.get(0);
+            index = statusInt.get(1);
+            Printer.printInfo("You must add at least one master!!!");
         }
     }
 
-    private void addMasters(String message) {
+    private List<Integer> addMasters(int quit) {
+        String message = "";
+        int index = 999;
+        boolean userAnswer;
         while (!message.equals("masters add successfully")) {
-            int index = ScannerUtil.getIntUser("Enter the index number of the master to add:");
-            Printer.printInfo(OrderController.getInstance().addOrderMasters(index));
+            index = ScannerUtil.getIntUser("Enter the index number of the master to add:");
+            if (index == 0){
+                break;
+            }
+            message = OrderController.getInstance().addOrderMasters(index);
+            Printer.printInfo(message);
+            userAnswer = isAnotherMaster();
+            if (userAnswer){
+                index = 0;
+                break;
+            }
         }
+        if (index != 0){
+            quit++;
+        }
+        return new ArrayList<>(Arrays.asList(quit, index));
     }
 
     private boolean isAnotherMaster() {
@@ -822,25 +775,16 @@ public class Builder {
         return answer.equals("n");
     }
 
-    private void addPlaceOrder() {
+    private void addPlaceOrder(String executionStartTime, String leadTime) {
         String message = "";
         int index = 0;
-        StringMaster.getStringFromMasters(freeMaster);
+        Printer.printInfo(PlaceController.getInstance().getFreePlacesByDate(executionStartTime, leadTime));
         Printer.printInfo("0. Stop adding");
         while (!message.equals("place add to order successfully")) {
             index = ScannerUtil.getIntUser("Enter the index number of the place to add in order:");
-            message = OrderController.getInstance().ge
+            message = OrderController.getInstance().addOrderPlace(index, executionStartTime, leadTime);
+            Printer.printInfo(message);
         }
-        return garages.get(index - 1);
-    }
-
-    private boolean isPlace(List<Garage> garages) {
-        for (Garage garage : garages) {
-            if (garage.getPlaces().size() > 0) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private List<Order> getSortPeriodOrders() {

@@ -57,8 +57,8 @@ public class DateUtil {
     }
 
     public static void checkDateTime(Date executionStartTime, Date leadTime) throws NullDateException, DateException {
-        if(executionStartTime == null) throw new NullDateException("The date is null", executionStartTime);
-        if(leadTime == null) throw new NullDateException("The date is null", leadTime);
+        if(executionStartTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"", executionStartTime);
+        if(leadTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"", leadTime);
         if (executionStartTime.compareTo(leadTime) > 0) throw new
                 DateException("The execution start time is greater than lead time", executionStartTime, leadTime);
         if (executionStartTime.compareTo(new Date()) < 1) throw new
@@ -66,8 +66,8 @@ public class DateUtil {
     }
 
     public static void checkPeriodTime(Date startPeriodTime, Date endPeriodTime) throws NullDateException, DateException {
-        if(startPeriodTime == null) throw new NullDateException("The date is null", startPeriodTime);
-        if(endPeriodTime == null) throw new NullDateException("The date is null", endPeriodTime);
+        if(startPeriodTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"", startPeriodTime);
+        if(endPeriodTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"", endPeriodTime);
         if (startPeriodTime.compareTo(endPeriodTime) > 0) throw new
                 DateException("The period time is wrong", startPeriodTime, endPeriodTime);
     }

@@ -10,17 +10,20 @@ import com.senla.carservice.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class OrderController {
     private static OrderController instance;
     private final OrderService orderService;
     private final MasterService masterService;
+    private final PlaceService placeService;
     private final CarOfficeService carOfficeService;
 
     private OrderController() {
         orderService = OrderServiceImpl.getInstance();
         carOfficeService = CarOfficeServiceImpl.getInstance();
         masterService = MasterServiceImpl.getInstance();
+        placeService = PlaceServiceImpl.getInstance();
     }
 
     public static OrderController getInstance() {
@@ -35,7 +38,7 @@ public class OrderController {
             orderService.addOrder(automaker, model, registrationNumber);
             return "order add successfully!";
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -45,10 +48,8 @@ public class OrderController {
         try {
             orderService.addOrderDeadlines(executionStartTime, leadTime);
             return "deadline add to order successfully";
-        } catch (NullDateException e) {
-            return "Error date format, should be \"dd.MM.yyyy hh:mm\"";
-        } catch (DateException | NumberObjectZeroException e) {
-            return String.valueOf(e);
+        } catch (NullDateException | DateException | NumberObjectZeroException e) {
+            return e.getMessage();
         }
     }
 
@@ -57,16 +58,20 @@ public class OrderController {
             orderService.addOrderMasters(masterService.getMasters().get(index));
             return "masters add successfully";
         } catch (NumberObjectZeroException | EqualObjectsException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
+
     }
 
-    public String addOrderPlaces(Place place) {
+    public String addOrderPlace(int index, String stringExecuteDate, String stringLeadDate) {
+        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate);
+        Date leadDate = DateUtil.getDatesFromString(stringLeadDate);
         try {
-            orderService.addOrderPlace(place);
+            List<Order> orders = orderService.getOrderByPeriod(executeDate, leadDate);
+            orderService.addOrderPlace(placeService.getFreePlaceByDate(executeDate, leadDate, orders).get(index));
             return "place add to order successfully";
-        } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+        } catch (NumberObjectZeroException | NullDateException | DateException e) {
+            return e.getMessage();
         }
     }
 
@@ -75,7 +80,7 @@ public class OrderController {
             orderService.addOrderPrice(price);
             return "price add to order successfully";
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -83,56 +88,78 @@ public class OrderController {
         try {
             return StringOrder.getStringFromOrder(orderService.getOrders());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
-    public String completeOrder(Order order) {
+    public String completeOrder(int index) {
         try {
-            orderService.completeOrder(order);
+            orderService.completeOrder(orderService.getOrders().get(index));
             return " - the order has been transferred to execution status";
-        } catch (OrderStatusException e) {
-            return String.valueOf(e);
+        } catch (OrderStatusException | NumberObjectZeroException e) {
+            return e.getMessage();
         }
     }
 
-    public String closeOrder(Order order) {
+    public String closeOrder(int index) {
         try {
-            orderService.closeOrder(order);
+            orderService.closeOrder(orderService.getOrders().get(index));
             return " -the order has been completed.";
-        } catch (OrderStatusException e) {
-            return String.valueOf(e);
+        } catch (OrderStatusException | NumberObjectZeroException e) {
+            return e.getMessage();
         }
     }
 
-    public String cancelOrder(Order order) {
+    public String cancelOrder(int index) {
         try {
-            orderService.cancelOrder(order);
+            orderService.cancelOrder(orderService.getOrders().get(index));
             return " -the order has been canceled.";
-        } catch (OrderStatusException e) {
-            return String.valueOf(e);
+        } catch (OrderStatusException | NumberObjectZeroException e) {
+            return e.getMessage();
         }
     }
 
-    public String deleteOrder(Order order) {
+    public String deleteOrder(int index) {
         try {
-            orderService.deleteOrder(order);
+            orderService.deleteOrder(orderService.getOrders().get(index));
             return " -the order has been deleted.";
-        } catch (OrderStatusException e) {
-            return String.valueOf(e);
+        } catch (OrderStatusException | NumberObjectZeroException e) {
+            return e.getMessage();
         }
     }
 
-    public String shiftLeadTime(Order order, String stringStartTime, String stringLeadTime) {
+    public String shiftLeadTime(int index, String stringStartTime, String stringLeadTime) {
         Date executionStartTime = DateUtil.getDatesFromString(stringStartTime);
         Date leadTime = DateUtil.getDatesFromString(stringLeadTime);
         try {
-            orderService.shiftLeadTime(order, executionStartTime, leadTime);
+            orderService.shiftLeadTime(orderService.getOrders().get(index), executionStartTime, leadTime);
             return " -the order lead time has been changed.";
-        } catch (OrderStatusException | DateException e) {
-            return String.valueOf(e);
-        } catch (NullDateException e) {
-            return "Error date format, should be \"dd.MM.yyyy hh:mm\"";
+        } catch (OrderStatusException | DateException | NullDateException | NumberObjectZeroException e) {
+            return e.getMessage();
+        }
+    }
+
+    public String getOrdersSortByFilingDate(){
+        try {
+            return StringOrder.getStringFromOrder(orderService.sortOrderCreationTime(orderService.getOrders()));
+        } catch (NumberObjectZeroException e) {
+            return e.getMessage();
+        }
+    }
+
+    public String getOrdersSortByExecutionDate(){
+        try {
+            return StringOrder.getStringFromOrder(orderService.sortOrderByLeadTime(orderService.getOrders()));
+        } catch (NumberObjectZeroException e) {
+            return e.getMessage();
+        }
+    }
+
+    public String getOrdersSortByPlannedStartDate(){
+        try {
+            return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime(orderService.getOrders()));
+        } catch (NumberObjectZeroException e) {
+            return e.getMessage();
         }
     }
 
@@ -140,7 +167,7 @@ public class OrderController {
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderCreationTime(orderService.getOrders()));
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -148,7 +175,7 @@ public class OrderController {
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByLeadTime(orderService.getOrders()));
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -156,7 +183,7 @@ public class OrderController {
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime(orderService.getOrders()));
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -164,7 +191,7 @@ public class OrderController {
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByPrice(orderService.getOrders()));
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -172,7 +199,7 @@ public class OrderController {
         try {
             return StringOrder.getStringFromOrder(orderService.getCurrentRunningOrders());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -181,10 +208,8 @@ public class OrderController {
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod);
         try {
             return StringOrder.getStringFromOrder(orderService.getOrderByPeriod(startPeriodDate, endPeriodDate));
-        } catch (NullDateException e) {
-            return "Error date format, should be \"dd.MM.yyyy hh:mm\"";
-        } catch (NumberObjectZeroException | DateException e) {
-            return String.valueOf(e);
+        } catch (NullDateException | NumberObjectZeroException | DateException e) {
+            return e.getMessage();
         }
     }
 
@@ -192,7 +217,7 @@ public class OrderController {
         try {
             return StringOrder.getStringFromOrder(orderService.getCompletedOrders());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -200,7 +225,7 @@ public class OrderController {
         try {
             return StringOrder.getStringFromOrder(orderService.getCanceledOrders());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -208,7 +233,7 @@ public class OrderController {
         try {
             return StringOrder.getStringFromOrder(orderService.getDeletedOrders());
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -216,7 +241,7 @@ public class OrderController {
         try {
             return StringOrder.getStringFromOrder(orderService.getMasterOrders(master));
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 
@@ -224,7 +249,7 @@ public class OrderController {
         try {
             return String.valueOf(orderService.getOrderMasters(order));
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 

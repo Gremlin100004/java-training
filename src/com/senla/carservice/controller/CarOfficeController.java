@@ -45,10 +45,8 @@ public class CarOfficeController {
         try {
             return StringMaster.getStringFromMasters(masterService.getFreeMastersByDate
                     (executeDate, leadDate, orderService.getOrderByPeriod(executeDate, leadDate)));
-        } catch (DateException | NumberObjectZeroException e) {
-            return String.valueOf(e);
-        } catch (NullDateException e) {
-            return "Error date format, should be \"dd.MM.yyyy hh:mm\"";
+        } catch (DateException | NumberObjectZeroException | NullDateException e) {
+            return e.getMessage();
         }
     }
 
@@ -65,10 +63,8 @@ public class CarOfficeController {
             int numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate, endDayDate, orders);
             return String.format("- number free places in service: %s\n- number free masters in service: %s",
                     numberFreePlace, numberFreeMasters);
-        } catch (NullDateException e) {
-            return "Error date format, should be \"dd.MM.yyyy hh:mm\"";
-        } catch (NumberObjectZeroException | DateException e) {
-            return String.valueOf(e);
+        } catch (NullDateException | NumberObjectZeroException | DateException e) {
+            return e.getMessage();
         }
     }
 
@@ -76,7 +72,7 @@ public class CarOfficeController {
         try {
             return carOfficeService.getNearestFreeDate();
         } catch (NumberObjectZeroException e) {
-            return String.valueOf(e);
+            return e.getMessage();
         }
     }
 }
