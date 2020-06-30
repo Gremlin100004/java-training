@@ -4,12 +4,14 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Status;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderRepositoryImpl implements OrderRepository {
+public class OrderRepositoryImpl implements OrderRepository, Serializable {
     private static OrderRepository instance;
+    private static final long serialVersionUID = 1L;
     private final List<Order> orders;
     private final IdGenerator idGeneratorOrder;
 
@@ -101,6 +103,8 @@ public class OrderRepositoryImpl implements OrderRepository {
         order.setId(this.idGeneratorOrder.getId());
         this.orders.add(order);
     }
+
+
 
     @Override
     public void updateOrder(Order order) {

@@ -4,10 +4,16 @@ import com.senla.carservice.csvutil.CsvMaster;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.NumberObjectZeroException;
+import com.senla.carservice.exception.SerializeException;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +21,7 @@ import java.util.stream.Collectors;
 
 public class MasterServiceImpl implements MasterService {
     private static MasterService instance;
+    private static final String PATH_SERIALIZE = "master.ser";
     private final MasterRepository masterRepository;
 
     private MasterServiceImpl() {
@@ -80,6 +87,28 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public String importMasters() {
         return CsvMaster.importMasters();
+    }
+
+    @Override
+    public void serializeMaster(){
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(PATH_SERIALIZE));
+            objectOutputStream.writeObject(masterRepository);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            throw new SerializeException("Serialize masters problem");
+        }
+    }
+
+    @Override
+    public void deserializeMaster(){
+        try {
+            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(PATH_SERIALIZE));
+            MasterRepositoryImpl getMasterRepository = (MasterRepositoryImpl) objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+            throw new SerializeException("Deserialize masters problem");
+        }
     }
 
     private void checkMasters() {

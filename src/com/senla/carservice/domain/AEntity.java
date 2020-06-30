@@ -1,8 +1,10 @@
 package com.senla.carservice.domain;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class AEntity {
+public abstract class AEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Long id;
 
     public AEntity() {

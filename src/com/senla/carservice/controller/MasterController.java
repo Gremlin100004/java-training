@@ -1,10 +1,7 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.exception.DateException;
-import com.senla.carservice.exception.ExportException;
-import com.senla.carservice.exception.NullDateException;
-import com.senla.carservice.exception.NumberObjectZeroException;
+import com.senla.carservice.exception.*;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.MasterServiceImpl;
 import com.senla.carservice.service.OrderService;
@@ -95,6 +92,24 @@ public class MasterController {
         try {
             return masterService.importMasters();
         } catch (NumberObjectZeroException e){
+            return e.getMessage();
+        }
+    }
+
+    public String serializeMaster() {
+        try {
+            masterService.serializeMaster();
+            return "Masters have been serialize successfully!";
+        } catch (SerializeException e){
+            return e.getMessage();
+        }
+    }
+
+    public String deserializeMaster() {
+        try {
+            masterService.deserializeMaster();
+            return "Masters have been deserialize successfully!";
+        } catch (SerializeException e){
             return e.getMessage();
         }
     }

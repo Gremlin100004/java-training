@@ -4,12 +4,14 @@ import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PlaceRepositoryImpl implements PlaceRepository {
+public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
     private static PlaceRepository instance;
+    private static final long serialVersionUID = 1L;
     private final List<Place> places;
     private final IdGenerator idGeneratorPlace;
 
