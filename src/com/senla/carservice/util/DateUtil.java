@@ -52,7 +52,7 @@ public class DateUtil {
     }
 
     public static String getStringFromDate(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         return dateFormat.format(date.getTime());
     }
 

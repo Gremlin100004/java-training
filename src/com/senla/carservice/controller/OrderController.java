@@ -16,11 +16,10 @@ public class OrderController {
     private final OrderService orderService;
     private final MasterService masterService;
     private final PlaceService placeService;
-    private final CarOfficeService carOfficeService;
+
 
     private OrderController() {
         orderService = OrderServiceImpl.getInstance();
-        carOfficeService = CarOfficeServiceImpl.getInstance();
         masterService = MasterServiceImpl.getInstance();
         placeService = PlaceServiceImpl.getInstance();
     }
@@ -183,38 +182,6 @@ public class OrderController {
         }
     }
 
-    public String sortOrderByCreationTime() {
-        try {
-            return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime(orderService.getOrders()));
-        } catch (NumberObjectZeroException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String sortOrderByLeadTime() {
-        try {
-            return StringOrder.getStringFromOrder(orderService.sortOrderByLeadTime(orderService.getOrders()));
-        } catch (NumberObjectZeroException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String sortOrderByStartTime() {
-        try {
-            return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime(orderService.getOrders()));
-        } catch (NumberObjectZeroException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String sortOrderByPrice() {
-        try {
-            return StringOrder.getStringFromOrder(orderService.sortOrderByPrice(orderService.getOrders()));
-        } catch (NumberObjectZeroException e) {
-            return e.getMessage();
-        }
-    }
-
     public String getExecuteOrderFilingDate() {
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
@@ -229,16 +196,6 @@ public class OrderController {
             return StringOrder.getStringFromOrder(orderService.sortOrderByLeadTime
                     (orderService.getCurrentRunningOrders()));
         } catch (NumberObjectZeroException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String getOrdersByPeriod(String startPeriod, String endPeriod) {
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-        try {
-            return StringOrder.getStringFromOrder(orderService.getOrderByPeriod(startPeriodDate, endPeriodDate));
-        } catch (NullDateException | NumberObjectZeroException | DateException e) {
             return e.getMessage();
         }
     }
@@ -366,7 +323,7 @@ public class OrderController {
         try {
             orderService.exportOrder();
             return "Orders have been export successfully!";
-        } catch (NumberObjectZeroException e){
+        } catch (NumberObjectZeroException | ExportException e){
             return e.getMessage();
         }
     }

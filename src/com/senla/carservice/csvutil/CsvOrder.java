@@ -1,4 +1,4 @@
-package com.senla.carservice.csv;
+package com.senla.carservice.csvutil;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
@@ -24,28 +24,26 @@ public class CsvOrder {
     }
 
     public static String exportOrder(List<Order> orders) {
-        StringBuilder valueOrderCsv = new StringBuilder();
-        String message;
+        String valueOrderCsv;
         for (int i = 0; i < orders.size(); i++) {
             if (i == orders.size() - 1) {
-                valueOrderCsv.append(convertOrderToCsv(orders.get(i), false));
+                valueOrderCsv = convertOrderToCsv(orders.get(i), false);
             } else {
-                valueOrderCsv.append(convertOrderToCsv(orders.get(i), true));
+                valueOrderCsv = convertOrderToCsv(orders.get(i), true);
             }
+            FileUtil.saveCsv(valueOrderCsv, ORDER_PATH, i != 0);
         }
-        message = FileUtil.saveCsv(valueOrderCsv, ORDER_PATH);
-        return message;
+        return "save successfully";
     }
 
     public static String importOrder() {
         List<String> csvLinesOrder = FileUtil.getCsv(ORDER_PATH);
-        if (csvLinesOrder == null) throw new NumberObjectZeroException("import orders problem");
         for (String s : csvLinesOrder) {
             Order order = getOrderFromCsv(s);
             if (order.getMasters().isEmpty()) throw new NumberObjectZeroException("masters not imported");
             OrderRepositoryImpl.getInstance().updateOrder(order);
         }
-        return "import successfully";
+        return "Orders have been import successfully!";
     }
 
     private static Order getOrderFromCsv(String line) {

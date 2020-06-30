@@ -21,7 +21,7 @@ public interface MasterService {
 
     List<Master> getMasterByBusy();
 
-    String exportMasters();
+    void exportMasters();
 
     String importMasters();
 }

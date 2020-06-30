@@ -1,8 +1,6 @@
-package com.senla.carservice.csv;
+package com.senla.carservice.csvutil;
 
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.exception.NumberObjectZeroException;
-import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.repository.PlaceRepositoryImpl;
 
 import java.util.Arrays;
@@ -16,25 +14,25 @@ public class CsvPlace {
     }
 
     public static String exportPlaces(List<Place> places) {
-        StringBuilder valueCsv = new StringBuilder();
+        String valueCsv;
         for (int i = 0; i < places.size(); i++) {
             if (i == places.size() - 1) {
-                valueCsv.append(convertToCsv(places.get(i), false));
+                valueCsv = convertToCsv(places.get(i), false);
             } else {
-                valueCsv.append(convertToCsv(places.get(i), true));
+                valueCsv = convertToCsv(places.get(i), true);
             }
+            FileUtil.saveCsv(valueCsv, PLACE_PATH, i != 0);
         }
-        return FileUtil.saveCsv(valueCsv, PLACE_PATH);
+        return "save successfully";
     }
 
     public static String importPlaces() {
         List<String> csvLinesPlace = FileUtil.getCsv(PLACE_PATH);
-        if (csvLinesPlace == null) throw new NumberObjectZeroException("export problem");
         csvLinesPlace.forEach(line -> {
             Place place = getPlaceFromCsv(line);
             PlaceRepositoryImpl.getInstance().updatePlace(place);
         });
-        return "Masters have been import successfully!";
+        return "Places have been import successfully!";
     }
 
     private static Place getPlaceFromCsv(String line) {

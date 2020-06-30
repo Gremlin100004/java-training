@@ -2,7 +2,6 @@ package com.senla.carservice.repository;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.util.IdGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +32,11 @@ public class MasterRepositoryImpl implements MasterRepository {
 
     @Override
     public void updateMaster(Master master) {
-        if (this.masters.isEmpty()){
+        int index = this.masters.indexOf(master);
+        if (index == -1){
             this.masters.add(master);
         } else {
-            this.masters.set(this.masters.indexOf(master), master);
+            this.masters.set(index, master);
         }
     }
 

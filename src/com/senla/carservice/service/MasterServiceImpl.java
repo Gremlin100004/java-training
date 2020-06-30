@@ -1,6 +1,6 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.csv.CsvMaster;
+import com.senla.carservice.csvutil.CsvMaster;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.NumberObjectZeroException;
@@ -72,14 +72,14 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public String exportMasters() {
+    public void exportMasters() {
         checkMasters();
-        return CsvMaster.exportMasters(masterRepository.getMasters());
+        CsvMaster.exportMasters(masterRepository.getMasters());
     }
 
     @Override
     public String importMasters() {
-        return CsvMaster.importMasters(masterRepository.getMasters());
+        return CsvMaster.importMasters();
     }
 
     private void checkMasters() {

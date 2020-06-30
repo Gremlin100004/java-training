@@ -1,6 +1,6 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.csv.CsvOrder;
+import com.senla.carservice.csvutil.CsvOrder;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
@@ -289,11 +289,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String exportOrder() {
+    public void exportOrder() {
         checkOrders();
         checkMasters();
         checkPlaces();
-        return CsvOrder.exportOrder(orderRepository.getOrders());
+        CsvOrder.exportOrder(orderRepository.getOrders());
     }
 
     @Override

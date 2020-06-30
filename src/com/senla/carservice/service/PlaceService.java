@@ -13,13 +13,11 @@ public interface PlaceService {
 
     void deletePlace(Place place);
 
-    List<Place> getFreePlaces();
-
     int getNumberFreePlaceByDate(Date executeDate, Date leadDate, List<Order> orders);
 
     List<Place> getFreePlaceByDate(Date executeDate, Date leadDate, List<Order> orders);
 
-    String exportPlaces();
+    void exportPlaces();
 
     String importPlaces();
 }

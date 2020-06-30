@@ -1,34 +1,34 @@
-package com.senla.carservice.csv;
+package com.senla.carservice.csvutil;
 
 import com.senla.carservice.domain.Master;
-import com.senla.carservice.exception.NumberObjectZeroException;
+
 import com.senla.carservice.repository.MasterRepositoryImpl;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class CsvMaster {
-    private static final String MASTER_PATH = "csv//masters.csv";
+    private static final String MASTER_PATH = "csv/masters.csv";
     private static final String COMMA = ",";
 
     private CsvMaster() {
     }
 
     public static String exportMasters(List<Master> masters) {
-        StringBuilder valueCsv = new StringBuilder();
+        String valueCsv;
         for (int i = 0; i < masters.size(); i++) {
             if (i == masters.size() - 1) {
-                valueCsv.append(convertToCsv(masters.get(i), false));
+                valueCsv = convertToCsv(masters.get(i), false);
             } else {
-                valueCsv.append(convertToCsv(masters.get(i), true));
+                valueCsv = convertToCsv(masters.get(i), true);
             }
+            FileUtil.saveCsv(valueCsv, MASTER_PATH, i != 0);
         }
-        return FileUtil.saveCsv(valueCsv, MASTER_PATH);
+        return "save successfully";
     }
 
-    public static String importMasters(List<Master> masters) {
+    public static String importMasters() {
         List<String> csvLinesMaster = FileUtil.getCsv(MASTER_PATH);
-        if (csvLinesMaster == null) throw new NumberObjectZeroException("export problem");
         csvLinesMaster.forEach(line -> {
             Master master = getMasterFromCsv(line);
             MasterRepositoryImpl.getInstance().updateMaster(master);

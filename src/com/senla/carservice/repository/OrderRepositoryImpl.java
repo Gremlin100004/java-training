@@ -3,7 +3,6 @@ package com.senla.carservice.repository;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Status;
-import com.senla.carservice.util.IdGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class OrderRepositoryImpl implements OrderRepository {
     private static OrderRepository instance;
-    private List<Order> orders;
+    private final List<Order> orders;
     private final IdGenerator idGeneratorOrder;
 
     private OrderRepositoryImpl() {
@@ -105,10 +104,11 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public void updateOrder(Order order) {
-        if (this.orders.isEmpty()){
+        int index = this.orders.indexOf(order);
+        if (index == -1){
             this.orders.add(order);
         } else {
-            this.orders.set(this.orders.indexOf(order), order);
+            this.orders.set(index, order);
         }
     }
 }

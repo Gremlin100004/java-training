@@ -53,7 +53,7 @@ public interface OrderService {
 
     List<Order> getDeletedOrders(Date startPeriod, Date endPeriod);
 
-    String exportOrder();
+    void exportOrder();
 
     String importOrder();
 }

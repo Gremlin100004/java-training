@@ -410,13 +410,13 @@ public class Builder {
     private void addItemCanceledOrderPartTwo(Menu canceledOrderMenu, Menu periodOrderMenu) {
         canceledOrderMenu.getMenuItems().add(new MenuItem("Sort by price",
                 () -> Printer.printInfo(OrderController.getInstance().getCanceledOrdersPrice(
-                ScannerUtil.getStringDateUser
-                        ("Enter the beginning date of period in " +
-                                "format dd.mm.yyyy, example:\"10.10.2010 10:00\""),
-                ScannerUtil.getStringDateUser
-                        ("Enter the end date of period in format dd.mm.yyyy, " +
-                                "example:\"10.10.2010 10:00\"")
-        )), canceledOrderMenu));
+                        ScannerUtil.getStringDateUser
+                                ("Enter the beginning date of period in " +
+                                        "format dd.mm.yyyy, example:\"10.10.2010 10:00\""),
+                        ScannerUtil.getStringDateUser
+                                ("Enter the end date of period in format dd.mm.yyyy, " +
+                                        "example:\"10.10.2010 10:00\"")
+                )), canceledOrderMenu));
         canceledOrderMenu.getMenuItems().add(new MenuItem("Previous menu",
                 () -> Printer.printInfo("Go to menu"), periodOrderMenu));
     }

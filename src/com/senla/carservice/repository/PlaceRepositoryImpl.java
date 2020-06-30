@@ -2,7 +2,6 @@ package com.senla.carservice.repository;
 
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.util.IdGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
     private final List<Place> places;
     private final IdGenerator idGeneratorPlace;
 
-    public PlaceRepositoryImpl() {
+    private PlaceRepositoryImpl() {
         this.places = new ArrayList<>();
         this.idGeneratorPlace = new IdGenerator();
     }
@@ -45,10 +44,11 @@ public class PlaceRepositoryImpl implements PlaceRepository {
 
     @Override
     public void updatePlace(Place place) {
-        if (this.places.isEmpty()){
+        int index = this.places.indexOf(place);
+        if (index == -1){
             this.places.add(place);
         } else {
-            this.places.set(this.places.indexOf(place), place);
+            this.places.set(index, place);
         }
     }
 

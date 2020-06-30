@@ -1,7 +1,5 @@
 package com.senla.carservice.domain;
 
-import java.util.Objects;
-
 public class Master extends AEntity {
     private String name;
     private Integer numberOrder;

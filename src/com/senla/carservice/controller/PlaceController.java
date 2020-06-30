@@ -2,6 +2,7 @@ package com.senla.carservice.controller;
 
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.DateException;
+import com.senla.carservice.exception.ExportException;
 import com.senla.carservice.exception.NullDateException;
 import com.senla.carservice.exception.NumberObjectZeroException;
 import com.senla.carservice.service.OrderService;
@@ -55,14 +56,6 @@ public class PlaceController {
         }
     }
 
-    public String getFreePlaces() {
-        try {
-            return StringPlaces.getStringFromPlaces(placeService.getFreePlaces());
-        } catch (NumberObjectZeroException e) {
-            return e.getMessage();
-        }
-    }
-
     public String getFreePlacesByDate(String stringExecuteDate, String stringLeadDate) {
         Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
         Date leadDate = DateUtil.getDatesFromString(stringLeadDate, true);
@@ -78,7 +71,7 @@ public class PlaceController {
         try {
             placeService.exportPlaces();
             return "Places have been export successfully!";
-        } catch (NumberObjectZeroException e){
+        } catch (NumberObjectZeroException | ExportException e){
             return e.getMessage();
         }
     }

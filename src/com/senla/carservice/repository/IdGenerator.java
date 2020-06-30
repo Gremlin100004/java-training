@@ -1,4 +1,4 @@
-package com.senla.carservice.util;
+package com.senla.carservice.repository;
 
 public class IdGenerator {
     private Long id;

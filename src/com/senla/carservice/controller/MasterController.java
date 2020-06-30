@@ -2,6 +2,7 @@ package com.senla.carservice.controller;
 
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.DateException;
+import com.senla.carservice.exception.ExportException;
 import com.senla.carservice.exception.NullDateException;
 import com.senla.carservice.exception.NumberObjectZeroException;
 import com.senla.carservice.service.MasterService;
@@ -85,7 +86,7 @@ public class MasterController {
         try {
             masterService.exportMasters();
             return "Masters have been export successfully!";
-        } catch (NumberObjectZeroException e){
+        } catch (NumberObjectZeroException | ExportException e){
             return e.getMessage();
         }
     }

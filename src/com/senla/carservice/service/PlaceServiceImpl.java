@@ -1,6 +1,6 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.csv.CsvPlace;
+import com.senla.carservice.csvutil.CsvPlace;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.NumberObjectZeroException;
@@ -43,13 +43,6 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public List<Place> getFreePlaces() {
-        if (placeRepository.getCurrentFreePlaces().isEmpty())
-            throw new NumberObjectZeroException("There are no places");
-        return placeRepository.getCurrentFreePlaces();
-    }
-
-    @Override
     public int getNumberFreePlaceByDate(Date executeDate, Date leadDate, List<Order> orders) {
         DateUtil.checkDateTime(executeDate, leadDate);
         checkPlaces();
@@ -70,9 +63,9 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public String exportPlaces() {
+    public void exportPlaces() {
         checkPlaces();
-        return CsvPlace.exportPlaces(placeRepository.getPlaces());
+        CsvPlace.exportPlaces(placeRepository.getPlaces());
     }
 
     @Override

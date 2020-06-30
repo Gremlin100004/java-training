@@ -1,11 +1,9 @@
 package com.senla.carservice.ui.menu;
 
-import java.util.Collections;
+import com.senla.carservice.ui.util.Printer;
 
-// почему класс финальный? какая цель?
-public final class Navigator {
+public class Navigator {
     private static Navigator instance;
-
     private Menu currentMenu;
 
     private Navigator() {
@@ -23,17 +21,7 @@ public final class Navigator {
     }
 
     public void printMenu() {
-        // может быть, это можно вынести в туСтринг у меню?
-        System.out.printf("%s\n",
-                String.join("", Collections.nCopies(this.currentMenu.getName().length(), "~")));
-        System.out.printf("%s\n", this.currentMenu.getName());
-        System.out.printf("%s\n", String.join("", Collections.nCopies(
-                this.currentMenu.getName().length(), "~")));
-        for (int i = 0; i < this.currentMenu.getMenuItems().size(); i++) {
-            System.out.printf("%s. %s\n", i + 1, this.currentMenu.getMenuItems().get(i));
-        }
-        System.out.println("0. Exit program");
-        System.out.println("---------------");
+        Printer.printInfo(this.currentMenu.toString());
     }
 
     public void navigate(Integer index) {

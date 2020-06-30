@@ -16,7 +16,9 @@ public class MenuItem {
     }
 
     public void doAction() {
-        this.action.execute();
+        if (action!= null){
+            action.execute();
+        }
     }
 
     @Override
