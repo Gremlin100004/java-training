@@ -1,9 +1,10 @@
 package com.senla.carservice.ui.menu;
 
 import com.senla.carservice.controller.MasterController;
+import com.senla.carservice.controller.OrderController;
+import com.senla.carservice.controller.PlaceController;
 import com.senla.carservice.ui.util.Printer;
 import com.senla.carservice.ui.util.ScannerUtil;
-import com.senla.carservice.util.PropertyUtil;
 
 public class MenuController {
     private static MenuController instance;
@@ -25,6 +26,8 @@ public class MenuController {
     public void run() {
         int answer = 1;
         Printer.printInfo(MasterController.getInstance().deserializeMaster());
+        Printer.printInfo(PlaceController.getInstance().deserializePlace());
+        Printer.printInfo(OrderController.getInstance().deserializeOrder());
         while (answer != 0) {
             this.navigator.printMenu();
             answer = ScannerUtil.getIntUser("Enter number item menu:");
@@ -33,5 +36,7 @@ public class MenuController {
             }
         }
         Printer.printInfo(MasterController.getInstance().serializeMaster());
+        Printer.printInfo(PlaceController.getInstance().serializePlace());
+        Printer.printInfo(OrderController.getInstance().serializeOrder());
     }
 }

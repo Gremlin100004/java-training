@@ -4,15 +4,11 @@ import com.senla.carservice.csvutil.CsvMaster;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.NumberObjectZeroException;
-import com.senla.carservice.exception.SerializeException;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.Serializer;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -94,7 +90,9 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public void deserializeMaster(){
-            MasterRepository masterRepository = Serializer.deserializeMaster();
+        MasterRepository masterRepositoryRestore = Serializer.deserializeMaster();
+        masterRepository.updateListMaster(masterRepositoryRestore.getMasters());
+        masterRepository.updateGenerator(masterRepositoryRestore.getIdGeneratorMaster());
     }
 
     private void checkMasters() {

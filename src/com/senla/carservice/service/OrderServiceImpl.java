@@ -246,7 +246,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deserializeOrder(){
-        OrderRepository orderRepository = Serializer.deserializeOrder();
+        OrderRepository orderRepositoryRestore = Serializer.deserializeOrder();
+        orderRepository.updateListOrder(orderRepositoryRestore.getOrders());
+        orderRepository.updateGenerator(orderRepositoryRestore.getIdGeneratorOrder());
     }
 
     private void checkOrders() {

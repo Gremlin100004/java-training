@@ -8,7 +8,6 @@ import com.senla.carservice.util.PropertyUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
     private static PlaceRepository instance;
@@ -26,6 +25,11 @@ public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
             instance = new PlaceRepositoryImpl();
         }
         return instance;
+    }
+
+    @Override
+    public IdGenerator getIdGeneratorPlace() {
+        return idGeneratorPlace;
     }
 
     @Override
@@ -70,7 +74,13 @@ public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
     }
 
     @Override
-    public List<Place> getCurrentFreePlaces() {
-        return this.places.stream().filter(place -> !place.isBusyStatus()).collect(Collectors.toList());
+    public void updateListPlace(List<Place> places) {
+        this.places.clear();
+        this.places.addAll(places);
+    }
+
+    @Override
+    public void updateGenerator(IdGenerator idGenerator) {
+        this.idGeneratorPlace.setId(idGenerator.getId());
     }
 }

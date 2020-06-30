@@ -81,12 +81,13 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public void serializePlace(){
-        Serializer.serializeMaster(MasterRepositoryImpl.getInstance());
+        Serializer.serializePlace(PlaceRepositoryImpl.getInstance());
     }
 
     @Override
     public void deserializePlace(){
-            MasterRepository masterRepository = Serializer.deserializeMaster();
+        PlaceRepository placeRepositoryRestore = Serializer.deserializePlace();
+        placeRepository.updateListPlace(placeRepositoryRestore.getPlaces());
+        placeRepository.updateGenerator(placeRepositoryRestore.getIdGeneratorPlace());
     }
 }
-

@@ -117,6 +117,17 @@ public class OrderRepositoryImpl implements OrderRepository, Serializable {
     }
 
     @Override
+    public void updateListOrder(List<Order> orders) {
+        this.orders.clear();
+        this.orders.addAll(orders);
+    }
+
+    @Override
+    public void updateGenerator(IdGenerator idGenerator) {
+        this.idGeneratorOrder.setId(idGenerator.getId());
+    }
+
+    @Override
     public void updateOrder(Order order) {
         update(order);
     }

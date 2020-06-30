@@ -1,7 +1,12 @@
 package com.senla.carservice.util;
 
 import com.senla.carservice.exception.SerializeException;
-import com.senla.carservice.repository.*;
+import com.senla.carservice.repository.MasterRepository;
+import com.senla.carservice.repository.MasterRepositoryImpl;
+import com.senla.carservice.repository.OrderRepository;
+import com.senla.carservice.repository.OrderRepositoryImpl;
+import com.senla.carservice.repository.PlaceRepository;
+import com.senla.carservice.repository.PlaceRepositoryImpl;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,9 +15,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Serializer {
-    private static final String MASTER_SER = "master.bin";
-    private static final String PLACE_SER = "place.bin";
-    private static final String ORDER_SER = "order.bin";
+    private static final String MASTER_SER = "src/resources/master.bin";
+    private static final String PLACE_SER = "src/resources/place.bin";
+    private static final String ORDER_SER = "src/resources/order.bin";
     
     private Serializer() {
     }

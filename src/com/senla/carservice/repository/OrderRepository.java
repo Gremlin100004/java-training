@@ -6,6 +6,7 @@ import com.senla.carservice.domain.Order;
 import java.util.List;
 
 public interface OrderRepository {
+
     IdGenerator getIdGeneratorOrder();
 
     List<Order> getOrders();
@@ -30,4 +31,7 @@ public interface OrderRepository {
 
     void deleteOrder(Order order);
 
+    void updateListOrder(List<Order> orders);
+
+    void updateGenerator(IdGenerator idGenerator);
 }

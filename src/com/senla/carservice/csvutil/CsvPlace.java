@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CsvPlace {
-    private static final String PLACE_PATH = "csv//places.csv";
+    private static final String PLACE_PATH = "csv/places.csv";
     private static final String COMMA = ",";
 
     private CsvPlace() {

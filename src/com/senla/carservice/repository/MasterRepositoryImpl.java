@@ -25,6 +25,10 @@ public class MasterRepositoryImpl implements MasterRepository, Serializable {
         return instance;
     }
 
+    public IdGenerator getIdGeneratorMaster() {
+        return idGeneratorMaster;
+    }
+
     @Override
     public void addMaster(Master master) {
         master.setId(this.idGeneratorMaster.getId());
@@ -39,6 +43,17 @@ public class MasterRepositoryImpl implements MasterRepository, Serializable {
         } else {
             this.masters.set(index, master);
         }
+    }
+
+    @Override
+    public void updateListMaster(List<Master> masters) {
+        this.masters.clear();
+        this.masters.addAll(masters);
+    }
+
+    @Override
+    public void updateGenerator(IdGenerator idGenerator) {
+        this.idGeneratorMaster.setId(idGenerator.getId());
     }
 
     @Override

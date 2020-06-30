@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CsvOrder {
-    private static final String ORDER_PATH = "csv//order.csv";
+    private static final String ORDER_PATH = "csv/order.csv";
     private static final String COMMA = ",";
     private static final String QUOTATION_MARK = "\"";
 
