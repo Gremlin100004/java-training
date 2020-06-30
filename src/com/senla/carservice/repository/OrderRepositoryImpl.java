@@ -3,6 +3,9 @@ package com.senla.carservice.repository;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Status;
+import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.exception.OrderStatusException;
+import com.senla.carservice.util.PropertyUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,14 +42,14 @@ public class OrderRepositoryImpl implements OrderRepository, Serializable {
 
     @Override
     public Order getLastOrder() {
-        return this.orders.get(orders.size()-1);
+        return this.orders.get(orders.size() - 1);
     }
 
     @Override
     public List<Order> getCompletedOrders() {
         List<Order> completedOrders = new ArrayList<>();
         this.orders.forEach(order -> {
-            if (order.getStatus().equals(Status.COMPLETED)){
+            if (order.getStatus().equals(Status.COMPLETED)) {
                 completedOrders.add(order);
             }
         });
@@ -57,7 +60,7 @@ public class OrderRepositoryImpl implements OrderRepository, Serializable {
     public List<Order> getDeletedOrders() {
         List<Order> deletedOrders = new ArrayList<>();
         this.orders.forEach(order -> {
-            if (order.isDeleteStatus()){
+            if (order.isDeleteStatus()) {
                 deletedOrders.add(order);
             }
         });
@@ -68,7 +71,7 @@ public class OrderRepositoryImpl implements OrderRepository, Serializable {
     public List<Order> getCanceledOrders() {
         List<Order> canceledOrders = new ArrayList<>();
         this.orders.forEach(order -> {
-            if (order.getStatus().equals(Status.CANCELED)){
+            if (order.getStatus().equals(Status.CANCELED)) {
                 canceledOrders.add(order);
             }
         });
@@ -104,15 +107,35 @@ public class OrderRepositoryImpl implements OrderRepository, Serializable {
         this.orders.add(order);
     }
 
-
+    @Override
+    public void deleteOrder(Order order) {
+        if (!Boolean.parseBoolean(PropertyUtil.getPropertyValue("deleteOrder")))
+            throw new BusinessException("Permission denied");
+        checkStatusOrderDelete(order);
+        order.setDeleteStatus(true);
+        update(order);
+    }
 
     @Override
     public void updateOrder(Order order) {
+        update(order);
+    }
+
+    private void update(Order order) {
         int index = this.orders.indexOf(order);
-        if (index == -1){
+        if (index == -1) {
             this.orders.add(order);
         } else {
             this.orders.set(index, order);
         }
+    }
+
+    private void checkStatusOrderDelete(Order order) {
+        if (order.isDeleteStatus()) throw new
+                OrderStatusException("The order has been deleted");
+        if (order.getStatus().equals(Status.PERFORM)) throw new
+                OrderStatusException("Order is being executed");
+        if (order.getStatus().equals(Status.WAIT)) throw new
+                OrderStatusException("The order is being waited");
     }
 }

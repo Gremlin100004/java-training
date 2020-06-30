@@ -25,14 +25,6 @@ public class MasterRepositoryImpl implements MasterRepository, Serializable {
         return instance;
     }
 
-    public static MasterRepository getInstance(MasterRepositoryImpl value) {
-        if (instance == null) {
-            instance = value;
-        }
-        return instance;
-    }
-
-
     @Override
     public void addMaster(Master master) {
         master.setId(this.idGeneratorMaster.getId());

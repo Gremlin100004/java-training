@@ -3,6 +3,7 @@ package com.senla.carservice.repository;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.util.PropertyUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
 
     @Override
     public void addPlace(Place addPlace) {
+        if (!Boolean.parseBoolean(PropertyUtil.getPropertyValue("placeAdd")))
+            throw new BusinessException("Permission denied");
         this.places.stream().filter(place -> place.getNumber().equals(addPlace.getNumber())).forEachOrdered(place -> {
             throw new BusinessException("Such a number exists");
         });
@@ -60,6 +63,9 @@ public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
 
     @Override
     public void deletePlace(Place place) {
+        if (place.isBusyStatus()) throw new BusinessException("Place is busy");
+        if (!Boolean.parseBoolean(PropertyUtil.getPropertyValue("placeDelete")))
+            throw new BusinessException("Permission denied");
         this.places.remove(place);
     }
 

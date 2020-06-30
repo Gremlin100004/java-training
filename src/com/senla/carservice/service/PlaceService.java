@@ -20,4 +20,8 @@ public interface PlaceService {
     void exportPlaces();
 
     String importPlaces();
+
+    void serializePlace();
+
+    void deserializePlace();
 }

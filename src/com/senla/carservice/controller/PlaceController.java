@@ -49,8 +49,9 @@ public class PlaceController {
     public String deletePlace(int index) {
         try {
             placeService.deletePlace(placeService.getPlaces().get(index));
-            return String.format(" -delete place in service number \"%s\"", placeService.getPlaces().get(index).getNumber());
-        } catch (NumberObjectZeroException e) {
+            return String.format(" -delete place in service number \"%s\"",
+                    placeService.getPlaces().get(index).getNumber());
+        } catch (NumberObjectZeroException | BusinessException e) {
             return e.getMessage();
         } catch (IndexOutOfBoundsException e){
             return "There are no such place";
@@ -81,6 +82,24 @@ public class PlaceController {
         try {
             return placeService.importPlaces();
         } catch (NumberObjectZeroException e){
+            return e.getMessage();
+        }
+    }
+
+    public String serializePlace() {
+        try {
+            placeService.serializePlace();
+            return "Places have been serialize successfully!";
+        } catch (SerializeException e){
+            return e.getMessage();
+        }
+    }
+
+    public String deserializePlace() {
+        try {
+            placeService.deserializePlace();
+            return "Masters have been deserialize successfully!";
+        } catch (SerializeException e){
             return e.getMessage();
         }
     }

@@ -130,7 +130,7 @@ public class OrderController {
         try {
             orderService.deleteOrder(orderService.getOrders().get(index));
             return " -the order has been deleted.";
-        } catch (OrderStatusException | NumberObjectZeroException e) {
+        } catch (OrderStatusException | NumberObjectZeroException | BusinessException e) {
             return e.getMessage();
         } catch (IndexOutOfBoundsException e){
             return "There are no such order";
@@ -143,7 +143,8 @@ public class OrderController {
         try {
             orderService.shiftLeadTime(orderService.getOrders().get(index), executionStartTime, leadTime);
             return " -the order lead time has been changed.";
-        } catch (OrderStatusException | DateException | NullDateException | NumberObjectZeroException e) {
+        } catch (OrderStatusException | DateException | NullDateException |
+                NumberObjectZeroException | BusinessException e) {
             return e.getMessage();
         } catch (IndexOutOfBoundsException e){
             return "There are no such order";
@@ -332,6 +333,24 @@ public class OrderController {
         try {
             return orderService.importOrder();
         } catch (NumberObjectZeroException e){
+            return e.getMessage();
+        }
+    }
+
+    public String serializeOrder() {
+        try {
+            orderService.serializeOrder();
+            return "Orders have been serialize successfully!";
+        } catch (SerializeException e){
+            return e.getMessage();
+        }
+    }
+
+    public String deserializeOrder() {
+        try {
+            orderService.deserializeOrder();
+            return "Orders have been deserialize successfully!";
+        } catch (SerializeException e){
             return e.getMessage();
         }
     }

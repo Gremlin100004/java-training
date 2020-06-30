@@ -56,4 +56,8 @@ public interface OrderService {
     void exportOrder();
 
     String importOrder();
+
+    void serializeOrder();
+
+    void deserializeOrder();
 }

@@ -3,6 +3,7 @@ package com.senla.carservice.ui.menu;
 import com.senla.carservice.controller.MasterController;
 import com.senla.carservice.ui.util.Printer;
 import com.senla.carservice.ui.util.ScannerUtil;
+import com.senla.carservice.util.PropertyUtil;
 
 public class MenuController {
     private static MenuController instance;

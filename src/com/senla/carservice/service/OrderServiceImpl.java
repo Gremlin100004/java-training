@@ -5,6 +5,7 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.Status;
+import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.exception.EqualObjectsException;
 import com.senla.carservice.exception.NumberObjectZeroException;
 import com.senla.carservice.exception.OrderStatusException;
@@ -15,6 +16,8 @@ import com.senla.carservice.repository.OrderRepositoryImpl;
 import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.util.PropertyUtil;
+import com.senla.carservice.util.Serializer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -145,13 +148,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(Order order) {
-        checkStatusOrderDelete(order);
-        order.setDeleteStatus(true);
-        orderRepository.updateOrder(order);
+        orderRepository.deleteOrder(order);
     }
 
     @Override
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
+        if (!Boolean.parseBoolean(PropertyUtil.getPropertyValue("shiftTime")))
+            throw new BusinessException("Permission denied");
         DateUtil.checkDateTime(executionStartTime, leadTime);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(leadTime);
@@ -236,6 +239,16 @@ public class OrderServiceImpl implements OrderService {
         return sortOrderByPeriod(orderRepository.getDeletedOrders(), startPeriod, endPeriod);
     }
 
+    @Override
+    public void serializeOrder(){
+        Serializer.serializeOrder(OrderRepositoryImpl.getInstance());
+    }
+
+    @Override
+    public void deserializeOrder(){
+        OrderRepository orderRepository = Serializer.deserializeOrder();
+    }
+
     private void checkOrders() {
         if (orderRepository.getOrders().isEmpty()) throw new NumberObjectZeroException("There are no orders");
     }
@@ -268,15 +281,6 @@ public class OrderServiceImpl implements OrderService {
                 OrderStatusException("Order is being executed");
         if (order.getStatus().equals(Status.CANCELED)) throw new
                 OrderStatusException("The order has been canceled");
-    }
-
-    private void checkStatusOrderDelete(Order order) {
-        if (order.isDeleteStatus()) throw new
-                OrderStatusException("The order has been deleted");
-        if (order.getStatus().equals(Status.PERFORM)) throw new
-                OrderStatusException("Order is being executed");
-        if (order.getStatus().equals(Status.WAIT)) throw new
-                OrderStatusException("The order is being waited");
     }
 
     private void checkStatusOrderShiftTime(Order order) {
