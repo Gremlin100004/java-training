@@ -5,7 +5,6 @@ import com.senla.carservice.exception.NumberObjectZeroException;
 import com.senla.carservice.repository.*;
 import com.senla.carservice.util.DateUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,13 +29,14 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     @Override
-    public String getNearestFreeDate() throws NumberObjectZeroException {
+    public String getNearestFreeDate() {
         Date dateFree = new Date();
-        if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters", 0);
-        if (orderRepository.getOrders().isEmpty()) throw new NumberObjectZeroException("There are no orders", 0);
-        if (placeRepository.getPlaces().isEmpty()) throw new NumberObjectZeroException("There are no places", 0);
+        if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters");
+        if (orderRepository.getOrders().isEmpty()) throw new NumberObjectZeroException("There are no orders");
+        if (placeRepository.getPlaces().isEmpty()) throw new NumberObjectZeroException("There are no places");
         int numberFreeMasters = 0;
         int numberFreePlace = 0;
+
         while (numberFreeMasters == 0 && numberFreePlace == 0) {
             Date endDay = DateUtil.bringEndOfDayDate(dateFree);
             List<Order> sortArrayOrder = new ArrayList<>();
@@ -46,9 +46,8 @@ public class CarOfficeServiceImpl implements CarOfficeService {
                     sortArrayOrder.add(order);
                 }
             });
-            numberFreeMasters = masterRepository.getMasters().size() -
-                    masterRepository.getFreeMasters(sortArrayOrder).size();
-            numberFreePlace = placeRepository.getPlaces().size() - placeRepository.getFreePlaces(sortArrayOrder).size();
+            numberFreeMasters = masterRepository.getFreeMasters(sortArrayOrder).size();
+            numberFreePlace = placeRepository.getFreePlaces(sortArrayOrder).size();
             dateFree = DateUtil.addDays(DateUtil.bringStartOfDayDate(dateFree), 1);
         }
         dateFree = DateUtil.addDays(dateFree, -1);

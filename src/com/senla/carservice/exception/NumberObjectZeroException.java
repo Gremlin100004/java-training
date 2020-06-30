@@ -1,16 +1,8 @@
 package com.senla.carservice.exception;
 
-import java.util.Date;
 
-public class NumberObjectZeroException extends Exception{
-    private int number;
-
-    public int getNumber() {
-        return number;
-    }
-
-    public NumberObjectZeroException(String message, int number) {
+public class NumberObjectZeroException extends RuntimeException {
+    public NumberObjectZeroException(String message) {
         super(message);
-        this.number = number;
     }
 }

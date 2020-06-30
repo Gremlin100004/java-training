@@ -8,7 +8,7 @@ import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.OrderServiceImpl;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.PlaceServiceImpl;
-import com.senla.carservice.ui.string.StringPlaces;
+import com.senla.carservice.string.StringPlaces;
 import com.senla.carservice.util.DateUtil;
 
 import java.util.Date;
@@ -64,8 +64,8 @@ public class PlaceController {
     }
 
     public String getFreePlacesByDate(String stringExecuteDate, String stringLeadDate) {
-        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate);
-        Date leadDate = DateUtil.getDatesFromString(stringLeadDate);
+        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
+        Date leadDate = DateUtil.getDatesFromString(stringLeadDate, true);
         try {
             List<Order> orders = orderService.getOrderByPeriod(executeDate, leadDate);
             return StringPlaces.getStringFromPlaces(placeService.getFreePlaceByDate(executeDate, leadDate, orders));
@@ -74,20 +74,20 @@ public class PlaceController {
         }
     }
 
-//    public String exportGarages() {
-//        // использовать исключения
-//        if (this.placeService.exportPlaces().equals("save successfully")) {
-//            return "Garages have been export successfully!";
-//        } else {
-//            return "export problem.";
-//        }
-//    }
-//
-//    public String importGarages() {
-//        if (this.placeService.importPlaces().equals("import successfully")) {
-//            return "Garages have been import successfully!";
-//        } else {
-//            return "import problem.";
-//        }
-//    }
+    public String exportPlaces() {
+        try {
+            placeService.exportPlaces();
+            return "Places have been export successfully!";
+        } catch (NumberObjectZeroException e){
+            return e.getMessage();
+        }
+    }
+
+    public String importPlaces() {
+        try {
+            return placeService.importPlaces();
+        } catch (NumberObjectZeroException e){
+            return e.getMessage();
+        }
+    }
 }

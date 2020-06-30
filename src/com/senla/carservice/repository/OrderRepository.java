@@ -27,10 +27,6 @@ public interface OrderRepository {
 
     void addOrder(Order order);
 
-    void deleteOrder(Order order);
-
-    void addExistingOrder(Order order);
-
     void updateOrder(Order order);
 
 

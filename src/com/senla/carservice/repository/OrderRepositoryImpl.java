@@ -104,18 +104,11 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public void deleteOrder(Order order) {
-        this.orders.remove(order);
-    }
-
-    @Override
-    public void addExistingOrder(Order order) {
-
-    }
-
-    @Override
     public void updateOrder(Order order) {
-        this.orders.set(this.orders.indexOf(order), order);
+        if (this.orders.isEmpty()){
+            this.orders.add(order);
+        } else {
+            this.orders.set(this.orders.indexOf(order), order);
+        }
     }
-
 }

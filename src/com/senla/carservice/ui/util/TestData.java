@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestData {
+
+    private TestData() {
+    }
+
     public static List<String> getArrayMasterNames() {
         List<String> arrayName = new ArrayList<>();
         arrayName.add("Petya");
@@ -32,24 +36,24 @@ public class TestData {
         return arrayName;
     }
 
-    static public List<Integer> getArrayPlaceNumber() {
-        List<Integer> arrayName = new ArrayList<>();
-        arrayName.add(1);
-        arrayName.add(2);
-        arrayName.add(3);
-        arrayName.add(4);
-        arrayName.add(5);
-        arrayName.add(6);
-        arrayName.add(7);
-        arrayName.add(8);
-        arrayName.add(9);
-        arrayName.add(10);
-        arrayName.add(11);
-        arrayName.add(12);
-        return arrayName;
+    public static List<Integer> getArrayPlaceNumber() {
+        List<Integer> arrayNumber = new ArrayList<>();
+        arrayNumber.add(1);
+        arrayNumber.add(2);
+        arrayNumber.add(3);
+        arrayNumber.add(4);
+        arrayNumber.add(5);
+        arrayNumber.add(6);
+        arrayNumber.add(7);
+        arrayNumber.add(8);
+        arrayNumber.add(9);
+        arrayNumber.add(10);
+        arrayNumber.add(11);
+        arrayNumber.add(12);
+        return arrayNumber;
     }
 
-    static public List<String> getArrayAutomaker() {
+    public static List<String> getArrayAutomaker() {
         List<String> arrayName = new ArrayList<>();
         arrayName.add("lexus");
         arrayName.add("Mercedes");
@@ -66,7 +70,7 @@ public class TestData {
         return arrayName;
     }
 
-    static public List<String> getArrayModel() {
+    public static List<String> getArrayModel() {
         List<String> arrayName = new ArrayList<>();
         arrayName.add("LS");
         arrayName.add("A 200");
@@ -83,7 +87,7 @@ public class TestData {
         return arrayName;
     }
 
-    static public List<String> getArrayRegistrationNumber() {
+    public static List<String> getArrayRegistrationNumber() {
         List<String> arrayName = new ArrayList<>();
         arrayName.add("1234 AB-7");
         arrayName.add("3234 AB-7");
@@ -100,7 +104,7 @@ public class TestData {
         return arrayName;
     }
 
-    static public List<BigDecimal> getArrayPrice() {
+    public static List<BigDecimal> getArrayPrice() {
         List<BigDecimal> arrayPrice = new ArrayList<>();
         arrayPrice.add(new BigDecimal("360.99"));
         arrayPrice.add(new BigDecimal("600.23"));
@@ -117,7 +121,7 @@ public class TestData {
         return arrayPrice;
     }
 
-    static public List<String> getArrayExecutionStartTime() {
+    public static List<String> getArrayExecutionStartTime() {
         List<String> arrayDate = new ArrayList<>();
         arrayDate.add("11.07.2020 10:00");
         arrayDate.add("11.07.2020 10:00");
@@ -134,7 +138,7 @@ public class TestData {
         return arrayDate;
     }
 
-    static public List<String> getArrayLeadTime() {
+    public static List<String> getArrayLeadTime() {
         ArrayList<String> arrayDate = new ArrayList<>();
         arrayDate.add("11.07.2020 18:00");
         arrayDate.add("11.07.2020 18:00");

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MasterRepositoryImpl implements MasterRepository {
     private static MasterRepository instance;
-    private List<Master> masters;
+    private final List<Master> masters;
     private final IdGenerator idGeneratorMaster;
 
     private MasterRepositoryImpl() {
@@ -33,7 +33,11 @@ public class MasterRepositoryImpl implements MasterRepository {
 
     @Override
     public void updateMaster(Master master) {
-        this.masters.set(this.masters.indexOf(master), master);
+        if (this.masters.isEmpty()){
+            this.masters.add(master);
+        } else {
+            this.masters.set(this.masters.indexOf(master), master);
+        }
     }
 
     @Override
@@ -51,10 +55,5 @@ public class MasterRepositoryImpl implements MasterRepository {
         List<Master> freeMasters = new ArrayList<>(this.masters);
         orders.forEach(order -> order.getMasters().forEach(freeMasters::remove));
         return freeMasters;
-    }
-
-    @Override
-    public IdGenerator getIdGeneratorMaster() {
-        return idGeneratorMaster;
     }
 }

@@ -1,4 +1,4 @@
-package com.senla.carservice.ui.string;
+package com.senla.carservice.string;
 
 import com.senla.carservice.domain.Order;
 

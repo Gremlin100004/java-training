@@ -3,38 +3,35 @@ package com.senla.carservice.service;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.exception.*;
-import com.senla.carservice.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 public interface OrderService {
-    List<Order> getOrders() throws NumberObjectZeroException;
+    List<Order> getOrders();
 
-    void addOrder(String automaker, String model, String registrationNumber) throws NumberObjectZeroException;
+    void addOrder(String automaker, String model, String registrationNumber);
 
-    void addOrderDeadlines(Date executionStartTime, Date leadTime) throws NullDateException, DateException, NumberObjectZeroException;
+    void addOrderDeadlines(Date executionStartTime, Date leadTime);
 
-    void addOrderMasters(Master masters) throws NumberObjectZeroException, EqualObjectsException;
+    void addOrderMasters(Master masters);
 
-    void addOrderPlace(Place place) throws NumberObjectZeroException;
+    void addOrderPlace(Place place);
 
-    void addOrderPrice(BigDecimal price) throws NumberObjectZeroException;
+    void addOrderPrice(BigDecimal price);
 
-    void completeOrder(Order order) throws OrderStatusException;
+    void completeOrder(Order order);
 
-    void cancelOrder(Order order) throws OrderStatusException;
+    void cancelOrder(Order order);
 
-    void closeOrder(Order order) throws OrderStatusException;
+    void closeOrder(Order order);
 
-    void deleteOrder(Order order) throws OrderStatusException;
+    void deleteOrder(Order order);
 
-    void shiftLeadTime(Order order, Date executionStartTime,
-                          Date leadTime) throws NullDateException, OrderStatusException, DateException;
+    void shiftLeadTime(Order order, Date executionStartTime, Date leadTime);
 
-    List<Order> sortOrderCreationTime(List<Order> order);
+    List<Order> sortOrderByCreationTime(List<Order> order);
 
     List<Order> sortOrderByLeadTime(List<Order> order);
 
@@ -42,21 +39,21 @@ public interface OrderService {
 
     List<Order> sortOrderByPrice(List<Order> order);
 
-    List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod) throws NullDateException, NumberObjectZeroException, DateException;
+    List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod);
 
-    List<Order> getCurrentRunningOrders() throws NumberObjectZeroException;
+    List<Order> getCurrentRunningOrders();
 
-    List<Order> getMasterOrders(Master master) throws NumberObjectZeroException;
+    List<Order> getMasterOrders(Master master);
 
-    List<Master> getOrderMasters(Order order) throws NumberObjectZeroException;
+    List<Master> getOrderMasters(Order order);
 
-    List<Order> getCompletedOrders() throws NumberObjectZeroException;
+    List<Order> getCompletedOrders(Date startPeriod, Date endPeriod);
 
-    List<Order> getCanceledOrders() throws NumberObjectZeroException;
+    List<Order> getCanceledOrders(Date startPeriod, Date endPeriod);
 
-    List<Order> getDeletedOrders() throws NumberObjectZeroException;
+    List<Order> getDeletedOrders(Date startPeriod, Date endPeriod);
 
-//    String exportOrder();
+    String exportOrder();
 
-//    String importOrder();
+    String importOrder();
 }

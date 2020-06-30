@@ -12,7 +12,6 @@ import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.MasterServiceImpl;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.OrderServiceImpl;
-import com.senla.carservice.ui.string.StringMaster;
 import com.senla.carservice.util.DateUtil;
 
 import java.util.Date;
@@ -26,10 +25,10 @@ public class CarOfficeController {
     private final PlaceService placeService;
 
     private CarOfficeController() {
-        this.carOfficeService = CarOfficeServiceImpl.getInstance();
-        this.orderService = OrderServiceImpl.getInstance();
-        this.masterService = MasterServiceImpl.getInstance();
-        this.placeService = PlaceServiceImpl.getInstance();
+        carOfficeService = CarOfficeServiceImpl.getInstance();
+        orderService = OrderServiceImpl.getInstance();
+        masterService = MasterServiceImpl.getInstance();
+        placeService = PlaceServiceImpl.getInstance();
     }
 
     public static CarOfficeController getInstance() {
@@ -39,19 +38,8 @@ public class CarOfficeController {
         return instance;
     }
 
-    public String f(String stringExecuteDate, String stringLeadDate) {
-        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate);
-        Date leadDate = DateUtil.getDatesFromString(stringLeadDate);
-        try {
-            return StringMaster.getStringFromMasters(masterService.getFreeMastersByDate
-                    (executeDate, leadDate, orderService.getOrderByPeriod(executeDate, leadDate)));
-        } catch (DateException | NumberObjectZeroException | NullDateException e) {
-            return e.getMessage();
-        }
-    }
-
     public String getFreePlacesByDate(String date) {
-        Date dateFree = DateUtil.getDatesFromString(date);
+        Date dateFree = DateUtil.getDatesFromString(date, false);
         if (dateFree == null){
             return "error date";
         }

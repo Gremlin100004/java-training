@@ -1,17 +1,13 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.csv.CsvMaster;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.exception.DateException;
-import com.senla.carservice.exception.NullDateException;
 import com.senla.carservice.exception.NumberObjectZeroException;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
-import com.senla.carservice.util.FileUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -20,10 +16,9 @@ import java.util.stream.Collectors;
 public class MasterServiceImpl implements MasterService {
     private static MasterService instance;
     private final MasterRepository masterRepository;
-    private final String MASTER_PATH = "csv//masters.csv";
 
     private MasterServiceImpl() {
-        this.masterRepository = MasterRepositoryImpl.getInstance();
+        masterRepository = MasterRepositoryImpl.getInstance();
     }
 
     public static MasterService getInstance() {
@@ -34,9 +29,9 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public List<Master> getMasters() throws NumberObjectZeroException {
+    public List<Master> getMasters() {
         checkMasters();
-        return this.masterRepository.getMasters();
+        return masterRepository.getMasters();
     }
 
     @Override
@@ -45,97 +40,55 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public List<Master> getFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders)
-            throws DateException, NullDateException, NumberObjectZeroException {
+    public List<Master> getFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders) {
         if (getFreeMaster(sortOrders, executeDate, leadDate).isEmpty())
-            throw new NumberObjectZeroException("There are no free masters", 0);
+            throw new NumberObjectZeroException("There are no free masters");
         return masterRepository.getFreeMasters(sortOrders);
     }
 
     @Override
-    public int getNumberFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders) throws NumberObjectZeroException, DateException, NullDateException {
+    public int getNumberFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders) {
         return getFreeMaster(sortOrders, executeDate, leadDate).size();
     }
 
     @Override
-    public void deleteMaster(Master master) throws NumberObjectZeroException {
+    public void deleteMaster(Master master) {
         checkMasters();
         masterRepository.deleteMaster(master);
     }
 
     @Override
-    public List<Master> getMasterByAlphabet() throws NumberObjectZeroException {
+    public List<Master> getMasterByAlphabet() {
         checkMasters();
         return masterRepository.getMasters().stream().sorted(Comparator.comparing(Master::getName,
                 Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 
     @Override
-    public List<Master> getMasterByBusy() throws NumberObjectZeroException {
+    public List<Master> getMasterByBusy() {
         checkMasters();
         return masterRepository.getMasters().stream().sorted(Comparator.comparing(Master::getNumberOrder,
                 Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 
-    private void checkMasters() throws NumberObjectZeroException {
-        if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters", 0);
+    @Override
+    public String exportMasters() {
+        checkMasters();
+        return CsvMaster.exportMasters(masterRepository.getMasters());
     }
 
-    private List<Master> getFreeMaster(List<Order> orders, Date executeDate, Date leadDate) throws NumberObjectZeroException, DateException, NullDateException {
+    @Override
+    public String importMasters() {
+        return CsvMaster.importMasters(masterRepository.getMasters());
+    }
+
+    private void checkMasters() {
+        if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters");
+    }
+
+    private List<Master> getFreeMaster(List<Order> orders, Date executeDate, Date leadDate) {
         checkMasters();
         DateUtil.checkDateTime(executeDate, leadDate);
         return masterRepository.getFreeMasters(orders);
-    }
-
-//    @Override
-//    public String exportMasters() {
-//        List<Master> masters = masterRepository.getMasters();
-//        StringBuilder valueCsv = new StringBuilder();
-//        for (int i = 0; i < masters.size(); i++) {
-//            if (i == masters.size() - 1) {
-//                valueCsv.append(convertToCsv(masters.get(i), false));
-//            } else {
-//                valueCsv.append(convertToCsv(masters.get(i), true));
-//            }
-//        }
-//        return FileUtil.SaveCsv(valueCsv, MASTER_PATH);
-//    }
-
-//    @Override
-//    public String importMasters() {
-//        List<String> csvLinesMaster = FileUtil.GetCsv(MASTER_PATH);
-//        if (csvLinesMaster.isEmpty()) {
-//            return "export problem";
-//        }
-//        List<Master> masters = masterRepository.getMasters();
-//        csvLinesMaster.forEach(line -> {
-//                    Master master = getMasterFromCsv(line);
-//                    masters.remove(master);
-//                    masters.add(master);
-//                }
-//        );
-//        return "import successfully";
-//    }
-
-
-    private Master getMasterFromCsv(String line) {
-        List<String> values = Arrays.asList(line.split(","));
-        Master master = new Master();
-        master.setId(Long.valueOf(values.get(0)));
-        master.setName(values.get(1));
-        if (values.get(2).equals("null")) {
-            master.setNumberOrder(null);
-        } else {
-            master.setNumberOrder(Integer.valueOf(values.get(2)));
-        }
-        return master;
-    }
-
-    private String convertToCsv(Master master, boolean isLineFeed) {
-        if (isLineFeed) {
-            return String.format("%s,%s,%s\n", master.getId(), master.getName(), master.getNumberOrder());
-        } else {
-            return String.format("%s,%s,%s", master.getId(), master.getName(), master.getNumberOrder());
-        }
     }
 }

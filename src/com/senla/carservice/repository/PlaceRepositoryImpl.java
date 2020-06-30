@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class PlaceRepositoryImpl implements PlaceRepository {
     private static PlaceRepository instance;
-    private List<Place> places;
+    private final List<Place> places;
     private final IdGenerator idGeneratorPlace;
 
     public PlaceRepositoryImpl() {
@@ -45,7 +45,11 @@ public class PlaceRepositoryImpl implements PlaceRepository {
 
     @Override
     public void updatePlace(Place place) {
-        this.places.set(this.places.indexOf(place), place);
+        if (this.places.isEmpty()){
+            this.places.add(place);
+        } else {
+            this.places.set(this.places.indexOf(place), place);
+        }
     }
 
     @Override

@@ -1,32 +1,17 @@
 package com.senla.carservice.ui.util;
 
-// удобнее и быстрее использовать регулярные выражения для таких проверок
+import java.util.regex.Pattern;
+
 public class Checker {
-    public static boolean isSymbolsString(String text) {
-        char[] symbols = new char[]{
-                '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+',
-                '=', '[', ']', '{', '}', '\n', '\\', ':', '\"', ';', ',', '.',
-                '/', '|', '<', '>', '`'
-        };
-        for (char symbol : symbols) {
-            if (text.contains(String.valueOf(symbol))) {
-                return true;
-            }
-        }
-        return false;
+
+    private Checker() {
     }
 
-    public static boolean isSymbolsStringNumber(String text) {
-        char[] symbols = new char[]{
-                '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
-                '_', '+', '=', '[', ']', '{', '}', '\n', '\\',
-                '\"', ';', ',', '/', '|', '<', '>', '`'
-        };
-        for (char symbol : symbols) {
-            if (text.contains(String.valueOf(symbol))) {
-                return false;
-            }
+    public static boolean isSymbolsString(String text) {
+        return !Pattern.compile("[a-zA-Z_]").matcher(text).find();
         }
-        return true;
+
+    public static boolean isSymbolsStringNumber(String text) {
+        return !Pattern.compile("[0-9\\.\\:]").matcher(text).find();
     }
 }

@@ -8,8 +8,7 @@ import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.MasterServiceImpl;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.OrderServiceImpl;
-import com.senla.carservice.ui.string.StringMaster;
-import com.senla.carservice.ui.string.StringPlaces;
+import com.senla.carservice.string.StringMaster;
 import com.senla.carservice.util.DateUtil;
 
 import java.util.Date;
@@ -48,8 +47,7 @@ public class MasterController {
     public String deleteMaster(int index) {
         try {
             masterService.deleteMaster(masterService.getMasters().get(index));
-            return String.format(" -master with name \"%s\" has been deleted",
-                    masterService.getMasters().get(index).getName());
+            return " -master has been deleted successfully!";
         } catch (NumberObjectZeroException e) {
             return e.getMessage();
         } catch (IndexOutOfBoundsException e){
@@ -74,8 +72,8 @@ public class MasterController {
     }
 
     public String getFreeMasters(String stringExecuteDate, String stringLeadDate){
-        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate);
-        Date leadDate = DateUtil.getDatesFromString(stringLeadDate);
+        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
+        Date leadDate = DateUtil.getDatesFromString(stringLeadDate, true);
         try {
             List<Order> orders = orderService.getOrderByPeriod(executeDate, leadDate);
             return StringMaster.getStringFromMasters(masterService.getFreeMastersByDate(executeDate, leadDate, orders));
@@ -83,19 +81,20 @@ public class MasterController {
             return e.getMessage();
         }
     }
-//    public String exportMasters() {
-//        if (masterService.exportMasters().equals("save successfully")) {
-//            return "Masters have been export successfully!";
-//        } else {
-//            return "export problem.";
-//        }
-//    }
+    public String exportMasters() {
+        try {
+            masterService.exportMasters();
+            return "Masters have been export successfully!";
+        } catch (NumberObjectZeroException e){
+            return e.getMessage();
+        }
+    }
 
-//    public String importMasters() {
-//        if (masterService.importMasters().equals("import successfully")) {
-//            return "Masters have been import successfully!";
-//        } else {
-//            return "import problem.";
-//        }
-//    }
+    public String importMasters() {
+        try {
+            return masterService.importMasters();
+        } catch (NumberObjectZeroException e){
+            return e.getMessage();
+        }
+    }
 }

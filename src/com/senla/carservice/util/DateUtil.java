@@ -14,6 +14,9 @@ public class DateUtil {
     private static final int START_DAY_HOUR = 0;
     private static final int START_DAY_MINUTE = 0;
 
+    private DateUtil() {
+    }
+
     public static Date addDays(Date date, int days) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -25,13 +28,22 @@ public class DateUtil {
     public static Date addHourMinutes(Date date, int hour, int minute) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         calendar.add(Calendar.HOUR_OF_DAY, hour);
         calendar.add(Calendar.MINUTE, minute);
         return calendar.getTime();
     }
 
-    public static Date getDatesFromString(String stringDate) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+    public static Date getDatesFromString(String stringDate, Boolean isTime) {
+        String format;
+        if (isTime){
+            format = "dd.MM.yyyy hh:mm";
+        } else
+            format = "dd.MM.yyyy";
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         try {
             return dateFormat.parse(stringDate);
         } catch (ParseException e) {
@@ -44,31 +56,32 @@ public class DateUtil {
         return dateFormat.format(date.getTime());
     }
 
-    public static Date bringStartOfDayDate(Date date){
-        if (addHourMinutes(date, START_DAY_HOUR, START_DAY_MINUTE).compareTo(new Date()) < 1){
+    public static Date bringStartOfDayDate(Date date) {
+        if (addHourMinutes(date, START_DAY_HOUR, START_DAY_MINUTE).compareTo(new Date()) < 1) {
             return addHourMinutes(new Date(), START_DAY_HOUR, START_DAY_MINUTE);
         } else {
             return addHourMinutes(date, START_DAY_HOUR, START_DAY_MINUTE);
         }
     }
 
-    public static Date bringEndOfDayDate(Date date){
+    public static Date bringEndOfDayDate(Date date) {
         return addHourMinutes(date, END_DAY_HOUR, END_DAY_MINUTE);
     }
 
-    public static void checkDateTime(Date executionStartTime, Date leadTime) throws NullDateException, DateException {
-        if(executionStartTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"", executionStartTime);
-        if(leadTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"", leadTime);
+    public static void checkDateTime(Date executionStartTime, Date leadTime){
+        if (executionStartTime == null)
+            throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"");
+        if (leadTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"");
         if (executionStartTime.compareTo(leadTime) > 0) throw new
-                DateException("The execution start time is greater than lead time", executionStartTime, leadTime);
+                DateException("The execution start time is greater than lead time");
         if (executionStartTime.compareTo(new Date()) < 1) throw new
-                DateException("The execution start time is less than current Date", executionStartTime, new Date());
+                DateException("The execution start time is less than current Date");
     }
 
-    public static void checkPeriodTime(Date startPeriodTime, Date endPeriodTime) throws NullDateException, DateException {
-        if(startPeriodTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"", startPeriodTime);
-        if(endPeriodTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"", endPeriodTime);
+    public static void checkPeriodTime(Date startPeriodTime, Date endPeriodTime){
+        if (startPeriodTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"");
+        if (endPeriodTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"");
         if (startPeriodTime.compareTo(endPeriodTime) > 0) throw new
-                DateException("The period time is wrong", startPeriodTime, endPeriodTime);
+                DateException("The period time is wrong");
     }
 }
