@@ -2,6 +2,7 @@ package com.senla.carservice.repository;
 
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
+import com.senla.carservice.exception.BusinessException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +38,12 @@ public class PlaceRepositoryImpl implements PlaceRepository {
     }
 
     @Override
-    public void addPlace(Place place) {
-        place.setId(this.idGeneratorPlace.getId());
-        this.places.add(place);
+    public void addPlace(Place addPlace) {
+        this.places.stream().filter(place -> place.getNumber().equals(addPlace.getNumber())).forEachOrdered(place -> {
+            throw new BusinessException("Such a number exists");
+        });
+        addPlace.setId(this.idGeneratorPlace.getId());
+        this.places.add(addPlace);
     }
 
     @Override

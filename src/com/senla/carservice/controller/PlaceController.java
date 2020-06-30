@@ -1,10 +1,7 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.exception.DateException;
-import com.senla.carservice.exception.ExportException;
-import com.senla.carservice.exception.NullDateException;
-import com.senla.carservice.exception.NumberObjectZeroException;
+import com.senla.carservice.exception.*;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.OrderServiceImpl;
 import com.senla.carservice.service.PlaceService;
@@ -33,8 +30,12 @@ public class PlaceController {
     }
 
     public String addPlace(int number) {
-        placeService.addPlace(number);
-        return String.format("-place \"%s\" has been added to service", number);
+        try {
+            placeService.addPlace(number);
+            return String.format("-place \"%s\" has been added to service", number);
+        } catch (BusinessException e) {
+            return e.getMessage();
+        }
     }
 
     public String getArrayPlace() {
