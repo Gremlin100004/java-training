@@ -1,3 +1,5 @@
+// лучше избегать имен пакетов, которые перекликаются с джавовскими пакетами или классами
+// чтобы не было путаницы
 package com.senla.carservice.string;
 
 import com.senla.carservice.domain.Master;

@@ -51,6 +51,7 @@ public class OrderController {
         }
     }
 
+    // используй форматирование кода, есть горячие клавиши
     public String addOrderMasters(int index) {
         try {
             orderService.addOrderMasters(masterService.getMasters().get(index));
@@ -69,6 +70,12 @@ public class OrderController {
             List<Order> orders = orderService.getOrderByPeriod(executeDate, leadDate);
             orderService.addOrderPlace(placeService.getFreePlaceByDate(executeDate, leadDate, orders).get(index));
             return "place add to order successfully";
+        // за счет большого количество однотипных исключений кэтч слишком массивный
+        // если исключения обрабатываются одинаково, нет большого смысла разделять их на большое количество
+        // классов-исключений
+        // обычно достаточно двух классов: бизнес-исключения (нормальная работа приложения) и
+        // и аппликейшн-исключения - ненормальная работа приложения, возможно, требуется вмешательство
+        // программиста или админа
         } catch (NumberObjectZeroException | NullDateException | DateException e) {
             return e.getMessage();
         } catch (IndexOutOfBoundsException e){

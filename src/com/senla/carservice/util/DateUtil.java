@@ -37,9 +37,12 @@ public class DateUtil {
         return calendar.getTime();
     }
 
+    // isTime может быть примитивом
     public static Date getDatesFromString(String stringDate, Boolean isTime) {
         String format;
+        // использовать форматирование кода
         if (isTime){
+            // в константу
             format = "dd.MM.yyyy hh:mm";
         } else
             format = "dd.MM.yyyy";
@@ -52,6 +55,7 @@ public class DateUtil {
     }
 
     public static String getStringFromDate(Date date) {
+        // в константу
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         return dateFormat.format(date.getTime());
     }
@@ -78,7 +82,12 @@ public class DateUtil {
                 DateException("The execution start time is less than current Date");
     }
 
+    // использовать форматирование кода
     public static void checkPeriodTime(Date startPeriodTime, Date endPeriodTime){
+        // ВСЕГДА ставить скобки в ифах и циклах, не писать инлайн
+        // два ифа можно объединить в один, тела у них одинаковые
+        // не перебарщивать с количеством исключений на одну простую операцию - достаточно DateException
+        // с разными сообщениями для всех кейсов
         if (startPeriodTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"");
         if (endPeriodTime == null) throw new NullDateException("Error date format, should be \"dd.MM.yyyy hh:mm\"");
         if (startPeriodTime.compareTo(endPeriodTime) > 0) throw new

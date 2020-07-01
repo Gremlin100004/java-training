@@ -73,6 +73,7 @@ public class Builder {
 
     private void setMenuItemRootMenuPart() {
         this.rootMenu.getMenuItems().add(new MenuItem("Get the closest free date",
+                // ссылки на контроллеры надо вынести в поля класса, код экшенов станет меньше и легче
                 () -> Printer.printInfo(CarOfficeController.getInstance().getNearestFreeDate()), this.rootMenu));
         this.rootMenu.getMenuItems().add(new MenuItem("Fill in test data", () -> {
             String delimiter = "***********************************************************************";
@@ -596,6 +597,7 @@ public class Builder {
         return new ArrayList<>(Arrays.asList(quit, index));
     }
 
+    // такие вещи выносятся в утилиту чтения из консоли
     private boolean isAnotherMaster() {
         String answer = "";
         while (!answer.equals("y") && !answer.equals("n")) {

@@ -28,15 +28,18 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         return instance;
     }
 
+    // метод должен возвращать дату, а переводить в сообщение должен контроллер
     @Override
     public String getNearestFreeDate() {
         Date dateFree = new Date();
+        // так ифы не пишут, скобки, отступы, перевод строки
         if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters");
         if (orderRepository.getOrders().isEmpty()) throw new NumberObjectZeroException("There are no orders");
         if (placeRepository.getPlaces().isEmpty()) throw new NumberObjectZeroException("There are no places");
         int numberFreeMasters = 0;
         int numberFreePlace = 0;
 
+        // здесь точно нужен вайл? вайл, внутри которого форыч - это очень тяжелый метод
         while (numberFreeMasters == 0 && numberFreePlace == 0) {
             Date endDay = DateUtil.bringEndOfDayDate(dateFree);
             List<Order> sortArrayOrder = new ArrayList<>();

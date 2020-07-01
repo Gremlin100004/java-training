@@ -42,6 +42,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public List<Order> getCompletedOrders() {
+        // попробуй стримы
         List<Order> completedOrders = new ArrayList<>();
         this.orders.forEach(order -> {
             if (order.getStatus().equals(Status.COMPLETED)){
@@ -86,9 +87,15 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public List<Order> getMasterOrders(Master master) {
-        return this.orders.stream().filter(order -> !order.isDeleteStatus() &&
-                order.getMasters().stream().anyMatch(masterService ->
-                        masterService.equals(master))).collect(Collectors.toList());
+        // разделяй стримы по точкам (изменю твой код):
+        return this.orders.stream()
+                .filter(order -> !order.isDeleteStatus() &&
+                        order.getMasters().stream()
+                                .anyMatch(masterService -> masterService.equals(master)))
+                .collect(Collectors.toList());
+        // а вообще надо подумать над связями между сущностями, у тебя очень часто стрим в стриме
+        // или фор внутри фора - это говорит о неоптимальности связей, количество переборов коллекций
+        // возрастает в разы
     }
 
     @Override

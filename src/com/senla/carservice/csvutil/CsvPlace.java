@@ -7,12 +7,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CsvPlace {
+    // зачем в пути двойной слэш?
     private static final String PLACE_PATH = "csv//places.csv";
     private static final String COMMA = ",";
 
     private CsvPlace() {
     }
 
+    // возвращаемое значение не используется
     public static String exportPlaces(List<Place> places) {
         String valueCsv;
         for (int i = 0; i < places.size(); i++) {

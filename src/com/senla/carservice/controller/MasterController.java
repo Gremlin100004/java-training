@@ -51,6 +51,7 @@ public class MasterController {
             return " -master has been deleted successfully!";
         } catch (NumberObjectZeroException e) {
             return e.getMessage();
+        // такое не ловим, а проверяем в коде
         } catch (IndexOutOfBoundsException e){
             return "There are no such master";
         }

@@ -18,6 +18,7 @@ public class ScannerUtil {
             if (!Checker.isSymbolsString(textUser)) {
                 isText = true;
             } else {
+                // у тебя есть утилита Принтер
                 System.out.println("You enter wrong value!!!");
             }
         }

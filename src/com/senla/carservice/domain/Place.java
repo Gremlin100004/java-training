@@ -28,6 +28,8 @@ public class Place extends AEntity {
         this.busyStatus = busyStatus;
     }
 
+    // или убрать (останется реализация суперкласса, или переопределить хэшкод
+    // при переопределении иквалз всегда должен быть переопределен хэшкод (в этом же классе)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

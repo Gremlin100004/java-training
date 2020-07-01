@@ -260,6 +260,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void checkStatusOrder(Order order) {
+        // ужасное форматирование, читать невозможно
         if (order.isDeleteStatus()) throw new
                 OrderStatusException("The order has been deleted");
         if (order.getStatus().equals(Status.COMPLETED)) throw new

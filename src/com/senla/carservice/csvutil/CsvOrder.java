@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CsvOrder {
+    // зачем в пути двойной слэш?
     private static final String ORDER_PATH = "csv//order.csv";
     private static final String COMMA = ",";
     private static final String QUOTATION_MARK = "\"";
@@ -23,6 +24,7 @@ public class CsvOrder {
     private CsvOrder() {
     }
 
+    // возвращаемое значение никто не использует
     public static String exportOrder(List<Order> orders) {
         String valueOrderCsv;
         for (int i = 0; i < orders.size(); i++) {
@@ -49,6 +51,8 @@ public class CsvOrder {
     private static Order getOrderFromCsv(String line) {
         List<String> values = Arrays.asList((line.split(QUOTATION_MARK))[0].split(COMMA));
         List<String> arrayIdMaster = Arrays.asList(line.split
+                // а здесь точно нужен реплейс? и обычно круглую скобку оставляют наверху при переносе
+                // либо переносят по точкам (точка оказывается первой на следующей строке)
                 (QUOTATION_MARK)[1].replaceAll(QUOTATION_MARK, "").split(COMMA));
         Order order = new Order(Long.valueOf(values.get(0)), values.get(5), values.get(6), values.get(7));
         order.setCreationTime(DateUtil.getDatesFromString(values.get(1), true));
@@ -58,6 +62,7 @@ public class CsvOrder {
         order.setPrice(new BigDecimal(values.get(8)));
         order.setStatus(Status.valueOf(values.get(9)));
         order.setDeleteStatus(Boolean.parseBoolean(values.get(10)));
+        // вызывать репозиторий можно только из сервиса
         order.setMasters(getMastersById(MasterRepositoryImpl.getInstance().getMasters(), arrayIdMaster));
         return order;
     }
@@ -85,6 +90,7 @@ public class CsvOrder {
 
     private static String convertOrderToCsv(Order order, boolean isLineFeed) {
         StringBuilder stringValue = new StringBuilder();
+        // лучше использовать разделитель константу, чтобы совпали форматы чтения и записи
         stringValue.append(String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,\"", order.getId(),
                 DateUtil.getStringFromDate(order.getCreationTime()),
                 DateUtil.getStringFromDate(order.getExecutionStartTime()),
@@ -93,6 +99,7 @@ public class CsvOrder {
                 order.getModel(), order.getRegistrationNumber(),
                 order.getPrice(), order.getStatus(),
                 order.isDeleteStatus()));
+        // если можно, использовать форыч
         for (int i = 0; i < order.getMasters().size(); i++) {
             if (i == order.getMasters().size() - 1) {
                 stringValue.append(order.getMasters().get(i).getId());

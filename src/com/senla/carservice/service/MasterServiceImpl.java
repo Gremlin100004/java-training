@@ -41,6 +41,7 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders) {
+        // фигурные скобки ставим ВСЕГДА!!!!
         if (getFreeMaster(sortOrders, executeDate, leadDate).isEmpty())
             throw new NumberObjectZeroException("There are no free masters");
         return masterRepository.getFreeMasters(sortOrders);
@@ -60,6 +61,7 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public List<Master> getMasterByAlphabet() {
         checkMasters();
+        // делай из стрима столбик по точке
         return masterRepository.getMasters().stream().sorted(Comparator.comparing(Master::getName,
                 Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
@@ -83,6 +85,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     private void checkMasters() {
+        // скобки, строки
         if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters");
     }
 
