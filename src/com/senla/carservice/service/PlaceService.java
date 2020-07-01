@@ -19,7 +19,7 @@ public interface PlaceService {
 
     void exportPlaces();
 
-    String importPlaces();
+    void importPlaces();
 
     void serializePlace();
 

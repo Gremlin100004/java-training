@@ -3,16 +3,12 @@ package com.senla.carservice.service;
 import com.senla.carservice.csvutil.CsvPlace;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.exception.NumberObjectZeroException;
-import com.senla.carservice.exception.SerializeException;
-import com.senla.carservice.repository.MasterRepository;
-import com.senla.carservice.repository.MasterRepositoryImpl;
+import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.Serializer;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +40,6 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public void deletePlace(Place place) {
-
         placeRepository.deletePlace(place);
     }
 
@@ -59,13 +54,17 @@ public class PlaceServiceImpl implements PlaceService {
     public List<Place> getFreePlaceByDate(Date executeDate, Date leadDate, List<Order> orders) {
         DateUtil.checkDateTime(executeDate, leadDate);
         checkPlaces();
-        if (placeRepository.getFreePlaces(orders).isEmpty())
-            throw new NumberObjectZeroException("There are no free places");
+        if (placeRepository.getFreePlaces(orders).isEmpty()) {
+            throw new BusinessException("There are no free places");
+        }
+
         return placeRepository.getFreePlaces(orders);
     }
 
     private void checkPlaces() {
-        if (placeRepository.getPlaces().isEmpty()) throw new NumberObjectZeroException("There are no places");
+        if (placeRepository.getPlaces().isEmpty()) {
+            throw new BusinessException("There are no places");
+        }
     }
 
     @Override
@@ -75,8 +74,8 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public String importPlaces() {
-        return CsvPlace.importPlaces();
+    public void importPlaces() {
+         CsvPlace.importPlaces().forEach(placeRepository::updatePlace);
     }
 
     @Override

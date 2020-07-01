@@ -2,40 +2,38 @@ package com.senla.carservice.csvutil;
 
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.repository.PlaceRepositoryImpl;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CsvPlace {
-    private static final String PLACE_PATH = "csv/places.csv";
+    private static final String PLACE_PATH = "resources/csv/places.csv";
     private static final String COMMA = ",";
 
-    private CsvPlace() {
+    private CsvPlace () {
     }
 
-    public static String exportPlaces(List<Place> places) {
-        String valueCsv;
+    public static void exportPlaces (List<Place> places) {
+        List<String> valueCsv = new ArrayList<>();
         for (int i = 0; i < places.size(); i++) {
             if (i == places.size() - 1) {
-                valueCsv = convertToCsv(places.get(i), false);
+                valueCsv.add(convertToCsv(places.get(i), false));
             } else {
-                valueCsv = convertToCsv(places.get(i), true);
+                valueCsv.add(convertToCsv(places.get(i), true));
             }
-            FileUtil.saveCsv(valueCsv, PLACE_PATH, i != 0);
         }
-        return "save successfully";
+        FileUtil.saveCsv(valueCsv, PLACE_PATH);
     }
 
-    public static String importPlaces() {
+    public static List<Place> importPlaces () {
         List<String> csvLinesPlace = FileUtil.getCsv(PLACE_PATH);
-        csvLinesPlace.forEach(line -> {
-            Place place = getPlaceFromCsv(line);
-            PlaceRepositoryImpl.getInstance().updatePlace(place);
-        });
-        return "Places have been import successfully!";
+        return csvLinesPlace.stream().map(CsvPlace::getPlaceFromCsv).collect(Collectors.toList());
     }
 
-    private static Place getPlaceFromCsv(String line) {
+    private static Place getPlaceFromCsv (@NotNull String line) {
         List<String> values = Arrays.asList(line.split(COMMA));
         Place place = new Place();
         place.setId(Long.valueOf(values.get(0)));
@@ -44,11 +42,8 @@ public class CsvPlace {
         return place;
     }
 
-    private static String convertToCsv(Place place, boolean isLineFeed) {
-        if (isLineFeed) {
-            return String.format("%s,%s,%s\n", place.getId(), place.getNumber(), place.isBusyStatus());
-        } else {
-            return String.format("%s,%s,%s", place.getId(), place.getNumber(), place.isBusyStatus());
-        }
+    private static String convertToCsv (@NotNull Place place, boolean isLineFeed) {
+        return isLineFeed ? place.getId() + COMMA + place.getNumber() + COMMA + place.isBusyStatus() + "\n"
+                : place.getId() + COMMA + place.getNumber() + COMMA + place.isBusyStatus();
     }
 }

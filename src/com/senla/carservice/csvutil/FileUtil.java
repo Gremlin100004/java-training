@@ -1,7 +1,6 @@
 package com.senla.carservice.csvutil;
 
-import com.senla.carservice.exception.ExportException;
-import com.senla.carservice.exception.NumberObjectZeroException;
+import com.senla.carservice.exception.BusinessException;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,11 +14,11 @@ public class FileUtil {
     private FileUtil() {
     }
 
-    public static void saveCsv(String value, String path, boolean flag) {
-        try (PrintStream printStream = new PrintStream(new FileOutputStream(path, flag))) {
-            printStream.print(value);
+    public static void saveCsv(List<String> arrayValue, String path) {
+        try (PrintStream printStream = new PrintStream(new FileOutputStream(path))) {
+            arrayValue.forEach(printStream::println);
         } catch (IOException e) {
-            throw new ExportException("export problem");
+            throw new BusinessException("export problem");
         }
     }
 
@@ -27,7 +26,7 @@ public class FileUtil {
         try {
             return Files.readAllLines(Paths.get(path));
         } catch (IOException ioException) {
-            throw new NumberObjectZeroException("import problem");
+            throw new BusinessException("import problem");
         }
     }
 }

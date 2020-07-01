@@ -1,6 +1,6 @@
 package com.senla.carservice.util;
 
-import com.senla.carservice.exception.SerializeException;
+import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.repository.OrderRepository;
@@ -15,9 +15,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Serializer {
-    private static final String MASTER_SER = "src/resources/master.bin";
-    private static final String PLACE_SER = "src/resources/place.bin";
-    private static final String ORDER_SER = "src/resources/order.bin";
+    private static final String MASTER_SER = "resources/bin/master.bin";
+    private static final String PLACE_SER = "resources/bin/place.bin";
+    private static final String ORDER_SER = "resources/bin/order.bin";
     
     private Serializer() {
     }
@@ -27,7 +27,7 @@ public class Serializer {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(MASTER_SER))) {
             objectOutputStream.writeObject(masterRepository);
         } catch (IOException e) {
-            throw new SerializeException("Serialize masters problem");
+            throw new BusinessException("Serialize masters problem");
         }
     }
 
@@ -35,7 +35,7 @@ public class Serializer {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(MASTER_SER))) {
             return  (MasterRepositoryImpl) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new SerializeException("Deserialize masters problem");
+            throw new BusinessException("Deserialize masters problem");
         }
     }
 
@@ -43,7 +43,7 @@ public class Serializer {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(PLACE_SER))) {
             objectOutputStream.writeObject(placeRepository);
         } catch (IOException e) {
-            throw new SerializeException("Serialize places problem");
+            throw new BusinessException("Serialize places problem");
         }
     }
 
@@ -51,7 +51,7 @@ public class Serializer {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(PLACE_SER))) {
             return (PlaceRepositoryImpl) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new SerializeException("Deserialize places problem");
+            throw new BusinessException("Deserialize places problem");
         }
     }
 
@@ -59,7 +59,7 @@ public class Serializer {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(ORDER_SER))){
             objectOutputStream.writeObject(orderRepository);
         } catch (IOException e) {
-            throw new SerializeException("Serialize orders problem");
+            throw new BusinessException("Serialize orders problem");
         }
     }
 
@@ -68,7 +68,7 @@ public class Serializer {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(ORDER_SER))) {
             return  (OrderRepositoryImpl) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new SerializeException("Deserialize orders problem");
+            throw new BusinessException("Deserialize orders problem");
         }
     }
 }

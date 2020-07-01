@@ -1,14 +1,10 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.exception.NumberObjectZeroException;
+import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.*;
 import com.senla.carservice.util.DateUtil;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,9 +31,15 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     public String getNearestFreeDate() {
         Date dateFree = new Date();
-        if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters");
-        if (orderRepository.getOrders().isEmpty()) throw new NumberObjectZeroException("There are no orders");
-        if (placeRepository.getPlaces().isEmpty()) throw new NumberObjectZeroException("There are no places");
+        if (masterRepository.getMasters().isEmpty()){
+            throw new BusinessException("There are no masters");
+        }
+        if (orderRepository.getOrders().isEmpty()){
+            throw new BusinessException("There are no orders");
+        }
+        if (placeRepository.getPlaces().isEmpty()){
+            throw new BusinessException("There are no places");
+        }
         int numberFreeMasters = 0;
         int numberFreePlace = 0;
 

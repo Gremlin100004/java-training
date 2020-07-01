@@ -3,7 +3,7 @@ package com.senla.carservice.service;
 import com.senla.carservice.csvutil.CsvMaster;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.exception.NumberObjectZeroException;
+import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
@@ -42,8 +42,10 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders) {
-        if (getFreeMaster(sortOrders, executeDate, leadDate).isEmpty())
-            throw new NumberObjectZeroException("There are no free masters");
+        if (getFreeMaster(sortOrders, executeDate, leadDate).isEmpty()) {
+            throw new BusinessException("There are no free masters");
+        }
+
         return masterRepository.getFreeMasters(sortOrders);
     }
 
@@ -79,8 +81,8 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public String importMasters() {
-        return CsvMaster.importMasters();
+    public void importMasters() {
+        CsvMaster.importMasters().forEach(masterRepository::updateMaster);
     }
 
     @Override
@@ -96,7 +98,9 @@ public class MasterServiceImpl implements MasterService {
     }
 
     private void checkMasters() {
-        if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters");
+        if (masterRepository.getMasters().isEmpty()) {
+            throw new BusinessException("There are no masters");
+        }
     }
 
     private List<Master> getFreeMaster(List<Order> orders, Date executeDate, Date leadDate) {

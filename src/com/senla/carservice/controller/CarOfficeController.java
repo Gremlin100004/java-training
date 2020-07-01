@@ -1,9 +1,8 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.domain.Order;
+import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.exception.DateException;
-import com.senla.carservice.exception.NullDateException;
-import com.senla.carservice.exception.NumberObjectZeroException;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.CarOfficeServiceImpl;
 import com.senla.carservice.service.PlaceService;
@@ -51,7 +50,7 @@ public class CarOfficeController {
             int numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate, endDayDate, orders);
             return String.format("- number free places in service: %s\n- number free masters in service: %s",
                     numberFreePlace, numberFreeMasters);
-        } catch (NullDateException | NumberObjectZeroException | DateException e) {
+        } catch (BusinessException | DateException e) {
             return e.getMessage();
         }
     }
@@ -59,7 +58,7 @@ public class CarOfficeController {
     public String getNearestFreeDate() {
         try {
             return carOfficeService.getNearestFreeDate();
-        } catch (NumberObjectZeroException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }

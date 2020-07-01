@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class PropertyUtil {
-    private static final String PATH = "src/resources/config.properties";
+    private static final String PATH = "resources/config.properties";
 
     private PropertyUtil() {
     }
