@@ -2,45 +2,58 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
+import com.senla.carservice.domain.Place;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public interface OrderService {
-    ArrayList<Order> getOrders();
+    List<Order> getOrders();
 
-    void addOrder(Order order);
+    void addOrder(String automaker, String model, String registrationNumber);
 
-    boolean completeOrder(Order order);
+    void addOrderDeadlines(Date executionStartTime, Date leadTime);
 
-    boolean cancelOrder(Order order);
+    void addOrderMasters(Master masters);
 
-    boolean closeOrder(Order order);
+    void addOrderPlace(Place place);
 
-    boolean deleteOrder(Order order);
+    void addOrderPrice(BigDecimal price);
 
-    boolean shiftLeadTime(Order order, Date executionStartTime,
-                          Date leadTime);
+    void completeOrder(Order order);
 
-    ArrayList<Order> sortOrderCreationTime(ArrayList<Order> order);
+    void cancelOrder(Order order);
 
-    ArrayList<Order> sortOrderByLeadTime(ArrayList<Order> order);
+    void closeOrder(Order order);
 
-    ArrayList<Order> sortOrderByStartTime(ArrayList<Order> order);
+    void deleteOrder(Order order);
 
-    ArrayList<Order> sortOrderByPrice(ArrayList<Order> order);
+    void shiftLeadTime(Order order, Date executionStartTime, Date leadTime);
 
-    ArrayList<Order> sortOrderByPeriod(ArrayList<Order> orders, Date startPeriod, Date endPeriod);
+    List<Order> sortOrderByCreationTime(List<Order> order);
 
-    ArrayList<Order> getCurrentRunningOrders();
+    List<Order> sortOrderByLeadTime(List<Order> order);
 
-    ArrayList<Order> getMasterOrders(Master master);
+    List<Order> sortOrderByStartTime(List<Order> order);
 
-    ArrayList<Master> getOrderMasters(Order order);
+    List<Order> sortOrderByPrice(List<Order> order);
 
-    ArrayList<Order> getCompletedOrders(ArrayList<Order> orders);
+    List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod);
 
-    ArrayList<Order> getCanceledOrders(ArrayList<Order> orders);
+    List<Order> getCurrentRunningOrders();
 
-    ArrayList<Order> getDeletedOrders(ArrayList<Order> orders);
+    List<Order> getMasterOrders(Master master);
+
+    List<Master> getOrderMasters(Order order);
+
+    List<Order> getCompletedOrders(Date startPeriod, Date endPeriod);
+
+    List<Order> getCanceledOrders(Date startPeriod, Date endPeriod);
+
+    List<Order> getDeletedOrders(Date startPeriod, Date endPeriod);
+
+    void exportOrder();
+
+    String importOrder();
 }

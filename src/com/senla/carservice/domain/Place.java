@@ -1,17 +1,27 @@
 package com.senla.carservice.domain;
 
-import java.util.Objects;
-
 public class Place extends AEntity {
-    private Long id;
+    private Integer number;
     private Boolean busyStatus;
 
     public Place() {
+    }
+
+    public Place(Integer number) {
+        this.number = number;
         this.busyStatus = false;
+    }
+
+    public Integer getNumber() {
+        return number;
     }
 
     public Boolean isBusyStatus() {
         return busyStatus;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public void setBusyStatus(Boolean busyStatus) {
@@ -19,25 +29,10 @@ public class Place extends AEntity {
     }
 
     @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Place place = (Place) o;
-        return id.equals(place.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+        return super.getId().equals(place.getId());
     }
 }

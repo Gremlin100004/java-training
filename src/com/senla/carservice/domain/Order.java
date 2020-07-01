@@ -3,49 +3,50 @@ package com.senla.carservice.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
+import java.util.List;
 
 public class Order extends AEntity {
-    private Long id;
-    private final Date creationTime;
+    private Date creationTime;
     private Date executionStartTime;
     private Date leadTime;
-    private ArrayList<Master> masters;
-    private Garage garage;
+    private List<Master> masters;
     private Place place;
-    private Car car;
+    private String automaker;
+    private String model;
+    private String registrationNumber;
     private BigDecimal price;
     private Status status;
     private boolean deleteStatus;
 
-    public Order(Date executionStartTime, Date leadTime, ArrayList<Master> masters, Garage garage, Place place,
-                 Car car, BigDecimal price) {
+    public Order(Long id, String automaker, String model, String registrationNumber) {
+        super.setId(id);
         this.creationTime = new Date();
-        this.executionStartTime = executionStartTime;
-        this.leadTime = leadTime;
-        this.masters = masters;
-        this.garage = garage;
-        this.place = place;
-        this.car = car;
-        this.price = price;
+        this.automaker = automaker;
+        this.model = model;
+        this.registrationNumber = registrationNumber;
         this.status = Status.WAIT;
         this.deleteStatus = false;
+        this.masters = new ArrayList<>();
     }
 
-    public ArrayList<Master> getMasters() {
+    public List<Master> getMasters() {
         return masters;
     }
 
-    public Car getCar() {
-        return car;
+    public String getAutomaker() {
+        return automaker;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
     }
 
     public Status getStatus() {
         return status;
-    }
-
-    public Garage getGarage() {
-        return this.garage;
     }
 
     public Place getPlace() {
@@ -72,15 +73,15 @@ public class Order extends AEntity {
         return deleteStatus;
     }
 
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
+    }
+
     public void setLeadTime(Date leadTime) {
         this.leadTime = leadTime;
     }
 
-    public void setGarage(Garage garage) {
-        this.garage = garage;
-    }
-
-    public void setMasters(ArrayList<Master> masters) {
+    public void setMasters(List<Master> masters) {
         this.masters = masters;
     }
 
@@ -88,8 +89,16 @@ public class Order extends AEntity {
         this.place = place;
     }
 
-    public void setCar(Car car) {
-        this.car = car;
+    public void setAutomaker(String automaker) {
+        this.automaker = automaker;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
     }
 
     public void setDeleteStatus(boolean deleteStatus) {
@@ -106,28 +115,5 @@ public class Order extends AEntity {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
-        return id.equals(order.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }
