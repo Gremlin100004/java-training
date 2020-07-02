@@ -1,5 +1,7 @@
 package com.senla.carservice.service;
 
+import java.util.Date;
+
 public interface CarOfficeService {
-    String getNearestFreeDate();
+    Date getNearestFreeDate();
 }

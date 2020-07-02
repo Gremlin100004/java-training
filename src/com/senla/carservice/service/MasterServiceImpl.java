@@ -45,7 +45,6 @@ public class MasterServiceImpl implements MasterService {
         if (getFreeMaster(sortOrders, executeDate, leadDate).isEmpty()) {
             throw new BusinessException("There are no free masters");
         }
-
         return masterRepository.getFreeMasters(sortOrders);
     }
 
@@ -63,15 +62,18 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public List<Master> getMasterByAlphabet() {
         checkMasters();
-        return masterRepository.getMasters().stream().sorted(Comparator.comparing(Master::getName,
-                Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
+        return masterRepository.getMasters().stream()
+            .sorted(Comparator.comparing(Master::getName, Comparator.nullsLast(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Master> getMasterByBusy() {
         checkMasters();
-        return masterRepository.getMasters().stream().sorted(Comparator.comparing(Master::getNumberOrder,
-                Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
+        return masterRepository.getMasters()
+            .stream()
+            .sorted(Comparator.comparing(Master::getNumberOrder, Comparator.nullsFirst(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -86,12 +88,12 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public void serializeMaster(){
-       Serializer.serializeMaster(MasterRepositoryImpl.getInstance());
+    public void serializeMaster() {
+        Serializer.serializeMaster(MasterRepositoryImpl.getInstance());
     }
 
     @Override
-    public void deserializeMaster(){
+    public void deserializeMaster() {
         MasterRepository masterRepositoryRestore = Serializer.deserializeMaster();
         masterRepository.updateListMaster(masterRepositoryRestore.getMasters());
         masterRepository.updateGenerator(masterRepositoryRestore.getIdGeneratorMaster());

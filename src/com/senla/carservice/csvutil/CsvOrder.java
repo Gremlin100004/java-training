@@ -3,17 +3,14 @@ package com.senla.carservice.csvutil;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.domain.Status;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.repository.OrderRepositoryImpl;
-import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -22,25 +19,18 @@ public class CsvOrder {
     private static final String COMMA = ",";
     private static final String QUOTATION_MARK = "\"";
 
-    private CsvOrder () {
+    private CsvOrder() {
     }
 
-    public static void exportOrder (List<Order> orders) {
-        List<String> valueOrderCsv = new ArrayList<>();
-        for (int i = 0; i < orders.size(); i++) {
-            if (i == orders.size() - 1) {
-                valueOrderCsv.add(convertOrderToCsv(orders.get(i), false));
-            } else {
-                valueOrderCsv.add(convertOrderToCsv(orders.get(i), true));
-            }
-        }
+    public static void exportOrder(List<Order> orders) {
+        List<String> valueOrderCsv = orders.stream().map(CsvOrder::convertOrderToCsv).collect(Collectors.toList());
         FileUtil.saveCsv(valueOrderCsv, ORDER_PATH);
     }
 
-    public static List<Order> importOrder (List<Master> masters) {
+    public static List<Order> importOrder(List<Master> masters, List<Place> places) {
         List<String> csvLinesOrder = FileUtil.getCsv(ORDER_PATH);
         List<Order> orders = new ArrayList<>();
-        csvLinesOrder.stream().map(line -> getOrderFromCsv(line, masters)).forEachOrdered(order -> {
+        csvLinesOrder.stream().map(line -> getOrderFromCsv(line, masters, places)).forEachOrdered(order -> {
             if (order.getMasters().isEmpty()) {
                 throw new BusinessException("masters not imported");
             }
@@ -49,44 +39,51 @@ public class CsvOrder {
         return orders;
     }
 
-    private static Order getOrderFromCsv (@NotNull String line, @NotNull List<Master> masters) {
+    private static Order getOrderFromCsv(String line, List<Master> masters, List<Place> places) {
+        if (line == null || masters == null || places == null) {
+            throw new BusinessException("argument is null");
+        }
         List<String> values = Arrays.asList((line.split(QUOTATION_MARK))[0].split(COMMA));
-        List<String> arrayIdMaster = Arrays.asList(line.split(QUOTATION_MARK)[1]
-                .split(COMMA));
-        Order order = new Order(Long.valueOf(values.get(0)), values.get(5), values.get(6), values.get(7));
+        List<String> arrayIdMaster = Arrays.asList(line.split(QUOTATION_MARK)[1].split(COMMA));
+        Order order = new Order(ParametrUtil.getValueLong(values.get(0)),
+                                ParametrUtil.checkValueString(values.get(5)),
+                                ParametrUtil.checkValueString(values.get(6)),
+                                ParametrUtil.checkValueString(values.get(7)));
         order.setCreationTime(DateUtil.getDatesFromString(values.get(1), true));
         order.setExecutionStartTime(DateUtil.getDatesFromString(values.get(2), true));
         order.setLeadTime(DateUtil.getDatesFromString(values.get(3), true));
-        order.setPlace(getPlaceById(PlaceRepositoryImpl.getInstance().getPlaces(), Long.valueOf(values.get(4))));
+        order.setPlace(getPlaceById(places, Long.valueOf(values.get(4))));
         order.setPrice(new BigDecimal(values.get(8)));
-        order.setStatus(Status.valueOf(values.get(9)));
-        order.setDeleteStatus(Boolean.parseBoolean(values.get(10)));
+        order.setStatus(ParametrUtil.getValueStatus(values.get(9)));
+        order.setDeleteStatus(ParametrUtil.getValueBoolean(values.get(10)));
         order.setMasters(getMastersById(masters, arrayIdMaster));
         return order;
     }
 
-    private static List<Master> getMastersById (List<Master> masters, @NotNull List<String> arrayIdMaster) {
-        List<Master> orderMasters = new ArrayList<>();
-        for (String stringIndex : arrayIdMaster) {
-            masters.forEach(master -> {
-                if (master.getId().equals(Long.valueOf(stringIndex))) {
-                    orderMasters.add(master);
-                }
-            });
+    private static List<Master> getMastersById(List<Master> masters, List<String> arrayIdMaster) {
+        if (masters == null || arrayIdMaster == null) {
+            throw new BusinessException("argument is null");
         }
+        List<Master> orderMasters = new ArrayList<>();
+        arrayIdMaster.stream().<Consumer<? super Master>> map(stringIndex -> master -> {
+            if (master.getId().equals(ParametrUtil.getValueLong(stringIndex))) {
+                orderMasters.add(master);
+            }
+        }).forEach(masters::forEach);
         return orderMasters;
     }
 
-    private static Place getPlaceById (List<Place> places, Long id) {
-        for (Place place : places) {
-            if (place.getId().equals(id)) {
-                return place;
-            }
+    private static Place getPlaceById(List<Place> places, Long id) {
+        if (places == null || id == null) {
+            throw new BusinessException("argument is null");
         }
-        return null;
+        return places.stream().filter(place -> place.getId().equals(id)).findFirst().orElse(null);
     }
 
-    private static String convertOrderToCsv (@NotNull Order order, boolean isLineFeed) {
+    private static String convertOrderToCsv(Order order) {
+        if (order == null) {
+            throw new BusinessException("argument is null");
+        }
         StringBuilder stringValue = new StringBuilder();
         stringValue.append(order.getId());
         stringValue.append(COMMA);
@@ -119,9 +116,6 @@ public class CsvOrder {
             }
         });
         stringValue.append(QUOTATION_MARK);
-        if (isLineFeed) {
-            stringValue.append("\n");
-        }
         return stringValue.toString();
     }
 }

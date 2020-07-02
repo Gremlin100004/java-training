@@ -2,7 +2,12 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.repository.*;
+import com.senla.carservice.repository.MasterRepository;
+import com.senla.carservice.repository.MasterRepositoryImpl;
+import com.senla.carservice.repository.OrderRepository;
+import com.senla.carservice.repository.OrderRepositoryImpl;
+import com.senla.carservice.repository.PlaceRepository;
+import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
 
 import java.util.ArrayList;
@@ -29,7 +34,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     @Override
-    public String getNearestFreeDate() {
+    public Date getNearestFreeDate() {
         Date dateFree = new Date();
         if (masterRepository.getMasters().isEmpty()){
             throw new BusinessException("There are no masters");
@@ -57,6 +62,6 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             dateFree = DateUtil.addDays(DateUtil.bringStartOfDayDate(dateFree), 1);
         }
         dateFree = DateUtil.addDays(dateFree, -1);
-        return String.format("Nearest free date: %s", DateUtil.getStringFromDate(dateFree));
+        return dateFree;
     }
 }

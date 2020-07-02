@@ -27,12 +27,4 @@ public class Place extends AEntity {
     public void setBusyStatus(Boolean busyStatus) {
         this.busyStatus = busyStatus;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Place place = (Place) o;
-        return super.getId().equals(place.getId());
-    }
 }

@@ -5,12 +5,12 @@ import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.CarOfficeServiceImpl;
-import com.senla.carservice.service.PlaceService;
-import com.senla.carservice.service.PlaceServiceImpl;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.MasterServiceImpl;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.OrderServiceImpl;
+import com.senla.carservice.service.PlaceService;
+import com.senla.carservice.service.PlaceServiceImpl;
 import com.senla.carservice.util.DateUtil;
 
 import java.util.Date;
@@ -39,7 +39,7 @@ public class CarOfficeController {
 
     public String getFreePlacesByDate(String date) {
         Date dateFree = DateUtil.getDatesFromString(date, false);
-        if (dateFree == null){
+        if (dateFree == null) {
             return "error date";
         }
         Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
@@ -49,7 +49,7 @@ public class CarOfficeController {
             int numberFreeMasters = masterService.getNumberFreeMastersByDate(startDayDate, endDayDate, orders);
             int numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate, endDayDate, orders);
             return String.format("- number free places in service: %s\n- number free masters in service: %s",
-                    numberFreePlace, numberFreeMasters);
+                                 numberFreePlace, numberFreeMasters);
         } catch (BusinessException | DateException e) {
             return e.getMessage();
         }
@@ -57,7 +57,8 @@ public class CarOfficeController {
 
     public String getNearestFreeDate() {
         try {
-            return carOfficeService.getNearestFreeDate();
+            return String
+                .format("Nearest free date: %s", DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate()));
         } catch (BusinessException e) {
             return e.getMessage();
         }
