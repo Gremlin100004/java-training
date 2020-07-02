@@ -24,14 +24,14 @@ public class ScannerUtil {
         return textUser;
     }
 
-    public static String getStringDateUser(String textForUser) {
+    public static String getStringDateUser(String textForUser, boolean isTime) {
         Scanner scanner = new Scanner(System.in);
         String textUser = null;
         boolean isText = false;
         while (!isText) {
             Printer.printInfo(textForUser);
             textUser = scanner.nextLine();
-            if (Checker.isSymbolsStringDate(textUser)) {
+            if (isTime && Checker.isSymbolsDateTime(textUser) || Checker.isSymbolsStringDate(textUser)) {
                 isText = true;
             } else {
                 Printer.printInfo("You enter wrong value!!!");

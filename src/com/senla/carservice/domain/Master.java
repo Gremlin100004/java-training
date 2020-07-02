@@ -34,8 +34,8 @@ public class Master extends AEntity {
     @Override
     public String toString() {
         return "Master{" +
-                "name='" + name + '\'' +
-                ", numberOrder=" + numberOrder +
-                '}';
+               "name='" + name + '\'' +
+               ", numberOrder=" + numberOrder +
+               '}';
     }
 }

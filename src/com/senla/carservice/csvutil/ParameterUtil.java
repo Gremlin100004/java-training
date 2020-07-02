@@ -3,9 +3,9 @@ package com.senla.carservice.csvutil;
 import com.senla.carservice.domain.Status;
 import com.senla.carservice.exception.BusinessException;
 
-public class ParametrUtil {
+public class ParameterUtil {
 
-    private ParametrUtil() {
+    private ParameterUtil() {
     }
 
     public static Long getValueLong(String value) {

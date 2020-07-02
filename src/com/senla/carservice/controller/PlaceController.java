@@ -1,7 +1,8 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.exception.*;
+import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.OrderServiceImpl;
 import com.senla.carservice.service.PlaceService;
@@ -48,14 +49,14 @@ public class PlaceController {
 
     public String deletePlace(int index) {
         try {
-            if (placeService.getPlaces().size() < index || index < 0 ) {
+            if (placeService.getPlaces().size() < index || index < 0) {
                 return "There are no such place";
             } else {
                 placeService.deletePlace(placeService.getPlaces().get(index));
                 return String.format(" -delete place in service number \"%s\"",
-                        placeService.getPlaces().get(index).getNumber());
+                                     placeService.getPlaces().get(index).getNumber());
             }
-        } catch ( BusinessException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -75,7 +76,7 @@ public class PlaceController {
         try {
             placeService.exportPlaces();
             return "Places have been export successfully!";
-        } catch (BusinessException e){
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -84,7 +85,7 @@ public class PlaceController {
         try {
             placeService.importPlaces();
             return "places imported successfully";
-        } catch (BusinessException e){
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -93,7 +94,7 @@ public class PlaceController {
         try {
             placeService.serializePlace();
             return "Places have been serialize successfully!";
-        } catch (BusinessException e){
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -102,7 +103,7 @@ public class PlaceController {
         try {
             placeService.deserializePlace();
             return "Masters have been deserialize successfully!";
-        } catch (BusinessException e){
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }

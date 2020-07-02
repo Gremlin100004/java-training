@@ -5,6 +5,7 @@ import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.util.PropertyLoader;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,9 +16,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CsvOrder {
-    private static final String ORDER_PATH = "resources/csv/order.csv";
-    private static final String COMMA = ",";
-    private static final String QUOTATION_MARK = "\"";
+    private static final String ORDER_PATH = PropertyLoader.getPropertyValue("csvPathOrder");
+    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("fieldSeparator");
+    private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("separatorId");
 
     private CsvOrder() {
     }
@@ -43,19 +44,19 @@ public class CsvOrder {
         if (line == null || masters == null || places == null) {
             throw new BusinessException("argument is null");
         }
-        List<String> values = Arrays.asList((line.split(QUOTATION_MARK))[0].split(COMMA));
-        List<String> arrayIdMaster = Arrays.asList(line.split(QUOTATION_MARK)[1].split(COMMA));
-        Order order = new Order(ParametrUtil.getValueLong(values.get(0)),
-                                ParametrUtil.checkValueString(values.get(5)),
-                                ParametrUtil.checkValueString(values.get(6)),
-                                ParametrUtil.checkValueString(values.get(7)));
+        List<String> values = Arrays.asList((line.split(SEPARATOR_ID))[0].split(FIELD_SEPARATOR));
+        List<String> arrayIdMaster = Arrays.asList(line.split(SEPARATOR_ID)[1].split(FIELD_SEPARATOR));
+        Order order = new Order(ParameterUtil.getValueLong(values.get(0)),
+                                ParameterUtil.checkValueString(values.get(5)),
+                                ParameterUtil.checkValueString(values.get(6)),
+                                ParameterUtil.checkValueString(values.get(7)));
         order.setCreationTime(DateUtil.getDatesFromString(values.get(1), true));
         order.setExecutionStartTime(DateUtil.getDatesFromString(values.get(2), true));
         order.setLeadTime(DateUtil.getDatesFromString(values.get(3), true));
         order.setPlace(getPlaceById(places, Long.valueOf(values.get(4))));
         order.setPrice(new BigDecimal(values.get(8)));
-        order.setStatus(ParametrUtil.getValueStatus(values.get(9)));
-        order.setDeleteStatus(ParametrUtil.getValueBoolean(values.get(10)));
+        order.setStatus(ParameterUtil.getValueStatus(values.get(9)));
+        order.setDeleteStatus(ParameterUtil.getValueBoolean(values.get(10)));
         order.setMasters(getMastersById(masters, arrayIdMaster));
         return order;
     }
@@ -66,7 +67,7 @@ public class CsvOrder {
         }
         List<Master> orderMasters = new ArrayList<>();
         arrayIdMaster.stream().<Consumer<? super Master>> map(stringIndex -> master -> {
-            if (master.getId().equals(ParametrUtil.getValueLong(stringIndex))) {
+            if (master.getId().equals(ParameterUtil.getValueLong(stringIndex))) {
                 orderMasters.add(master);
             }
         }).forEach(masters::forEach);
@@ -86,36 +87,36 @@ public class CsvOrder {
         }
         StringBuilder stringValue = new StringBuilder();
         stringValue.append(order.getId());
-        stringValue.append(COMMA);
+        stringValue.append(FIELD_SEPARATOR);
         stringValue.append(DateUtil.getStringFromDate(order.getCreationTime()));
-        stringValue.append(COMMA);
+        stringValue.append(FIELD_SEPARATOR);
         stringValue.append(DateUtil.getStringFromDate(order.getExecutionStartTime()));
-        stringValue.append(COMMA);
+        stringValue.append(FIELD_SEPARATOR);
         stringValue.append(DateUtil.getStringFromDate(order.getLeadTime()));
-        stringValue.append(COMMA);
+        stringValue.append(FIELD_SEPARATOR);
         stringValue.append(order.getPlace().getId());
-        stringValue.append(COMMA);
+        stringValue.append(FIELD_SEPARATOR);
         stringValue.append(order.getAutomaker());
-        stringValue.append(COMMA);
+        stringValue.append(FIELD_SEPARATOR);
         stringValue.append(order.getModel());
-        stringValue.append(COMMA);
+        stringValue.append(FIELD_SEPARATOR);
         stringValue.append(order.getRegistrationNumber());
-        stringValue.append(COMMA);
+        stringValue.append(FIELD_SEPARATOR);
         stringValue.append(order.getPrice());
-        stringValue.append(COMMA);
+        stringValue.append(FIELD_SEPARATOR);
         stringValue.append(order.getStatus());
-        stringValue.append(COMMA);
+        stringValue.append(FIELD_SEPARATOR);
         stringValue.append(order.isDeleteStatus());
-        stringValue.append(COMMA);
-        stringValue.append(QUOTATION_MARK);
+        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(SEPARATOR_ID);
         IntStream.range(0, order.getMasters().size()).forEachOrdered(i -> {
             if (i == order.getMasters().size() - 1) {
                 stringValue.append(order.getMasters().get(i).getId());
             } else {
-                stringValue.append(order.getMasters().get(i).getId()).append(COMMA);
+                stringValue.append(order.getMasters().get(i).getId()).append(FIELD_SEPARATOR);
             }
         });
-        stringValue.append(QUOTATION_MARK);
+        stringValue.append(SEPARATOR_ID);
         return stringValue.toString();
     }
 }

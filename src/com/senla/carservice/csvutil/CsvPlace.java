@@ -2,14 +2,15 @@ package com.senla.carservice.csvutil;
 
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.util.PropertyLoader;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CsvPlace {
-    private static final String PLACE_PATH = "resources/csv/places.csv";
-    private static final String COMMA = ",";
+    private static final String PLACE_PATH = PropertyLoader.getPropertyValue("csvPathPlace");
+    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("fieldSeparator");
 
     private CsvPlace() {
     }
@@ -31,15 +32,15 @@ public class CsvPlace {
         if (line == null) {
             throw new BusinessException("argument is null");
         }
-        List<String> values = Arrays.asList(line.split(COMMA));
+        List<String> values = Arrays.asList(line.split(FIELD_SEPARATOR));
         Place place = new Place();
-        place.setId(ParametrUtil.getValueLong(values.get(0)));
-        place.setNumber(ParametrUtil.getValueInteger(values.get(1)));
-        place.setBusyStatus(ParametrUtil.getValueBoolean(values.get(2)));
+        place.setId(ParameterUtil.getValueLong(values.get(0)));
+        place.setNumber(ParameterUtil.getValueInteger(values.get(1)));
+        place.setBusyStatus(ParameterUtil.getValueBoolean(values.get(2)));
         return place;
     }
 
     private static String convertToCsv(Place place) {
-        return place.getId() + COMMA + place.getNumber() + COMMA + place.isBusyStatus();
+        return place.getId() + FIELD_SEPARATOR + place.getNumber() + FIELD_SEPARATOR + place.isBusyStatus();
     }
 }

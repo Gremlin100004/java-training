@@ -13,7 +13,7 @@ import com.senla.carservice.repository.OrderRepositoryImpl;
 import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
-import com.senla.carservice.util.PropertyUtil;
+import com.senla.carservice.util.PropertyLoader;
 import com.senla.carservice.util.Serializer;
 
 import java.math.BigDecimal;
@@ -152,7 +152,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
-        if (!Boolean.parseBoolean(PropertyUtil.getPropertyValue("shiftTime"))) {
+        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("shiftTime"))) {
             throw new BusinessException("Permission denied");
         }
         DateUtil.checkDateTime(executionStartTime, leadTime);

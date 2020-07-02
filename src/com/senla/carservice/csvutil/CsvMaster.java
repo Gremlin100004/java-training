@@ -2,14 +2,15 @@ package com.senla.carservice.csvutil;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.util.PropertyLoader;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CsvMaster {
-    private static final String MASTER_PATH = "resources/csv/masters.csv";
-    private static final String COMMA = ",";
+    private static final String MASTER_PATH = PropertyLoader.getPropertyValue("csvPathMaster");
+    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("fieldSeparator");
 
     private CsvMaster() {
     }
@@ -29,15 +30,15 @@ public class CsvMaster {
         if (line == null) {
             throw new BusinessException("argument is null");
         }
-        List<String> values = Arrays.asList(line.split(COMMA));
+        List<String> values = Arrays.asList(line.split(FIELD_SEPARATOR));
         Master master = new Master();
-        master.setId(ParametrUtil.getValueLong(values.get(0)));
+        master.setId(ParameterUtil.getValueLong(values.get(0)));
         master.setName(values.get(1));
-        master.setNumberOrder(ParametrUtil.getValueInteger(values.get(2)));
+        master.setNumberOrder(ParameterUtil.getValueInteger(values.get(2)));
         return master;
     }
 
     private static String convertToCsv(Master master) {
-        return master.getId() + COMMA + master.getName() + COMMA + master.getNumberOrder();
+        return master.getId() + FIELD_SEPARATOR + master.getName() + FIELD_SEPARATOR + master.getNumberOrder();
     }
 }

@@ -1,7 +1,8 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.exception.*;
+import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.MasterServiceImpl;
 import com.senla.carservice.service.OrderService;
@@ -17,19 +18,19 @@ public class MasterController {
     private final MasterService masterService;
     private final OrderService orderService;
 
-    private MasterController () {
+    private MasterController() {
         masterService = MasterServiceImpl.getInstance();
         orderService = OrderServiceImpl.getInstance();
     }
 
-    public static MasterController getInstance () {
+    public static MasterController getInstance() {
         if (instance == null) {
             instance = new MasterController();
         }
         return instance;
     }
 
-    public String getMasters () {
+    public String getMasters() {
         try {
             return StringMaster.getStringFromMasters(masterService.getMasters());
         } catch (BusinessException e) {
@@ -37,12 +38,12 @@ public class MasterController {
         }
     }
 
-    public String addMaster (String name) {
+    public String addMaster(String name) {
         masterService.addMaster(name);
         return String.format(" -master \"%s\" has been added to service.", name);
     }
 
-    public String deleteMaster (int index) {
+    public String deleteMaster(int index) {
         try {
             if (masterService.getMasters().size() < index || index < 0) {
                 return "There are no such master";
@@ -55,7 +56,7 @@ public class MasterController {
         }
     }
 
-    public String getMasterByAlphabet () {
+    public String getMasterByAlphabet() {
         try {
             return StringMaster.getStringFromMasters(masterService.getMasterByAlphabet());
         } catch (BusinessException e) {
@@ -63,7 +64,7 @@ public class MasterController {
         }
     }
 
-    public String getMasterByBusy () {
+    public String getMasterByBusy() {
         try {
             return StringMaster.getStringFromMasters(masterService.getMasterByBusy());
         } catch (BusinessException e) {
@@ -71,7 +72,7 @@ public class MasterController {
         }
     }
 
-    public String getFreeMasters (String stringExecuteDate, String stringLeadDate) {
+    public String getFreeMasters(String stringExecuteDate, String stringLeadDate) {
         Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
         Date leadDate = DateUtil.getDatesFromString(stringLeadDate, true);
         try {
@@ -82,7 +83,7 @@ public class MasterController {
         }
     }
 
-    public String exportMasters () {
+    public String exportMasters() {
         try {
             masterService.exportMasters();
             return "Masters have been export successfully!";
@@ -91,7 +92,7 @@ public class MasterController {
         }
     }
 
-    public String importMasters () {
+    public String importMasters() {
         try {
             masterService.importMasters();
             return "Masters imported successfully";
@@ -100,7 +101,7 @@ public class MasterController {
         }
     }
 
-    public String serializeMaster () {
+    public String serializeMaster() {
         try {
             masterService.serializeMaster();
             return "Masters have been serialize successfully!";
@@ -109,7 +110,7 @@ public class MasterController {
         }
     }
 
-    public String deserializeMaster () {
+    public String deserializeMaster() {
         try {
             masterService.deserializeMaster();
             return "Masters have been deserialize successfully!";

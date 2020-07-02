@@ -15,15 +15,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Serializer {
-    private static final String MASTER_SER = "resources/bin/master.bin";
-    private static final String PLACE_SER = "resources/bin/place.bin";
-    private static final String ORDER_SER = "resources/bin/order.bin";
-    
+    private static final ClassLoader CLASS_LOADER = PropertyLoader.class.getClassLoader();
+    private static final String MASTER_SER = PropertyLoader.getPropertyValue("serializableMaster");
+    private static final String PLACE_SER = PropertyLoader.getPropertyValue("serializablePlace");
+    private static final String ORDER_SER = PropertyLoader.getPropertyValue("serializableOrder");
+
     private Serializer() {
     }
 
     public static void serializeMaster(MasterRepository masterRepository) {
-
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(MASTER_SER))) {
             objectOutputStream.writeObject(masterRepository);
         } catch (IOException e) {
@@ -33,7 +33,7 @@ public class Serializer {
 
     public static MasterRepository deserializeMaster() {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(MASTER_SER))) {
-            return  (MasterRepositoryImpl) objectInputStream.readObject();
+            return (MasterRepositoryImpl) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new BusinessException("Deserialize masters problem");
         }
@@ -55,8 +55,8 @@ public class Serializer {
         }
     }
 
-    public static void serializeOrder(OrderRepository orderRepository)  {
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(ORDER_SER))){
+    public static void serializeOrder(OrderRepository orderRepository) {
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(ORDER_SER))) {
             objectOutputStream.writeObject(orderRepository);
         } catch (IOException e) {
             throw new BusinessException("Serialize orders problem");
@@ -64,9 +64,8 @@ public class Serializer {
     }
 
     public static OrderRepository deserializeOrder() {
-
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(ORDER_SER))) {
-            return  (OrderRepositoryImpl) objectInputStream.readObject();
+            return (OrderRepositoryImpl) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new BusinessException("Deserialize orders problem");
         }

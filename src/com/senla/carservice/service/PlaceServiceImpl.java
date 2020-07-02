@@ -57,7 +57,6 @@ public class PlaceServiceImpl implements PlaceService {
         if (placeRepository.getFreePlaces(orders).isEmpty()) {
             throw new BusinessException("There are no free places");
         }
-
         return placeRepository.getFreePlaces(orders);
     }
 
@@ -75,16 +74,16 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public void importPlaces() {
-         CsvPlace.importPlaces().forEach(placeRepository::updatePlace);
+        CsvPlace.importPlaces().forEach(placeRepository::updatePlace);
     }
 
     @Override
-    public void serializePlace(){
+    public void serializePlace() {
         Serializer.serializePlace(PlaceRepositoryImpl.getInstance());
     }
 
     @Override
-    public void deserializePlace(){
+    public void deserializePlace() {
         PlaceRepository placeRepositoryRestore = Serializer.deserializePlace();
         placeRepository.updateListPlace(placeRepositoryRestore.getPlaces());
         placeRepository.updateGenerator(placeRepositoryRestore.getIdGeneratorPlace());

@@ -35,7 +35,7 @@ public class Menu {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(String.format("%s\n%s\n%s\n", String.join("", Collections.nCopies(name.length(), "~")),
-                name, String.join("", Collections.nCopies(name.length(), "~"))));
+                                           name, String.join("", Collections.nCopies(name.length(), "~"))));
         for (int i = 0; i < this.menuItems.size(); i++) {
             stringBuilder.append(String.format("%s. %s\n", i + 1, menuItems.get(i)));
         }
