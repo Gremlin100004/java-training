@@ -584,7 +584,7 @@ public class Builder {
             }
             message = OrderController.getInstance().addOrderMasters(index - 1);
             Printer.printInfo(message);
-            userAnswer = isAnotherMaster();
+            userAnswer = ScannerUtil.isAnotherMaster();
             if (userAnswer) {
                 index = 0;
                 break;
@@ -594,17 +594,6 @@ public class Builder {
             quit++;
         }
         return new ArrayList<>(Arrays.asList(quit, index));
-    }
-
-    private boolean isAnotherMaster() {
-        String answer = "";
-        while (!answer.equals("y") && !answer.equals("n")) {
-            answer = ScannerUtil.getStringUser("Add another master to the order? y/n");
-            if (!answer.equals("y") && !answer.equals("n")) {
-                Printer.printInfo("You have entered wrong answer!");
-            }
-        }
-        return answer.equals("n");
     }
 
     private void addPlaceOrder(String executionStartTime, String leadTime) {

@@ -13,12 +13,12 @@ public class ScannerUtil {
         String textUser = null;
         boolean isText = false;
         while (!isText) {
-            System.out.println(textForUser);
+            Printer.printInfo(textForUser);
             textUser = scanner.nextLine();
             if (!Checker.isSymbolsString(textUser)) {
                 isText = true;
             } else {
-                System.out.println("You enter wrong value!!!");
+                Printer.printInfo("You enter wrong value!!!");
             }
         }
         return textUser;
@@ -29,12 +29,12 @@ public class ScannerUtil {
         String textUser = null;
         boolean isText = false;
         while (!isText) {
-            System.out.println(textForUser);
+            Printer.printInfo(textForUser);
             textUser = scanner.nextLine();
-            if (Checker.isSymbolsStringNumber(textUser)) {
+            if (Checker.isSymbolsStringDate(textUser)) {
                 isText = true;
             } else {
-                System.out.println("You enter wrong value!!!");
+                Printer.printInfo("You enter wrong value!!!");
             }
         }
         return textUser;
@@ -42,10 +42,10 @@ public class ScannerUtil {
 
     public static int getIntUser(String textForUser) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println(textForUser);
+        Printer.printInfo(textForUser);
         while (!scanner.hasNextInt()) {
-            System.out.println("You enter wrong value!!!");
-            System.out.println("Try again:");
+            Printer.printInfo("You enter wrong value!!!");
+            Printer.printInfo("Try again:");
             scanner.next();
         }
         return scanner.nextInt();
@@ -53,12 +53,23 @@ public class ScannerUtil {
 
     public static BigDecimal getBigDecimalUser(String textForUser) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println(textForUser);
+        Printer.printInfo(textForUser);
         while (!scanner.hasNextBigDecimal()) {
-            System.out.println("You enter wrong value!!!");
-            System.out.println("Try again:");
+            Printer.printInfo("You enter wrong value!!!");
+            Printer.printInfo("Try again:");
             scanner.next();
         }
         return scanner.nextBigDecimal();
+    }
+
+    public static boolean isAnotherMaster() {
+        String answer = "";
+        while (!answer.equals("y") && !answer.equals("n")) {
+            answer = getStringUser("Add another master to the order? y/n");
+            if (!answer.equals("y") && !answer.equals("n")) {
+                Printer.printInfo("You have entered wrong answer!");
+            }
+        }
+        return answer.equals("n");
     }
 }

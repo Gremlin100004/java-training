@@ -194,9 +194,6 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod) {
         checkOrders();
         DateUtil.checkPeriodTime(startPeriod, endPeriod);
-        if (sortOrderByPeriod(orderRepository.getOrders(), startPeriod, endPeriod).isEmpty()) {
-            throw new BusinessException("There are no orders in this period");
-        }
         return sortOrderByPeriod(orderRepository.getOrders(), startPeriod, endPeriod);
     }
 

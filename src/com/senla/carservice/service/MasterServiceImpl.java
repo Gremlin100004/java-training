@@ -49,8 +49,8 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public int getNumberFreeMastersByDate(Date executeDate, Date leadDate, List<Order> sortOrders) {
-        return getFreeMaster(sortOrders, executeDate, leadDate).size();
+    public int getNumberFreeMastersByDate(Date startDayDate, Date endDayDate, List<Order> sortOrders) {
+        return getFreeMaster(sortOrders, startDayDate, endDayDate).size();
     }
 
     @Override

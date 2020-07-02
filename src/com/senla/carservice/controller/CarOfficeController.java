@@ -43,7 +43,7 @@ public class CarOfficeController {
             return "error date";
         }
         Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
-        Date endDayDate = DateUtil.bringStartOfDayDate(dateFree);
+        Date endDayDate = DateUtil.bringEndOfDayDate(dateFree);
         try {
             List<Order> orders = orderService.getOrderByPeriod(startDayDate, endDayDate);
             int numberFreeMasters = masterService.getNumberFreeMastersByDate(startDayDate, endDayDate, orders);

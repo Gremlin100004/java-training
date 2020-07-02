@@ -44,8 +44,8 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public int getNumberFreePlaceByDate(Date executeDate, Date leadDate, List<Order> orders) {
-        DateUtil.checkDateTime(executeDate, leadDate);
+    public int getNumberFreePlaceByDate(Date startDayDate, Date endDayDate, List<Order> orders) {
+        DateUtil.checkDateTime(startDayDate, endDayDate);
         checkPlaces();
         return placeRepository.getFreePlaces(orders).size();
     }
