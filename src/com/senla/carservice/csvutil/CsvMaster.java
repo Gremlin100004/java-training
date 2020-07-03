@@ -1,59 +1,44 @@
 package com.senla.carservice.csvutil;
 
 import com.senla.carservice.domain.Master;
-
-import com.senla.carservice.repository.MasterRepositoryImpl;
+import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.util.PropertyLoader;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CsvMaster {
-    private static final String MASTER_PATH = "csv/masters.csv";
-    private static final String COMMA = ",";
+    private static final String MASTER_PATH = PropertyLoader.getPropertyValue("csvPathMaster");
+    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("fieldSeparator");
 
     private CsvMaster() {
     }
 
-    public static String exportMasters(List<Master> masters) {
-        String valueCsv;
-        for (int i = 0; i < masters.size(); i++) {
-            if (i == masters.size() - 1) {
-                valueCsv = convertToCsv(masters.get(i), false);
-            } else {
-                valueCsv = convertToCsv(masters.get(i), true);
-            }
-            FileUtil.saveCsv(valueCsv, MASTER_PATH, i != 0);
-        }
-        return "save successfully";
+    public static void exportMasters(List<Master> masters) {
+        List<String> valueCsv;
+        valueCsv = masters.stream().map(CsvMaster::convertToCsv).collect(Collectors.toList());
+        FileUtil.saveCsv(valueCsv, MASTER_PATH);
     }
 
-    public static String importMasters() {
+    public static List<Master> importMasters() {
         List<String> csvLinesMaster = FileUtil.getCsv(MASTER_PATH);
-        csvLinesMaster.forEach(line -> {
-            Master master = getMasterFromCsv(line);
-            MasterRepositoryImpl.getInstance().updateMaster(master);
-        });
-        return "Masters have been import successfully!";
+        return csvLinesMaster.stream().map(CsvMaster::getMasterFromCsv).collect(Collectors.toList());
     }
 
     private static Master getMasterFromCsv(String line) {
-        List<String> values = Arrays.asList(line.split(COMMA));
-        Master master = new Master();
-        master.setId(Long.valueOf(values.get(0)));
-        master.setName(values.get(1));
-        if (values.get(2).equals("null")) {
-            master.setNumberOrder(null);
-        } else {
-            master.setNumberOrder(Integer.valueOf(values.get(2)));
+        if (line == null) {
+            throw new BusinessException("argument is null");
         }
+        List<String> values = Arrays.asList(line.split(FIELD_SEPARATOR));
+        Master master = new Master();
+        master.setId(ParameterUtil.getValueLong(values.get(0)));
+        master.setName(values.get(1));
+        master.setNumberOrder(ParameterUtil.getValueInteger(values.get(2)));
         return master;
     }
 
-    private static String convertToCsv(Master master, boolean isLineFeed) {
-        if (isLineFeed) {
-            return String.format("%s,%s,%s\n", master.getId(), master.getName(), master.getNumberOrder());
-        } else {
-            return String.format("%s,%s,%s", master.getId(), master.getName(), master.getNumberOrder());
-        }
+    private static String convertToCsv(Master master) {
+        return master.getId() + FIELD_SEPARATOR + master.getName() + FIELD_SEPARATOR + master.getNumberOrder();
     }
 }

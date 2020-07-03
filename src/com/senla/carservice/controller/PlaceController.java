@@ -1,12 +1,13 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.exception.*;
+import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.OrderServiceImpl;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.PlaceServiceImpl;
-import com.senla.carservice.string.StringPlaces;
+import com.senla.carservice.stringutil.StringPlaces;
 import com.senla.carservice.util.DateUtil;
 
 import java.util.Date;
@@ -41,19 +42,22 @@ public class PlaceController {
     public String getArrayPlace() {
         try {
             return StringPlaces.getStringFromPlaces(placeService.getPlaces());
-        } catch (NumberObjectZeroException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
 
     public String deletePlace(int index) {
         try {
-            placeService.deletePlace(placeService.getPlaces().get(index));
-            return String.format(" -delete place in service number \"%s\"", placeService.getPlaces().get(index).getNumber());
-        } catch (NumberObjectZeroException e) {
+            if (placeService.getPlaces().size() < index || index < 0) {
+                return "There are no such place";
+            } else {
+                placeService.deletePlace(placeService.getPlaces().get(index));
+                return String.format(" -delete place in service number \"%s\"",
+                                     placeService.getPlaces().get(index).getNumber());
+            }
+        } catch (BusinessException e) {
             return e.getMessage();
-        } catch (IndexOutOfBoundsException e){
-            return "There are no such place";
         }
     }
 
@@ -63,7 +67,7 @@ public class PlaceController {
         try {
             List<Order> orders = orderService.getOrderByPeriod(executeDate, leadDate);
             return StringPlaces.getStringFromPlaces(placeService.getFreePlaceByDate(executeDate, leadDate, orders));
-        } catch (NumberObjectZeroException | DateException | NullDateException e) {
+        } catch (BusinessException | DateException e) {
             return e.getMessage();
         }
     }
@@ -72,15 +76,34 @@ public class PlaceController {
         try {
             placeService.exportPlaces();
             return "Places have been export successfully!";
-        } catch (NumberObjectZeroException | ExportException e){
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
 
     public String importPlaces() {
         try {
-            return placeService.importPlaces();
-        } catch (NumberObjectZeroException e){
+            placeService.importPlaces();
+            return "places imported successfully";
+        } catch (BusinessException e) {
+            return e.getMessage();
+        }
+    }
+
+    public String serializePlace() {
+        try {
+            placeService.serializePlace();
+            return "Places have been serialize successfully!";
+        } catch (BusinessException e) {
+            return e.getMessage();
+        }
+    }
+
+    public String deserializePlace() {
+        try {
+            placeService.deserializePlace();
+            return "Masters have been deserialize successfully!";
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
