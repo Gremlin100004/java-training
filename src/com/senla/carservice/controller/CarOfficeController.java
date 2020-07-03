@@ -50,7 +50,7 @@ public class CarOfficeController {
     public String getNearestFreeDate() {
         try {
             return String
-                .format("Nearest free date: %s", DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate()));
+                .format("Nearest free date: %s", DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false));
         } catch (BusinessException e) {
             return e.getMessage();
         }

@@ -45,8 +45,8 @@ public class DateUtil {
         }
     }
 
-    public static String getStringFromDate(Date date) {
-        return DATE_TIME_FORMAT.format(date.getTime());
+    public static String getStringFromDate(Date date, boolean isTime) {
+        return isTime ? DATE_TIME_FORMAT.format(date.getTime()) : DATE_FORMAT.format(date.getTime());
     }
 
     public static Date bringStartOfDayDate(Date date) {
