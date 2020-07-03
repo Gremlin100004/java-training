@@ -61,31 +61,11 @@ public class PlaceController {
         }
     }
 
-    public String getFreePlacesByDate(String stringExecuteDate, String stringLeadDate) {
+    public String getFreePlacesByDate(String stringExecuteDate) {
         Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
-        Date leadDate = DateUtil.getDatesFromString(stringLeadDate, true);
         try {
-            List<Order> orders = orderService.getOrderByPeriod(executeDate, leadDate);
-            return StringPlaces.getStringFromPlaces(placeService.getFreePlaceByDate(executeDate, leadDate, orders));
+            return StringPlaces.getStringFromPlaces(placeService.getFreePlaceByDate(executeDate));
         } catch (BusinessException | DateException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String exportPlaces() {
-        try {
-            placeService.exportPlaces();
-            return "Places have been export successfully!";
-        } catch (BusinessException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String importPlaces() {
-        try {
-            placeService.importPlaces();
-            return "places imported successfully";
-        } catch (BusinessException e) {
             return e.getMessage();
         }
     }

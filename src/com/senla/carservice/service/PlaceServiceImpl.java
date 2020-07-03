@@ -1,12 +1,9 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.csvutil.CsvPlace;
-import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.repository.PlaceRepositoryImpl;
-import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.Serializer;
 
 import java.util.Date;
@@ -44,37 +41,19 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public int getNumberFreePlaceByDate(Date startDayDate, Date endDayDate, List<Order> orders) {
-        DateUtil.checkDateTime(startDayDate, endDayDate);
+    public int getNumberFreePlaceByDate(Date startDayDate) {
         checkPlaces();
-        return placeRepository.getFreePlaces(orders).size();
+        return placeRepository.getFreePlaces(startDayDate).size();
     }
 
     @Override
-    public List<Place> getFreePlaceByDate(Date executeDate, Date leadDate, List<Order> orders) {
-        DateUtil.checkDateTime(executeDate, leadDate);
+    public List<Place> getFreePlaceByDate(Date executeDate) {
         checkPlaces();
-        if (placeRepository.getFreePlaces(orders).isEmpty()) {
+        List<Place> freePlace = placeRepository.getFreePlaces(executeDate);
+        if (freePlace.isEmpty()) {
             throw new BusinessException("There are no free places");
         }
-        return placeRepository.getFreePlaces(orders);
-    }
-
-    private void checkPlaces() {
-        if (placeRepository.getPlaces().isEmpty()) {
-            throw new BusinessException("There are no places");
-        }
-    }
-
-    @Override
-    public void exportPlaces() {
-        checkPlaces();
-        CsvPlace.exportPlaces(placeRepository.getPlaces());
-    }
-
-    @Override
-    public void importPlaces() {
-        CsvPlace.importPlaces().forEach(placeRepository::updatePlace);
+        return freePlace;
     }
 
     @Override
@@ -87,5 +66,11 @@ public class PlaceServiceImpl implements PlaceService {
         PlaceRepository placeRepositoryRestore = Serializer.deserializePlace();
         placeRepository.updateListPlace(placeRepositoryRestore.getPlaces());
         placeRepository.updateGenerator(placeRepositoryRestore.getIdGeneratorPlace());
+    }
+
+    private void checkPlaces() {
+        if (placeRepository.getPlaces().isEmpty()) {
+            throw new BusinessException("There are no places");
+        }
     }
 }

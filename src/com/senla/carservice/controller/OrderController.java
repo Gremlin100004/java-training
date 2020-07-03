@@ -69,15 +69,13 @@ public class OrderController {
         }
     }
 
-    public String addOrderPlace(int index, String stringExecuteDate, String stringLeadDate) {
+    public String addOrderPlace(int index, String stringExecuteDate) {
         Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
-        Date leadDate = DateUtil.getDatesFromString(stringLeadDate, true);
         try {
-            List<Order> orders = orderService.getOrderByPeriod(executeDate, leadDate);
-            if (placeService.getFreePlaceByDate(executeDate, leadDate, orders).size() < index || index < 0) {
+            if (placeService.getFreePlaceByDate(executeDate).size() < index || index < 0) {
                 return "There is no such place!";
             } else {
-                orderService.addOrderPlace(placeService.getFreePlaceByDate(executeDate, leadDate, orders).get(index));
+                orderService.addOrderPlace(placeService.getFreePlaceByDate(executeDate).get(index));
                 return "place add to order successfully";
             }
         } catch (BusinessException | DateException e) {
@@ -339,24 +337,6 @@ public class OrderController {
                 return StringMaster
                     .getStringFromMasters(orderService.getOrderMasters(orderService.getOrders().get(index)));
             }
-        } catch (BusinessException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String exportOrders() {
-        try {
-            orderService.exportOrder();
-            return "Orders have been export successfully!";
-        } catch (BusinessException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String importOrders() {
-        try {
-            orderService.importOrder();
-            return "orders imported successfully!";
         } catch (BusinessException e) {
             return e.getMessage();
         }

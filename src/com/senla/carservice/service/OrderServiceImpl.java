@@ -1,6 +1,5 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.csvutil.CsvOrder;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
@@ -91,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
         masters.add(master);
         currentOrder.setMasters(masters);
         orderRepository.updateOrder(currentOrder);
-        master.setNumberOrder(master.getNumberOrder() != null ? master.getNumberOrder() + 1 : 1);
+        master.getOrders().add(currentOrder);
         masterRepository.updateMaster(master);
     }
 
@@ -100,6 +99,8 @@ public class OrderServiceImpl implements OrderService {
         checkOrders();
         Order currentOrder = orderRepository.getLastOrder();
         currentOrder.setPlace(place);
+        place.getOrders().add(currentOrder);
+        placeRepository.updatePlace(place);
         orderRepository.updateOrder(currentOrder);
     }
 
@@ -126,11 +127,13 @@ public class OrderServiceImpl implements OrderService {
         order.setLeadTime(new Date());
         order.setStatus(Status.CANCELED);
         order.getMasters().forEach(master -> {
-            master.setNumberOrder(master.getNumberOrder() - 1);
+            master.getOrders().remove(order);
             masterRepository.updateMaster(master);
         });
-        order.getPlace().setBusyStatus(false);
-        placeRepository.updatePlace(order.getPlace());
+        Place place = order.getPlace();
+        place.setBusyStatus(false);
+        place.getOrders().remove(order);
+        placeRepository.updatePlace(place);
         orderRepository.updateOrder(order);
     }
 
@@ -139,8 +142,13 @@ public class OrderServiceImpl implements OrderService {
         checkStatusOrder(order);
         order.setLeadTime(new Date());
         order.setStatus(Status.COMPLETED);
-        order.getMasters().forEach(master -> master.setNumberOrder(master.getNumberOrder() - 1));
-        order.getPlace().setBusyStatus(false);
+        order.getMasters().forEach(master -> {
+            master.getOrders().remove(order);
+            masterRepository.updateMaster(master);
+        });
+        Place place = order.getPlace();
+        place.setBusyStatus(false);
+        place.getOrders().remove(order);
         placeRepository.updatePlace(order.getPlace());
         orderRepository.updateOrder(order);
     }
@@ -159,6 +167,13 @@ public class OrderServiceImpl implements OrderService {
         checkStatusOrderShiftTime(order);
         order.setLeadTime(leadTime);
         order.setExecutionStartTime(executionStartTime);
+        Place place = order.getPlace();
+        place.getOrders().set(place.getOrders().indexOf(order), order);
+        order.getMasters().forEach(master -> {
+            master.getOrders().set(master.getOrders().indexOf(order), order);
+            masterRepository.updateMaster(master);
+        });
+        placeRepository.updatePlace(place);
         orderRepository.updateOrder(order);
     }
 
@@ -188,13 +203,6 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream()
             .sorted(Comparator.comparing(Order::getExecutionStartTime, Comparator.nullsLast(Comparator.naturalOrder())))
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod) {
-        checkOrders();
-        DateUtil.checkPeriodTime(startPeriod, endPeriod);
-        return sortOrderByPeriod(orderRepository.getOrders(), startPeriod, endPeriod);
     }
 
     @Override
@@ -315,19 +323,5 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus().equals(Status.CANCELED)) {
             throw new BusinessException("The order has been canceled");
         }
-    }
-
-    @Override
-    public void exportOrder() {
-        checkOrders();
-        checkMasters();
-        checkPlaces();
-        CsvOrder.exportOrder(orderRepository.getOrders());
-    }
-
-    @Override
-    public void importOrder() {
-        CsvOrder.importOrder(masterRepository.getMasters(), placeRepository.getPlaces())
-            .forEach(orderRepository::updateOrder);
     }
 }

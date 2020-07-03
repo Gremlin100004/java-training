@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class CsvOrder {
     private static final String ORDER_PATH = PropertyLoader.getPropertyValue("csvPathOrder");
@@ -109,13 +108,14 @@ public class CsvOrder {
         stringValue.append(order.isDeleteStatus());
         stringValue.append(FIELD_SEPARATOR);
         stringValue.append(SEPARATOR_ID);
-        IntStream.range(0, order.getMasters().size()).forEachOrdered(i -> {
+        int bound = order.getMasters().size();
+        for (int i = 0; i < bound; i++) {
             if (i == order.getMasters().size() - 1) {
                 stringValue.append(order.getMasters().get(i).getId());
             } else {
                 stringValue.append(order.getMasters().get(i).getId()).append(FIELD_SEPARATOR);
             }
-        });
+        }
         stringValue.append(SEPARATOR_ID);
         return stringValue.toString();
     }

@@ -1,8 +1,8 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 
+import java.util.Date;
 import java.util.List;
 
 public interface PlaceRepository {
@@ -11,7 +11,7 @@ public interface PlaceRepository {
 
     List<Place> getPlaces();
 
-    List<Place> getFreePlaces(List<Order> orders);
+    List<Place> getFreePlaces(Date startDayDate);
 
     void addPlace(Place place);
 

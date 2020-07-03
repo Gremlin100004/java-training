@@ -39,8 +39,6 @@ public interface OrderService {
 
     List<Order> sortOrderByPrice(List<Order> order);
 
-    List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod);
-
     List<Order> getCurrentRunningOrders();
 
     List<Order> getMasterOrders(Master master);
@@ -52,10 +50,6 @@ public interface OrderService {
     List<Order> getCanceledOrders(Date startPeriod, Date endPeriod);
 
     List<Order> getDeletedOrders(Date startPeriod, Date endPeriod);
-
-    void exportOrder();
-
-    void importOrder();
 
     void serializeOrder();
 
