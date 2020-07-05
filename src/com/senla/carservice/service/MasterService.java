@@ -23,5 +23,9 @@ public interface MasterService {
 
     void exportMasters();
 
-    String importMasters();
+    void importMasters();
+
+    void serializeMaster();
+
+    void deserializeMaster();
 }

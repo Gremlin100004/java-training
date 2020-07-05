@@ -1,54 +1,46 @@
 package com.senla.carservice.csvutil;
 
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.repository.PlaceRepositoryImpl;
+import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.util.PropertyLoader;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CsvPlace {
-    private static final String PLACE_PATH = "csv//places.csv";
-    private static final String COMMA = ",";
+    private static final String PLACE_PATH = PropertyLoader.getPropertyValue("csvPathPlace");
+    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("fieldSeparator");
 
     private CsvPlace() {
     }
 
-    public static String exportPlaces(List<Place> places) {
-        String valueCsv;
-        for (int i = 0; i < places.size(); i++) {
-            if (i == places.size() - 1) {
-                valueCsv = convertToCsv(places.get(i), false);
-            } else {
-                valueCsv = convertToCsv(places.get(i), true);
-            }
-            FileUtil.saveCsv(valueCsv, PLACE_PATH, i != 0);
+    public static void exportPlaces(List<Place> places) {
+        if (places == null) {
+            throw new BusinessException("argument is null");
         }
-        return "save successfully";
+        List<String> valueCsv = places.stream().map(CsvPlace::convertToCsv).collect(Collectors.toList());
+        FileUtil.saveCsv(valueCsv, PLACE_PATH);
     }
 
-    public static String importPlaces() {
+    public static List<Place> importPlaces() {
         List<String> csvLinesPlace = FileUtil.getCsv(PLACE_PATH);
-        csvLinesPlace.forEach(line -> {
-            Place place = getPlaceFromCsv(line);
-            PlaceRepositoryImpl.getInstance().updatePlace(place);
-        });
-        return "Places have been import successfully!";
+        return csvLinesPlace.stream().map(CsvPlace::getPlaceFromCsv).collect(Collectors.toList());
     }
 
     private static Place getPlaceFromCsv(String line) {
-        List<String> values = Arrays.asList(line.split(COMMA));
+        if (line == null) {
+            throw new BusinessException("argument is null");
+        }
+        List<String> values = Arrays.asList(line.split(FIELD_SEPARATOR));
         Place place = new Place();
-        place.setId(Long.valueOf(values.get(0)));
-        place.setNumber(Integer.valueOf(values.get(1)));
-        place.setBusyStatus(Boolean.valueOf(values.get(2)));
+        place.setId(ParameterUtil.getValueLong(values.get(0)));
+        place.setNumber(ParameterUtil.getValueInteger(values.get(1)));
+        place.setBusyStatus(ParameterUtil.getValueBoolean(values.get(2)));
         return place;
     }
 
-    private static String convertToCsv(Place place, boolean isLineFeed) {
-        if (isLineFeed) {
-            return String.format("%s,%s,%s\n", place.getId(), place.getNumber(), place.isBusyStatus());
-        } else {
-            return String.format("%s,%s,%s", place.getId(), place.getNumber(), place.isBusyStatus());
-        }
+    private static String convertToCsv(Place place) {
+        return place.getId() + FIELD_SEPARATOR + place.getNumber() + FIELD_SEPARATOR + place.isBusyStatus();
     }
 }

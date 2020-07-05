@@ -3,13 +3,17 @@ package com.senla.carservice.repository;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Status;
+import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.util.PropertyLoader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderRepositoryImpl implements OrderRepository {
+public class OrderRepositoryImpl implements OrderRepository, Serializable {
     private static OrderRepository instance;
+    private static final long serialVersionUID = 1L;
     private final List<Order> orders;
     private final IdGenerator idGeneratorOrder;
 
@@ -37,14 +41,14 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Order getLastOrder() {
-        return this.orders.get(orders.size()-1);
+        return this.orders.get(orders.size() - 1);
     }
 
     @Override
     public List<Order> getCompletedOrders() {
         List<Order> completedOrders = new ArrayList<>();
         this.orders.forEach(order -> {
-            if (order.getStatus().equals(Status.COMPLETED)){
+            if (order.getStatus().equals(Status.COMPLETED)) {
                 completedOrders.add(order);
             }
         });
@@ -55,7 +59,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public List<Order> getDeletedOrders() {
         List<Order> deletedOrders = new ArrayList<>();
         this.orders.forEach(order -> {
-            if (order.isDeleteStatus()){
+            if (order.isDeleteStatus()) {
                 deletedOrders.add(order);
             }
         });
@@ -66,7 +70,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public List<Order> getCanceledOrders() {
         List<Order> canceledOrders = new ArrayList<>();
         this.orders.forEach(order -> {
-            if (order.getStatus().equals(Status.CANCELED)){
+            if (order.getStatus().equals(Status.CANCELED)) {
                 canceledOrders.add(order);
             }
         });
@@ -87,8 +91,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<Order> getMasterOrders(Master master) {
         return this.orders.stream().filter(order -> !order.isDeleteStatus() &&
-                order.getMasters().stream().anyMatch(masterService ->
-                        masterService.equals(master))).collect(Collectors.toList());
+                                                    order.getMasters().stream().anyMatch(masterService ->
+                                                                                             masterService
+                                                                                                 .equals(master)))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -103,12 +109,49 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public void deleteOrder(Order order) {
+        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("deleteOrder"))) {
+            throw new BusinessException("Permission denied");
+        }
+        checkStatusOrderDelete(order);
+        order.setDeleteStatus(true);
+        update(order);
+    }
+
+    @Override
+    public void updateListOrder(List<Order> orders) {
+        this.orders.clear();
+        this.orders.addAll(orders);
+    }
+
+    @Override
+    public void updateGenerator(IdGenerator idGenerator) {
+        this.idGeneratorOrder.setId(idGenerator.getId());
+    }
+
+    @Override
     public void updateOrder(Order order) {
+        update(order);
+    }
+
+    private void update(Order order) {
         int index = this.orders.indexOf(order);
-        if (index == -1){
+        if (index == -1) {
             this.orders.add(order);
         } else {
             this.orders.set(index, order);
+        }
+    }
+
+    private void checkStatusOrderDelete(Order order) {
+        if (order.isDeleteStatus()) {
+            throw new BusinessException("The order has been deleted");
+        }
+        if (order.getStatus().equals(Status.PERFORM)) {
+            throw new BusinessException("Order is being executed");
+        }
+        if (order.getStatus().equals(Status.WAIT)) {
+            throw new BusinessException("The order is being waited");
         }
     }
 }

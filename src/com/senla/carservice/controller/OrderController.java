@@ -1,10 +1,16 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.exception.*;
-import com.senla.carservice.service.*;
-import com.senla.carservice.string.StringMaster;
-import com.senla.carservice.string.StringOrder;
+import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.exception.DateException;
+import com.senla.carservice.service.MasterService;
+import com.senla.carservice.service.MasterServiceImpl;
+import com.senla.carservice.service.OrderService;
+import com.senla.carservice.service.OrderServiceImpl;
+import com.senla.carservice.service.PlaceService;
+import com.senla.carservice.service.PlaceServiceImpl;
+import com.senla.carservice.stringutil.StringMaster;
+import com.senla.carservice.stringutil.StringOrder;
 import com.senla.carservice.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -16,7 +22,6 @@ public class OrderController {
     private final OrderService orderService;
     private final MasterService masterService;
     private final PlaceService placeService;
-
 
     private OrderController() {
         orderService = OrderServiceImpl.getInstance();
@@ -35,7 +40,7 @@ public class OrderController {
         try {
             orderService.addOrder(automaker, model, registrationNumber);
             return "order add successfully!";
-        } catch (NumberObjectZeroException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -46,19 +51,21 @@ public class OrderController {
         try {
             orderService.addOrderDeadlines(executionStartTime, leadTime);
             return "deadline add to order successfully";
-        } catch (NullDateException | DateException | NumberObjectZeroException e) {
+        } catch (DateException | BusinessException e) {
             return e.getMessage();
         }
     }
 
     public String addOrderMasters(int index) {
         try {
-            orderService.addOrderMasters(masterService.getMasters().get(index));
-            return "masters add successfully";
-        } catch (NumberObjectZeroException | EqualObjectsException e) {
+            if (masterService.getMasters().size() < index || index < 0) {
+                return "There is no such master";
+            } else {
+                orderService.addOrderMasters(masterService.getMasters().get(index));
+                return "masters add successfully";
+            }
+        } catch (BusinessException e) {
             return e.getMessage();
-        } catch (IndexOutOfBoundsException e){
-         return "There is no such master";
         }
     }
 
@@ -67,12 +74,14 @@ public class OrderController {
         Date leadDate = DateUtil.getDatesFromString(stringLeadDate, true);
         try {
             List<Order> orders = orderService.getOrderByPeriod(executeDate, leadDate);
-            orderService.addOrderPlace(placeService.getFreePlaceByDate(executeDate, leadDate, orders).get(index));
-            return "place add to order successfully";
-        } catch (NumberObjectZeroException | NullDateException | DateException e) {
+            if (placeService.getFreePlaceByDate(executeDate, leadDate, orders).size() < index || index < 0) {
+                return "There is no such place!";
+            } else {
+                orderService.addOrderPlace(placeService.getFreePlaceByDate(executeDate, leadDate, orders).get(index));
+                return "place add to order successfully";
+            }
+        } catch (BusinessException | DateException e) {
             return e.getMessage();
-        } catch (IndexOutOfBoundsException e){
-            return "There is no such place!";
         }
     }
 
@@ -80,7 +89,7 @@ public class OrderController {
         try {
             orderService.addOrderPrice(price);
             return "price add to order successfully";
-        } catch (NumberObjectZeroException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -88,52 +97,60 @@ public class OrderController {
     public String getOrders() {
         try {
             return StringOrder.getStringFromOrder(orderService.getOrders());
-        } catch (NumberObjectZeroException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
 
     public String completeOrder(int index) {
         try {
-            orderService.completeOrder(orderService.getOrders().get(index));
+            if (orderService.getOrders().size() < index || index < 0) {
+                return "There are no such order";
+            } else {
+                orderService.completeOrder(orderService.getOrders().get(index));
+            }
             return " - the order has been transferred to execution status";
-        } catch (OrderStatusException | NumberObjectZeroException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
-        } catch (IndexOutOfBoundsException e){
-            return "There are no such order";
         }
     }
 
     public String closeOrder(int index) {
         try {
-            orderService.closeOrder(orderService.getOrders().get(index));
-            return " -the order has been completed.";
-        } catch (OrderStatusException | NumberObjectZeroException e) {
+            if (orderService.getOrders().size() < index || index < 0) {
+                return "There are no such order";
+            } else {
+                orderService.closeOrder(orderService.getOrders().get(index));
+                return " -the order has been completed.";
+            }
+        } catch (BusinessException e) {
             return e.getMessage();
-        } catch (IndexOutOfBoundsException e){
-            return "There are no such order";
         }
     }
 
     public String cancelOrder(int index) {
         try {
-            orderService.cancelOrder(orderService.getOrders().get(index));
+            if (orderService.getOrders().size() < index || index < 0) {
+                return "There are no such order";
+            } else {
+                orderService.cancelOrder(orderService.getOrders().get(index));
+            }
             return " -the order has been canceled.";
-        } catch (OrderStatusException | NumberObjectZeroException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
-        } catch (IndexOutOfBoundsException e){
-            return "There are no such order";
         }
     }
 
     public String deleteOrder(int index) {
         try {
-            orderService.deleteOrder(orderService.getOrders().get(index));
-            return " -the order has been deleted.";
-        } catch (OrderStatusException | NumberObjectZeroException e) {
+            if (orderService.getOrders().size() < index || index < 0) {
+                return "There are no such order";
+            } else {
+                orderService.deleteOrder(orderService.getOrders().get(index));
+                return " -the order has been deleted.";
+            }
+        } catch (BusinessException e) {
             return e.getMessage();
-        } catch (IndexOutOfBoundsException e){
-            return "There are no such order";
         }
     }
 
@@ -141,43 +158,45 @@ public class OrderController {
         Date executionStartTime = DateUtil.getDatesFromString(stringStartTime, true);
         Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
         try {
-            orderService.shiftLeadTime(orderService.getOrders().get(index), executionStartTime, leadTime);
-            return " -the order lead time has been changed.";
-        } catch (OrderStatusException | DateException | NullDateException | NumberObjectZeroException e) {
+            if (orderService.getOrders().size() < index || index < 0) {
+                return "There are no such order";
+            } else {
+                orderService.shiftLeadTime(orderService.getOrders().get(index), executionStartTime, leadTime);
+                return " -the order lead time has been changed.";
+            }
+        } catch (DateException | BusinessException e) {
             return e.getMessage();
-        } catch (IndexOutOfBoundsException e){
-            return "There are no such order";
         }
     }
 
-    public String getOrdersSortByFilingDate(){
+    public String getOrdersSortByFilingDate() {
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime(orderService.getOrders()));
-        } catch (NumberObjectZeroException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
 
-    public String getOrdersSortByExecutionDate(){
+    public String getOrdersSortByExecutionDate() {
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByLeadTime(orderService.getOrders()));
-        } catch (NumberObjectZeroException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
 
-    public String getOrdersSortByPlannedStartDate(){
+    public String getOrdersSortByPlannedStartDate() {
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime(orderService.getOrders()));
-        } catch (NumberObjectZeroException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
 
-    public String getOrdersSortByPrice(){
+    public String getOrdersSortByPrice() {
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByPrice(orderService.getOrders()));
-        } catch (NumberObjectZeroException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -185,8 +204,8 @@ public class OrderController {
     public String getExecuteOrderFilingDate() {
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
-                    (orderService.getCurrentRunningOrders()));
-        } catch (NumberObjectZeroException e) {
+                (orderService.getCurrentRunningOrders()));
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -194,8 +213,8 @@ public class OrderController {
     public String getExecuteOrderExecutionDate() {
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByLeadTime
-                    (orderService.getCurrentRunningOrders()));
-        } catch (NumberObjectZeroException e) {
+                (orderService.getCurrentRunningOrders()));
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -205,8 +224,8 @@ public class OrderController {
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
-                    (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
-        } catch (NumberObjectZeroException e) {
+                (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -216,8 +235,8 @@ public class OrderController {
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime
-                    (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
-        } catch (NumberObjectZeroException e) {
+                (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -227,8 +246,8 @@ public class OrderController {
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByPrice
-                    (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
-        } catch (NumberObjectZeroException e) {
+                (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -238,8 +257,8 @@ public class OrderController {
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
-                    (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
-        } catch (NumberObjectZeroException e) {
+                (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -249,8 +268,8 @@ public class OrderController {
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime
-                    (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
-        } catch (NumberObjectZeroException e) {
+                (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -260,8 +279,8 @@ public class OrderController {
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByPrice
-                    (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
-        } catch (NumberObjectZeroException e) {
+                (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -271,8 +290,8 @@ public class OrderController {
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
-                    (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
-        } catch (NumberObjectZeroException e) {
+                (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -282,8 +301,8 @@ public class OrderController {
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime
-                    (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
-        } catch (NumberObjectZeroException e) {
+                (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -293,29 +312,35 @@ public class OrderController {
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByPrice
-                    (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
-        } catch (NumberObjectZeroException e) {
+                (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
 
     public String getMasterOrders(int index) {
         try {
-            return StringOrder.getStringFromOrder(orderService.getMasterOrders(masterService.getMasters().get(index)));
-        } catch (NumberObjectZeroException e) {
+            if (masterService.getMasters().size() < index || index < 0) {
+                return "There are no such master";
+            } else {
+                return StringOrder.getStringFromOrder(
+                    orderService.getMasterOrders(masterService.getMasters().get(index)));
+            }
+        } catch (BusinessException e) {
             return e.getMessage();
-        } catch (IndexOutOfBoundsException e){
-            return "There are no such master";
         }
     }
 
     public String getOrderMasters(int index) {
         try {
-            return StringMaster.getStringFromMasters(orderService.getOrderMasters(orderService.getOrders().get(index)));
-        } catch (NumberObjectZeroException e) {
+            if (orderService.getOrders().size() < index || index < 0) {
+                return "There are no such order";
+            } else {
+                return StringMaster
+                    .getStringFromMasters(orderService.getOrderMasters(orderService.getOrders().get(index)));
+            }
+        } catch (BusinessException e) {
             return e.getMessage();
-        } catch (IndexOutOfBoundsException e){
-            return "There are no such order";
         }
     }
 
@@ -323,15 +348,34 @@ public class OrderController {
         try {
             orderService.exportOrder();
             return "Orders have been export successfully!";
-        } catch (NumberObjectZeroException | ExportException e){
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
 
     public String importOrders() {
         try {
-            return orderService.importOrder();
-        } catch (NumberObjectZeroException e){
+            orderService.importOrder();
+            return "orders imported successfully!";
+        } catch (BusinessException e) {
+            return e.getMessage();
+        }
+    }
+
+    public String serializeOrder() {
+        try {
+            orderService.serializeOrder();
+            return "Orders have been serialize successfully!";
+        } catch (BusinessException e) {
+            return e.getMessage();
+        }
+    }
+
+    public String deserializeOrder() {
+        try {
+            orderService.deserializeOrder();
+            return "Orders have been deserialize successfully!";
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }

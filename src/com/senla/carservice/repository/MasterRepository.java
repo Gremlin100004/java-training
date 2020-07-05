@@ -6,9 +6,16 @@ import com.senla.carservice.domain.Order;
 import java.util.List;
 
 public interface MasterRepository {
+
+    IdGenerator getIdGeneratorMaster();
+
     void addMaster(Master master);
 
     void updateMaster(Master master);
+
+    void updateListMaster(List<Master> masters);
+
+    void updateGenerator(IdGenerator idGenerator);
 
     void deleteMaster(Master master);
 

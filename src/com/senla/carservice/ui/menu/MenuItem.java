@@ -16,7 +16,7 @@ public class MenuItem {
     }
 
     public void doAction() {
-        if (action!= null){
+        if (action != null) {
             action.execute();
         }
     }

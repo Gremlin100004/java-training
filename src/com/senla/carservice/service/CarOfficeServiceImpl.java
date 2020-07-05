@@ -1,8 +1,13 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.exception.NumberObjectZeroException;
-import com.senla.carservice.repository.*;
+import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.repository.MasterRepository;
+import com.senla.carservice.repository.MasterRepositoryImpl;
+import com.senla.carservice.repository.OrderRepository;
+import com.senla.carservice.repository.OrderRepositoryImpl;
+import com.senla.carservice.repository.PlaceRepository;
+import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
 
 import java.util.ArrayList;
@@ -29,28 +34,32 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     @Override
-    public String getNearestFreeDate() {
-        Date dateFree = new Date();
-        if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters");
-        if (orderRepository.getOrders().isEmpty()) throw new NumberObjectZeroException("There are no orders");
-        if (placeRepository.getPlaces().isEmpty()) throw new NumberObjectZeroException("There are no places");
-        int numberFreeMasters = 0;
-        int numberFreePlace = 0;
-
-        while (numberFreeMasters == 0 && numberFreePlace == 0) {
-            Date endDay = DateUtil.bringEndOfDayDate(dateFree);
+    public Date getNearestFreeDate() {
+        Date startDayDate = new Date();
+        if (masterRepository.getMasters().isEmpty()) {
+            throw new BusinessException("There are no masters");
+        }
+        if (orderRepository.getOrders().isEmpty()) {
+            throw new BusinessException("There are no orders");
+        }
+        if (placeRepository.getPlaces().isEmpty()) {
+            throw new BusinessException("There are no places");
+        }
+        for (Date endDayDate = DateUtil.bringEndOfDayDate(startDayDate);
+             orderRepository.getLastOrder().getLeadTime().compareTo(endDayDate) <= 0; DateUtil.addDays(endDayDate, 1)) {
+            startDayDate = DateUtil.bringStartOfDayDate(endDayDate);
             List<Order> sortArrayOrder = new ArrayList<>();
-            Date startDay = dateFree;
-            orderRepository.getOrders().forEach(order -> {
-                if (order.getLeadTime().compareTo(startDay) >= 0 && order.getLeadTime().compareTo(endDay) <= 0) {
+            for (Order order : orderRepository.getOrders()) {
+                if (order.getLeadTime().compareTo(startDayDate) >= 0 &&
+                    order.getLeadTime().compareTo(endDayDate) <= 0) {
                     sortArrayOrder.add(order);
                 }
-            });
-            numberFreeMasters = masterRepository.getFreeMasters(sortArrayOrder).size();
-            numberFreePlace = placeRepository.getFreePlaces(sortArrayOrder).size();
-            dateFree = DateUtil.addDays(DateUtil.bringStartOfDayDate(dateFree), 1);
+            }
+            if (!masterRepository.getFreeMasters(sortArrayOrder).isEmpty() &&
+                !placeRepository.getFreePlaces(sortArrayOrder).isEmpty()) {
+                return DateUtil.addDays(startDayDate, -1);
+            }
         }
-        dateFree = DateUtil.addDays(dateFree, -1);
-        return String.format("Nearest free date: %s", DateUtil.getStringFromDate(dateFree));
+        return startDayDate;
     }
 }

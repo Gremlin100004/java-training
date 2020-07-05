@@ -3,11 +3,13 @@ package com.senla.carservice.repository;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MasterRepositoryImpl implements MasterRepository {
+public class MasterRepositoryImpl implements MasterRepository, Serializable {
     private static MasterRepository instance;
+    private static final long serialVersionUID = 1L;
     private final List<Master> masters;
     private final IdGenerator idGeneratorMaster;
 
@@ -23,6 +25,9 @@ public class MasterRepositoryImpl implements MasterRepository {
         return instance;
     }
 
+    public IdGenerator getIdGeneratorMaster() {
+        return idGeneratorMaster;
+    }
 
     @Override
     public void addMaster(Master master) {
@@ -38,6 +43,17 @@ public class MasterRepositoryImpl implements MasterRepository {
         } else {
             this.masters.set(index, master);
         }
+    }
+
+    @Override
+    public void updateListMaster(List<Master> masters) {
+        this.masters.clear();
+        this.masters.addAll(masters);
+    }
+
+    @Override
+    public void updateGenerator(IdGenerator idGenerator) {
+        this.idGeneratorMaster.setId(idGenerator.getId());
     }
 
     @Override

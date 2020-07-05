@@ -5,9 +5,7 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.Status;
-import com.senla.carservice.exception.EqualObjectsException;
-import com.senla.carservice.exception.NumberObjectZeroException;
-import com.senla.carservice.exception.OrderStatusException;
+import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.repository.OrderRepository;
@@ -15,6 +13,8 @@ import com.senla.carservice.repository.OrderRepositoryImpl;
 import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.util.PropertyLoader;
+import com.senla.carservice.util.Serializer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
         checkMasters();
         checkPlaces();
         orderRepository.addOrder(new Order(orderRepository.getIdGeneratorOrder().getId(),
-                automaker, model, registrationNumber));
+                                           automaker, model, registrationNumber));
     }
 
     @Override
@@ -63,14 +63,18 @@ public class OrderServiceImpl implements OrderService {
         Order currentOrder = orderRepository.getLastOrder();
         List<Order> orders = new ArrayList<>(orderRepository.getOrders());
         orders.remove(currentOrder);
-        if (!orders.isEmpty()) orders = sortOrderByPeriod(orders, executionStartTime, leadTime);
-        int numberFreeMasters = masterRepository.getMasters().size() -
-                orders.stream().mapToInt(order -> order.getMasters().size()).sum();
+        if (!orders.isEmpty()) {
+            orders = sortOrderByPeriod(orders, executionStartTime, leadTime);
+        }
+        int numberFreeMasters = masterRepository.getMasters().size() - orders
+            .stream().mapToInt(order -> order.getMasters().size()).sum();
         int numberFreePlace = orderRepository.getOrders().size() - orders.size();
-        if (numberFreeMasters == 0) throw new
-                NumberObjectZeroException("The number of masters is zero");
-        if (numberFreePlace == 0) throw new
-                NumberObjectZeroException("The number of places is zero");
+        if (numberFreeMasters == 0) {
+            throw new BusinessException("The number of masters is zero");
+        }
+        if (numberFreePlace == 0) {
+            throw new BusinessException("The number of places is zero");
+        }
         currentOrder.setExecutionStartTime(executionStartTime);
         currentOrder.setLeadTime(leadTime);
         orderRepository.updateOrder(currentOrder);
@@ -81,9 +85,9 @@ public class OrderServiceImpl implements OrderService {
         checkOrders();
         Order currentOrder = orderRepository.getLastOrder();
         List<Master> masters = currentOrder.getMasters();
-        for (Master orderMaster : masters) {
-            if (orderMaster.equals(master)) throw new EqualObjectsException("This master already exists");
-        }
+        masters.stream().filter(orderMaster -> orderMaster.equals(master)).forEachOrdered(orderMaster -> {
+            throw new BusinessException("This master already exists");
+        });
         masters.add(master);
         currentOrder.setMasters(masters);
         orderRepository.updateOrder(currentOrder);
@@ -121,10 +125,10 @@ public class OrderServiceImpl implements OrderService {
         checkStatusOrder(order);
         order.setLeadTime(new Date());
         order.setStatus(Status.CANCELED);
-        for (Master master : order.getMasters()) {
+        order.getMasters().forEach(master -> {
             master.setNumberOrder(master.getNumberOrder() - 1);
             masterRepository.updateMaster(master);
-        }
+        });
         order.getPlace().setBusyStatus(false);
         placeRepository.updatePlace(order.getPlace());
         orderRepository.updateOrder(order);
@@ -135,9 +139,7 @@ public class OrderServiceImpl implements OrderService {
         checkStatusOrder(order);
         order.setLeadTime(new Date());
         order.setStatus(Status.COMPLETED);
-        for (Master master : order.getMasters()) {
-            master.setNumberOrder(master.getNumberOrder() - 1);
-        }
+        order.getMasters().forEach(master -> master.setNumberOrder(master.getNumberOrder() - 1));
         order.getPlace().setBusyStatus(false);
         placeRepository.updatePlace(order.getPlace());
         orderRepository.updateOrder(order);
@@ -145,13 +147,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(Order order) {
-        checkStatusOrderDelete(order);
-        order.setDeleteStatus(true);
-        orderRepository.updateOrder(order);
+        orderRepository.deleteOrder(order);
     }
 
     @Override
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
+        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("shiftTime"))) {
+            throw new BusinessException("Permission denied");
+        }
         DateUtil.checkDateTime(executionStartTime, leadTime);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(leadTime);
@@ -161,95 +164,123 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> sortOrderByCreationTime(List<Order> orders) {
-        return orders.stream().sorted(Comparator.comparing(Order::getCreationTime,
-                Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
+        return orders.stream()
+            .sorted(Comparator.comparing(Order::getCreationTime, Comparator.nullsLast(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByLeadTime(List<Order> orders) {
-        return orders.stream().sorted(Comparator.comparing(Order::getLeadTime,
-                Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
+        return orders.stream()
+            .sorted(Comparator.comparing(Order::getLeadTime, Comparator.nullsLast(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByPrice(List<Order> orders) {
-        return orders.stream().sorted(Comparator.comparing(Order::getPrice,
-                Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
+        return orders.stream()
+            .sorted(Comparator.comparing(Order::getPrice, Comparator.nullsLast(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByStartTime(List<Order> orders) {
-        return orders.stream().sorted(Comparator.comparing(Order::getExecutionStartTime,
-                Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
+        return orders.stream()
+            .sorted(Comparator.comparing(Order::getExecutionStartTime, Comparator.nullsLast(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod) {
         checkOrders();
         DateUtil.checkPeriodTime(startPeriod, endPeriod);
-        if (sortOrderByPeriod(orderRepository.getOrders(), startPeriod, endPeriod).isEmpty())
-            throw new NumberObjectZeroException("There are no orders in this period");
         return sortOrderByPeriod(orderRepository.getOrders(), startPeriod, endPeriod);
     }
 
     @Override
     public List<Order> getCurrentRunningOrders() {
         checkOrders();
-        if (orderRepository.getRunningOrders().isEmpty())
-            throw new NumberObjectZeroException("There are no orders with status PERFORM");
+        if (orderRepository.getRunningOrders().isEmpty()) {
+            throw new BusinessException("There are no orders with status PERFORM");
+        }
         return orderRepository.getRunningOrders();
     }
 
     @Override
     public List<Order> getMasterOrders(Master master) {
         checkOrders();
-        if (orderRepository.getMasterOrders(master).isEmpty())
-            throw new NumberObjectZeroException("Master doesn't have any orders");
+        if (orderRepository.getMasterOrders(master).isEmpty()) {
+            throw new BusinessException("Master doesn't have any orders");
+        }
         return orderRepository.getMasterOrders(master);
     }
 
     @Override
     public List<Master> getOrderMasters(Order order) {
-        if (orderRepository.getOrderMasters(order).isEmpty())
-            throw new NumberObjectZeroException("There are no masters in order");
+        if (orderRepository.getOrderMasters(order).isEmpty()) {
+            throw new BusinessException("There are no masters in order");
+        }
         return orderRepository.getOrderMasters(order);
     }
 
     @Override
     public List<Order> getCompletedOrders(Date startPeriod, Date endPeriod) {
-        if (sortOrderByPeriod(orderRepository.getCompletedOrders(), startPeriod, endPeriod).isEmpty())
-            throw new NumberObjectZeroException("There are no orders with status COMPLETED");
+        if (sortOrderByPeriod(orderRepository.getCompletedOrders(), startPeriod, endPeriod).isEmpty()) {
+            throw new BusinessException("There are no orders with status COMPLETED");
+        }
         return (sortOrderByPeriod(orderRepository.getCompletedOrders(), startPeriod, endPeriod));
     }
 
     @Override
     public List<Order> getCanceledOrders(Date startPeriod, Date endPeriod) {
-        if (sortOrderByPeriod(orderRepository.getCanceledOrders(), startPeriod, endPeriod).isEmpty())
-            throw new NumberObjectZeroException("There are no orders with status CANCELED");
+        if (sortOrderByPeriod(orderRepository.getCanceledOrders(), startPeriod, endPeriod).isEmpty()) {
+            throw new BusinessException("There are no orders with status CANCELED");
+        }
         return sortOrderByPeriod(orderRepository.getCanceledOrders(), startPeriod, endPeriod);
     }
 
     @Override
     public List<Order> getDeletedOrders(Date startPeriod, Date endPeriod) {
-        if (sortOrderByPeriod(orderRepository.getDeletedOrders(), startPeriod, endPeriod).isEmpty())
-            throw new NumberObjectZeroException("There are no deleted orders");
+        if (sortOrderByPeriod(orderRepository.getDeletedOrders(), startPeriod, endPeriod).isEmpty()) {
+            throw new BusinessException("There are no deleted orders");
+        }
         return sortOrderByPeriod(orderRepository.getDeletedOrders(), startPeriod, endPeriod);
     }
 
+    @Override
+    public void serializeOrder() {
+        Serializer.serializeOrder(OrderRepositoryImpl.getInstance());
+    }
+
+    @Override
+    public void deserializeOrder() {
+        OrderRepository orderRepositoryRestore = Serializer.deserializeOrder();
+        orderRepository.updateListOrder(orderRepositoryRestore.getOrders());
+        orderRepository.updateGenerator(orderRepositoryRestore.getIdGeneratorOrder());
+    }
+
     private void checkOrders() {
-        if (orderRepository.getOrders().isEmpty()) throw new NumberObjectZeroException("There are no orders");
+        if (orderRepository.getOrders().isEmpty()) {
+            throw new BusinessException("There are no orders");
+        }
     }
 
     private void checkMasters() {
-        if (masterRepository.getMasters().isEmpty()) throw new NumberObjectZeroException("There are no masters");
+        if (masterRepository.getMasters().isEmpty()) {
+            throw new BusinessException("There are no masters");
+        }
     }
 
     private void checkPlaces() {
-        if (placeRepository.getPlaces().isEmpty()) throw new NumberObjectZeroException("There are no places");
+        if (placeRepository.getPlaces().isEmpty()) {
+            throw new BusinessException("There are no places");
+        }
     }
 
     private List<Order> sortOrderByPeriod(List<Order> orders, Date startPeriod, Date endPeriod) {
-        if (orders.isEmpty()) throw new NumberObjectZeroException("There are no orders");
+        if (orders.isEmpty()) {
+            throw new BusinessException("There are no orders");
+        }
         List<Order> sortArrayOrder = new ArrayList<>();
         orders.forEach(order -> {
             if (order.getLeadTime().compareTo(startPeriod) >= 0 && order.getLeadTime().compareTo(endPeriod) <= 0) {
@@ -260,32 +291,30 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void checkStatusOrder(Order order) {
-        if (order.isDeleteStatus()) throw new
-                OrderStatusException("The order has been deleted");
-        if (order.getStatus().equals(Status.COMPLETED)) throw new
-                OrderStatusException("The order has been completed");
-        if (order.getStatus().equals(Status.PERFORM)) throw new
-                OrderStatusException("Order is being executed");
-        if (order.getStatus().equals(Status.CANCELED)) throw new
-                OrderStatusException("The order has been canceled");
-    }
-
-    private void checkStatusOrderDelete(Order order) {
-        if (order.isDeleteStatus()) throw new
-                OrderStatusException("The order has been deleted");
-        if (order.getStatus().equals(Status.PERFORM)) throw new
-                OrderStatusException("Order is being executed");
-        if (order.getStatus().equals(Status.WAIT)) throw new
-                OrderStatusException("The order is being waited");
+        if (order.isDeleteStatus()) {
+            throw new BusinessException("The order has been deleted");
+        }
+        if (order.getStatus().equals(Status.COMPLETED)) {
+            throw new BusinessException("The order has been completed");
+        }
+        if (order.getStatus().equals(Status.PERFORM)) {
+            throw new BusinessException("Order is being executed");
+        }
+        if (order.getStatus().equals(Status.CANCELED)) {
+            throw new BusinessException("The order has been canceled");
+        }
     }
 
     private void checkStatusOrderShiftTime(Order order) {
-        if (order.isDeleteStatus()) throw new
-                OrderStatusException("The order has been deleted");
-        if (order.getStatus().equals(Status.COMPLETED)) throw new
-                OrderStatusException("The order has been completed");
-        if (order.getStatus().equals(Status.CANCELED)) throw new
-                OrderStatusException("The order has been canceled");
+        if (order.isDeleteStatus()) {
+            throw new BusinessException("The order has been deleted");
+        }
+        if (order.getStatus().equals(Status.COMPLETED)) {
+            throw new BusinessException("The order has been completed");
+        }
+        if (order.getStatus().equals(Status.CANCELED)) {
+            throw new BusinessException("The order has been canceled");
+        }
     }
 
     @Override
@@ -297,7 +326,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String importOrder() {
-        return CsvOrder.importOrder();
+    public void importOrder() {
+        CsvOrder.importOrder(masterRepository.getMasters(), placeRepository.getPlaces())
+            .forEach(orderRepository::updateOrder);
     }
 }
