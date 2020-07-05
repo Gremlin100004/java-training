@@ -1,5 +1,6 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.annotation.Singleton;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Singleton
 public class MasterServiceImpl implements MasterService {
     private static MasterService instance;
     private final MasterRepository masterRepository;

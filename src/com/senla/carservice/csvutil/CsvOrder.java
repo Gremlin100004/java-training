@@ -1,5 +1,6 @@
 package com.senla.carservice.csvutil;
 
+import com.senla.carservice.annotation.InjectProperty;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
@@ -15,6 +16,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class CsvOrder {
+    @InjectProperty
     private static final String ORDER_PATH = PropertyLoader.getPropertyValue("csvPathOrder");
     private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("fieldSeparator");
     private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("separatorId");

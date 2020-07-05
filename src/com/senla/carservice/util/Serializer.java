@@ -1,5 +1,6 @@
 package com.senla.carservice.util;
 
+import com.senla.carservice.annotation.InjectProperty;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.MasterRepositoryImpl;
@@ -17,6 +18,7 @@ import java.util.Objects;
 
 public class Serializer {
     private static final ClassLoader CLASS_LOADER = PropertyLoader.class.getClassLoader();
+    @InjectProperty
     private static final String MASTER_SER = PropertyLoader.getPropertyValue("serializableMaster");
     private static final String PLACE_SER = PropertyLoader.getPropertyValue("serializablePlace");
     private static final String ORDER_SER = PropertyLoader.getPropertyValue("serializableOrder");
