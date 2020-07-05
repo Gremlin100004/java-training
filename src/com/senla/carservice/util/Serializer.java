@@ -16,6 +16,7 @@ import java.io.ObjectOutputStream;
 import java.util.Objects;
 
 public class Serializer {
+    // не нужно классЛоадер в константу
     private static final ClassLoader CLASS_LOADER = PropertyLoader.class.getClassLoader();
     private static final String MASTER_SER = PropertyLoader.getPropertyValue("serializableMaster");
     private static final String PLACE_SER = PropertyLoader.getPropertyValue("serializablePlace");
@@ -25,6 +26,10 @@ public class Serializer {
     }
 
     public static void serializeMaster(MasterRepository masterRepository) {
+        // можно чуток упростить круглые скобки в трай - получить файл можно вне трай
+        // String file = Objects.requireNonNull(CLASS_LOADER.getResource(MASTER_SER)).getFile();
+        // Objects.requireNonNull(CLASS_LOADER.getResource(MASTER_SER)) выбросит НПЕ в случае нал - такая
+        // себе проверка
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(
             Objects.requireNonNull(CLASS_LOADER.getResource(MASTER_SER)).getFile()))) {
             objectOutputStream.writeObject(masterRepository);
@@ -54,6 +59,7 @@ public class Serializer {
     public static PlaceRepository deserializePlace() {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(
             Objects.requireNonNull(CLASS_LOADER.getResource(PLACE_SER)).getFile()))) {
+            // по идее можно попробовать кастить сразу к типу интерфейса
             return (PlaceRepositoryImpl) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new BusinessException("Deserialize places problem");

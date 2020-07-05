@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class FileUtil {
+    // не нужно классЛоадер в константу
+    // замечания аналогичные как в Serializer
     private static final ClassLoader CLASS_LOADER = PropertyLoader.class.getClassLoader();
     private FileUtil() {
     }

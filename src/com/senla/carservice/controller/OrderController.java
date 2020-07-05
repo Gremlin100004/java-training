@@ -279,6 +279,7 @@ public class OrderController {
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
             return StringOrder.getStringFromOrder(orderService.sortOrderByPrice
+                    // при переносе оставляй скобку на предыдущей строке
                 (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
         } catch (BusinessException e) {
             return e.getMessage();

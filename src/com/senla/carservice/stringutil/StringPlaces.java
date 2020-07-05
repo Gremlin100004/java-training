@@ -16,16 +16,17 @@ public class StringPlaces {
                                            "№", "Number", "Status"
                                           ));
         stringBuilder.append(line);
-        IntStream.range(0, places.size()).forEach(i -> {
-            stringBuilder.append(places.get(i).isBusyStatus() ? String.format("|%-3s|%6s|%-6s|\n",
-                                                                              i + 1, places.get(i).getNumber(),
-                                                                              "busy"
-                                                                             ) : String.format("|%-3s|%-6s|%-6s|\n",
-                                                                                               i + 1, places.get(i)
-                                                                                                   .getNumber(),
-                                                                                               "free"
-                                                                                              ));
-        });
+        // ужасное форматирование, неужели тебе самому нравится на это смотреть?
+        // основная рабочая область пустая, а весь код уехал столбиком вправо за пределы рекомендуемой длины
+        // строки
+        // стримы можно переносить на строку ниже через точку (точка на новой строке)
+        // а тернарный оператор можно переносить по ? и : оставляя их на предыдущей
+        // я отформатирую, уберу также ненужные скобки, сравни
+        IntStream.range(0, places.size())
+                .forEach(i ->
+                        stringBuilder.append(places.get(i).isBusyStatus() ?
+                                String.format("|%-3s|%6s|%-6s|\n", i + 1, places.get(i).getNumber(), "busy") :
+                                String.format("|%-3s|%-6s|%-6s|\n", i + 1, places.get(i).getNumber(), "free")));
         stringBuilder.append(line);
         return stringBuilder.toString();
     }

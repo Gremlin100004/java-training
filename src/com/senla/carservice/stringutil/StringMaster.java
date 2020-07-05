@@ -5,7 +5,10 @@ import com.senla.carservice.domain.Master;
 import java.util.Collections;
 import java.util.List;
 
+// лучше не разбрасывать утилиты по собственным пакетам в общем пакете проекта
+// а собрать их в один пакет утил и там внутри делать любую иерархию пакетов
 public class StringMaster {
+    // желательно дополнить имя - длина чего? строки, колонки?
     private static final int LENGTH = 38;
 
     public static String getStringFromMasters(List<Master> masters) {

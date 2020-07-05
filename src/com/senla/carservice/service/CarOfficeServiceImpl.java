@@ -45,11 +45,14 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         if (placeRepository.getPlaces().isEmpty()) {
             throw new BusinessException("There are no places");
         }
+        // переделай этот метод, я не погу прочитать, что здесь происходит
+        // уверен, что это можно сделать без такого сложного фора
         for (Date endDayDate = DateUtil.bringEndOfDayDate(startDayDate);
              orderRepository.getLastOrder().getLeadTime().compareTo(endDayDate) <= 0; DateUtil.addDays(endDayDate, 1)) {
             startDayDate = DateUtil.bringStartOfDayDate(endDayDate);
             List<Order> sortArrayOrder = new ArrayList<>();
             for (Order order : orderRepository.getOrders()) {
+                // у дат есть методы before и after
                 if (order.getLeadTime().compareTo(startDayDate) >= 0 &&
                     order.getLeadTime().compareTo(endDayDate) <= 0) {
                     sortArrayOrder.add(order);

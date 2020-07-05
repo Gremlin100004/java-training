@@ -66,6 +66,11 @@ public class CsvOrder {
             throw new BusinessException("argument is null");
         }
         List<Master> orderMasters = new ArrayList<>();
+        // угловые скобки стриму не нужны
+        // этот стрим нужно переписать:
+        // stringIndex -> master ->
+        // .forEach(masters::forEach);
+        // так не пишут
         arrayIdMaster.stream().<Consumer<? super Master>> map(stringIndex -> master -> {
             if (master.getId().equals(ParameterUtil.getValueLong(stringIndex))) {
                 orderMasters.add(master);

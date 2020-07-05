@@ -88,13 +88,16 @@ public class OrderRepositoryImpl implements OrderRepository, Serializable {
         return arrayOder;
     }
 
+    // плохое форматирование, стримы можно собирать в столбик через точку
+    // точка уходит на следующую строку
+    // я отформатирую код, как это должно быть:
     @Override
     public List<Order> getMasterOrders(Master master) {
-        return this.orders.stream().filter(order -> !order.isDeleteStatus() &&
-                                                    order.getMasters().stream().anyMatch(masterService ->
-                                                                                             masterService
-                                                                                                 .equals(master)))
-            .collect(Collectors.toList());
+        return this.orders.stream()
+                .filter(order -> !order.isDeleteStatus() &&
+                        order.getMasters().stream()
+                                .anyMatch(masterService -> masterService.equals(master)))
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -67,6 +67,7 @@ public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
 
     @Override
     public void deletePlace(Place place) {
+        // фигурные скобки ставятся ВСЕГДА!!! в циклах и логических ветвлениях
         if (place.isBusyStatus()) throw new BusinessException("Place is busy");
         if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("placeDelete")))
             throw new BusinessException("Permission denied");

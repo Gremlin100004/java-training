@@ -19,6 +19,7 @@ public class ParameterUtil {
     public static Integer getValueInteger(String value) {
         if (value.equals("null")) {
             return null;
+        // после ретурн else можно не писать - это уменьшит вложенность кода
         } else {
             try {
                 return Integer.parseInt(value);
