@@ -1,22 +1,24 @@
 package com.senla.carservice.configuration;
 
-import com.senla.carservice.annotation.InjectObject;
+import com.senla.carservice.annotation.InjectDependency;
 
 import java.lang.reflect.Field;
 
 public class InjectDependencyConfigurableObjectImpl implements ConfigurableObject {
     @Override
-    public void configure(final Object o) {
-        for (Field field : o.getClass().getDeclaredFields()) {
-            if (field.isAnnotationPresent(InjectObject.class)) {
+    public Object configure(Object inputObject) {
+        for (Field field : inputObject.getClass().getDeclaredFields()) {
+            if (field.isAnnotationPresent(InjectDependency.class)) {
                 field.setAccessible(true);
                 Object object = Builder.getInstance().createObject(field.getType());
                 try {
-                    field.set(o, object);
+                    field.set(inputObject, object);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
+                    //TODO : Add logging.
                 }
             }
         }
+        return inputObject;
     }
 }

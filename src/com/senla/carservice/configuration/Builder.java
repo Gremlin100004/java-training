@@ -1,45 +1,33 @@
 package com.senla.carservice.configuration;
 
-import com.senla.carservice.repository.MasterRepository;
-import com.senla.carservice.repository.MasterRepositoryImpl;
-
-import java.io.ObjectInputFilter;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.senla.carservice.util.PropertyLoader;
 
 public class Builder {
     private static final Builder INSTANCE = new Builder();
-    private List<ConfigurableObject> configurators = new ArrayList<>();
-    private Config config;
+    private static final String SOURCE_FOLDER = "sourceFolder";
+    private static final String PACKAGE_PROJECT = "packageProject";
+    private Creator creator;
+    private Configurator configurator;
+    private ContainerClass containerClass;
 
     private Builder() {
-        config = new ConfigImpl("com.senla.carservice", new HashMap<>(Map.of(MasterRepository.class,
-                                                                             MasterRepositoryImpl.class)));
+        this.configurator = new ConfiguratorImpl(PropertyLoader.getPropertyValue(PACKAGE_PROJECT), PropertyLoader.getPropertyValue(SOURCE_FOLDER));
+        this.creator = new CreatorImpl();
+        this.containerClass = configurator.getConfigureContainerClass();
     }
 
-
-
-    public static Builder getInstance(){
+    public static Builder getInstance() {
         return INSTANCE;
     }
 
-    public <T> T createObject(Class<T> implementClass) {
-
-        try {
-            return implementClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+    public Object createObject(Class rawClass) {
+        Class implementClass = rawClass;
+        if (rawClass.isInterface()){
+            implementClass = containerClass.getImplementClass(rawClass);
         }
-        T t = implementClass.getDeclaredConstructor().newInstance();
+        Object rawObject = creator.createRawObject(implementClass);
+        Object customizedObject = configurator.configureObject(rawObject);
 
-        configurators.forEach(configurableObject -> configurableObject.configure(t));
-        return t;
+        return customizedObject;
     }
-
-
-
 }

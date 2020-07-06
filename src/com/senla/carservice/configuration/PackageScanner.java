@@ -1,7 +1,5 @@
 package com.senla.carservice.configuration;
 
-import com.senla.carservice.util.PropertyLoader;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,20 +8,20 @@ import java.util.List;
 
 public class PackageScanner {
     final String packageProject;
-    final static String SOURCE_FOLDER = PropertyLoader.getPropertyValue("sourceFolder");
+    final String sourceFolder;
 
-    public PackageScanner(String packageProject) {
+    public PackageScanner(String packageProject, String sourceFolder) {
         this.packageProject = packageProject;
+        this.sourceFolder = sourceFolder;
     }
 
-//    public void getImplementedClass(Class<T> classInterface){
-    public <T> List<Class> getImplementedClass(T classInterface){
-        String path = String.format("%s/%s", SOURCE_FOLDER, packageProject.replace('.', '/'));
+    public List<Class> getPackageClass(){
+        String path = String.format("%s/%s", sourceFolder, packageProject.replace('.', '/'));
         List<File> files = getClassFiles(path);
-        return getClassByType(files, classInterface);
+        return getClassByFiles(files);
     }
 
-    public List<File> getClassFiles(String path) {
+    private List<File> getClassFiles(String path) {
         List<File> files = new ArrayList<>();
         List<File> clearFiles = new ArrayList<>();
         getFolderFiles(files, new File(path));
@@ -54,22 +52,21 @@ public class PackageScanner {
         }
     }
 
-    private <T> List<Class> getClassByType(List<File> files, T classInterface){
+    private  List<Class> getClassByFiles(List<File> files){
         List<Class> classes = new ArrayList<>();
         for (File file : files){
             String className = file.getName().substring(0, file.getName().lastIndexOf("."));
             String folder = getFolderClass(Arrays.asList(file.getParent().split("/")));
             try {
-                Class classObject = Class.forName( folder + className);
-                if (isEqualClass(classObject, classInterface)){
-                    classes.add(classObject);
-                }
+                classes.add(Class.forName( folder + className));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                //TODO : Add logging.
             }
         }
         return classes;
     }
+
     private String getFolderClass(List<String> folders){
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0, foldersSize = folders.size(); i < foldersSize; i++) {
@@ -79,49 +76,4 @@ public class PackageScanner {
         }
         return stringBuilder.toString();
     }
-
-    private <T> boolean isEqualClass(T classOne, T classTwo){
-        return classOne.equals(classTwo);
-    }
-
-
-
-
-//    private void getResource(){
-//        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-//        String path = packageProject.replace('.', '/');
-//        Enumeration<URL> resources = null;
-//        try {
-//            resources = classLoader.getResources(path);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        if (resources == null){
-//            return;
-//        }
-//        while (resources.hasMoreElements()) {
-//            URL resource = resources.nextElement();
-//            System.out.println(resource);
-//            File file = null;
-//            try {
-//                file = new File(resource.toURI());
-//
-//            } catch (URISyntaxException e) {
-//                e.printStackTrace();
-//            }
-//            getFileName(file);
-//
-//        }
-//    }
-//    private void getFileName(File file){
-//        if (file != null){
-//            return;
-//        }
-//        assert false;
-//        for(File classFile : file.listFiles()) {
-//            String fileName = classFile.getName();
-//            System.out.println(fileName);
-//        }
-//    }
-
 }
