@@ -116,4 +116,21 @@ public class Order extends AEntity {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+               "creationTime=" + creationTime +
+               ", executionStartTime=" + executionStartTime +
+               ", leadTime=" + leadTime +
+               ", masters=" + masters +
+               ", place=" + place +
+               ", automaker='" + automaker + '\'' +
+               ", model='" + model + '\'' +
+               ", registrationNumber='" + registrationNumber + '\'' +
+               ", price=" + price +
+               ", status=" + status +
+               ", deleteStatus=" + deleteStatus +
+               '}';
+    }
 }

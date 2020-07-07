@@ -13,12 +13,14 @@ import java.util.Objects;
 
 public class FileUtil {
     private static final ClassLoader CLASS_LOADER = PropertyLoader.class.getClassLoader();
+
     private FileUtil() {
     }
 
     public static void saveCsv(List<String> arrayValue, String path) {
-        try (PrintStream printStream = new PrintStream(new FileOutputStream(
-            Objects.requireNonNull(CLASS_LOADER.getResource(path)).getFile()))) {
+//        try (PrintStream printStream = new PrintStream(
+//            new FileOutputStream(CLASS_LOADER.getResource(path).getFile()))) {
+        try (PrintStream printStream = new PrintStream(new FileOutputStream(path))) {
             arrayValue.forEach(printStream::println);
         } catch (IOException e) {
             throw new BusinessException("export problem");
@@ -27,7 +29,8 @@ public class FileUtil {
 
     public static List<String> getCsv(String path) {
         try {
-            return Files.readAllLines(Paths.get(Objects.requireNonNull(CLASS_LOADER.getResource(path)).getFile()));
+            return Files.readAllLines(Paths.get(path));
+//            return Files.readAllLines(Paths.get(Objects.requireNonNull(CLASS_LOADER.getResource(path)).getFile()));
         } catch (IOException ioException) {
             throw new BusinessException("import problem");
         }

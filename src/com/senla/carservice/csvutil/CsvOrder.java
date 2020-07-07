@@ -1,5 +1,6 @@
 package com.senla.carservice.csvutil;
 
+import com.senla.carservice.annotation.InjectProperty;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
@@ -13,9 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class CsvOrder {
+    @InjectProperty
     private static final String ORDER_PATH = PropertyLoader.getPropertyValue("csvPathOrder");
     private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("fieldSeparator");
     private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("separatorId");
@@ -88,11 +89,11 @@ public class CsvOrder {
         StringBuilder stringValue = new StringBuilder();
         stringValue.append(order.getId());
         stringValue.append(FIELD_SEPARATOR);
-        stringValue.append(DateUtil.getStringFromDate(order.getCreationTime()));
+        stringValue.append(DateUtil.getStringFromDate(order.getCreationTime(), true));
         stringValue.append(FIELD_SEPARATOR);
-        stringValue.append(DateUtil.getStringFromDate(order.getExecutionStartTime()));
+        stringValue.append(DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
         stringValue.append(FIELD_SEPARATOR);
-        stringValue.append(DateUtil.getStringFromDate(order.getLeadTime()));
+        stringValue.append(DateUtil.getStringFromDate(order.getLeadTime(), true));
         stringValue.append(FIELD_SEPARATOR);
         stringValue.append(order.getPlace().getId());
         stringValue.append(FIELD_SEPARATOR);
@@ -109,13 +110,14 @@ public class CsvOrder {
         stringValue.append(order.isDeleteStatus());
         stringValue.append(FIELD_SEPARATOR);
         stringValue.append(SEPARATOR_ID);
-        IntStream.range(0, order.getMasters().size()).forEachOrdered(i -> {
+        int bound = order.getMasters().size();
+        for (int i = 0; i < bound; i++) {
             if (i == order.getMasters().size() - 1) {
                 stringValue.append(order.getMasters().get(i).getId());
             } else {
                 stringValue.append(order.getMasters().get(i).getId()).append(FIELD_SEPARATOR);
             }
-        });
+        }
         stringValue.append(SEPARATOR_ID);
         return stringValue.toString();
     }

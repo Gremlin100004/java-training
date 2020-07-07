@@ -72,7 +72,8 @@ public class Builder {
                                                  String date = ScannerUtil.getStringDateUser(
                                                      "Enter the date in format dd.mm.yyyy, example:\"10.10.2010\"",
                                                      false);
-                                                 Printer.printInfo(carOfficeController.getFreePlacesByDate(date));
+                                                 Printer
+                                                     .printInfo(carOfficeController.getFreePlacesMastersByDate(date));
                                              }, this.rootMenu));
     }
 
@@ -88,16 +89,12 @@ public class Builder {
             Printer.printInfo("Add new orders to car service.");
             addOrderDate(orderController);
         }, this.rootMenu));
-        this.rootMenu.getMenuItems().add(new MenuItem("Export of all entities", () -> {
-            Printer.printInfo(masterController.exportMasters());
-            Printer.printInfo(placeController.exportPlaces());
-            Printer.printInfo(orderController.exportOrders());
-        }, this.rootMenu));
-        this.rootMenu.getMenuItems().add(new MenuItem("Import of all entities", () -> {
-            Printer.printInfo(masterController.importMasters());
-            Printer.printInfo(placeController.importPlaces());
-            Printer.printInfo(orderController.importOrders());
-        }, this.rootMenu));
+        this.rootMenu.getMenuItems().add(
+            new MenuItem("Export of all entities", () -> Printer.printInfo(carOfficeController.exportEntities()),
+                         this.rootMenu));
+        this.rootMenu.getMenuItems().add(
+            new MenuItem("Import of all entities", () -> Printer.printInfo(carOfficeController.importEntities()),
+                         this.rootMenu));
     }
 
     private void createItemMastersMenu(Menu mastersMenu) {
@@ -114,10 +111,6 @@ public class Builder {
                          () -> Printer.printInfo(masterController.getMasterByAlphabet()), mastersMenu),
             new MenuItem("Show list of masters sorted by busy",
                          () -> Printer.printInfo(masterController.getMasterByBusy()), mastersMenu),
-            new MenuItem("Export masters",
-                         () -> Printer.printInfo(masterController.exportMasters()), mastersMenu),
-            new MenuItem("Import masters",
-                         () -> Printer.printInfo(masterController.importMasters()), mastersMenu),
             new MenuItem("Previous menu", () -> Printer.printInfo("Go to menu"), this.rootMenu)
                                                               )));
     }
@@ -137,12 +130,6 @@ public class Builder {
             }
             deleteGarage();
         }, placesMenu));
-        placesMenu.getMenuItems().add(new MenuItem("Export place",
-                                                   () -> Printer.printInfo(placeController.exportPlaces()),
-                                                   placesMenu));
-        placesMenu.getMenuItems().add(new MenuItem("Import place",
-                                                   () -> Printer.printInfo(placeController.importPlaces()),
-                                                   placesMenu));
         placesMenu.getMenuItems().add(new MenuItem("Previous menu",
                                                    () -> Printer.printInfo("Go to menu"), this.rootMenu));
     }
@@ -279,14 +266,6 @@ public class Builder {
     }
 
     private void addItemListOrderMenuPartSeven(Menu listOrderMenu, Menu ordersMenu) {
-        listOrderMenu.getMenuItems().add(new MenuItem("Export orders", () -> {
-            if (isContinue()) {
-                Printer.printInfo(orderController.exportOrders());
-            }
-        }, listOrderMenu));
-        listOrderMenu.getMenuItems().add(new MenuItem("Import orders",
-                                                      () -> Printer.printInfo(orderController.importOrders()),
-                                                      listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem("Previous menu",
                                                       () -> Printer.printInfo("Go to menu"), ordersMenu));
     }
@@ -453,19 +432,6 @@ public class Builder {
                                                           () -> Printer.printInfo("Go to menu"), periodOrderMenu));
     }
 
-    private boolean isContinue() {
-        String answer = "";
-        while (!answer.equals("y") && !answer.equals("n")) {
-            answer = ScannerUtil.getStringUser(
-                "For proper import, do not forget to export \"masters\" and \" " +
-                "garages\"!\n Would you like to continue export? y/n");
-            if (!answer.equals("y") && !answer.equals("n")) {
-                Printer.printInfo("You have entered wrong answer!");
-            }
-        }
-        return answer.equals("y");
-    }
-
     private void addMaster(String delimiter, MasterController masterController) {
         Printer.printInfo("Add master:");
         for (String masterName : TestData.getArrayMasterNames()) {
@@ -497,8 +463,7 @@ public class Builder {
             }
             Printer.printInfo(orderController.addOrderDeadlines(TestData.getArrayExecutionStartTime().get(i),
                                                                 TestData.getArrayLeadTime().get(i)));
-            Printer.printInfo(orderController.addOrderPlace(0, TestData.getArrayExecutionStartTime().get(i),
-                                                            TestData.getArrayLeadTime().get(i)));
+            Printer.printInfo(orderController.addOrderPlace(0, TestData.getArrayExecutionStartTime().get(i)));
             Printer.printInfo(orderController.addOrderPrice(TestData.getArrayPrice().get(i)));
         }
     }
@@ -565,18 +530,15 @@ public class Builder {
             message = orderController.addOrder(automaker, model, registrationNumber);
             Printer.printInfo(message);
         }
-        List<String> deadline = addOrderDeadline();
-        String executionStartTime = deadline.get(0);
-        String leadTime = deadline.get(1);
-        addMastersOrder(executionStartTime, leadTime);
-        addPlaceOrder(executionStartTime, leadTime);
-        Printer.printInfo(orderController
-                              .addOrderPrice(ScannerUtil.getBigDecimalUser("Enter the price")));
+        String executionStartTime = addOrderDeadline();
+        addMastersOrder(executionStartTime);
+        addPlaceOrder(executionStartTime);
+        Printer.printInfo(orderController.addOrderPrice(ScannerUtil.getBigDecimalUser("Enter the price")));
     }
 
-    private List<String> addOrderDeadline() {
+    private String addOrderDeadline() {
         String message = "";
-        String leadTime = "";
+        String leadTime;
         String executionStartTime = "";
         while (!message.equals("deadline add to order successfully")) {
             executionStartTime = ScannerUtil.getStringDateUser(
@@ -588,11 +550,11 @@ public class Builder {
             message = orderController.addOrderDeadlines(executionStartTime, leadTime);
             Printer.printInfo(message);
         }
-        return Arrays.asList(executionStartTime, leadTime);
+        return executionStartTime;
     }
 
-    private void addMastersOrder(String executionStartTime, String leadTime) {
-        Printer.printInfo(masterController.getFreeMasters(executionStartTime, leadTime));
+    private void addMastersOrder(String executionStartTime) {
+        Printer.printInfo(masterController.getFreeMasters(executionStartTime));
         Printer.printInfo("0. Stop adding");
         int quit = 0;
         int index = 999;
@@ -627,14 +589,14 @@ public class Builder {
         return new ArrayList<>(Arrays.asList(quit, index));
     }
 
-    private void addPlaceOrder(String executionStartTime, String leadTime) {
+    private void addPlaceOrder(String executionStartTime) {
         String message = "";
         int index;
-        Printer.printInfo(placeController.getFreePlacesByDate(executionStartTime, leadTime));
+        Printer.printInfo(placeController.getFreePlacesByDate(executionStartTime));
         Printer.printInfo("0. Stop adding");
         while (!message.equals("place add to order successfully")) {
             index = ScannerUtil.getIntUser("Enter the index number of the place to add in order:");
-            message = orderController.addOrderPlace(index - 1, executionStartTime, leadTime);
+            message = orderController.addOrderPlace(index - 1, executionStartTime);
             Printer.printInfo(message);
         }
     }

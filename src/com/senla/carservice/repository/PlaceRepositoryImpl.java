@@ -1,13 +1,14 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.PropertyLoader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
     private static PlaceRepository instance;
@@ -38,16 +39,18 @@ public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
     }
 
     @Override
-    public List<Place> getFreePlaces(List<Order> orders) {
-        List<Place> freePlaces = new ArrayList<>(this.places);
-        orders.forEach(order -> freePlaces.remove(order.getPlace()));
-        return freePlaces;
+    public List<Place> getFreePlaces(Date startDayDate) {
+        return this.places.stream()
+            .filter(place -> place.getOrders().isEmpty() ||
+                             startDayDate.before(place.getOrders().get(place.getOrders().size() - 1).getLeadTime()))
+            .collect(Collectors.toList());
     }
 
     @Override
     public void addPlace(Place addPlace) {
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("placeAdd")))
+        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("placeAdd"))) {
             throw new BusinessException("Permission denied");
+        }
         this.places.stream().filter(place -> place.getNumber().equals(addPlace.getNumber())).forEachOrdered(place -> {
             throw new BusinessException("Such a number exists");
         });
@@ -58,7 +61,7 @@ public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
     @Override
     public void updatePlace(Place place) {
         int index = this.places.indexOf(place);
-        if (index == -1){
+        if (index == -1) {
             this.places.add(place);
         } else {
             this.places.set(index, place);
@@ -67,9 +70,12 @@ public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
 
     @Override
     public void deletePlace(Place place) {
-        if (place.isBusyStatus()) throw new BusinessException("Place is busy");
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("placeDelete")))
+        if (place.getBusyStatus()) {
+            throw new BusinessException("Place is busy");
+        }
+        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("placeDelete"))) {
             throw new BusinessException("Permission denied");
+        }
         this.places.remove(place);
     }
 

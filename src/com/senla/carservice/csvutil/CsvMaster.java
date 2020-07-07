@@ -1,16 +1,21 @@
 package com.senla.carservice.csvutil;
 
 import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.PropertyLoader;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CsvMaster {
     private static final String MASTER_PATH = PropertyLoader.getPropertyValue("csvPathMaster");
     private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("fieldSeparator");
+    private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("separatorId");
 
     private CsvMaster() {
     }
@@ -21,24 +26,57 @@ public class CsvMaster {
         FileUtil.saveCsv(valueCsv, MASTER_PATH);
     }
 
-    public static List<Master> importMasters() {
+    public static List<Master> importMasters(List<Order> orders) {
         List<String> csvLinesMaster = FileUtil.getCsv(MASTER_PATH);
-        return csvLinesMaster.stream().map(CsvMaster::getMasterFromCsv).collect(Collectors.toList());
+        return csvLinesMaster.stream().map((String line) -> getMasterFromCsv(line, orders))
+            .collect(Collectors.toList());
     }
 
-    private static Master getMasterFromCsv(String line) {
+    private static Master getMasterFromCsv(String line, List<Order> orders) {
         if (line == null) {
             throw new BusinessException("argument is null");
         }
-        List<String> values = Arrays.asList(line.split(FIELD_SEPARATOR));
+        List<String> values = Arrays.asList((line.split(SEPARATOR_ID))[0].split(FIELD_SEPARATOR));
+        List<String> arrayIdOrder = Arrays.asList(line.split(SEPARATOR_ID)[1].split(FIELD_SEPARATOR));
         Master master = new Master();
         master.setId(ParameterUtil.getValueLong(values.get(0)));
         master.setName(values.get(1));
-        master.setNumberOrder(ParameterUtil.getValueInteger(values.get(2)));
+        master.setOrders(getOrdersById(orders, arrayIdOrder));
         return master;
     }
 
     private static String convertToCsv(Master master) {
-        return master.getId() + FIELD_SEPARATOR + master.getName() + FIELD_SEPARATOR + master.getNumberOrder();
+        if (master == null) {
+            throw new BusinessException("argument is null");
+        }
+        StringBuilder stringValue = new StringBuilder();
+        stringValue.append(master.getId());
+        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(master.getName());
+        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(SEPARATOR_ID);
+        List<Order> orders = master.getOrders();
+        IntStream.range(0, orders.size()).forEachOrdered(i -> {
+            if (i == orders.size() - 1) {
+                stringValue.append(orders.get(i).getId());
+            } else {
+                stringValue.append(orders.get(i).getId()).append(FIELD_SEPARATOR);
+            }
+        });
+        stringValue.append(SEPARATOR_ID);
+        return stringValue.toString();
+    }
+
+    public static List<Order> getOrdersById(List<Order> orders, List<String> arrayIdOrder) {
+        if (orders == null || arrayIdOrder == null) {
+            throw new BusinessException("argument is null");
+        }
+        List<Order> masterOrders = new ArrayList<>();
+        arrayIdOrder.stream().<Consumer<? super Order>> map(stringIndex -> order -> {
+            if (order.getId().equals(ParameterUtil.getValueLong(stringIndex))) {
+                masterOrders.add(order);
+            }
+        }).forEach(orders::forEach);
+        return masterOrders;
     }
 }

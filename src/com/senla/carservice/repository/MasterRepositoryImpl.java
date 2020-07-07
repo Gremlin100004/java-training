@@ -1,11 +1,12 @@
 package com.senla.carservice.repository;
 
 import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Order;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MasterRepositoryImpl implements MasterRepository, Serializable {
     private static MasterRepository instance;
@@ -25,6 +26,7 @@ public class MasterRepositoryImpl implements MasterRepository, Serializable {
         return instance;
     }
 
+    @Override
     public IdGenerator getIdGeneratorMaster() {
         return idGeneratorMaster;
     }
@@ -38,7 +40,7 @@ public class MasterRepositoryImpl implements MasterRepository, Serializable {
     @Override
     public void updateMaster(Master master) {
         int index = this.masters.indexOf(master);
-        if (index == -1){
+        if (index == -1) {
             this.masters.add(master);
         } else {
             this.masters.set(index, master);
@@ -67,9 +69,10 @@ public class MasterRepositoryImpl implements MasterRepository, Serializable {
     }
 
     @Override
-    public List<Master> getFreeMasters(List<Order> orders) {
-        List<Master> freeMasters = new ArrayList<>(this.masters);
-        orders.forEach(order -> order.getMasters().forEach(freeMasters::remove));
-        return freeMasters;
+    public List<Master> getFreeMasters(Date date) {
+        return this.masters.stream()
+            .filter(master -> master.getOrders().isEmpty() ||
+                              date.before(master.getOrders().get(master.getOrders().size() - 1).getLeadTime()))
+            .collect(Collectors.toList());
     }
 }
