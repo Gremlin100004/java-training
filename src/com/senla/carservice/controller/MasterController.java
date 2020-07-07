@@ -1,27 +1,19 @@
 package com.senla.carservice.controller;
 
+import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.MasterService;
-import com.senla.carservice.service.MasterServiceImpl;
 import com.senla.carservice.stringutil.StringMaster;
 import com.senla.carservice.util.DateUtil;
 
 import java.util.Date;
 
 public class MasterController {
-    private static MasterController instance;
-    private final MasterService masterService;
+    @InjectDependency
+    private MasterService masterService;
 
-    private MasterController() {
-        masterService = MasterServiceImpl.getInstance();
-    }
-
-    public static MasterController getInstance() {
-        if (instance == null) {
-            instance = new MasterController();
-        }
-        return instance;
+    public MasterController() {
     }
 
     public String getMasters() {
@@ -71,24 +63,6 @@ public class MasterController {
         try {
             return StringMaster.getStringFromMasters(masterService.getFreeMastersByDate(executeDate));
         } catch (DateException | BusinessException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String serializeMaster() {
-        try {
-            masterService.serializeMaster();
-            return "Masters have been serialize successfully!";
-        } catch (BusinessException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String deserializeMaster() {
-        try {
-            masterService.deserializeMaster();
-            return "Masters have been deserialize successfully!";
-        } catch (BusinessException e) {
             return e.getMessage();
         }
     }

@@ -1,35 +1,23 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.annotation.Prototype;
+import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
-import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.repository.OrderRepository;
-import com.senla.carservice.repository.OrderRepositoryImpl;
-import com.senla.carservice.util.Serializer;
 
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Prototype
 public class MasterServiceImpl implements MasterService {
-    private static MasterService instance;
-    private final MasterRepository masterRepository;
-    private final OrderRepository orderRepository;
+    @InjectDependency
+    private MasterRepository masterRepository;
+    @InjectDependency
+    private OrderRepository orderRepository;
 
-    private MasterServiceImpl() {
-        masterRepository = MasterRepositoryImpl.getInstance();
-        orderRepository = OrderRepositoryImpl.getInstance();
-    }
-
-    public static MasterService getInstance() {
-        if (instance == null) {
-            instance = new MasterServiceImpl();
-        }
-        return instance;
+    public MasterServiceImpl() {
     }
 
     @Override
@@ -79,18 +67,6 @@ public class MasterServiceImpl implements MasterService {
             .sorted(Comparator.comparing(master -> master.getOrders().size(),
                                          Comparator.nullsFirst(Comparator.naturalOrder())))
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public void serializeMaster() {
-        Serializer.serializeMaster(MasterRepositoryImpl.getInstance());
-    }
-
-    @Override
-    public void deserializeMaster() {
-        MasterRepository masterRepositoryRestore = Serializer.deserializeMaster();
-        masterRepository.updateListMaster(masterRepositoryRestore.getMasters());
-        masterRepository.updateGenerator(masterRepositoryRestore.getIdGeneratorMaster());
     }
 
     private void checkMasters() {

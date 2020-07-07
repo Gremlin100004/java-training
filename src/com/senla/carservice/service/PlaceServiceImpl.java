@@ -4,7 +4,6 @@ import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.PlaceRepository;
-import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.Serializer;
 
 import java.util.Date;
@@ -12,18 +11,9 @@ import java.util.List;
 
 public class PlaceServiceImpl implements PlaceService {
     @InjectDependency
-    private static PlaceService instance;
-    private final PlaceRepository placeRepository;
+    private PlaceRepository placeRepository;
 
-    private PlaceServiceImpl() {
-        placeRepository = PlaceRepositoryImpl.getInstance();
-    }
-
-    public static PlaceService getInstance() {
-        if (instance == null) {
-            instance = new PlaceServiceImpl();
-        }
-        return instance;
+    public PlaceServiceImpl() {
     }
 
     @Override
@@ -56,18 +46,6 @@ public class PlaceServiceImpl implements PlaceService {
             throw new BusinessException("There are no free places");
         }
         return freePlace;
-    }
-
-    @Override
-    public void serializePlace() {
-        Serializer.serializePlace(PlaceRepositoryImpl.getInstance());
-    }
-
-    @Override
-    public void deserializePlace() {
-        PlaceRepository placeRepositoryRestore = Serializer.deserializePlace();
-        placeRepository.updateListPlace(placeRepositoryRestore.getPlaces());
-        placeRepository.updateGenerator(placeRepositoryRestore.getIdGeneratorPlace());
     }
 
     private void checkPlaces() {

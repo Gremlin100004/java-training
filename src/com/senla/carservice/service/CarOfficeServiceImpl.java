@@ -1,38 +1,30 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.csvutil.CsvMaster;
 import com.senla.carservice.csvutil.CsvOrder;
 import com.senla.carservice.csvutil.CsvPlace;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.repository.ApplicationState;
 import com.senla.carservice.repository.MasterRepository;
-import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.repository.OrderRepository;
-import com.senla.carservice.repository.OrderRepositoryImpl;
 import com.senla.carservice.repository.PlaceRepository;
-import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.util.Serializer;
 
 import java.util.Date;
 import java.util.List;
 
 public class CarOfficeServiceImpl implements CarOfficeService {
-    private static CarOfficeService instance;
-    private final MasterRepository masterRepository;
-    private final PlaceRepository placeRepository;
-    private final OrderRepository orderRepository;
+    @InjectDependency
+    private MasterRepository masterRepository;
+    @InjectDependency
+    private PlaceRepository placeRepository;
+    @InjectDependency
+    private OrderRepository orderRepository;
 
-    private CarOfficeServiceImpl() {
-        masterRepository = MasterRepositoryImpl.getInstance();
-        placeRepository = PlaceRepositoryImpl.getInstance();
-        orderRepository = OrderRepositoryImpl.getInstance();
-    }
-
-    public static CarOfficeService getInstance() {
-        if (instance == null) {
-            instance = new CarOfficeServiceImpl();
-        }
-        return instance;
+    public CarOfficeServiceImpl() {
     }
 
     @Override
@@ -79,6 +71,29 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         CsvPlace.exportPlaces(placeRepository.getPlaces());
     }
 
+    @Override
+    public void serializeEntities() {
+        ApplicationState applicationState = new ApplicationState();
+        applicationState.setIdGeneratorMaster(masterRepository.getIdGeneratorMaster());
+        applicationState.setIdGeneratorPlace(placeRepository.getIdGeneratorPlace());
+        applicationState.setIdGeneratorOrder(orderRepository.getIdGeneratorOrder());
+        applicationState.setMasters(masterRepository.getMasters());
+        applicationState.setPlaces(placeRepository.getPlaces());
+        applicationState.setOrders(orderRepository.getOrders());
+        Serializer.serializeEntities(applicationState);
+    }
+
+    @Override
+    public void deserializeEntities() {
+        ApplicationState applicationState = Serializer.deserializeEntities();
+        masterRepository.updateGenerator(applicationState.getIdGeneratorMaster());
+        masterRepository.updateListMaster(applicationState.getMasters());
+        placeRepository.updateGenerator(applicationState.getIdGeneratorPlace());
+        placeRepository.updateListPlace(applicationState.getPlaces());
+        orderRepository.updateGenerator(applicationState.getIdGeneratorOrder());
+        orderRepository.updateListOrder(applicationState.getOrders());
+    }
+
     private void checkOrders() {
         if (orderRepository.getOrders().isEmpty()) {
             throw new BusinessException("There are no orders");
@@ -96,6 +111,4 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             throw new BusinessException("There are no places");
         }
     }
-
-
 }

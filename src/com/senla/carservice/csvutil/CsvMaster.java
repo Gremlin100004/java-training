@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CsvMaster {
-    private static final String MASTER_PATH = PropertyLoader.getPropertyValue("csvPathMaster");
-    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("fieldSeparator");
-    private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("separatorId");
+    private static final String MASTER_PATH = PropertyLoader.getPropertyValue("csv.master.pathFile");
+    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("csv.separator.field");
+    private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("csv.separator.id");
 
     private CsvMaster() {
     }

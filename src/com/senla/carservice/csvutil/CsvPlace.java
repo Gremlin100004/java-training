@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CsvPlace {
-    private static final String PLACE_PATH = PropertyLoader.getPropertyValue("csvPathPlace");
-    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("fieldSeparator");
-    private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("separatorId");
+    private static final String PLACE_PATH = PropertyLoader.getPropertyValue("csv.place.pathFile");
+    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("csv.separator.field");
+    private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("csv.separator.id");
 
     private CsvPlace() {
     }

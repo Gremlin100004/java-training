@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 public class PropertyLoader {
-    private static final String PATH = "config.properties";
+    private static final String PATH = "application.properties";
 
     private PropertyLoader() {
     }

@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 
 public class CsvOrder {
     @InjectProperty
-    private static final String ORDER_PATH = PropertyLoader.getPropertyValue("csvPathOrder");
-    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("fieldSeparator");
-    private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("separatorId");
+    private static final String ORDER_PATH = PropertyLoader.getPropertyValue("csv.order.pathFile");
+    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("csv.separator.field");
+    private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("csv.separator.id");
 
     private CsvOrder() {
     }

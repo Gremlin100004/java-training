@@ -1,33 +1,22 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.domain.Order;
+import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.OrderService;
-import com.senla.carservice.service.OrderServiceImpl;
 import com.senla.carservice.service.PlaceService;
-import com.senla.carservice.service.PlaceServiceImpl;
 import com.senla.carservice.stringutil.StringPlaces;
 import com.senla.carservice.util.DateUtil;
 
 import java.util.Date;
-import java.util.List;
 
 public class PlaceController {
-    private static PlaceController instance;
-    private final PlaceService placeService;
-    private final OrderService orderService;
+    @InjectDependency
+    private PlaceService placeService;
+    @InjectDependency
+    private OrderService orderService;
 
-    private PlaceController() {
-        placeService = PlaceServiceImpl.getInstance();
-        orderService = OrderServiceImpl.getInstance();
-    }
-
-    public static PlaceController getInstance() {
-        if (instance == null) {
-            instance = new PlaceController();
-        }
-        return instance;
+    public PlaceController() {
     }
 
     public String addPlace(int number) {
@@ -66,24 +55,6 @@ public class PlaceController {
         try {
             return StringPlaces.getStringFromPlaces(placeService.getFreePlaceByDate(executeDate));
         } catch (BusinessException | DateException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String serializePlace() {
-        try {
-            placeService.serializePlace();
-            return "Places have been serialize successfully!";
-        } catch (BusinessException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String deserializePlace() {
-        try {
-            placeService.deserializePlace();
-            return "Masters have been deserialize successfully!";
-        } catch (BusinessException e) {
             return e.getMessage();
         }
     }

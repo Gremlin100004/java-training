@@ -1,5 +1,6 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
@@ -23,22 +24,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderServiceImpl implements OrderService {
-    private static OrderService instance;
-    private final OrderRepository orderRepository;
-    private final PlaceRepository placeRepository;
-    private final MasterRepository masterRepository;
+    @InjectDependency
+    private OrderRepository orderRepository;
+    @InjectDependency
+    private PlaceRepository placeRepository;
+    @InjectDependency
+    private MasterRepository masterRepository;
 
-    private OrderServiceImpl() {
-        orderRepository = OrderRepositoryImpl.getInstance();
-        placeRepository = PlaceRepositoryImpl.getInstance();
-        masterRepository = MasterRepositoryImpl.getInstance();
-    }
-
-    public static OrderService getInstance() {
-        if (instance == null) {
-            instance = new OrderServiceImpl();
-        }
-        return instance;
+    public OrderServiceImpl() {
     }
 
     @Override
@@ -253,18 +246,6 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException("There are no deleted orders");
         }
         return sortOrderByPeriod(orderRepository.getDeletedOrders(), startPeriod, endPeriod);
-    }
-
-    @Override
-    public void serializeOrder() {
-        Serializer.serializeOrder(OrderRepositoryImpl.getInstance());
-    }
-
-    @Override
-    public void deserializeOrder() {
-        OrderRepository orderRepositoryRestore = Serializer.deserializeOrder();
-        orderRepository.updateListOrder(orderRepositoryRestore.getOrders());
-        orderRepository.updateGenerator(orderRepositoryRestore.getIdGeneratorOrder());
     }
 
     private void checkOrders() {

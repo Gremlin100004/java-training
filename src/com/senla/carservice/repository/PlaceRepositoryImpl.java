@@ -4,28 +4,18 @@ import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.PropertyLoader;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
-    private static PlaceRepository instance;
-    private static final long serialVersionUID = 1L;
+public class PlaceRepositoryImpl implements PlaceRepository {
     private final List<Place> places;
     private final IdGenerator idGeneratorPlace;
 
-    private PlaceRepositoryImpl() {
+    public PlaceRepositoryImpl() {
         this.places = new ArrayList<>();
         this.idGeneratorPlace = new IdGenerator();
-    }
-
-    public static PlaceRepository getInstance() {
-        if (instance == null) {
-            instance = new PlaceRepositoryImpl();
-        }
-        return instance;
     }
 
     @Override

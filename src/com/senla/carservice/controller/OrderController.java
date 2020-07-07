@@ -1,39 +1,27 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.domain.Order;
+import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.MasterService;
-import com.senla.carservice.service.MasterServiceImpl;
 import com.senla.carservice.service.OrderService;
-import com.senla.carservice.service.OrderServiceImpl;
 import com.senla.carservice.service.PlaceService;
-import com.senla.carservice.service.PlaceServiceImpl;
 import com.senla.carservice.stringutil.StringMaster;
 import com.senla.carservice.stringutil.StringOrder;
 import com.senla.carservice.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 public class OrderController {
-    private static OrderController instance;
-    private final OrderService orderService;
-    private final MasterService masterService;
-    private final PlaceService placeService;
+    @InjectDependency
+    private OrderService orderService;
+    @InjectDependency
+    private MasterService masterService;
+    @InjectDependency
+    private PlaceService placeService;
 
-    private OrderController() {
-        orderService = OrderServiceImpl.getInstance();
-        masterService = MasterServiceImpl.getInstance();
-        placeService = PlaceServiceImpl.getInstance();
-    }
-
-    public static OrderController getInstance() {
-        if (instance == null) {
-            instance = new OrderController();
-        }
-        return instance;
+    public OrderController() {
     }
 
     public String addOrder(String automaker, String model, String registrationNumber) {
@@ -337,24 +325,6 @@ public class OrderController {
                 return StringMaster
                     .getStringFromMasters(orderService.getOrderMasters(orderService.getOrders().get(index)));
             }
-        } catch (BusinessException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String serializeOrder() {
-        try {
-            orderService.serializeOrder();
-            return "Orders have been serialize successfully!";
-        } catch (BusinessException e) {
-            return e.getMessage();
-        }
-    }
-
-    public String deserializeOrder() {
-        try {
-            orderService.deserializeOrder();
-            return "Orders have been deserialize successfully!";
         } catch (BusinessException e) {
             return e.getMessage();
         }

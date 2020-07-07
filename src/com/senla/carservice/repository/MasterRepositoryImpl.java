@@ -2,28 +2,19 @@ package com.senla.carservice.repository;
 
 import com.senla.carservice.domain.Master;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MasterRepositoryImpl implements MasterRepository, Serializable {
-    private static MasterRepository instance;
-    private static final long serialVersionUID = 1L;
+public class MasterRepositoryImpl implements MasterRepository {
+
     private final List<Master> masters;
     private final IdGenerator idGeneratorMaster;
 
-    private MasterRepositoryImpl() {
+    public MasterRepositoryImpl() {
         this.masters = new ArrayList<>();
         this.idGeneratorMaster = new IdGenerator();
-    }
-
-    public static MasterRepository getInstance() {
-        if (instance == null) {
-            instance = new MasterRepositoryImpl();
-        }
-        return instance;
     }
 
     @Override

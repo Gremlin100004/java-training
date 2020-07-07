@@ -6,27 +6,17 @@ import com.senla.carservice.domain.Status;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.PropertyLoader;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderRepositoryImpl implements OrderRepository, Serializable {
-    private static OrderRepository instance;
-    private static final long serialVersionUID = 1L;
+public class OrderRepositoryImpl implements OrderRepository {
     private final List<Order> orders;
     private final IdGenerator idGeneratorOrder;
 
-    private OrderRepositoryImpl() {
+    public OrderRepositoryImpl() {
         this.orders = new ArrayList<>();
         this.idGeneratorOrder = new IdGenerator();
-    }
-
-    public static OrderRepository getInstance() {
-        if (instance == null) {
-            instance = new OrderRepositoryImpl();
-        }
-        return instance;
     }
 
     @Override

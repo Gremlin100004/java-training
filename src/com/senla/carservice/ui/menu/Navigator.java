@@ -5,18 +5,13 @@ import com.senla.carservice.ui.util.Printer;
 import java.util.List;
 
 public class Navigator {
-    private static Navigator instance;
     private Menu currentMenu;
 
-    private Navigator(Menu currentMenu) {
-        this.currentMenu = currentMenu;
+    public Navigator() {
     }
 
-    public static Navigator getInstance(Menu currentMenu) {
-        if (instance == null) {
-            instance = new Navigator(currentMenu);
-        }
-        return instance;
+    public void addCurrentMenu(Menu currentMenu){
+        this.currentMenu = currentMenu;
     }
 
     public void printMenu() {

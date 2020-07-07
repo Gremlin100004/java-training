@@ -1,5 +1,7 @@
 package com.senla.carservice.configuration;
 
+import com.senla.carservice.annotation.Prototype;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +12,7 @@ public class ContainerSingletonImpl implements ContainerSingleton {
     private ContainerSingletonImpl() {
     }
 
-    public static ContainerSingleton getInstance(PackageScanner packageScanner) {
+    public static ContainerSingleton getInstance() {
         if (instance == null) {
             instance = new ContainerSingletonImpl();
         }
@@ -27,6 +29,9 @@ public class ContainerSingletonImpl implements ContainerSingleton {
 
     @Override
     public void addSingleton(Class implementClass, Object singletonObject) {
+        if (implementClass.isAnnotationPresent(Prototype.class)){
+            return;
+        }
         cacheSingleton.put(implementClass, singletonObject);
     }
 }

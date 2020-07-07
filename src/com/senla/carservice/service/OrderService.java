@@ -50,8 +50,4 @@ public interface OrderService {
     List<Order> getCanceledOrders(Date startPeriod, Date endPeriod);
 
     List<Order> getDeletedOrders(Date startPeriod, Date endPeriod);
-
-    void serializeOrder();
-
-    void deserializeOrder();
 }

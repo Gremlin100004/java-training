@@ -15,8 +15,4 @@ public interface PlaceService {
     int getNumberFreePlaceByDate(Date startDate);
 
     List<Place> getFreePlaceByDate(Date executeDate);
-
-    void serializePlace();
-
-    void deserializePlace();
 }

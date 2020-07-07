@@ -19,8 +19,4 @@ public interface MasterService {
     List<Master> getMasterByAlphabet();
 
     List<Master> getMasterByBusy();
-
-    void serializeMaster();
-
-    void deserializeMaster();
 }

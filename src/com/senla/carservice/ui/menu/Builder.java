@@ -1,5 +1,6 @@
 package com.senla.carservice.ui.menu;
 
+import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.controller.CarOfficeController;
 import com.senla.carservice.controller.MasterController;
 import com.senla.carservice.controller.OrderController;
@@ -13,21 +14,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Builder {
-    private static Builder instance;
     private Menu rootMenu;
-    private final CarOfficeController carOfficeController = CarOfficeController.getInstance();
-    private final MasterController masterController = MasterController.getInstance();
-    private final OrderController orderController = OrderController.getInstance();
-    private final PlaceController placeController = PlaceController.getInstance();
+    @InjectDependency
+    private CarOfficeController carOfficeController;
+    @InjectDependency
+    private MasterController masterController;
+    @InjectDependency
+    private OrderController orderController;
+    @InjectDependency
+    private PlaceController placeController;
 
-    private Builder() {
-    }
-
-    public static Builder getInstance() {
-        if (instance == null) {
-            instance = new Builder();
-        }
-        return instance;
+    public Builder() {
     }
 
     public void buildMenu() {

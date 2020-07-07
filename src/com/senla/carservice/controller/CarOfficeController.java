@@ -1,34 +1,24 @@
 package com.senla.carservice.controller;
 
+import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.CarOfficeService;
-import com.senla.carservice.service.CarOfficeServiceImpl;
 import com.senla.carservice.service.MasterService;
-import com.senla.carservice.service.MasterServiceImpl;
 import com.senla.carservice.service.PlaceService;
-import com.senla.carservice.service.PlaceServiceImpl;
 import com.senla.carservice.util.DateUtil;
 
 import java.util.Date;
 
 public class CarOfficeController {
-    private static CarOfficeController instance;
-    private final CarOfficeService carOfficeService;
-    private final MasterService masterService;
-    private final PlaceService placeService;
+    @InjectDependency
+    private CarOfficeService carOfficeService;
+    @InjectDependency
+    private MasterService masterService;
+    @InjectDependency
+    private PlaceService placeService;
 
-    private CarOfficeController() {
-        carOfficeService = CarOfficeServiceImpl.getInstance();
-        masterService = MasterServiceImpl.getInstance();
-        placeService = PlaceServiceImpl.getInstance();
-    }
-
-    public static CarOfficeController getInstance() {
-        if (instance == null) {
-            instance = new CarOfficeController();
-        }
-        return instance;
+    public CarOfficeController() {
     }
 
     public String getFreePlacesMastersByDate(String date) {
@@ -50,7 +40,8 @@ public class CarOfficeController {
     public String getNearestFreeDate() {
         try {
             return String
-                .format("Nearest free date: %s", DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false));
+                .format("Nearest free date: %s",
+                        DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -64,6 +55,7 @@ public class CarOfficeController {
             return e.getMessage();
         }
     }
+
     public String importEntities() {
         try {
             carOfficeService.importEntities();
@@ -71,5 +63,13 @@ public class CarOfficeController {
         } catch (BusinessException e) {
             return e.getMessage();
         }
+    }
+
+    public void serializeEntities() {
+        carOfficeService.serializeEntities();
+    }
+
+    public void deserializeEntities() {
+        carOfficeService.deserializeEntities();
     }
 }
