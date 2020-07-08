@@ -1,5 +1,5 @@
 package com.senla.carservice.configuration;
 
 public interface ConfigurableObject {
-    Object configure(Object o);
+   <O> O configure(O inputObject);
 }

@@ -10,13 +10,15 @@ import java.util.Properties;
 
 public class PropertyLoader {
     private static final String PATH = "application.properties";
+    private static final String PATH_CLEAR = "resources/application.properties";
 
     private PropertyLoader() {
     }
 
     public static String getPropertyValue(String propertyName) {
         ClassLoader classLoader = PropertyLoader.class.getClassLoader();
-        File file = new File(Objects.requireNonNull(classLoader.getResource(PATH)).getFile());
+//        File file = new File(Objects.requireNonNull(classLoader.getResource(PATH)).getFile());
+        File file = new File(PATH_CLEAR);
         Properties properties = new Properties();
         try (FileInputStream in = new FileInputStream(file)) {
             properties.load(in);

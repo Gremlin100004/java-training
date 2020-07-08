@@ -9,7 +9,7 @@ public class StringPlaces {
     private static final int LENGTH = 17;
 
     public static String getStringFromPlaces(List<Place> places) {
-        String line = String.format(" %s\n", String.join("", Collections.nCopies(LENGTH, "-")));
+        String line = " " + String.join("", Collections.nCopies(LENGTH, "-")) + "\n";
         StringBuilder stringBuilder = new StringBuilder(line);
         stringBuilder.append(String.format("|%-3s|%-6s|%-6s|\n",
                                            "№", "Number", "Status"

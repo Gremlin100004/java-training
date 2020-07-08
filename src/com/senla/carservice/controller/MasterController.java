@@ -26,7 +26,7 @@ public class MasterController {
 
     public String addMaster(String name) {
         masterService.addMaster(name);
-        return String.format(" -master \"%s\" has been added to service.", name);
+        return " -master \"" + name + "\" has been added to service.";
     }
 
     public String deleteMaster(int index) {

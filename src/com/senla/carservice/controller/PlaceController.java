@@ -22,7 +22,7 @@ public class PlaceController {
     public String addPlace(int number) {
         try {
             placeService.addPlace(number);
-            return String.format("-place \"%s\" has been added to service", number);
+            return "-place \"" + number + "\" has been added to service";
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -42,8 +42,7 @@ public class PlaceController {
                 return "There are no such place";
             } else {
                 placeService.deletePlace(placeService.getPlaces().get(index));
-                return String.format(" -delete place in service number \"%s\"",
-                                     placeService.getPlaces().get(index).getNumber());
+                return " -delete place in service number \"" + placeService.getPlaces().get(index).getNumber() + "\"";
             }
         } catch (BusinessException e) {
             return e.getMessage();

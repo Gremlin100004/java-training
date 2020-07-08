@@ -30,8 +30,8 @@ public class CarOfficeController {
         try {
             int numberFreeMasters = masterService.getNumberFreeMastersByDate(startDayDate);
             int numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate);
-            return String.format("- number free places in service: %s\n- number free masters in service: %s",
-                                 numberFreePlace, numberFreeMasters);
+            return "- number free places in service: " + numberFreePlace + "\n- number free masters in service: " +
+                   numberFreeMasters;
         } catch (BusinessException | DateException e) {
             return e.getMessage();
         }
@@ -39,9 +39,7 @@ public class CarOfficeController {
 
     public String getNearestFreeDate() {
         try {
-            return String
-                .format("Nearest free date: %s",
-                        DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false));
+            return "Nearest free date: " + DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false);
         } catch (BusinessException e) {
             return e.getMessage();
         }

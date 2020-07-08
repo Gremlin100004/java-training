@@ -7,15 +7,14 @@ import java.lang.reflect.Field;
 
 public class InjectPropertyConfigurableObjectImpl implements ConfigurableObject {
     @Override
-    public Object configure(Object inputObject) {
+    public <O> O configure(O inputObject) {
         Class<?> implementClass = inputObject.getClass();
         for (Field field : implementClass.getDeclaredFields()) {
             InjectProperty annotation = field.getAnnotation(InjectProperty.class);
             String value;
             if (annotation != null) {
                 if (annotation.value().isEmpty()) {
-                    value = PropertyLoader
-                        .getPropertyValue(String.format("%s.%s", inputObject.getClass().getName(), field.getName()));
+                    value = PropertyLoader.getPropertyValue(inputObject.getClass().getName() + "." + field.getName());
                 } else {
                     value = PropertyLoader.getPropertyValue(annotation.value());
                 }

@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 
 public class InjectDependencyConfigurableObjectImpl implements ConfigurableObject {
     @Override
-    public Object configure(Object inputObject) {
+    public <O> O configure(O inputObject) {
         for (Field field : inputObject.getClass().getDeclaredFields()) {
             if (field.isAnnotationPresent(InjectDependency.class)) {
                 field.setAccessible(true);

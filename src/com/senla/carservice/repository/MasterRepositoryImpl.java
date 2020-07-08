@@ -1,5 +1,6 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.domain.Master;
 
 import java.util.ArrayList;
@@ -10,11 +11,11 @@ import java.util.stream.Collectors;
 public class MasterRepositoryImpl implements MasterRepository {
 
     private final List<Master> masters;
-    private final IdGenerator idGeneratorMaster;
+    @InjectDependency
+    private IdGenerator idGeneratorMaster;
 
     public MasterRepositoryImpl() {
         this.masters = new ArrayList<>();
-        this.idGeneratorMaster = new IdGenerator();
     }
 
     @Override

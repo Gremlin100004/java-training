@@ -3,7 +3,7 @@ package com.senla.carservice.configuration;
 import java.util.List;
 
 public interface ContainerClass {
-    Class getImplementClass(Class interfaceClass);
+    <T> Class<? extends T> getImplementClass(Class<? extends T> interfaceClass);
 
-    List<Class> getConfigurableClass(Class interfaceConfigurableClass);
+    <T> List<Class<? extends ConfigurableObject>> getConfigurableClass(Class<? extends T> interfaceConfigurableClass);
 }

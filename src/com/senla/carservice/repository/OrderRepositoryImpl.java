@@ -1,8 +1,9 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.domain.Status;
+import com.senla.carservice.enumarated.Status;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.PropertyLoader;
 
@@ -12,11 +13,11 @@ import java.util.stream.Collectors;
 
 public class OrderRepositoryImpl implements OrderRepository {
     private final List<Order> orders;
-    private final IdGenerator idGeneratorOrder;
+    @InjectDependency
+    private IdGenerator idGeneratorOrder;
 
     public OrderRepositoryImpl() {
         this.orders = new ArrayList<>();
-        this.idGeneratorOrder = new IdGenerator();
     }
 
     @Override
@@ -100,7 +101,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public void deleteOrder(Order order) {
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("deleteOrder"))) {
+        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("carservice.service.OrderServiceImpl.deleteOrder"))) {
             throw new BusinessException("Permission denied");
         }
         checkStatusOrderDelete(order);

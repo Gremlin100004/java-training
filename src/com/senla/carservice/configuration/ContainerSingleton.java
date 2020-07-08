@@ -1,7 +1,8 @@
 package com.senla.carservice.configuration;
 
-public interface ContainerSingleton {
-    Object getObjectSingleton(Class implementClass);
+public interface  ContainerSingleton  {
 
-    void addSingleton(Class implementClass, Object singletonObject);
+    <T> T getObjectSingleton(Class<? extends T> implementClass);
+
+    <T> void addSingleton(Class<? extends T> implementClass, T singletonObject);
 }

@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 public class CreatorImpl implements Creator {
 
     @Override
-    public Object createRawObject(Class implementClass) {
+    public <T> T createRawObject(Class<? extends T> implementClass) {
         try {
             return implementClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

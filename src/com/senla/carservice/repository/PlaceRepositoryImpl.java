@@ -1,5 +1,6 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.PropertyLoader;
@@ -11,11 +12,11 @@ import java.util.stream.Collectors;
 
 public class PlaceRepositoryImpl implements PlaceRepository {
     private final List<Place> places;
-    private final IdGenerator idGeneratorPlace;
+    @InjectDependency
+    private IdGenerator idGeneratorPlace;
 
     public PlaceRepositoryImpl() {
         this.places = new ArrayList<>();
-        this.idGeneratorPlace = new IdGenerator();
     }
 
     @Override
@@ -38,7 +39,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
 
     @Override
     public void addPlace(Place addPlace) {
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("placeAdd"))) {
+        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("carservice.repository.PlaceServiceImpl.addPlace"))) {
             throw new BusinessException("Permission denied");
         }
         this.places.stream().filter(place -> place.getNumber().equals(addPlace.getNumber())).forEachOrdered(place -> {
@@ -63,7 +64,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
         if (place.getBusyStatus()) {
             throw new BusinessException("Place is busy");
         }
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("placeDelete"))) {
+        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("carservice.repository.PlaceServiceImpl.deletePlace"))) {
             throw new BusinessException("Permission denied");
         }
         this.places.remove(place);

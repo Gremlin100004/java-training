@@ -1,6 +1,6 @@
 package com.senla.carservice.csvutil;
 
-import com.senla.carservice.domain.Status;
+import com.senla.carservice.enumarated.Status;
 import com.senla.carservice.exception.BusinessException;
 
 public class ParameterUtil {

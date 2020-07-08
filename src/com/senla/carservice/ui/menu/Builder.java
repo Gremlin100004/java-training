@@ -78,7 +78,7 @@ public class Builder {
         this.rootMenu.getMenuItems().add(new MenuItem("Get the closest free date",
                                                       () -> Printer.printInfo(carOfficeController.getNearestFreeDate()),
                                                       this.rootMenu));
-        this.rootMenu.getMenuItems().add(new MenuItem("Fill in test data", () -> {
+        this.rootMenu.getMenuItems().add(new MenuItem("Fill in com.senla.carservice.test data", () -> {
             String delimiter = "***********************************************************************";
             Printer.printInfo(delimiter);
             addMaster(delimiter, masterController);

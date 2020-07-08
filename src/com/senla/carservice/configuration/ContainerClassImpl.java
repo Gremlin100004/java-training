@@ -3,9 +3,9 @@ package com.senla.carservice.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerClassImpl implements ContainerClass {
+public class ContainerClassImpl<T> implements ContainerClass {
     private static ContainerClass instance;
-    private List<Class> packageClasses;
+    private final List<Class<? extends T>> packageClasses;
 
     private ContainerClassImpl(PackageScanner packageScanner) {
         packageClasses = packageScanner.getPackageClass();
@@ -19,14 +19,14 @@ public class ContainerClassImpl implements ContainerClass {
     }
 
     @Override
-    public Class getImplementClass(Class interfaceClass) {
+    public <T> Class<? extends T> getImplementClass(Class<? extends T> interfaceClass) {
         if (!interfaceClass.isInterface()) {
             return interfaceClass;
         }
-        for (Class classProject : packageClasses) {
-            for (Class interfaceProjectClass : classProject.getInterfaces()) {
+        for (Class<?> classProject : packageClasses) {
+            for (Class<?> interfaceProjectClass : classProject.getInterfaces()) {
                 if (interfaceProjectClass.equals(interfaceClass)) {
-                    return classProject;
+                    return (Class<? extends T>) classProject;
                 }
             }
         }
@@ -34,12 +34,12 @@ public class ContainerClassImpl implements ContainerClass {
     }
 
     @Override
-    public List<Class> getConfigurableClass(Class interfaceConfigurableClass) {
-        List<Class> configurableClasses = new ArrayList<>();
-        for (Class classProject : packageClasses) {
-            for (Class interfaceProjectClass : classProject.getInterfaces()) {
+    public <T> List<Class<? extends ConfigurableObject>> getConfigurableClass(Class<? extends T> interfaceConfigurableClass) {
+        List<Class<? extends ConfigurableObject>> configurableClasses = new ArrayList<>();
+        for (Class<?> classProject : packageClasses) {
+            for (Class<?> interfaceProjectClass : classProject.getInterfaces()) {
                 if (interfaceProjectClass.equals(interfaceConfigurableClass)) {
-                    configurableClasses.add(classProject);
+                    configurableClasses.add((Class<? extends ConfigurableObject>) classProject);
                 }
             }
         }

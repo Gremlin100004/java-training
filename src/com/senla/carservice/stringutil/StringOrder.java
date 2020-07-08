@@ -9,7 +9,7 @@ public class StringOrder {
 
     public static String getStringFromOrder(List<Order> orders) {
         final int LENGTH = 167;
-        String line = String.format(" %s\n", String.join("", Collections.nCopies(LENGTH, "-")));
+        String line = " " + String.join("", Collections.nCopies(LENGTH, "-")) + "\n";
         StringBuilder stringBuilder = new StringBuilder(line);
         stringBuilder.append(String.format("|%-4s|%-10s|%-12s|%-19s|%-28s|%-28s|%-28s|%-10s|%-12s|%-7s|\n",
                                            "№",

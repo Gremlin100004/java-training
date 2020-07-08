@@ -10,7 +10,7 @@ public class StringMaster {
     private static final int LENGTH = 38;
 
     public static String getStringFromMasters(List<Master> masters) {
-        String line = String.format(" %s\n", String.join("", Collections.nCopies(LENGTH, "-")));
+        String line = String.join("", Collections.nCopies(LENGTH, "-")) + "\n";
         StringBuilder stringBuilder = new StringBuilder(line);
         stringBuilder.append(String.format("|%-3s|%-20s|%-12s|\n",
                                            "№", "Name",

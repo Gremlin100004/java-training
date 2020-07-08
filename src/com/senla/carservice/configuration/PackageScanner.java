@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class PackageScanner {
     final String packageProject;
     final String sourceFolder;
@@ -15,8 +14,8 @@ public class PackageScanner {
         this.sourceFolder = sourceFolder;
     }
 
-    public List<Class> getPackageClass(){
-        String path = String.format("%s/%s", sourceFolder, packageProject.replace('.', '/'));
+    public <T> List<Class<? extends T>> getPackageClass() {
+        String path = sourceFolder + "/" + packageProject.replace('.', '/');
         List<File> files = getClassFiles(path);
         return getClassByFiles(files);
     }
@@ -26,7 +25,7 @@ public class PackageScanner {
         List<File> clearFiles = new ArrayList<>();
         getFolderFiles(files, new File(path));
         for (File file : files) {
-            if (file.isFile()){
+            if (file.isFile()) {
                 clearFiles.add(file);
             }
         }
@@ -38,7 +37,7 @@ public class PackageScanner {
             source.add(parent);
         }
         File[] listFiles = parent.listFiles();
-        if(listFiles == null) {
+        if (listFiles == null) {
             return;
         }
         for (File file : listFiles) {
@@ -51,14 +50,14 @@ public class PackageScanner {
             }
         }
     }
-
-    private  List<Class> getClassByFiles(List<File> files){
-        List<Class> classes = new ArrayList<>();
-        for (File file : files){
+    @SuppressWarnings("unchecked")
+    private <T> List<Class<? extends T>> getClassByFiles(List<File> files) {
+        List<Class<? extends T>> classes = new ArrayList<>();
+        for (File file : files) {
             String className = file.getName().substring(0, file.getName().lastIndexOf("."));
-            String folder = getFolderClass(Arrays.asList(file.getParent().split("/")));
+            String folder = getFolderClass(Arrays.asList(file.getParent().split("(/)|(\\\\)")));
             try {
-                classes.add(Class.forName( folder + className));
+                classes.add((Class<? extends T>) Class.forName(folder + className));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
                 //TODO : Add logging.
@@ -67,7 +66,7 @@ public class PackageScanner {
         return classes;
     }
 
-    private String getFolderClass(List<String> folders){
+    private String getFolderClass(List<String> folders) {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0, foldersSize = folders.size(); i < foldersSize; i++) {
             if (i != 0) {

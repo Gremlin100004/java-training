@@ -4,17 +4,13 @@ import com.senla.carservice.annotation.InjectDependency;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.domain.Status;
+import com.senla.carservice.enumarated.Status;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
-import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.repository.OrderRepository;
-import com.senla.carservice.repository.OrderRepositoryImpl;
 import com.senla.carservice.repository.PlaceRepository;
-import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.PropertyLoader;
-import com.senla.carservice.util.Serializer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -153,7 +149,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("shiftTime"))) {
+        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("carservice.service.OrderServiceImpl.shiftTime"))) {
             throw new BusinessException("Permission denied");
         }
         DateUtil.checkDateTime(executionStartTime, leadTime);

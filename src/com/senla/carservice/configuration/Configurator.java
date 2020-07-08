@@ -4,5 +4,5 @@ public interface Configurator {
 
     ContainerClass getConfigureContainerClass();
 
-    Object configureObject(Object rawObject);
+    <O> O configureObject(O rawObject);
 }

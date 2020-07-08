@@ -1,7 +1,10 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.annotation.Prototype;
+
 import java.io.Serializable;
 
+@Prototype
 public class IdGenerator implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long id;
