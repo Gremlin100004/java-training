@@ -1,6 +1,6 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.MasterService;
@@ -14,11 +14,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class OrderController {
-    @InjectDependency
+    @Dependency
     private OrderService orderService;
-    @InjectDependency
+    @Dependency
     private MasterService masterService;
-    @InjectDependency
+    @Dependency
     private PlaceService placeService;
 
     public OrderController() {

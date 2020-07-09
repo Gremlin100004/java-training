@@ -1,4 +1,4 @@
-package com.senla.carservice.configuration;
+package com.senla.carservice.factory.container;
 
 public interface  ContainerSingleton  {
 

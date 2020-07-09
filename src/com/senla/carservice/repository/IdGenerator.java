@@ -1,6 +1,6 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.annotation.Prototype;
+import com.senla.carservice.factory.annotation.Prototype;
 
 import java.io.Serializable;
 

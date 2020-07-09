@@ -1,4 +1,4 @@
-package com.senla.carservice.configuration;
+package com.senla.carservice.factory.creator;
 
 import java.lang.reflect.InvocationTargetException;
 

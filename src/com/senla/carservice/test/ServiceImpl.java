@@ -1,9 +1,9 @@
 package com.senla.carservice.test;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 
 public class ServiceImpl implements Service {
-    @InjectDependency
+    @Dependency
     private Repository repository;
     @Override
     public void doAction() {

@@ -1,6 +1,6 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MasterServiceImpl implements MasterService {
-    @InjectDependency
+    @Dependency
     private MasterRepository masterRepository;
-    @InjectDependency
+    @Dependency
     private OrderRepository orderRepository;
 
     public MasterServiceImpl() {

@@ -1,4 +1,6 @@
-package com.senla.carservice.configuration;
+package com.senla.carservice.factory.configurator;
+
+import com.senla.carservice.factory.container.ContainerClass;
 
 public interface Configurator {
 

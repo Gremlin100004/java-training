@@ -1,12 +1,12 @@
 package com.senla.carservice.ui.menu;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.ui.util.ScannerUtil;
 
 public class MenuController {
-    @InjectDependency
+    @Dependency
     private Navigator navigator;
-    @InjectDependency
+    @Dependency
     private Builder builder;
 
     public MenuController() {

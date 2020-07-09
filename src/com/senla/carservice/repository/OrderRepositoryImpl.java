@@ -1,6 +1,6 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.enumarated.Status;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class OrderRepositoryImpl implements OrderRepository {
     private final List<Order> orders;
-    @InjectDependency
+    @Dependency
     private IdGenerator idGeneratorOrder;
 
     public OrderRepositoryImpl() {

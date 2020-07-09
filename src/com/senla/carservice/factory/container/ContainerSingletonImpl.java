@@ -1,6 +1,6 @@
-package com.senla.carservice.configuration;
+package com.senla.carservice.factory.container;
 
-import com.senla.carservice.annotation.Prototype;
+import com.senla.carservice.factory.annotation.Prototype;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +28,7 @@ public class ContainerSingletonImpl implements ContainerSingleton {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getObjectSingleton(Class<? extends T> implementClass) {
         if (cacheSingleton.containsKey(implementClass)) {
             return (T) cacheSingleton.get(implementClass);

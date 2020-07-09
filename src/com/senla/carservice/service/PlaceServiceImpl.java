@@ -1,16 +1,15 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.PlaceRepository;
-import com.senla.carservice.util.Serializer;
 
 import java.util.Date;
 import java.util.List;
 
 public class PlaceServiceImpl implements PlaceService {
-    @InjectDependency
+    @Dependency
     private PlaceRepository placeRepository;
 
     public PlaceServiceImpl() {

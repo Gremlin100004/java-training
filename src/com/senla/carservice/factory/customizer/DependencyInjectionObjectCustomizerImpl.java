@@ -1,14 +1,15 @@
-package com.senla.carservice.configuration;
+package com.senla.carservice.factory.customizer;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.Builder;
+import com.senla.carservice.factory.annotation.Dependency;
 
 import java.lang.reflect.Field;
 
-public class InjectDependencyConfigurableObjectImpl implements ConfigurableObject {
+public class DependencyInjectionObjectCustomizerImpl implements ObjectCustomizer {
     @Override
     public <O> O configure(O inputObject) {
         for (Field field : inputObject.getClass().getDeclaredFields()) {
-            if (field.isAnnotationPresent(InjectDependency.class)) {
+            if (field.isAnnotationPresent(Dependency.class)) {
                 field.setAccessible(true);
                 Object object = Builder.getInstance().createObject(field.getType());
                 try {

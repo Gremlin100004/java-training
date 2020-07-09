@@ -1,6 +1,6 @@
 package com.senla.carservice.ui.menu;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.controller.CarOfficeController;
 import com.senla.carservice.controller.MasterController;
 import com.senla.carservice.controller.OrderController;
@@ -15,13 +15,13 @@ import java.util.List;
 
 public class Builder {
     private Menu rootMenu;
-    @InjectDependency
+    @Dependency
     private CarOfficeController carOfficeController;
-    @InjectDependency
+    @Dependency
     private MasterController masterController;
-    @InjectDependency
+    @Dependency
     private OrderController orderController;
-    @InjectDependency
+    @Dependency
     private PlaceController placeController;
 
     public Builder() {

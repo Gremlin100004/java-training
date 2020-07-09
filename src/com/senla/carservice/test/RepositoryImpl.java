@@ -1,13 +1,13 @@
 package com.senla.carservice.test;
 
-import com.senla.carservice.annotation.InjectProperty;
+import com.senla.carservice.factory.annotation.Dependency;
 
 public class RepositoryImpl implements Repository {
-    @InjectProperty("carservice.test.repository.value")
-    private String value = "default value";
+    @Dependency
+    private TestObject testObject;
 
     @Override
     public String getValue() {
-        return value;
+        return testObject.getValue();
     }
 }

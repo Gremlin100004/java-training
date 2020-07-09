@@ -1,4 +1,4 @@
-package com.senla.carservice.configuration;
+package com.senla.carservice.factory.configurator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,6 +50,7 @@ public class PackageScanner {
             }
         }
     }
+
     @SuppressWarnings("unchecked")
     private <T> List<Class<? extends T>> getClassByFiles(List<File> files) {
         List<Class<? extends T>> classes = new ArrayList<>();

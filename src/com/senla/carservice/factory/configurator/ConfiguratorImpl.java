@@ -1,11 +1,15 @@
-package com.senla.carservice.configuration;
+package com.senla.carservice.factory.configurator;
+
+import com.senla.carservice.factory.container.ContainerClass;
+import com.senla.carservice.factory.container.ContainerClassImpl;
+import com.senla.carservice.factory.customizer.ObjectCustomizer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ConfiguratorImpl implements Configurator {
-    private final List<ConfigurableObject> configurationSet;
+    private final List<ObjectCustomizer> configurationSet;
     private final ContainerClass containerClass;
 
     public ConfiguratorImpl(String packageProject, String sourceFolder) {
@@ -13,12 +17,13 @@ public class ConfiguratorImpl implements Configurator {
         this.configurationSet = getConfigurationSet();
     }
 
-    private List<ConfigurableObject> getConfigurationSet(){
-        List<Class<? extends ConfigurableObject>> configurableClasses= containerClass.getConfigurableClass(ConfigurableObject.class);
-        List<ConfigurableObject> configurableObjects = new ArrayList<>();
-        for (Class<?> configurableClass : configurableClasses){
+    private List<ObjectCustomizer> getConfigurationSet() {
+        List<Class<? extends ObjectCustomizer>> configurableClasses = containerClass.getConfigurableClass(
+            ObjectCustomizer.class);
+        List<ObjectCustomizer> configurableObjects = new ArrayList<>();
+        for (Class<?> configurableClass : configurableClasses) {
             try {
-                configurableObjects.add((ConfigurableObject) configurableClass.getDeclaredConstructor().newInstance());
+                configurableObjects.add((ObjectCustomizer) configurableClass.getDeclaredConstructor().newInstance());
             } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
                 //TODO : Add logging.
@@ -29,7 +34,7 @@ public class ConfiguratorImpl implements Configurator {
 
     @Override
     public <O> O configureObject(O rawObject) {
-        for (ConfigurableObject configurator: configurationSet){
+        for (ObjectCustomizer configurator : configurationSet) {
             rawObject = configurator.configure(rawObject);
         }
         return rawObject;

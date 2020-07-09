@@ -1,6 +1,6 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.CarOfficeService;
@@ -11,11 +11,11 @@ import com.senla.carservice.util.DateUtil;
 import java.util.Date;
 
 public class CarOfficeController {
-    @InjectDependency
+    @Dependency
     private CarOfficeService carOfficeService;
-    @InjectDependency
+    @Dependency
     private MasterService masterService;
-    @InjectDependency
+    @Dependency
     private PlaceService placeService;
 
     public CarOfficeController() {

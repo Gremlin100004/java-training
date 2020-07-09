@@ -1,6 +1,6 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.PropertyLoader;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class PlaceRepositoryImpl implements PlaceRepository {
     private final List<Place> places;
-    @InjectDependency
+    @Dependency
     private IdGenerator idGeneratorPlace;
 
     public PlaceRepositoryImpl() {

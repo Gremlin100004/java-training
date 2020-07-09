@@ -1,6 +1,6 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.csvutil.CsvMaster;
 import com.senla.carservice.csvutil.CsvOrder;
 import com.senla.carservice.csvutil.CsvPlace;
@@ -17,11 +17,11 @@ import java.util.Date;
 import java.util.List;
 
 public class CarOfficeServiceImpl implements CarOfficeService {
-    @InjectDependency
+    @Dependency
     private MasterRepository masterRepository;
-    @InjectDependency
+    @Dependency
     private PlaceRepository placeRepository;
-    @InjectDependency
+    @Dependency
     private OrderRepository orderRepository;
 
     public CarOfficeServiceImpl() {

@@ -2,33 +2,33 @@ package com.senla.carservice.util;
 
 import com.senla.carservice.repository.ApplicationState;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Objects;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class Serializer {
-    private static final ClassLoader CLASS_LOADER = PropertyLoader.class.getClassLoader();
     private static final String PATH_SER = PropertyLoader.getPropertyValue("serialize.entities.filePath");
 
     private Serializer() {
     }
 
     public static void serializeEntities(ApplicationState applicationState) {
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(
-            Objects.requireNonNull(CLASS_LOADER.getResource(PATH_SER)).getFile()))) {
+        ClassLoader classLoader = Serializer.class.getClassLoader();
+        URL url = classLoader.getResource(PATH_SER);
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File(url.toURI())))) {
             objectOutputStream.writeObject(applicationState);
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
             //TODO : Add logging.
         }
     }
 
     public static ApplicationState deserializeEntities() {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(
-            Objects.requireNonNull(CLASS_LOADER.getResource(PATH_SER)).getFile()))) {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(Thread.currentThread().getContextClassLoader().getResourceAsStream(PATH_SER))) {
             return (ApplicationState) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

@@ -1,6 +1,6 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderServiceImpl implements OrderService {
-    @InjectDependency
+    @Dependency
     private OrderRepository orderRepository;
-    @InjectDependency
+    @Dependency
     private PlaceRepository placeRepository;
-    @InjectDependency
+    @Dependency
     private MasterRepository masterRepository;
 
     public OrderServiceImpl() {

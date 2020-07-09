@@ -1,9 +1,9 @@
 package com.senla.carservice.test;
 
-import com.senla.carservice.annotation.InjectDependency;
+import com.senla.carservice.factory.annotation.Dependency;
 
 public class TestService {
-    @InjectDependency
+    @Dependency
     private Service service;
 
     public TestService() {
