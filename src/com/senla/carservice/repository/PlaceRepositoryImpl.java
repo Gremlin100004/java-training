@@ -1,9 +1,9 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.util.PropertyLoader;
+import com.senla.carservice.factory.annotation.Dependency;
+import com.senla.carservice.factory.annotation.Property;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +12,10 @@ import java.util.stream.Collectors;
 
 public class PlaceRepositoryImpl implements PlaceRepository {
     private final List<Place> places;
+    @Property
+    private Boolean isBlockAddPlace;
+    @Property
+    private Boolean isBlockDeletePlace;
     @Dependency
     private IdGenerator idGeneratorPlace;
 
@@ -39,10 +43,11 @@ public class PlaceRepositoryImpl implements PlaceRepository {
 
     @Override
     public void addPlace(Place addPlace) {
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("carservice.repository.PlaceServiceImpl.addPlace"))) {
+        if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
-        this.places.stream().filter(place -> place.getNumber().equals(addPlace.getNumber())).forEachOrdered(place -> {
+        this.places.stream()
+            .filter(place -> place.getNumber().equals(addPlace.getNumber())).forEach(place -> {
             throw new BusinessException("Such a number exists");
         });
         addPlace.setId(this.idGeneratorPlace.getId());
@@ -64,7 +69,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
         if (place.getBusyStatus()) {
             throw new BusinessException("Place is busy");
         }
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("carservice.repository.PlaceServiceImpl.deletePlace"))) {
+        if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
         this.places.remove(place);

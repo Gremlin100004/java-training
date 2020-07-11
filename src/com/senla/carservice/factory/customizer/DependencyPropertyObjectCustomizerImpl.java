@@ -13,6 +13,7 @@ public class DependencyPropertyObjectCustomizerImpl implements ObjectCustomizer 
             Property annotation = field.getAnnotation(Property.class);
             String value;
             if (annotation != null) {
+                System.out.println(inputObject.getClass().getName() + "." + field.getName());
                 if (annotation.value().isEmpty()) {
                     value = PropertyLoader.getPropertyValue(inputObject.getClass().getName() + "." + field.getName());
                 } else {
@@ -20,8 +21,19 @@ public class DependencyPropertyObjectCustomizerImpl implements ObjectCustomizer 
                 }
                 field.setAccessible(true);
                 try {
-                    field.getAnnotatedType().getType();
-                    field.set(inputObject, value);
+                    if (field.getType().getName().contains("Boolean")) {
+                        field.set(inputObject, Boolean.parseBoolean(value));
+                    } else if (field.getType().getName().contains("Short")) {
+                        field.set(inputObject, Short.parseShort(value));
+                    } else if (field.getType().getName().contains("Integer")) {
+                        field.set(inputObject, Integer.parseInt(value));
+                    } else if (field.getType().getName().contains("Long")) {
+                        field.set(inputObject, Long.parseLong(value));
+                    } else if (field.getType().getName().contains("Double")) {
+                        field.set(inputObject, Double.parseDouble(value));
+                    } else if (field.getType().getName().contains("String")) {
+                        field.set(inputObject, value);
+                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                     //TODO : Add logging.

@@ -19,7 +19,12 @@ public class Serializer {
     public static void serializeEntities(ApplicationState applicationState) {
         ClassLoader classLoader = Serializer.class.getClassLoader();
         URL url = classLoader.getResource(PATH_SER);
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File(url.toURI())))) {
+        if (url == null){
+            //TODO : Add logging.
+            return;
+        }
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+            new FileOutputStream(new File(url.toURI())))) {
             objectOutputStream.writeObject(applicationState);
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
@@ -28,12 +33,13 @@ public class Serializer {
     }
 
     public static ApplicationState deserializeEntities() {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(Thread.currentThread().getContextClassLoader().getResourceAsStream(PATH_SER))) {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(
+            Thread.currentThread().getContextClassLoader().getResourceAsStream(PATH_SER))) {
             return (ApplicationState) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            return null;
             //TODO : Add logging.
         }
-        return null;
     }
 }

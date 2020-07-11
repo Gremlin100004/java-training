@@ -1,7 +1,5 @@
 package com.senla.carservice.domain;
 
-import com.senla.carservice.enumarated.Status;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;

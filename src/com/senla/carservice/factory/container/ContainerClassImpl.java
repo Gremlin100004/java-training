@@ -1,9 +1,10 @@
 package com.senla.carservice.factory.container;
 
-import com.senla.carservice.factory.customizer.ObjectCustomizer;
 import com.senla.carservice.factory.configurator.PackageScanner;
+import com.senla.carservice.factory.customizer.ObjectCustomizer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ContainerClassImpl implements ContainerClass {
@@ -27,27 +28,19 @@ public class ContainerClassImpl implements ContainerClass {
         if (!interfaceClass.isInterface()) {
             return interfaceClass;
         }
-        for (Class<?> classProject : packageClasses) {
-            for (Class<?> interfaceProjectClass : classProject.getInterfaces()) {
-                if (interfaceProjectClass.equals(interfaceClass)) {
-                    return (Class<? extends T>) classProject;
-                }
-            }
-        }
-        return null;
+        return (Class<? extends T>) packageClasses.stream()
+            .filter(classProject -> Arrays.asList(classProject.getInterfaces())
+                .contains(interfaceClass)).findFirst().orElse(null);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<Class<? extends ObjectCustomizer>> getConfigurableClass(Class<? extends T> interfaceConfigurableClass) {
         List<Class<? extends ObjectCustomizer>> configurableClasses = new ArrayList<>();
-        for (Class<?> classProject : packageClasses) {
-            for (Class<?> interfaceProjectClass : classProject.getInterfaces()) {
-                if (interfaceProjectClass.equals(interfaceConfigurableClass)) {
-                    configurableClasses.add((Class<? extends ObjectCustomizer>) classProject);
-                }
-            }
-        }
+        packageClasses.forEach(classProject -> Arrays.stream(classProject.getInterfaces())
+                .filter(interfaceProjectClass -> interfaceProjectClass.equals(interfaceConfigurableClass))
+                .map(interfaceProjectClass -> (Class<? extends ObjectCustomizer>) classProject)
+                .forEach(configurableClasses::add));
         return configurableClasses;
     }
 }

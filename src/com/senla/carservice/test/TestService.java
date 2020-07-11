@@ -9,7 +9,7 @@ public class TestService {
     public TestService() {
     }
 
-    public void run(){
+    public void run() {
         service.doAction();
     }
 }

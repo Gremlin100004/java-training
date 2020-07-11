@@ -1,17 +1,17 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.factory.annotation.Dependency;
-import com.senla.carservice.csvutil.CsvMaster;
-import com.senla.carservice.csvutil.CsvOrder;
-import com.senla.carservice.csvutil.CsvPlace;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.repository.ApplicationState;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.OrderRepository;
 import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.Serializer;
+import com.senla.carservice.util.csvutil.CsvMaster;
+import com.senla.carservice.util.csvutil.CsvOrder;
+import com.senla.carservice.util.csvutil.CsvPlace;
 
 import java.util.Date;
 import java.util.List;
@@ -40,13 +40,14 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         }
         Date leadTimeOrder = orderRepository.getLastOrder().getLeadTime();
         Date DayDate = new Date();
-        for (Date currentDay = new Date(); leadTimeOrder.compareTo(currentDay) <= 0; DateUtil.addDays(currentDay, 1)) {
-            if (!masterRepository.getFreeMasters(currentDay).isEmpty() &&
-                !placeRepository.getFreePlaces(currentDay).isEmpty()) {
+        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay); DateUtil.addDays(currentDay, 1)) {
+            if (masterRepository.getFreeMasters(currentDay).isEmpty() ||
+                placeRepository.getFreePlaces(currentDay).isEmpty()) {
+                DayDate = currentDay;
+                currentDay = DateUtil.bringStartOfDayDate(currentDay);
+            } else {
                 break;
             }
-            DayDate = currentDay;
-            currentDay = DateUtil.bringStartOfDayDate(currentDay);
         }
         return DayDate;
     }
@@ -86,6 +87,9 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     public void deserializeEntities() {
         ApplicationState applicationState = Serializer.deserializeEntities();
+        if (applicationState == null){
+            return;
+        }
         masterRepository.updateGenerator(applicationState.getIdGeneratorMaster());
         masterRepository.updateListMaster(applicationState.getMasters());
         placeRepository.updateGenerator(applicationState.getIdGeneratorPlace());

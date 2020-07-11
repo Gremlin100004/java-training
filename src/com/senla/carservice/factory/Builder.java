@@ -2,11 +2,11 @@ package com.senla.carservice.factory;
 
 import com.senla.carservice.factory.configurator.Configurator;
 import com.senla.carservice.factory.configurator.ConfiguratorImpl;
-import com.senla.carservice.factory.creator.Creator;
-import com.senla.carservice.factory.creator.CreatorImpl;
 import com.senla.carservice.factory.container.ContainerClass;
 import com.senla.carservice.factory.container.ContainerSingleton;
 import com.senla.carservice.factory.container.ContainerSingletonImpl;
+import com.senla.carservice.factory.creator.Creator;
+import com.senla.carservice.factory.creator.CreatorImpl;
 import com.senla.carservice.util.PropertyLoader;
 
 public class Builder {
@@ -19,11 +19,11 @@ public class Builder {
     private final ContainerSingleton containerSingleton;
 
     private Builder() {
-        this.configurator = new ConfiguratorImpl(PropertyLoader.getPropertyValue(PACKAGE_PROJECT), PropertyLoader.getPropertyValue(SOURCE_FOLDER));
+        this.configurator = new ConfiguratorImpl(PropertyLoader.getPropertyValue(PACKAGE_PROJECT),
+                                                 PropertyLoader.getPropertyValue(SOURCE_FOLDER));
         this.containerSingleton = ContainerSingletonImpl.getInstance();
         this.creator = new CreatorImpl();
         this.containerClass = configurator.getConfigureContainerClass();
-
     }
 
     public static Builder getInstance() {
@@ -33,10 +33,10 @@ public class Builder {
     public <T> T createObject(Class<? extends T> rawClass) {
         Class<? extends T> implementClass = rawClass;
         T customizedObject = containerSingleton.getObjectSingleton(implementClass);
-        if (customizedObject != null){
+        if (customizedObject != null) {
             return customizedObject;
         }
-        if (rawClass.isInterface()){
+        if (rawClass.isInterface()) {
             implementClass = containerClass.getImplementClass(rawClass);
         }
         T rawObject = creator.createRawObject(implementClass);

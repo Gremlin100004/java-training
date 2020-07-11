@@ -21,14 +21,14 @@ public class ConfiguratorImpl implements Configurator {
         List<Class<? extends ObjectCustomizer>> configurableClasses = containerClass.getConfigurableClass(
             ObjectCustomizer.class);
         List<ObjectCustomizer> configurableObjects = new ArrayList<>();
-        for (Class<?> configurableClass : configurableClasses) {
+        configurableClasses.forEach(configurableClass -> {
             try {
-                configurableObjects.add((ObjectCustomizer) configurableClass.getDeclaredConstructor().newInstance());
+                configurableObjects.add(configurableClass.getDeclaredConstructor().newInstance());
             } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
                 //TODO : Add logging.
             }
-        }
+        });
         return configurableObjects;
     }
 

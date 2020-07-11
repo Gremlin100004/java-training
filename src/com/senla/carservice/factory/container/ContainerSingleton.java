@@ -1,6 +1,6 @@
 package com.senla.carservice.factory.container;
 
-public interface  ContainerSingleton  {
+public interface ContainerSingleton {
 
     <T> T getObjectSingleton(Class<? extends T> implementClass);
 

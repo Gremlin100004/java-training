@@ -1,16 +1,16 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.enumarated.Status;
+import com.senla.carservice.domain.Status;
 import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.factory.annotation.Dependency;
+import com.senla.carservice.factory.annotation.Property;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.OrderRepository;
 import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.util.DateUtil;
-import com.senla.carservice.util.PropertyLoader;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,6 +26,8 @@ public class OrderServiceImpl implements OrderService {
     private PlaceRepository placeRepository;
     @Dependency
     private MasterRepository masterRepository;
+    @Property
+    private boolean isBlockShiftTime;
 
     public OrderServiceImpl() {
     }
@@ -54,8 +56,8 @@ public class OrderServiceImpl implements OrderService {
         if (!orders.isEmpty()) {
             orders = sortOrderByPeriod(orders, executionStartTime, leadTime);
         }
-        int numberFreeMasters = masterRepository.getMasters().size() - orders
-            .stream().mapToInt(order -> order.getMasters().size()).sum();
+        int numberFreeMasters = masterRepository.getMasters().size() - orders.stream()
+            .mapToInt(order -> order.getMasters().size()).sum();
         int numberFreePlace = orderRepository.getOrders().size() - orders.size();
         if (numberFreeMasters == 0) {
             throw new BusinessException("The number of masters is zero");
@@ -149,7 +151,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("carservice.service.OrderServiceImpl.shiftTime"))) {
+        if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
         DateUtil.checkDateTime(executionStartTime, leadTime);
@@ -268,7 +270,8 @@ public class OrderServiceImpl implements OrderService {
         }
         List<Order> sortArrayOrder = new ArrayList<>();
         orders.forEach(order -> {
-            if (order.getLeadTime().compareTo(startPeriod) >= 0 && order.getLeadTime().compareTo(endPeriod) <= 0) {
+            if (order.getLeadTime().after(startPeriod) && order.getLeadTime().equals(startPeriod) &&
+                order.getLeadTime().before(endPeriod) && order.getLeadTime().equals(endPeriod)) {
                 sortArrayOrder.add(order);
             }
         });

@@ -3,13 +3,13 @@ package com.senla.carservice.factory.customizer;
 import com.senla.carservice.factory.Builder;
 import com.senla.carservice.factory.annotation.Dependency;
 
-import java.lang.reflect.Field;
+import java.util.Arrays;
 
 public class DependencyInjectionObjectCustomizerImpl implements ObjectCustomizer {
     @Override
     public <O> O configure(O inputObject) {
-        for (Field field : inputObject.getClass().getDeclaredFields()) {
-            if (field.isAnnotationPresent(Dependency.class)) {
+        Arrays.stream(inputObject.getClass().getDeclaredFields())
+            .filter(field -> field.isAnnotationPresent(Dependency.class)).forEach(field -> {
                 field.setAccessible(true);
                 Object object = Builder.getInstance().createObject(field.getType());
                 try {
@@ -18,8 +18,7 @@ public class DependencyInjectionObjectCustomizerImpl implements ObjectCustomizer
                     e.printStackTrace();
                     //TODO : Add logging.
                 }
-            }
-        }
+            });
         return inputObject;
     }
 }

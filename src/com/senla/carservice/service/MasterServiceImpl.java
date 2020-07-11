@@ -1,8 +1,8 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.OrderRepository;
 
@@ -62,8 +62,7 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public List<Master> getMasterByBusy() {
         checkMasters();
-        return masterRepository.getMasters()
-            .stream()
+        return masterRepository.getMasters().stream()
             .sorted(Comparator.comparing(master -> master.getOrders().size(),
                                          Comparator.nullsFirst(Comparator.naturalOrder())))
             .collect(Collectors.toList());

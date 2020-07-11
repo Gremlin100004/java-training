@@ -1,4 +1,4 @@
-package com.senla.carservice.csvutil;
+package com.senla.carservice.util.csvutil;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
@@ -8,7 +8,6 @@ import com.senla.carservice.util.PropertyLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -28,7 +27,8 @@ public class CsvMaster {
 
     public static List<Master> importMasters(List<Order> orders) {
         List<String> csvLinesMaster = FileUtil.getCsv(MASTER_PATH);
-        return csvLinesMaster.stream().map((String line) -> getMasterFromCsv(line, orders))
+        return csvLinesMaster.stream()
+            .map((String line) -> getMasterFromCsv(line, orders))
             .collect(Collectors.toList());
     }
 
@@ -72,11 +72,9 @@ public class CsvMaster {
             throw new BusinessException("argument is null");
         }
         List<Order> masterOrders = new ArrayList<>();
-        arrayIdOrder.stream().<Consumer<? super Order>> map(stringIndex -> order -> {
-            if (order.getId().equals(ParameterUtil.getValueLong(stringIndex))) {
-                masterOrders.add(order);
-            }
-        }).forEach(orders::forEach);
+        orders.forEach(order -> arrayIdOrder.stream()
+            .filter(stringIndex -> order.getId().equals(ParameterUtil.getValueLong(stringIndex)))
+            .map(stringIndex -> order).forEach(masterOrders::add));
         return masterOrders;
     }
 }

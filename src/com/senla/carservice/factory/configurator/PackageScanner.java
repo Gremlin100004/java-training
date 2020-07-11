@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PackageScanner {
     final String packageProject;
@@ -22,14 +23,8 @@ public class PackageScanner {
 
     private List<File> getClassFiles(String path) {
         List<File> files = new ArrayList<>();
-        List<File> clearFiles = new ArrayList<>();
         getFolderFiles(files, new File(path));
-        for (File file : files) {
-            if (file.isFile()) {
-                clearFiles.add(file);
-            }
-        }
-        return clearFiles;
+        return files.stream().filter(File::isFile).collect(Collectors.toList());
     }
 
     private void getFolderFiles(List<File> source, File parent) {
@@ -40,21 +35,22 @@ public class PackageScanner {
         if (listFiles == null) {
             return;
         }
-        for (File file : listFiles) {
+        Arrays.stream(listFiles).forEach(file -> {
             if (file.isDirectory()) {
                 getFolderFiles(source, file);
             } else {
-                if (!source.contains(file)) {
-                    source.add(file);
+                if (source.contains(file)) {
+                    return;
                 }
+                source.add(file);
             }
-        }
+        });
     }
 
     @SuppressWarnings("unchecked")
     private <T> List<Class<? extends T>> getClassByFiles(List<File> files) {
         List<Class<? extends T>> classes = new ArrayList<>();
-        for (File file : files) {
+        files.forEach(file -> {
             String className = file.getName().substring(0, file.getName().lastIndexOf("."));
             String folder = getFolderClass(Arrays.asList(file.getParent().split("(/)|(\\\\)")));
             try {
@@ -63,7 +59,7 @@ public class PackageScanner {
                 e.printStackTrace();
                 //TODO : Add logging.
             }
-        }
+        });
         return classes;
     }
 

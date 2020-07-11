@@ -1,10 +1,10 @@
-package com.senla.carservice.csvutil;
+package com.senla.carservice.util.csvutil;
 
-import com.senla.carservice.factory.annotation.Property;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.factory.annotation.Property;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.PropertyLoader;
 
@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class CsvOrder {
@@ -67,11 +66,9 @@ public class CsvOrder {
             throw new BusinessException("argument is null");
         }
         List<Master> orderMasters = new ArrayList<>();
-        arrayIdMaster.stream().<Consumer<? super Master>> map(stringIndex -> master -> {
-            if (master.getId().equals(ParameterUtil.getValueLong(stringIndex))) {
-                orderMasters.add(master);
-            }
-        }).forEach(masters::forEach);
+        masters.forEach(master -> arrayIdMaster.stream()
+            .filter(stringIndex -> master.getId().equals(ParameterUtil.getValueLong(stringIndex)))
+            .map(stringIndex -> master).forEach(orderMasters::add));
         return orderMasters;
     }
 

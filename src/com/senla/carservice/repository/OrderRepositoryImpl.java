@@ -1,11 +1,11 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.factory.annotation.Dependency;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.enumarated.Status;
+import com.senla.carservice.domain.Status;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.util.PropertyLoader;
+import com.senla.carservice.factory.annotation.Dependency;
+import com.senla.carservice.factory.annotation.Property;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 public class OrderRepositoryImpl implements OrderRepository {
     private final List<Order> orders;
+    @Property
+    private Boolean isBlockDeleteOrder;
     @Dependency
     private IdGenerator idGeneratorOrder;
 
@@ -81,10 +83,9 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public List<Order> getMasterOrders(Master master) {
-        return this.orders.stream().filter(order -> !order.isDeleteStatus() &&
-                                                    order.getMasters().stream().anyMatch(masterService ->
-                                                                                             masterService
-                                                                                                 .equals(master)))
+        return this.orders.stream()
+            .filter(order -> !order.isDeleteStatus() && order.getMasters().stream()
+                .anyMatch(masterService -> masterService.equals(master)))
             .collect(Collectors.toList());
     }
 
@@ -101,7 +102,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public void deleteOrder(Order order) {
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("carservice.service.OrderServiceImpl.deleteOrder"))) {
+        if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
         checkStatusOrderDelete(order);

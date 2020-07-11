@@ -10,7 +10,7 @@ public class Navigator {
     public Navigator() {
     }
 
-    public void addCurrentMenu(Menu currentMenu){
+    public void addCurrentMenu(Menu currentMenu) {
         this.currentMenu = currentMenu;
     }
 
