@@ -1,10 +1,12 @@
 package com.senla.carservice.factory.configurator;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PackageScanner {
     final String packageProject;
@@ -16,60 +18,72 @@ public class PackageScanner {
     }
 
     public <T> List<Class<? extends T>> getPackageClass() {
-        String path = sourceFolder + "/" + packageProject.replace('.', '/');
-        List<File> files = getClassFiles(path);
-        return getClassByFiles(files);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null){
+            //TODO : Add logging.
+            return null;
+        }
+        String path = packageProject.replace('.', '/');
+        List<File> dirs = getDirs(classLoader, path);
+        if (dirs == null){
+            return null;
+        }
+        return getClassByDirs(dirs, packageProject);
     }
 
-    private List<File> getClassFiles(String path) {
-        List<File> files = new ArrayList<>();
-        getFolderFiles(files, new File(path));
-        return files.stream().filter(File::isFile).collect(Collectors.toList());
-    }
-
-    private void getFolderFiles(List<File> source, File parent) {
-        if (!source.contains(parent)) {
-            source.add(parent);
-        }
-        File[] listFiles = parent.listFiles();
-        if (listFiles == null) {
-            return;
-        }
-        Arrays.stream(listFiles).forEach(file -> {
-            if (file.isDirectory()) {
-                getFolderFiles(source, file);
-            } else {
-                if (source.contains(file)) {
-                    return;
-                }
-                source.add(file);
+    private List<File> getDirs(ClassLoader classLoader, String path){
+        List<File> dirs = new ArrayList<>();
+        try {
+            Enumeration<URL> resources = classLoader.getResources(path);
+            while (resources.hasMoreElements()) {
+                URL resource = resources.nextElement();
+                dirs.add(new File(resource.getFile()));
             }
-        });
+            return dirs;
+        } catch (IOException e) {
+            e.printStackTrace();
+            //TODO : Add logging.
+            return null;
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> List<Class<? extends T>> getClassByFiles(List<File> files) {
+    private <T> List<Class<? extends T>> getClassByDirs(List<File> dirs, String packageName) {
         List<Class<? extends T>> classes = new ArrayList<>();
-        files.forEach(file -> {
-            String className = file.getName().substring(0, file.getName().lastIndexOf("."));
-            String folder = getFolderClass(Arrays.asList(file.getParent().split("(/)|(\\\\)")));
-            try {
-                classes.add((Class<? extends T>) Class.forName(folder + className));
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-                //TODO : Add logging.
-            }
-        });
+        for (File directory : dirs) {
+            classes.addAll(findClasses(directory, packageName));
+        }
         return classes;
     }
 
-    private String getFolderClass(List<String> folders) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0, foldersSize = folders.size(); i < foldersSize; i++) {
-            if (i != 0) {
-                stringBuilder.append(folders.get(i)).append(".");
+    @SuppressWarnings("unchecked")
+    private static <T> List<Class<? extends T>> findClasses(File directory, String packageName) {
+        List<Class<? extends T>> classes = new ArrayList<>();
+        if (!directory.exists()) {
+            return classes;
+        }
+        File[] files = directory.listFiles();
+        if (files == null) {
+            return classes;
+        }
+        for (File file : files) {
+            if (file.isDirectory()) {
+//                if (file.getName().contains(".")) {
+//                    continue;
+//                }
+                assert !file.getName().contains(".");
+                classes.addAll(findClasses(file, packageName + "." + file.getName()));
+            } else if (file.getName().endsWith(".class")) {
+                try {
+                    classes.add((Class<? extends T>) Class
+                        .forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                    //TODO : Add logging.
+                }
             }
         }
-        return stringBuilder.toString();
+        return classes;
     }
+
+
 }

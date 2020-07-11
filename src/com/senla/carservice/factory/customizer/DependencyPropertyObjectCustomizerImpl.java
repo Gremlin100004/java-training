@@ -13,7 +13,6 @@ public class DependencyPropertyObjectCustomizerImpl implements ObjectCustomizer 
             Property annotation = field.getAnnotation(Property.class);
             String value;
             if (annotation != null) {
-                System.out.println(inputObject.getClass().getName() + "." + field.getName());
                 if (annotation.value().isEmpty()) {
                     value = PropertyLoader.getPropertyValue(inputObject.getClass().getName() + "." + field.getName());
                 } else {

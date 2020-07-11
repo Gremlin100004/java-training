@@ -123,35 +123,35 @@ public class TestData {
 
     public static List<String> getArrayExecutionStartTime() {
         List<String> arrayDate = new ArrayList<>();
-        arrayDate.add("11.07.2020 10:00");
-        arrayDate.add("11.07.2020 10:00");
-        arrayDate.add("12.07.2020 14:00");
-        arrayDate.add("13.07.2020 15:00");
-        arrayDate.add("14.07.2020 15:00");
-        arrayDate.add("15.07.2020 15:00");
-        arrayDate.add("16.07.2020 15:00");
-        arrayDate.add("16.07.2020 15:00");
-        arrayDate.add("16.07.2020 15:00");
-        arrayDate.add("16.07.2020 15:00");
-        arrayDate.add("16.07.2020 15:00");
-        arrayDate.add("16.07.2020 15:00");
+        arrayDate.add("11.08.2020 10:00");
+        arrayDate.add("11.08.2020 10:00");
+        arrayDate.add("12.08.2020 14:00");
+        arrayDate.add("13.08.2020 15:00");
+        arrayDate.add("14.08.2020 15:00");
+        arrayDate.add("15.08.2020 15:00");
+        arrayDate.add("16.08.2020 15:00");
+        arrayDate.add("16.08.2020 15:00");
+        arrayDate.add("16.08.2020 15:00");
+        arrayDate.add("16.08.2020 15:00");
+        arrayDate.add("16.08.2020 15:00");
+        arrayDate.add("16.08.2020 15:00");
         return arrayDate;
     }
 
     public static List<String> getArrayLeadTime() {
         ArrayList<String> arrayDate = new ArrayList<>();
-        arrayDate.add("11.07.2020 18:00");
-        arrayDate.add("11.07.2020 18:00");
-        arrayDate.add("13.07.2020 10:00");
-        arrayDate.add("14.07.2020 18:00");
-        arrayDate.add("15.07.2020 10:00");
-        arrayDate.add("16.07.2020 10:00");
-        arrayDate.add("17.07.2020 10:00");
-        arrayDate.add("18.07.2020 10:00");
-        arrayDate.add("19.07.2020 10:00");
-        arrayDate.add("20.07.2020 10:00");
-        arrayDate.add("20.07.2020 10:00");
-        arrayDate.add("20.07.2020 10:00");
+        arrayDate.add("11.08.2020 18:00");
+        arrayDate.add("11.08.2020 18:00");
+        arrayDate.add("13.08.2020 10:00");
+        arrayDate.add("14.08.2020 18:00");
+        arrayDate.add("15.08.2020 10:00");
+        arrayDate.add("16.08.2020 10:00");
+        arrayDate.add("17.08.2020 10:00");
+        arrayDate.add("18.08.2020 10:00");
+        arrayDate.add("19.08.2020 10:00");
+        arrayDate.add("20.08.2020 10:00");
+        arrayDate.add("20.08.2020 10:00");
+        arrayDate.add("20.08.2020 10:00");
         return arrayDate;
     }
 }
