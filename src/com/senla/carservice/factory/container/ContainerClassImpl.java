@@ -24,13 +24,17 @@ public class ContainerClassImpl implements ContainerClass {
 
     @Override
     @SuppressWarnings("unchecked")
+    // как ты переводишь фразу getImplementClass? я перевожу как "получить реализовать класс"
     public <T> Class<? extends T> getImplementClass(Class<? extends T> interfaceClass) {
         if (!interfaceClass.isInterface()) {
             return interfaceClass;
         }
+        // вот тут у тебя будет NPE, так как packageClasses может быть нал из метода getPackageClass()
+        // используй нормальное форматирование стримов, писал уже об этом, читать невозможно (я отформатирую)
         return (Class<? extends T>) packageClasses.stream()
-            .filter(classProject -> Arrays.asList(classProject.getInterfaces())
-                .contains(interfaceClass)).findFirst().orElse(null);
+                .filter(classProject -> Arrays.asList(classProject.getInterfaces()).contains(interfaceClass))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

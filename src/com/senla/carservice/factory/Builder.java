@@ -9,8 +9,12 @@ import com.senla.carservice.factory.creator.Creator;
 import com.senla.carservice.factory.creator.CreatorImpl;
 import com.senla.carservice.util.PropertyLoader;
 
+// может быть статик утилитой, синглтон не нужен
 public class Builder {
     private static final Builder INSTANCE = new Builder();
+    // этот модуль должен быть полностью независимым - он не должен знать ни классы из
+    // проекта, ни структуру проекта
+    // если что-то ему нужно из-вне, пусть это придет в параметрах
     private static final String PACKAGE_PROJECT = "carservice.source.package";
     private final Creator creator;
     private final Configurator configurator;
@@ -28,6 +32,8 @@ public class Builder {
         return INSTANCE;
     }
 
+    // плохое название для метода - создается впечатление, что сколько раз вызовешь этот метод,
+    // столько объектов не-синглтонов и получишь
     public <T> T createObject(Class<? extends T> rawClass) {
         Class<? extends T> implementClass = rawClass;
         T customizedObject = containerSingleton.getObjectSingleton(implementClass);
@@ -39,6 +45,8 @@ public class Builder {
         }
         T rawObject = creator.createRawObject(implementClass);
         customizedObject = configurator.configureObject(rawObject);
+        // лучшая практика - создать контекст приложения со всеми синглтонами при старте приложения,
+        // а не по ходу в рантайме, чтобы узнать при старте, если что-то не так
         containerSingleton.addSingleton(rawClass, customizedObject);
         return customizedObject;
     }

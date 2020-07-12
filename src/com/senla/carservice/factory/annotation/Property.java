@@ -7,6 +7,8 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+// нарушено условие задания: такой аннотации нет в задаче, не реализованы атрибуты, которые требовались по условию
+// задачи
 public @interface Property {
     String value() default "";
 }

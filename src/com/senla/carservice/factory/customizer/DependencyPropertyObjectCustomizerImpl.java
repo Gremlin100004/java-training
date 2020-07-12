@@ -20,6 +20,7 @@ public class DependencyPropertyObjectCustomizerImpl implements ObjectCustomizer 
                 }
                 field.setAccessible(true);
                 try {
+                    // так типы не определяют
                     if (field.getType().getName().contains("Boolean")) {
                         field.set(inputObject, Boolean.parseBoolean(value));
                     } else if (field.getType().getName().contains("Short")) {
@@ -34,6 +35,7 @@ public class DependencyPropertyObjectCustomizerImpl implements ObjectCustomizer 
                         field.set(inputObject, value);
                     }
                 } catch (IllegalAccessException e) {
+                    // так исключения не обрабатывают
                     e.printStackTrace();
                     //TODO : Add logging.
                 }
