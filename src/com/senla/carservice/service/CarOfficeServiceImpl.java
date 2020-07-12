@@ -87,7 +87,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     public void deserializeEntities() {
         ApplicationState applicationState = Serializer.deserializeEntities();
-        if (applicationState == null){
+        if (applicationState == null) {
             return;
         }
         masterRepository.updateGenerator(applicationState.getIdGeneratorMaster());

@@ -4,34 +4,31 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
 public class PackageScanner {
     final String packageProject;
-    final String sourceFolder;
 
-    public PackageScanner(String packageProject, String sourceFolder) {
+    public PackageScanner(String packageProject) {
         this.packageProject = packageProject;
-        this.sourceFolder = sourceFolder;
     }
 
     public <T> List<Class<? extends T>> getPackageClass() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null){
+        if (classLoader == null) {
             //TODO : Add logging.
             return null;
         }
         String path = packageProject.replace('.', '/');
         List<File> dirs = getDirs(classLoader, path);
-        if (dirs == null){
+        if (dirs == null) {
             return null;
         }
         return getClassByDirs(dirs, packageProject);
     }
 
-    private List<File> getDirs(ClassLoader classLoader, String path){
+    private List<File> getDirs(ClassLoader classLoader, String path) {
         List<File> dirs = new ArrayList<>();
         try {
             Enumeration<URL> resources = classLoader.getResources(path);
@@ -67,9 +64,6 @@ public class PackageScanner {
         }
         for (File file : files) {
             if (file.isDirectory()) {
-//                if (file.getName().contains(".")) {
-//                    continue;
-//                }
                 assert !file.getName().contains(".");
                 classes.addAll(findClasses(file, packageName + "." + file.getName()));
             } else if (file.getName().endsWith(".class")) {
@@ -84,6 +78,4 @@ public class PackageScanner {
         }
         return classes;
     }
-
-
 }

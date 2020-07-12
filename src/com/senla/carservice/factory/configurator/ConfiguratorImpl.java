@@ -12,8 +12,8 @@ public class ConfiguratorImpl implements Configurator {
     private final List<ObjectCustomizer> configurationSet;
     private final ContainerClass containerClass;
 
-    public ConfiguratorImpl(String packageProject, String sourceFolder) {
-        this.containerClass = ContainerClassImpl.getInstance(new PackageScanner(packageProject, sourceFolder));
+    public ConfiguratorImpl(String packageProject) {
+        this.containerClass = ContainerClassImpl.getInstance(new PackageScanner(packageProject));
         this.configurationSet = getConfigurationSet();
     }
 
