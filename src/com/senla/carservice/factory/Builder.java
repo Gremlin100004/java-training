@@ -10,25 +10,21 @@ import com.senla.carservice.factory.creator.CreatorImpl;
 import com.senla.carservice.util.PropertyLoader;
 
 public class Builder {
-    private static final Builder INSTANCE = new Builder();
     private static final String PACKAGE_PROJECT = "carservice.source.package";
+    private Context context;
+
     private final Creator creator;
     private final Configurator configurator;
     private final ContainerClass containerClass;
-    private final ContainerSingleton containerSingleton;
 
-    private Builder() {
-        this.configurator = new ConfiguratorImpl(PropertyLoader.getPropertyValue(PACKAGE_PROJECT));
-        this.containerSingleton = ContainerSingletonImpl.getInstance();
+    public Builder() {
+        this.configurator = new ConfiguratorImpl();
         this.creator = new CreatorImpl();
         this.containerClass = configurator.getConfigureContainerClass();
     }
 
-    public static Builder getInstance() {
-        return INSTANCE;
-    }
-
     public <T> T createObject(Class<? extends T> rawClass) {
+
         Class<? extends T> implementClass = rawClass;
         T customizedObject = containerSingleton.getObjectSingleton(implementClass);
         if (customizedObject != null) {

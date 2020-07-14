@@ -2,14 +2,15 @@ package com.senla.carservice.factory.configurator;
 
 import com.senla.carservice.factory.container.ContainerClass;
 import com.senla.carservice.factory.container.ContainerClassImpl;
-import com.senla.carservice.factory.customizer.ObjectCustomizer;
+import com.senla.carservice.factory.customizer.BeanPostProcessor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ConfiguratorImpl implements Configurator {
-    private final List<ObjectCustomizer> configurationSet;
+    private final List<BeanPostProcessor> configurationSet;
     private final ContainerClass containerClass;
 
     public ConfiguratorImpl(String packageProject) {
@@ -17,10 +18,10 @@ public class ConfiguratorImpl implements Configurator {
         this.configurationSet = getConfigurationSet();
     }
 
-    private List<ObjectCustomizer> getConfigurationSet() {
-        List<Class<? extends ObjectCustomizer>> configurableClasses = containerClass.getConfigurableClass(
-            ObjectCustomizer.class);
-        List<ObjectCustomizer> configurableObjects = new ArrayList<>();
+    private List<BeanPostProcessor> getConfigurationSet() {
+        List<Class<? extends BeanPostProcessor>> configurableClasses = containerClass.getConfigurableClass(
+            BeanPostProcessor.class);
+        List<BeanPostProcessor> configurableObjects = new ArrayList<>();
         configurableClasses.forEach(configurableClass -> {
             try {
                 configurableObjects.add(configurableClass.getDeclaredConstructor().newInstance());
@@ -32,9 +33,19 @@ public class ConfiguratorImpl implements Configurator {
         return configurableObjects;
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> Class<? extends T> getImplementClass(Class<? extends T> interfaceClass) {
+        if (!interfaceClass.isInterface()) {
+            return interfaceClass;
+        }
+        return (Class<? extends T>) packageClasses.stream()
+                .filter(classProject -> Arrays.asList(classProject.getInterfaces())
+                        .contains(interfaceClass)).findFirst().orElse(null);
+    }
+
     @Override
     public <O> O configureObject(O rawObject) {
-        for (ObjectCustomizer configurator : configurationSet) {
+        for (BeanPostProcessor configurator : configurationSet) {
             rawObject = configurator.configure(rawObject);
         }
         return rawObject;

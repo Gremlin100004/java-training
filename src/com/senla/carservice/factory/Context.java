@@ -3,6 +3,7 @@ package com.senla.carservice.factory;
 import com.senla.carservice.factory.annotation.Prototype;
 import com.senla.carservice.factory.configurator.Configurator;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,8 +12,16 @@ public class Context {
     private final Map<Class<?>, Object> cacheSingleton = new HashMap<>();
     private Configurator configurator;
 
-    private Context(final Configurator configurator) {
+    public Context(final Configurator configurator) {
         this.configurator = configurator;
+    }
+
+
+    public <T> T getObjectSingleton(Class<? extends T> implementClass) {
+        if (cacheSingleton.containsKey(implementClass)) {
+            return (T) cacheSingleton.get(implementClass);
+        }
+        return null;
     }
 
     public <T> void addSingleton(Class<? extends T> implementClass, T singletonObject) {
@@ -22,10 +31,7 @@ public class Context {
         cacheSingleton.put(implementClass, singletonObject);
     }
 
-    public <T> T getObjectSingleton(Class<? extends T> implementClass) {
-        if (cacheSingleton.containsKey(implementClass)) {
-            return (T) cacheSingleton.get(implementClass);
-        }
-        return null;
+    public Configurator getConfigurator() {
+        return configurator;
     }
 }

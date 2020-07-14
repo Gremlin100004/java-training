@@ -1,7 +1,7 @@
 package com.senla.carservice.factory.container;
 
 import com.senla.carservice.factory.configurator.PackageScanner;
-import com.senla.carservice.factory.customizer.ObjectCustomizer;
+import com.senla.carservice.factory.customizer.BeanPostProcessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,11 +35,11 @@ public class ContainerClassImpl implements ContainerClass {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> List<Class<? extends ObjectCustomizer>> getConfigurableClass(Class<? extends T> interfaceConfigurableClass) {
-        List<Class<? extends ObjectCustomizer>> configurableClasses = new ArrayList<>();
+    public <T> List<Class<? extends BeanPostProcessor>> getConfigurableClass(Class<? extends T> interfaceConfigurableClass) {
+        List<Class<? extends BeanPostProcessor>> configurableClasses = new ArrayList<>();
         packageClasses.forEach(classProject -> Arrays.stream(classProject.getInterfaces())
                 .filter(interfaceProjectClass -> interfaceProjectClass.equals(interfaceConfigurableClass))
-                .map(interfaceProjectClass -> (Class<? extends ObjectCustomizer>) classProject)
+                .map(interfaceProjectClass -> (Class<? extends BeanPostProcessor>) classProject)
                 .forEach(configurableClasses::add));
         return configurableClasses;
     }
