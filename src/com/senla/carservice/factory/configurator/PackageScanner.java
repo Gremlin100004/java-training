@@ -3,9 +3,14 @@ package com.senla.carservice.factory.configurator;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PackageScanner {
     final String packageProject;
@@ -77,5 +82,20 @@ public class PackageScanner {
             }
         }
         return classes;
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        Path start = Paths.get("C:\\data\\");
+        try (Stream<Path> stream = Files.walk(start, Integer.MAX_VALUE)) {
+            List<String> collect = stream
+                    .map(String::valueOf)
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            collect.forEach(System.out::println);
+        }
+
+
     }
 }
