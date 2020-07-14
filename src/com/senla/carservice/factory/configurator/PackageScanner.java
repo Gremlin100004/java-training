@@ -8,18 +8,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PackageScanner {
-    final String packageProject;
+    private final String packageProject;
+    private Map<String, Class<?>> classesPrototype = new HashMap<>();
 
     public PackageScanner(String packageProject) {
         this.packageProject = packageProject;
+
     }
 
-    public <T> List<Class<? extends T>> getPackageClass() {
+    public <T> List<Class<? extends T>> getArrayClasses() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             //TODO : Add logging.

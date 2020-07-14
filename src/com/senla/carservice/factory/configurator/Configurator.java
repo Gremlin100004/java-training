@@ -1,10 +1,13 @@
 package com.senla.carservice.factory.configurator;
 
-import com.senla.carservice.factory.container.ContainerClass;
+public class Configurator {
+    private PackageScanner packageScanner;
 
-public interface Configurator {
+    public Configurator(String packageName) {
+        packageScanner = new PackageScanner(packageName);
+    }
 
-    ContainerClass getConfigureContainerClass();
-
-    <O> O configureObject(O rawObject);
+    public PackageScanner getPackageScanner() {
+        return packageScanner;
+    }
 }

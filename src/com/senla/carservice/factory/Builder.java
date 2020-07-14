@@ -1,24 +1,21 @@
 package com.senla.carservice.factory;
 
 import com.senla.carservice.factory.configurator.Configurator;
-import com.senla.carservice.factory.configurator.ConfiguratorImpl;
 import com.senla.carservice.factory.container.ContainerClass;
-import com.senla.carservice.factory.container.ContainerSingleton;
-import com.senla.carservice.factory.container.ContainerSingletonImpl;
 import com.senla.carservice.factory.creator.Creator;
 import com.senla.carservice.factory.creator.CreatorImpl;
-import com.senla.carservice.util.PropertyLoader;
+
+import java.util.List;
 
 public class Builder {
-    private static final String PACKAGE_PROJECT = "carservice.source.package";
     private Context context;
 
     private final Creator creator;
     private final Configurator configurator;
     private final ContainerClass containerClass;
 
-    public Builder() {
-        this.configurator = new ConfiguratorImpl();
+    public Builder(List<Object> ) {
+        this.configurator = new Configurator();
         this.creator = new CreatorImpl();
         this.containerClass = configurator.getConfigureContainerClass();
     }

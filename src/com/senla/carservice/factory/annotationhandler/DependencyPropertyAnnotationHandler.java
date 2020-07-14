@@ -1,12 +1,12 @@
-package com.senla.carservice.factory.customizer;
+package com.senla.carservice.factory.annotationhandler;
 
 import com.senla.carservice.factory.annotation.Property;
 import com.senla.carservice.util.PropertyLoader;
 
 import java.lang.reflect.Field;
 
-public class DependencyPropertyBeanPostProcessorImpl implements BeanPostProcessor {
-    @Override
+public class DependencyPropertyAnnotationHandler {
+
     public <O> O configure(O inputObject) {
         Class<?> implementClass = inputObject.getClass();
         for (Field field : implementClass.getDeclaredFields()) {

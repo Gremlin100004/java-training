@@ -1,7 +1,7 @@
 package com.senla.carservice.factory.container;
 
 import com.senla.carservice.factory.configurator.PackageScanner;
-import com.senla.carservice.factory.customizer.BeanPostProcessor;
+import com.senla.carservice.factory.annotationhandler.BeanPostProcessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +12,7 @@ public class ContainerClassImpl implements ContainerClass {
     private final List<Class<?>> packageClasses;
 
     private ContainerClassImpl(PackageScanner packageScanner) {
-        packageClasses = packageScanner.getPackageClass();
+        packageClasses = packageScanner.getArrayClasses();
     }
 
     public static ContainerClass getInstance(PackageScanner packageScanner) {

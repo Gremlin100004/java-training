@@ -1,13 +1,12 @@
-package com.senla.carservice.factory.customizer;
+package com.senla.carservice.factory.annotationhandler;
 
-import com.senla.carservice.factory.Builder;
 import com.senla.carservice.factory.Context;
 import com.senla.carservice.factory.annotation.Dependency;
 
 import java.util.Arrays;
 
-public class DependencyInjectionBeanPostProcessorImpl implements BeanPostProcessor {
-    @Override
+public class DependencyInjectionAnnotationHandler {
+
     public <O> O configure(O inputObject, Context context) {
         Arrays.stream(inputObject.getClass().getDeclaredFields())
             .filter(field -> field.isAnnotationPresent(Dependency.class)).forEach(field -> {
