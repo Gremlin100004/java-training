@@ -1,13 +1,14 @@
 package com.senla.carservice.container.configurator;
 
-import java.io.File;
+import com.senla.carservice.exception.BusinessException;
+
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,81 +20,48 @@ public class PackageScanner {
         this.packageProject = packageProject;
     }
 
-    public <T> List<Class<? extends T>> getArrayClasses() {
+    public List<Class<?>> getArrayClasses() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
-            //TODO : Add logging.
-            return null;
+            throw new BusinessException("ClassLoader error");
         }
-        String path = packageProject.replace('.', '/');
-        List<File> dirs = getDirs(classLoader, path);
-        if (dirs == null) {
-            return null;
+        URL url = classLoader.getResource(packageProject.replace('.', '/'));
+        if (url == null) {
+            throw new BusinessException("Error project package");
         }
-        return getClassByDirs(dirs, packageProject);
-    }
-
-    private List<File> getDirs(ClassLoader classLoader, String path) {
-        List<File> dirs = new ArrayList<>();
+        String fullPath;
         try {
-            Enumeration<URL> resources = classLoader.getResources(path);
-            while (resources.hasMoreElements()) {
-                URL resource = resources.nextElement();
-                dirs.add(new File(resource.getFile()));
-            }
-            return dirs;
-        } catch (IOException e) {
-            e.printStackTrace();
-            //TODO : Add logging.
-            return null;
+            fullPath = url.toURI().getPath();
+        } catch (URISyntaxException e) {
+            throw new BusinessException("Error project package");
         }
+        return getClassByPath(getStringFilesPaths(fullPath));
     }
 
-    private <T> List<Class<? extends T>> getClassByDirs(List<File> dirs, String packageName) {
-        List<Class<? extends T>> classes = new ArrayList<>();
-        for (File directory : dirs) {
-            classes.addAll(findClasses(directory, packageName));
-        }
-        return classes;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> List<Class<? extends T>> findClasses(File directory, String packageName) {
-        List<Class<? extends T>> classes = new ArrayList<>();
-        if (!directory.exists()) {
-            return classes;
-        }
-        File[] files = directory.listFiles();
-        if (files == null) {
-            return classes;
-        }
-        for (File file : files) {
-            if (file.isDirectory()) {
-                assert !file.getName().contains(".");
-                classes.addAll(findClasses(file, packageName + "." + file.getName()));
-            } else if (file.getName().endsWith(".class")) {
+    private List<Class<?>> getClassByPath(List<String> filesStringPaths) {
+        List<Class<?>> classes = new ArrayList<>();
+        String separator = packageProject.replace(".", "/");
+        filesStringPaths.stream()
+            .map(file -> file.substring(file.lastIndexOf(separator)).split("\\.")[0].replace("/", "."))
+            .forEach(className -> {
                 try {
-                    classes.add((Class<? extends T>) Class
-                            .forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
+                    classes.add(Class.forName(className));
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    //TODO : Add logging.
+                    throw new BusinessException("Error name class");
                 }
-            }
-        }
+            });
         return classes;
     }
 
-    public static void main(String[] args) throws IOException {
-
-        Path start = Paths.get("C:\\data\\");
-        try (Stream<Path> stream = Files.walk(start, Integer.MAX_VALUE)) {
-            List<String> collect = stream
-                    .map(String::valueOf)
-                    .sorted()
-                    .collect(Collectors.toList());
-
-            collect.forEach(System.out::println);
+    private static List<String> getStringFilesPaths(String stringPath) {
+        Path start = Paths.get(stringPath);
+        try (Stream<Path> filesPath = Files.walk(start, Integer.MAX_VALUE)) {
+            return filesPath
+                .filter(Files::isRegularFile)
+                .map(String::valueOf)
+                .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new BusinessException("Error scanning package");
         }
     }
 }

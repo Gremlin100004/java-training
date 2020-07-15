@@ -4,7 +4,7 @@ import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.domain.Status;
+import com.senla.carservice.enumeration.Status;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.container.annotation.Property;
@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
         checkMasters();
         checkPlaces();
         orderRepository.addOrder(new Order(orderRepository.getIdGeneratorOrder().getId(),
-                automaker, model, registrationNumber));
+                                           automaker, model, registrationNumber));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
             orders = sortOrderByPeriod(orders, executionStartTime, leadTime);
         }
         int numberFreeMasters = masterRepository.getMasters().size() - orders.stream()
-                .mapToInt(order -> order.getMasters().size()).sum();
+            .mapToInt(order -> order.getMasters().size()).sum();
         int numberFreePlace = orderRepository.getOrders().size() - orders.size();
         if (numberFreeMasters == 0) {
             throw new BusinessException("The number of masters is zero");
@@ -77,9 +77,11 @@ public class OrderServiceImpl implements OrderService {
         checkOrders();
         Order currentOrder = orderRepository.getLastOrder();
         List<Master> masters = currentOrder.getMasters();
-        masters.stream().filter(orderMaster -> orderMaster.equals(master)).forEachOrdered(orderMaster -> {
-            throw new BusinessException("This master already exists");
-        });
+        masters.stream()
+            .filter(orderMaster -> orderMaster.equals(master))
+            .forEachOrdered(orderMaster -> {
+                throw new BusinessException("This master already exists");
+            });
         masters.add(master);
         currentOrder.setMasters(masters);
         orderRepository.updateOrder(currentOrder);
@@ -173,29 +175,29 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> sortOrderByCreationTime(List<Order> orders) {
         return orders.stream()
-                .sorted(Comparator.comparing(Order::getCreationTime, Comparator.nullsLast(Comparator.naturalOrder())))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(Order::getCreationTime, Comparator.nullsLast(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByLeadTime(List<Order> orders) {
         return orders.stream()
-                .sorted(Comparator.comparing(Order::getLeadTime, Comparator.nullsLast(Comparator.naturalOrder())))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(Order::getLeadTime, Comparator.nullsLast(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByPrice(List<Order> orders) {
         return orders.stream()
-                .sorted(Comparator.comparing(Order::getPrice, Comparator.nullsLast(Comparator.naturalOrder())))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(Order::getPrice, Comparator.nullsLast(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByStartTime(List<Order> orders) {
         return orders.stream()
-                .sorted(Comparator.comparing(Order::getExecutionStartTime, Comparator.nullsLast(Comparator.naturalOrder())))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(Order::getExecutionStartTime, Comparator.nullsLast(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -273,7 +275,7 @@ public class OrderServiceImpl implements OrderService {
         List<Order> sortArrayOrder = new ArrayList<>();
         orders.forEach(order -> {
             if (order.getLeadTime().after(startPeriod) && order.getLeadTime().equals(startPeriod) &&
-                    order.getLeadTime().before(endPeriod) && order.getLeadTime().equals(endPeriod)) {
+                order.getLeadTime().before(endPeriod) && order.getLeadTime().equals(endPeriod)) {
                 sortArrayOrder.add(order);
             }
         });

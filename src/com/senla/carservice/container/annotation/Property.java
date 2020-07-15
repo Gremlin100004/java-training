@@ -8,5 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Property {
-    String value() default "";
+    String configName() default "";
+    String propertyName() default "";
+    String type() default "";
 }

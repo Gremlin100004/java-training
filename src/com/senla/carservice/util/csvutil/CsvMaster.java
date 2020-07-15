@@ -2,6 +2,7 @@ package com.senla.carservice.util.csvutil;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
+import com.senla.carservice.enumeration.DefaultValue;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.PropertyLoader;
 
@@ -12,9 +13,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CsvMaster {
-    private static final String MASTER_PATH = PropertyLoader.getPropertyValue("csv.master.pathFile");
-    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("csv.separator.field");
-    private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("csv.separator.id");
+    private static final String MASTER_PATH = PropertyLoader
+        .getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
+                          DefaultValue.PROPERTY_MASTER_CSV_FILE_PATH.toString());
+    private static final String FIELD_SEPARATOR = PropertyLoader
+        .getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
+                          DefaultValue.PROPERTY_MASTER_FIELD_SEPARATOR.toString());
+    private static final String ID_SEPARATOR = PropertyLoader
+        .getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
+                          DefaultValue.PROPERTY_MASTER_ID_SEPARATOR.toString());
 
     private CsvMaster() {
     }
@@ -36,8 +43,8 @@ public class CsvMaster {
         if (line == null) {
             throw new BusinessException("argument is null");
         }
-        List<String> values = Arrays.asList((line.split(SEPARATOR_ID))[0].split(FIELD_SEPARATOR));
-        List<String> arrayIdOrder = Arrays.asList(line.split(SEPARATOR_ID)[1].split(FIELD_SEPARATOR));
+        List<String> values = Arrays.asList((line.split(ID_SEPARATOR))[0].split(FIELD_SEPARATOR));
+        List<String> arrayIdOrder = Arrays.asList(line.split(ID_SEPARATOR)[1].split(FIELD_SEPARATOR));
         Master master = new Master();
         master.setId(ParameterUtil.getValueLong(values.get(0)));
         master.setName(values.get(1));
@@ -54,16 +61,17 @@ public class CsvMaster {
         stringValue.append(FIELD_SEPARATOR);
         stringValue.append(master.getName());
         stringValue.append(FIELD_SEPARATOR);
-        stringValue.append(SEPARATOR_ID);
+        stringValue.append(ID_SEPARATOR);
         List<Order> orders = master.getOrders();
-        IntStream.range(0, orders.size()).forEachOrdered(i -> {
-            if (i == orders.size() - 1) {
-                stringValue.append(orders.get(i).getId());
-            } else {
-                stringValue.append(orders.get(i).getId()).append(FIELD_SEPARATOR);
-            }
-        });
-        stringValue.append(SEPARATOR_ID);
+        IntStream.range(0, orders.size())
+            .forEachOrdered(i -> {
+                if (i == orders.size() - 1) {
+                    stringValue.append(orders.get(i).getId());
+                } else {
+                    stringValue.append(orders.get(i).getId()).append(FIELD_SEPARATOR);
+                }
+            });
+        stringValue.append(ID_SEPARATOR);
         return stringValue.toString();
     }
 
@@ -74,7 +82,8 @@ public class CsvMaster {
         List<Order> masterOrders = new ArrayList<>();
         orders.forEach(order -> arrayIdOrder.stream()
             .filter(stringIndex -> order.getId().equals(ParameterUtil.getValueLong(stringIndex)))
-            .map(stringIndex -> order).forEach(masterOrders::add));
+            .map(stringIndex -> order)
+            .forEach(masterOrders::add));
         return masterOrders;
     }
 }

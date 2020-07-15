@@ -1,4 +1,4 @@
-package com.senla.carservice.container;
+package com.senla.carservice.container.contex;
 
 import com.senla.carservice.container.annotationhandler.DependencyInjectionAnnotationHandler;
 import com.senla.carservice.container.annotationhandler.PropertyDependencyAnnotationHandler;
@@ -17,7 +17,6 @@ public class Context {
 
     public Context(final Configurator configurator) {
         this.configurator = configurator;
-        createAllSingletons();
     }
 
     public void setDependencyInjection(DependencyInjectionAnnotationHandler dependencyInjection) {
@@ -28,38 +27,45 @@ public class Context {
         this.propertyDependency = propertyDependency;
     }
 
-    private void createAllSingletons() {
+    public <T> void createSingletons() {
         for (Class<?> classSingleton : configurator.getSingletonClasses()) {
-            if (classSingleton.getInterfaces().length == 0){
-                singletons.put(classSingleton.getName(), createRawObject(classSingleton));
+            T rawObject = createRawObject(classSingleton);
+            if (classSingleton.getInterfaces().length == 0) {
+                singletons.put(classSingleton.getName(), rawObject);
             } else {
-                singletons.put(classSingleton.getInterfaces()[0].getName(), createRawObject(classSingleton));
+                singletons.put(classSingleton.getInterfaces()[0].getName(), rawObject);
             }
         }
     }
 
-    public Object getObject(String stringNameClass) {
-        Object rawObject = singletons.get(stringNameClass);
-        if (rawObject == null) {
-            Class<?> classImplementation = configurator.getPrototypeClasses(stringNameClass);
-            if (classImplementation == null) {
-                throw new BusinessException("Error input class name");
-            }
-            rawObject = createRawObject(classImplementation);
-        }
-        return configureObject(rawObject);
+    public void configureSingletons() {
+        singletons.values().forEach(this::configureObject);
     }
 
-    private Object createRawObject(Class<?> classImplementation) {
+    @SuppressWarnings("unchecked")
+    public <T> T getObject(String stringNameClass) {
+        T customizedObject = (T) singletons.get(stringNameClass);
+        if (customizedObject != null) {
+            return customizedObject;
+        }
+        Class<?> classImplementation = configurator.getPrototypeClasses(stringNameClass);
+        if (classImplementation == null) {
+            throw new BusinessException("Error input class name");
+        }
+        return configureObject(createRawObject(classImplementation));
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T createRawObject(Class<?> classImplementation) {
         try {
-            return classImplementation.getDeclaredConstructor().newInstance();
+            return (T) classImplementation.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new BusinessException("Problem create object");
         }
     }
 
-    private Object configureObject(Object rawObject) {
-        Object configureObject = propertyDependency.configure(rawObject);
+    private <T> T configureObject(T rawObject) {
+        T configureObject = propertyDependency.configure(rawObject);
         configureObject = dependencyInjection.configure(configureObject);
         return configureObject;
     }

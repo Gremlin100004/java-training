@@ -17,8 +17,8 @@ public class StringPlaces {
         stringBuilder.append("|").append(StringUtil.fillStringSpace("Status", 6)).append("|\n");
         stringBuilder.append(line);
         int bound = places.size();
-        IntStream.range(0, bound).forEach(
-            i -> {
+        IntStream.range(0, bound)
+            .forEach(i -> {
                 stringBuilder.append("|").append(StringUtil.fillStringSpace(String.valueOf(i + 1), 3));
                 stringBuilder.append("|")
                     .append(StringUtil.fillStringSpace(String.valueOf(places.get(i).getNumber()), 6));

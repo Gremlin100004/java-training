@@ -1,10 +1,11 @@
 package com.senla.carservice.util.csvutil;
 
+import com.senla.carservice.container.annotation.Property;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
+import com.senla.carservice.enumeration.DefaultValue;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.container.annotation.Property;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.PropertyLoader;
 
@@ -16,9 +17,15 @@ import java.util.stream.Collectors;
 
 public class CsvOrder {
     @Property
-    private static final String ORDER_PATH = PropertyLoader.getPropertyValue("csv.order.pathFile");
-    private static final String FIELD_SEPARATOR = PropertyLoader.getPropertyValue("csv.separator.field");
-    private static final String SEPARATOR_ID = PropertyLoader.getPropertyValue("csv.separator.id");
+    private static final String ORDER_PATH = PropertyLoader.getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
+                                                                             DefaultValue.PROPERTY_ORDER_CSV_FILE_PATH
+                                                                                 .toString());
+    private static final String FIELD_SEPARATOR = PropertyLoader
+        .getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
+                          DefaultValue.PROPERTY_MASTER_FIELD_SEPARATOR.toString());
+    private static final String ID_SEPARATOR = PropertyLoader
+        .getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
+                          DefaultValue.PROPERTY_MASTER_ID_SEPARATOR.toString());
 
     private CsvOrder() {
     }
@@ -31,7 +38,9 @@ public class CsvOrder {
     public static List<Order> importOrder(List<Master> masters, List<Place> places) {
         List<String> csvLinesOrder = FileUtil.getCsv(ORDER_PATH);
         List<Order> orders = new ArrayList<>();
-        csvLinesOrder.stream().map(line -> getOrderFromCsv(line, masters, places)).forEachOrdered(order -> {
+        csvLinesOrder.stream()
+            .map(line -> getOrderFromCsv(line, masters, places))
+            .forEachOrdered(order -> {
             if (order.getMasters().isEmpty()) {
                 throw new BusinessException("masters not imported");
             }
@@ -44,8 +53,8 @@ public class CsvOrder {
         if (line == null || masters == null || places == null) {
             throw new BusinessException("argument is null");
         }
-        List<String> values = Arrays.asList((line.split(SEPARATOR_ID))[0].split(FIELD_SEPARATOR));
-        List<String> arrayIdMaster = Arrays.asList(line.split(SEPARATOR_ID)[1].split(FIELD_SEPARATOR));
+        List<String> values = Arrays.asList((line.split(ID_SEPARATOR))[0].split(FIELD_SEPARATOR));
+        List<String> arrayIdMaster = Arrays.asList(line.split(ID_SEPARATOR)[1].split(FIELD_SEPARATOR));
         Order order = new Order(ParameterUtil.getValueLong(values.get(0)),
                                 ParameterUtil.checkValueString(values.get(5)),
                                 ParameterUtil.checkValueString(values.get(6)),
@@ -66,9 +75,11 @@ public class CsvOrder {
             throw new BusinessException("argument is null");
         }
         List<Master> orderMasters = new ArrayList<>();
-        masters.forEach(master -> arrayIdMaster.stream()
+        masters
+            .forEach(master -> arrayIdMaster.stream()
             .filter(stringIndex -> master.getId().equals(ParameterUtil.getValueLong(stringIndex)))
-            .map(stringIndex -> master).forEach(orderMasters::add));
+            .map(stringIndex -> master)
+            .forEach(orderMasters::add));
         return orderMasters;
     }
 
@@ -76,7 +87,10 @@ public class CsvOrder {
         if (places == null || id == null) {
             throw new BusinessException("argument is null");
         }
-        return places.stream().filter(place -> place.getId().equals(id)).findFirst().orElse(null);
+        return places.stream()
+            .filter(place -> place.getId().equals(id))
+            .findFirst()
+            .orElse(null);
     }
 
     private static String convertOrderToCsv(Order order) {
@@ -106,7 +120,7 @@ public class CsvOrder {
         stringValue.append(FIELD_SEPARATOR);
         stringValue.append(order.isDeleteStatus());
         stringValue.append(FIELD_SEPARATOR);
-        stringValue.append(SEPARATOR_ID);
+        stringValue.append(ID_SEPARATOR);
         int bound = order.getMasters().size();
         for (int i = 0; i < bound; i++) {
             if (i == order.getMasters().size() - 1) {
@@ -115,7 +129,7 @@ public class CsvOrder {
                 stringValue.append(order.getMasters().get(i).getId()).append(FIELD_SEPARATOR);
             }
         }
-        stringValue.append(SEPARATOR_ID);
+        stringValue.append(ID_SEPARATOR);
         return stringValue.toString();
     }
 }

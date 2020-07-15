@@ -1,9 +1,9 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.OrderRepository;
 
@@ -57,17 +57,17 @@ public class MasterServiceImpl implements MasterService {
     public List<Master> getMasterByAlphabet() {
         checkMasters();
         return masterRepository.getMasters().stream()
-                .sorted(Comparator.comparing(Master::getName, Comparator.nullsLast(Comparator.naturalOrder())))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(Master::getName, Comparator.nullsLast(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Master> getMasterByBusy() {
         checkMasters();
         return masterRepository.getMasters().stream()
-                .sorted(Comparator.comparing(master -> master.getOrders().size(),
-                        Comparator.nullsFirst(Comparator.naturalOrder())))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(master -> master.getOrders().size(),
+                                         Comparator.nullsFirst(Comparator.naturalOrder())))
+            .collect(Collectors.toList());
     }
 
     private void checkMasters() {

@@ -1,45 +1,77 @@
 package com.senla.carservice.container.annotationhandler;
 
+import com.senla.carservice.enumeration.DefaultValue;
 import com.senla.carservice.container.annotation.Property;
+import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.PropertyLoader;
 
 import java.lang.reflect.Field;
 
 public class PropertyDependencyAnnotationHandler {
 
-    public Object configure(Object inputObject) {
+    public <T> T configure(T inputObject) {
         Class<?> implementClass = inputObject.getClass();
+        String propertyFileName;
+        String value;
+        String propertyName;
+        String fieldType;
+        Property annotation;
         for (Field field : implementClass.getDeclaredFields()) {
-            Property annotation = field.getAnnotation(Property.class);
-            String value;
+            annotation = field.getAnnotation(Property.class);
             if (annotation == null) {
                 continue;
             }
-            if (annotation.value().isEmpty()) {
-                value = PropertyLoader.getPropertyValue(inputObject.getClass().getName() + "." + field.getName());
-            } else {
-                value = PropertyLoader.getPropertyValue(annotation.value());
-            }
+            propertyFileName = getPropertyFileName(annotation);
+            propertyName = getPropertyName(annotation, inputObject.getClass().getName() + "." + field.getName());
+            fieldType = getTypeField(annotation, field.getType().getName());
+            value = PropertyLoader.getPropertyValue(propertyFileName, propertyName);
             field.setAccessible(true);
-            try {
-                if (field.getType().getName().contains("Boolean")) {
-                    field.set(inputObject, Boolean.parseBoolean(value));
-                } else if (field.getType().getName().contains("Short")) {
-                    field.set(inputObject, Short.parseShort(value));
-                } else if (field.getType().getName().contains("Integer")) {
-                    field.set(inputObject, Integer.parseInt(value));
-                } else if (field.getType().getName().contains("Long")) {
-                    field.set(inputObject, Long.parseLong(value));
-                } else if (field.getType().getName().contains("Double")) {
-                    field.set(inputObject, Double.parseDouble(value));
-                } else if (field.getType().getName().contains("String")) {
-                    field.set(inputObject, value);
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                //TODO : Add logging.
-            }
+            injectValueInField(field, value, fieldType, inputObject);
         }
         return inputObject;
+    }
+
+    private String getPropertyFileName(Property annotation) {
+        if (annotation.configName().isEmpty()) {
+            return DefaultValue.PROPERTY_FILE_NAME.toString();
+        } else {
+            return annotation.propertyName();
+        }
+    }
+
+    private String getPropertyName(Property annotation, String propertyName) {
+        if (annotation.propertyName().isEmpty()) {
+            return propertyName;
+        } else {
+            return annotation.propertyName();
+        }
+    }
+
+    private String getTypeField(Property annotation, String typeInString) {
+        if (annotation.type().isEmpty()) {
+            return typeInString;
+        } else {
+            return annotation.type();
+        }
+    }
+
+    private <T> void injectValueInField(Field field, String value, String fieldType, T inputObject) {
+        try {
+            if (fieldType.contains("Boolean")) {
+                field.set(inputObject, Boolean.parseBoolean(value));
+            } else if (fieldType.contains("Short")) {
+                field.set(inputObject, Short.parseShort(value));
+            } else if (fieldType.contains("Integer")) {
+                field.set(inputObject, Integer.parseInt(value));
+            } else if (fieldType.contains("Long")) {
+                field.set(inputObject, Long.parseLong(value));
+            } else if (fieldType.contains("Double")) {
+                field.set(inputObject, Double.parseDouble(value));
+            } else if (fieldType.contains("String")) {
+                field.set(inputObject, value);
+            }
+        } catch (IllegalAccessException e) {
+            throw new BusinessException("Error set value to a field");
+        }
     }
 }

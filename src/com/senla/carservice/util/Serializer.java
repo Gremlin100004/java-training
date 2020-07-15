@@ -1,5 +1,7 @@
 package com.senla.carservice.util;
 
+import com.senla.carservice.enumeration.DefaultValue;
+import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.ApplicationState;
 
 import java.io.File;
@@ -11,35 +13,32 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class Serializer {
-    private static final String PATH_SER = PropertyLoader.getPropertyValue("serialize.entities.filePath");
+    private static final String FILE_PATH_SERIALIZE = PropertyLoader
+        .getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(), DefaultValue.FILE_PATH_SERIALIZE.toString());
 
     private Serializer() {
     }
 
     public static void serializeEntities(ApplicationState applicationState) {
         ClassLoader classLoader = Serializer.class.getClassLoader();
-        URL url = classLoader.getResource(PATH_SER);
-        if (url == null){
-            //TODO : Add logging.
-            return;
+        URL url = classLoader.getResource(FILE_PATH_SERIALIZE);
+        if (url == null) {
+            throw new BusinessException("Url is null");
         }
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
             new FileOutputStream(new File(url.toURI())))) {
             objectOutputStream.writeObject(applicationState);
         } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
-            //TODO : Add logging.
+            throw new BusinessException("Error url serialize object");
         }
     }
 
     public static ApplicationState deserializeEntities() {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(
-            Thread.currentThread().getContextClassLoader().getResourceAsStream(PATH_SER))) {
+            Thread.currentThread().getContextClassLoader().getResourceAsStream(FILE_PATH_SERIALIZE))) {
             return (ApplicationState) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-            //TODO : Add logging.
+            throw new BusinessException("Error deserialize objects");
         }
     }
 }
