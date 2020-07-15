@@ -1,19 +1,19 @@
-package com.senla.carservice.factory.annotationhandler;
+package com.senla.carservice.container.annotationhandler;
 
-import com.senla.carservice.factory.annotation.Property;
+import com.senla.carservice.container.annotation.Property;
 import com.senla.carservice.util.PropertyLoader;
 
 import java.lang.reflect.Field;
 
-public class DependencyPropertyAnnotationHandler {
+public class PropertyDependencyAnnotationHandler {
 
-    public <O> O configure(O inputObject) {
+    public Object configure(Object inputObject) {
         Class<?> implementClass = inputObject.getClass();
         for (Field field : implementClass.getDeclaredFields()) {
             Property annotation = field.getAnnotation(Property.class);
             String value;
             if (annotation == null) {
-                return inputObject;
+                continue;
             }
             if (annotation.value().isEmpty()) {
                 value = PropertyLoader.getPropertyValue(inputObject.getClass().getName() + "." + field.getName());

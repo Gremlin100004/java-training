@@ -1,8 +1,10 @@
 package com.senla.carservice.ui.menu;
 
-import com.senla.carservice.factory.annotation.Dependency;
+import com.senla.carservice.container.annotation.Dependency;
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.ui.util.ScannerUtil;
 
+@Singleton
 public class MenuController {
     @Dependency
     private Navigator navigator;

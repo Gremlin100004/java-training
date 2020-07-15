@@ -1,9 +1,11 @@
 package com.senla.carservice.ui.menu;
 
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.ui.util.Printer;
 
 import java.util.List;
 
+@Singleton
 public class Navigator {
     private Menu currentMenu;
 

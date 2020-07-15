@@ -1,4 +1,4 @@
-package com.senla.carservice.factory.configurator;
+package com.senla.carservice.container.configurator;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,19 +8,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PackageScanner {
     private final String packageProject;
-    private Map<String, Class<?>> classesPrototype = new HashMap<>();
 
     public PackageScanner(String packageProject) {
         this.packageProject = packageProject;
-
     }
 
     public <T> List<Class<? extends T>> getArrayClasses() {
@@ -78,7 +74,7 @@ public class PackageScanner {
             } else if (file.getName().endsWith(".class")) {
                 try {
                     classes.add((Class<? extends T>) Class
-                        .forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
+                            .forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                     //TODO : Add logging.
@@ -99,7 +95,5 @@ public class PackageScanner {
 
             collect.forEach(System.out::println);
         }
-
-
     }
 }

@@ -1,12 +1,13 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.Status;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.factory.annotation.Dependency;
-import com.senla.carservice.factory.annotation.Property;
+import com.senla.carservice.container.annotation.Dependency;
+import com.senla.carservice.container.annotation.Property;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.OrderRepository;
 import com.senla.carservice.repository.PlaceRepository;
@@ -19,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Singleton
 public class OrderServiceImpl implements OrderService {
     @Dependency
     private OrderRepository orderRepository;
@@ -43,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
         checkMasters();
         checkPlaces();
         orderRepository.addOrder(new Order(orderRepository.getIdGeneratorOrder().getId(),
-                                           automaker, model, registrationNumber));
+                automaker, model, registrationNumber));
     }
 
     @Override
@@ -57,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
             orders = sortOrderByPeriod(orders, executionStartTime, leadTime);
         }
         int numberFreeMasters = masterRepository.getMasters().size() - orders.stream()
-            .mapToInt(order -> order.getMasters().size()).sum();
+                .mapToInt(order -> order.getMasters().size()).sum();
         int numberFreePlace = orderRepository.getOrders().size() - orders.size();
         if (numberFreeMasters == 0) {
             throw new BusinessException("The number of masters is zero");
@@ -171,29 +173,29 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> sortOrderByCreationTime(List<Order> orders) {
         return orders.stream()
-            .sorted(Comparator.comparing(Order::getCreationTime, Comparator.nullsLast(Comparator.naturalOrder())))
-            .collect(Collectors.toList());
+                .sorted(Comparator.comparing(Order::getCreationTime, Comparator.nullsLast(Comparator.naturalOrder())))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByLeadTime(List<Order> orders) {
         return orders.stream()
-            .sorted(Comparator.comparing(Order::getLeadTime, Comparator.nullsLast(Comparator.naturalOrder())))
-            .collect(Collectors.toList());
+                .sorted(Comparator.comparing(Order::getLeadTime, Comparator.nullsLast(Comparator.naturalOrder())))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByPrice(List<Order> orders) {
         return orders.stream()
-            .sorted(Comparator.comparing(Order::getPrice, Comparator.nullsLast(Comparator.naturalOrder())))
-            .collect(Collectors.toList());
+                .sorted(Comparator.comparing(Order::getPrice, Comparator.nullsLast(Comparator.naturalOrder())))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> sortOrderByStartTime(List<Order> orders) {
         return orders.stream()
-            .sorted(Comparator.comparing(Order::getExecutionStartTime, Comparator.nullsLast(Comparator.naturalOrder())))
-            .collect(Collectors.toList());
+                .sorted(Comparator.comparing(Order::getExecutionStartTime, Comparator.nullsLast(Comparator.naturalOrder())))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -271,7 +273,7 @@ public class OrderServiceImpl implements OrderService {
         List<Order> sortArrayOrder = new ArrayList<>();
         orders.forEach(order -> {
             if (order.getLeadTime().after(startPeriod) && order.getLeadTime().equals(startPeriod) &&
-                order.getLeadTime().before(endPeriod) && order.getLeadTime().equals(endPeriod)) {
+                    order.getLeadTime().before(endPeriod) && order.getLeadTime().equals(endPeriod)) {
                 sortArrayOrder.add(order);
             }
         });

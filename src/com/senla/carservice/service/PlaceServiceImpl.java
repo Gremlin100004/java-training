@@ -1,13 +1,15 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.factory.annotation.Dependency;
+import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.repository.PlaceRepository;
 
 import java.util.Date;
 import java.util.List;
 
+@Singleton
 public class PlaceServiceImpl implements PlaceService {
     @Dependency
     private PlaceRepository placeRepository;

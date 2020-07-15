@@ -1,16 +1,18 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Status;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.factory.annotation.Dependency;
-import com.senla.carservice.factory.annotation.Property;
+import com.senla.carservice.container.annotation.Dependency;
+import com.senla.carservice.container.annotation.Property;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Singleton
 public class OrderRepositoryImpl implements OrderRepository {
     private final List<Order> orders;
     @Property
@@ -84,9 +86,9 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<Order> getMasterOrders(Master master) {
         return this.orders.stream()
-            .filter(order -> !order.isDeleteStatus() && order.getMasters().stream()
-                .anyMatch(masterService -> masterService.equals(master)))
-            .collect(Collectors.toList());
+                .filter(order -> !order.isDeleteStatus() && order.getMasters().stream()
+                        .anyMatch(masterService -> masterService.equals(master)))
+                .collect(Collectors.toList());
     }
 
     @Override

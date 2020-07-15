@@ -1,13 +1,15 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.domain.Master;
-import com.senla.carservice.factory.annotation.Dependency;
+import com.senla.carservice.container.annotation.Dependency;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Singleton
 public class MasterRepositoryImpl implements MasterRepository {
 
     private final List<Master> masters;
@@ -63,8 +65,8 @@ public class MasterRepositoryImpl implements MasterRepository {
     @Override
     public List<Master> getFreeMasters(Date date) {
         return this.masters.stream()
-            .filter(master -> master.getOrders().isEmpty() ||
-                              date.before(master.getOrders().get(master.getOrders().size() - 1).getLeadTime()))
-            .collect(Collectors.toList());
+                .filter(master -> master.getOrders().isEmpty() ||
+                        date.before(master.getOrders().get(master.getOrders().size() - 1).getLeadTime()))
+                .collect(Collectors.toList());
     }
 }

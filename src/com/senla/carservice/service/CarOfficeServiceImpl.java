@@ -1,8 +1,9 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.factory.annotation.Dependency;
+import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.repository.ApplicationState;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.OrderRepository;
@@ -16,6 +17,7 @@ import com.senla.carservice.util.csvutil.CsvPlace;
 import java.util.Date;
 import java.util.List;
 
+@Singleton
 public class CarOfficeServiceImpl implements CarOfficeService {
     @Dependency
     private MasterRepository masterRepository;
@@ -42,7 +44,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         Date DayDate = new Date();
         for (Date currentDay = new Date(); leadTimeOrder.before(currentDay); DateUtil.addDays(currentDay, 1)) {
             if (masterRepository.getFreeMasters(currentDay).isEmpty() ||
-                placeRepository.getFreePlaces(currentDay).isEmpty()) {
+                    placeRepository.getFreePlaces(currentDay).isEmpty()) {
                 DayDate = currentDay;
                 currentDay = DateUtil.bringStartOfDayDate(currentDay);
             } else {

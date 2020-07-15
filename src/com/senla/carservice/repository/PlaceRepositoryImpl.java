@@ -1,15 +1,17 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.factory.annotation.Dependency;
-import com.senla.carservice.factory.annotation.Property;
+import com.senla.carservice.container.annotation.Dependency;
+import com.senla.carservice.container.annotation.Property;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Singleton
 public class PlaceRepositoryImpl implements PlaceRepository {
     private final List<Place> places;
     @Property
@@ -36,9 +38,9 @@ public class PlaceRepositoryImpl implements PlaceRepository {
     @Override
     public List<Place> getFreePlaces(Date startDayDate) {
         return this.places.stream()
-            .filter(place -> place.getOrders().isEmpty() ||
-                             startDayDate.before(place.getOrders().get(place.getOrders().size() - 1).getLeadTime()))
-            .collect(Collectors.toList());
+                .filter(place -> place.getOrders().isEmpty() ||
+                        startDayDate.before(place.getOrders().get(place.getOrders().size() - 1).getLeadTime()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -47,7 +49,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
             throw new BusinessException("Permission denied");
         }
         this.places.stream()
-            .filter(place -> place.getNumber().equals(addPlace.getNumber())).forEach(place -> {
+                .filter(place -> place.getNumber().equals(addPlace.getNumber())).forEach(place -> {
             throw new BusinessException("Such a number exists");
         });
         addPlace.setId(this.idGeneratorPlace.getId());

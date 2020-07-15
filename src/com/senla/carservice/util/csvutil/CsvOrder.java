@@ -4,7 +4,7 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.factory.annotation.Property;
+import com.senla.carservice.container.annotation.Property;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.PropertyLoader;
 
