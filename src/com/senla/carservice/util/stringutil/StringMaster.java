@@ -19,12 +19,12 @@ public class StringMaster {
         int bound = masters.size();
         IntStream.range(0, bound)
             .forEach(i -> {
-            stringBuilder.append("|").append(StringUtil.fillStringSpace(String.valueOf(i + 1), 3));
-            stringBuilder.append("|").append(StringUtil.fillStringSpace(masters.get(i).getName(), 20));
-            stringBuilder.append("|")
-                .append(StringUtil.fillStringSpace(String.valueOf(masters.get(i).getOrders().size()), 12));
-            stringBuilder.append("|\n");
-        });
+                stringBuilder.append("|").append(StringUtil.fillStringSpace(String.valueOf(i + 1), 3));
+                stringBuilder.append("|").append(StringUtil.fillStringSpace(masters.get(i).getName(), 20));
+                stringBuilder.append("|")
+                    .append(StringUtil.fillStringSpace(String.valueOf(masters.get(i).getOrders().size()), 12));
+                stringBuilder.append("|\n");
+            });
         stringBuilder.append(line);
         return stringBuilder.toString();
     }

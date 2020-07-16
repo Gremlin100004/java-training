@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Property {
     String configName() default "";
+
     String propertyName() default "";
+
     String type() default "";
 }

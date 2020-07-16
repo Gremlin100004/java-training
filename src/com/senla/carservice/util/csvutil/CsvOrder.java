@@ -41,11 +41,11 @@ public class CsvOrder {
         csvLinesOrder.stream()
             .map(line -> getOrderFromCsv(line, masters, places))
             .forEachOrdered(order -> {
-            if (order.getMasters().isEmpty()) {
-                throw new BusinessException("masters not imported");
-            }
-            orders.add(order);
-        });
+                if (order.getMasters().isEmpty()) {
+                    throw new BusinessException("masters not imported");
+                }
+                orders.add(order);
+            });
         return orders;
     }
 
@@ -77,9 +77,9 @@ public class CsvOrder {
         List<Master> orderMasters = new ArrayList<>();
         masters
             .forEach(master -> arrayIdMaster.stream()
-            .filter(stringIndex -> master.getId().equals(ParameterUtil.getValueLong(stringIndex)))
-            .map(stringIndex -> master)
-            .forEach(orderMasters::add));
+                .filter(stringIndex -> master.getId().equals(ParameterUtil.getValueLong(stringIndex)))
+                .map(stringIndex -> master)
+                .forEach(orderMasters::add));
         return orderMasters;
     }
 

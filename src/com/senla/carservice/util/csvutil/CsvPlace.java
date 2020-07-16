@@ -74,12 +74,12 @@ public class CsvPlace {
         List<Order> orders = place.getOrders();
         IntStream.range(0, orders.size())
             .forEachOrdered(i -> {
-            if (i == orders.size() - 1) {
-                stringValue.append(orders.get(i).getId());
-            } else {
-                stringValue.append(orders.get(i).getId()).append(FIELD_SEPARATOR);
-            }
-        });
+                if (i == orders.size() - 1) {
+                    stringValue.append(orders.get(i).getId());
+                } else {
+                    stringValue.append(orders.get(i).getId()).append(FIELD_SEPARATOR);
+                }
+            });
         stringValue.append(ID_SEPARATOR);
         return stringValue.toString();
     }

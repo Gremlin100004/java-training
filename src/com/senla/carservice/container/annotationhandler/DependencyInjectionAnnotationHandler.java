@@ -1,7 +1,7 @@
 package com.senla.carservice.container.annotationhandler;
 
-import com.senla.carservice.container.contex.Context;
 import com.senla.carservice.container.annotation.Dependency;
+import com.senla.carservice.container.contex.Context;
 import com.senla.carservice.exception.BusinessException;
 
 import java.lang.reflect.Field;
@@ -13,7 +13,7 @@ public class DependencyInjectionAnnotationHandler {
         this.context = context;
     }
 
-    public  <T> T configure(T inputObject) {
+    public <T> T configure(T inputObject) {
         for (Field field : inputObject.getClass().getDeclaredFields()) {
             if (field.isAnnotationPresent(Dependency.class)) {
                 field.setAccessible(true);

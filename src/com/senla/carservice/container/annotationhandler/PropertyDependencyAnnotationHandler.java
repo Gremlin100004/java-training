@@ -23,10 +23,10 @@ public class PropertyDependencyAnnotationHandler {
             }
             propertyFileName = getPropertyFileName(annotation);
             propertyName = getPropertyName(annotation, inputObject.getClass().getName() + "." + field.getName());
-            fieldType = getTypeField(annotation, field.getType().getName().substring(field.getType().getName().lastIndexOf('.') + 1));
+            fieldType = getTypeField(annotation, field.getType().getName()
+                .substring(field.getType().getName().lastIndexOf('.') + 1));
             value = PropertyLoader.getPropertyValue(propertyFileName, propertyName);
             field.setAccessible(true);
-
             injectValueInField(field, value, fieldType, inputObject);
         }
         return inputObject;
