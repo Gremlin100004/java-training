@@ -1,7 +1,7 @@
 package com.senla.carservice.container.annotationhandler;
 
-import com.senla.carservice.enumeration.DefaultValue;
 import com.senla.carservice.container.annotation.Property;
+import com.senla.carservice.enumeration.DefaultValue;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.PropertyLoader;
 
@@ -23,9 +23,10 @@ public class PropertyDependencyAnnotationHandler {
             }
             propertyFileName = getPropertyFileName(annotation);
             propertyName = getPropertyName(annotation, inputObject.getClass().getName() + "." + field.getName());
-            fieldType = getTypeField(annotation, field.getType().getName());
+            fieldType = getTypeField(annotation, field.getType().getName().substring(field.getType().getName().lastIndexOf('.') + 1));
             value = PropertyLoader.getPropertyValue(propertyFileName, propertyName);
             field.setAccessible(true);
+
             injectValueInField(field, value, fieldType, inputObject);
         }
         return inputObject;
@@ -57,17 +58,17 @@ public class PropertyDependencyAnnotationHandler {
 
     private <T> void injectValueInField(Field field, String value, String fieldType, T inputObject) {
         try {
-            if (fieldType.contains("Boolean")) {
+            if (fieldType.equals("Boolean")) {
                 field.set(inputObject, Boolean.parseBoolean(value));
-            } else if (fieldType.contains("Short")) {
+            } else if (fieldType.equals("Short")) {
                 field.set(inputObject, Short.parseShort(value));
-            } else if (fieldType.contains("Integer")) {
+            } else if (fieldType.equals("Integer")) {
                 field.set(inputObject, Integer.parseInt(value));
-            } else if (fieldType.contains("Long")) {
+            } else if (fieldType.equals("Long")) {
                 field.set(inputObject, Long.parseLong(value));
-            } else if (fieldType.contains("Double")) {
+            } else if (fieldType.equals("Double")) {
                 field.set(inputObject, Double.parseDouble(value));
-            } else if (fieldType.contains("String")) {
+            } else if (fieldType.equals("String")) {
                 field.set(inputObject, value);
             }
         } catch (IllegalAccessException e) {
