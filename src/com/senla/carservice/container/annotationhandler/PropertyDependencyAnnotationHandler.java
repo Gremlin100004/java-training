@@ -21,7 +21,6 @@ public class PropertyDependencyAnnotationHandler {
             if (annotation == null) {
                 continue;
             }
-            System.out.println(field.getType().equals(Boolean.class));
             propertyFileName = getPropertyFileName(annotation);
             propertyName = getPropertyName(annotation, inputObject.getClass().getName() + "." + field.getName());
             fieldType = getTypeField(annotation, field.getType().getName().substring(field.getType().getName().lastIndexOf('.') + 1));
