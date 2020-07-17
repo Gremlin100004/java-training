@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 public class StringMaster {
     private static final int LINE_LENGTH = 38;
 
+    // литералы в константы
     public static String getStringFromMasters(List<Master> masters) {
         String line = String.join("", Collections.nCopies(LINE_LENGTH, "-")) + "\n";
         StringBuilder stringBuilder = new StringBuilder(line);

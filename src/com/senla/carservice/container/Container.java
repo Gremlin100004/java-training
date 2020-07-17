@@ -15,12 +15,15 @@ public class Container {
     }
 
     public Container() {
+        // модуль инъекции получил зависимость от проекта
         initialization(PropertyLoader.getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
                                                        DefaultValue.PACKAGE_PROJECT.toString()));
     }
 
+    // нейминг
     private void initialization(String projectPackage) {
         Configurator configurator = new Configurator(projectPackage);
+        // что мешает новый объект сразу сохранить в поле класса?
         Context context = new Context(configurator);
         context.setPropertyDependency(new PropertyDependencyAnnotationHandler());
         context.setDependencyInjection(new DependencyInjectionAnnotationHandler(context));
@@ -29,6 +32,7 @@ public class Container {
         this.context = context;
     }
 
+    // не совсем правильное использование дженериков - на вход должен приходить класс Class<T> objectClass
     @SuppressWarnings("unchecked")
     public <T> T getObject(String inputClass) {
         return (T) context.getObject(inputClass);

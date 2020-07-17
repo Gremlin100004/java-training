@@ -16,6 +16,7 @@ public class DependencyInjectionAnnotationHandler {
     public <T> T configure(T inputObject) {
         for (Field field : inputObject.getClass().getDeclaredFields()) {
             if (field.isAnnotationPresent(Dependency.class)) {
+                // считается, что нужно вернуть прежнее значение Accessible
                 field.setAccessible(true);
                 Object object = context.getObject(field.getType().getName());
                 try {

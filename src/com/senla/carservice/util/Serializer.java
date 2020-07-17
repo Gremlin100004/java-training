@@ -13,6 +13,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class Serializer {
+    // для простановки ВСЕХ настроек использовать механизм из ДЗ-8
+    // или убираешь настройки из пропертей и оставляешь только те, что требовались в ДЗ-7
+    // или (лучше) работаешь со всем настройками в проекте одинаковым способом
     private static final String FILE_PATH_SERIALIZE = PropertyLoader
         .getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(), DefaultValue.FILE_PATH_SERIALIZE.toString());
 

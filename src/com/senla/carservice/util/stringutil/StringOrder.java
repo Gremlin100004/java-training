@@ -8,6 +8,7 @@ import java.util.List;
 public class StringOrder {
     private static final int LINE_LENGTH = 167;
 
+    // литералы в константы
     public static String getStringFromOrder(List<Order> orders) {
         String line = " " + String.join("", Collections.nCopies(LINE_LENGTH, "-")) + "\n";
         StringBuilder stringBuilder = new StringBuilder(line);

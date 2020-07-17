@@ -27,12 +27,14 @@ public class Context {
         this.propertyDependency = propertyDependency;
     }
 
+    // а зачем void методу дженерик тип?
     public <T> void createSingletons() {
         for (Class<?> classSingleton : configurator.getSingletonClasses()) {
             T rawObject = createRawObject(classSingleton);
             if (classSingleton.getInterfaces().length == 0) {
                 singletons.put(classSingleton.getName(), rawObject);
             } else {
+                // работает только с первым интерфейсом? не очень удобно
                 singletons.put(classSingleton.getInterfaces()[0].getName(), rawObject);
             }
         }
@@ -64,6 +66,9 @@ public class Context {
         }
     }
 
+    // лучше пусть все три метода будут воид: configureObject, configure, configure
+    // иначе жуткая путаница с хранением объектов, создается впечатление, что возвращается
+    // какой-то другой объект
     private <T> T configureObject(T rawObject) {
         T configureObject = propertyDependency.configure(rawObject);
         configureObject = dependencyInjection.configure(configureObject);

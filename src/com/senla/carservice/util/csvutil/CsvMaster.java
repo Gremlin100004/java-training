@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CsvMaster {
+    // использовать механизм настроек из ДЗ-8
     private static final String MASTER_PATH = PropertyLoader
         .getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
                           DefaultValue.PROPERTY_MASTER_CSV_FILE_PATH.toString());

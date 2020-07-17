@@ -1,6 +1,7 @@
 package com.senla.carservice.util.stringutil;
 
 public class StringUtil {
+    // литералы в константы
     public static String fillStringSpace(String value, int lengthString) {
         StringBuilder stringBuilder = new StringBuilder(value);
         if (value.length() < lengthString) {

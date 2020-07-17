@@ -20,6 +20,7 @@ public class Configurator {
         initialize();
     }
 
+    // метод называется "дай классы", но возвращает один класс
     public Class<?> getPrototypeClasses(String className) {
         return prototypeClasses.get(className);
     }
@@ -33,8 +34,12 @@ public class Configurator {
         if (classesOfPackage.isEmpty()) {
             throw new BusinessException("there are no classes");
         }
+        // сканируешь пакеты второй раз
         for (Class<?> classPackage : packageScanner.getArrayClasses()) {
+            // чтобы посчитать количество элементов в массиве, нужно обязательно перевести его в
+            // лист? может, есть еще способы?
             if (Arrays.asList(classPackage.getInterfaces()).size() > 1) {
+                // иметь много интерфейсов нельзя в твоем приложении? это не очень удобно
                 throw new BusinessException("class has more then one interface");
             }
             if (classPackage.isAnnotationPresent(Singleton.class)) {

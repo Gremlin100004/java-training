@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 public class StringPlaces {
     private static final int LINE_LENGTH = 17;
 
+    // литералы в константы
     public static String getStringFromPlaces(List<Place> places) {
         String line = " " + String.join("", Collections.nCopies(LINE_LENGTH, "-")) + "\n";
         StringBuilder stringBuilder = new StringBuilder(line);

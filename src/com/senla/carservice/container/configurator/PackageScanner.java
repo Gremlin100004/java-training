@@ -25,24 +25,29 @@ public class PackageScanner {
         if (classLoader == null) {
             throw new BusinessException("ClassLoader error");
         }
+        // литералы в константы
         URL url = classLoader.getResource(packageProject.replace('.', '/'));
         if (url == null) {
             throw new BusinessException("Error project package");
         }
-        String fullPath;
+        // лучше не разбивать логику, а поместить ее всю целиком в трай, я отредактирую код:
         try {
-            fullPath = url.toURI().getPath();
+            String fullPath = url.toURI().getPath();
+            return getClassByPath(getStringFilesPaths(fullPath));
         } catch (URISyntaxException e) {
             throw new BusinessException("Error project package");
         }
-        return getClassByPath(getStringFilesPaths(fullPath));
     }
 
     private List<Class<?>> getClassByPath(List<String> filesStringPaths) {
         List<Class<?>> classes = new ArrayList<>();
+        // почему переменная называется разделитель?
         String separator = packageProject.replace(".", "/");
         filesStringPaths.stream()
+            // плохо понимаю, зачем менять точку на слэш, а потом слэш снова на точку
             .map(file -> file.substring(file.lastIndexOf(separator)).split("\\.")[0].replace("/", "."))
+            // обычно в стримах используют коллекторы для создания листа, а не форыч
+            // в данном случае тут будет нужен еще один мап и затем коллект(Коллектор.туЛист())
             .forEach(className -> {
                 try {
                     classes.add(Class.forName(className));
