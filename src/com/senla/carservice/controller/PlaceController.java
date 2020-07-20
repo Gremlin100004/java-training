@@ -1,9 +1,8 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.util.DateUtil;
@@ -52,10 +51,10 @@ public class PlaceController {
     }
 
     public String getFreePlacesByDate(String stringExecuteDate) {
-        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
         try {
+            Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
             return StringPlaces.getStringFromPlaces(placeService.getFreePlaceByDate(executeDate));
-        } catch (BusinessException | DateException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }

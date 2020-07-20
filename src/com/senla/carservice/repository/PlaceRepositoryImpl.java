@@ -1,8 +1,8 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.container.annotation.Dependency;
-import com.senla.carservice.container.annotation.Property;
 import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.container.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 
@@ -14,12 +14,14 @@ import java.util.stream.Collectors;
 @Singleton
 public class PlaceRepositoryImpl implements PlaceRepository {
     private final List<Place> places;
-    @Property
+    @ConfigProperty
     private Boolean isBlockAddPlace;
-    @Property
+    @ConfigProperty
     private Boolean isBlockDeletePlace;
     @Dependency
     private IdGenerator idGeneratorPlace;
+    private static final int SIZE_INDEX = 1;
+    private static final int PLACE_INDEX = -1;
 
     public PlaceRepositoryImpl() {
         this.places = new ArrayList<>();
@@ -39,7 +41,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
     public List<Place> getFreePlaces(Date startDayDate) {
         return this.places.stream()
             .filter(place -> place.getOrders().isEmpty() ||
-                             startDayDate.before(place.getOrders().get(place.getOrders().size() - 1).getLeadTime()))
+                             startDayDate.before(place.getOrders().get(place.getOrders().size() - SIZE_INDEX).getLeadTime()))
             .collect(Collectors.toList());
     }
 
@@ -60,7 +62,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
     @Override
     public void updatePlace(Place place) {
         int index = this.places.indexOf(place);
-        if (index == -1) {
+        if (index == PLACE_INDEX) {
             this.places.add(place);
         } else {
             this.places.set(index, place);

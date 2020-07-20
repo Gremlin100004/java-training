@@ -1,7 +1,7 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.domain.Master;
 
 import java.util.ArrayList;
@@ -15,6 +15,8 @@ public class MasterRepositoryImpl implements MasterRepository {
     private final List<Master> masters;
     @Dependency
     private IdGenerator idGeneratorMaster;
+    private static final int MASTER_INDEX = -1;
+    private static final int SIZE_INDEX = 1;
 
     public MasterRepositoryImpl() {
         this.masters = new ArrayList<>();
@@ -34,7 +36,7 @@ public class MasterRepositoryImpl implements MasterRepository {
     @Override
     public void updateMaster(Master master) {
         int index = this.masters.indexOf(master);
-        if (index == -1) {
+        if (index == MASTER_INDEX) {
             this.masters.add(master);
         } else {
             this.masters.set(index, master);
@@ -66,7 +68,7 @@ public class MasterRepositoryImpl implements MasterRepository {
     public List<Master> getFreeMasters(Date date) {
         return this.masters.stream()
             .filter(master -> master.getOrders().isEmpty() ||
-                              date.before(master.getOrders().get(master.getOrders().size() - 1).getLeadTime()))
+                              date.before(master.getOrders().get(master.getOrders().size() - SIZE_INDEX).getLeadTime()))
             .collect(Collectors.toList());
     }
 }

@@ -1,7 +1,7 @@
 package com.senla.carservice.ui.menu;
 
-import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.ui.util.ScannerUtil;
 
 @Singleton

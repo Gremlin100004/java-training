@@ -1,9 +1,8 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.PlaceService;
@@ -36,12 +35,12 @@ public class OrderController {
     }
 
     public String addOrderDeadlines(String stringExecutionStartTime, String stringLeadTime) {
-        Date executionStartTime = DateUtil.getDatesFromString(stringExecutionStartTime, true);
-        Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
         try {
+            Date executionStartTime = DateUtil.getDatesFromString(stringExecutionStartTime, true);
+            Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
             orderService.addOrderDeadlines(executionStartTime, leadTime);
             return "deadline add to order successfully";
-        } catch (DateException | BusinessException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -60,15 +59,15 @@ public class OrderController {
     }
 
     public String addOrderPlace(int index, String stringExecuteDate) {
-        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
         try {
+            Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
             if (placeService.getFreePlaceByDate(executeDate).size() < index || index < 0) {
                 return "There is no such place!";
             } else {
                 orderService.addOrderPlace(placeService.getFreePlaceByDate(executeDate).get(index));
                 return "place add to order successfully";
             }
-        } catch (BusinessException | DateException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -143,16 +142,16 @@ public class OrderController {
     }
 
     public String shiftLeadTime(int index, String stringStartTime, String stringLeadTime) {
-        Date executionStartTime = DateUtil.getDatesFromString(stringStartTime, true);
-        Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
         try {
+            Date executionStartTime = DateUtil.getDatesFromString(stringStartTime, true);
+            Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
             if (orderService.getOrders().size() < index || index < 0) {
                 return "There are no such order";
             } else {
                 orderService.shiftLeadTime(orderService.getOrders().get(index), executionStartTime, leadTime);
                 return " -the order lead time has been changed.";
             }
-        } catch (DateException | BusinessException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
@@ -191,8 +190,8 @@ public class OrderController {
 
     public String getExecuteOrderFilingDate() {
         try {
-            return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
-                (orderService.getCurrentRunningOrders()));
+            return StringOrder.getStringFromOrder(
+                orderService.sortOrderByCreationTime(orderService.getCurrentRunningOrders()));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -200,17 +199,17 @@ public class OrderController {
 
     public String getExecuteOrderExecutionDate() {
         try {
-            return StringOrder.getStringFromOrder(orderService.sortOrderByLeadTime
-                (orderService.getCurrentRunningOrders()));
+            return StringOrder.getStringFromOrder(
+                orderService.sortOrderByLeadTime(orderService.getCurrentRunningOrders()));
         } catch (BusinessException e) {
             return e.getMessage();
         }
     }
 
     public String getCompletedOrdersFilingDate(String startPeriod, String endPeriod) {
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
+            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
                 (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
         } catch (BusinessException e) {
@@ -219,9 +218,9 @@ public class OrderController {
     }
 
     public String getCompletedOrdersExecutionDate(String startPeriod, String endPeriod) {
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
+            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime
                 (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
         } catch (BusinessException e) {
@@ -230,9 +229,9 @@ public class OrderController {
     }
 
     public String getCompletedOrdersPrice(String startPeriod, String endPeriod) {
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
+            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.sortOrderByPrice
                 (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
         } catch (BusinessException e) {
@@ -241,9 +240,9 @@ public class OrderController {
     }
 
     public String getCanceledOrdersFilingDate(String startPeriod, String endPeriod) {
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
+            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
                 (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
         } catch (BusinessException e) {
@@ -252,9 +251,9 @@ public class OrderController {
     }
 
     public String getCanceledOrdersExecutionDate(String startPeriod, String endPeriod) {
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
+            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime
                 (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
         } catch (BusinessException e) {
@@ -263,9 +262,9 @@ public class OrderController {
     }
 
     public String getCanceledOrdersPrice(String startPeriod, String endPeriod) {
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
+            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.sortOrderByPrice
                 (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
         } catch (BusinessException e) {
@@ -274,9 +273,9 @@ public class OrderController {
     }
 
     public String getDeletedOrdersFilingDate(String startPeriod, String endPeriod) {
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
+            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
                 (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
         } catch (BusinessException e) {
@@ -285,9 +284,9 @@ public class OrderController {
     }
 
     public String getDeletedOrdersExecutionDate(String startPeriod, String endPeriod) {
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
+            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime
                 (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
         } catch (BusinessException e) {
@@ -296,9 +295,9 @@ public class OrderController {
     }
 
     public String getDeletedOrdersPrice(String startPeriod, String endPeriod) {
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         try {
+            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.sortOrderByPrice
                 (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
         } catch (BusinessException e) {

@@ -1,7 +1,6 @@
 package com.senla.carservice.util;
 
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.exception.DateException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,13 +60,13 @@ public class DateUtil {
 
     public static void checkDateTime(Date executionStartTime, Date leadTime) {
         if (executionStartTime == null || leadTime == null) {
-            throw new DateException("Error date format, should be \"dd.MM.yyyy hh:mm\"");
+            throw new BusinessException("Error date format, should be \"dd.MM.yyyy hh:mm\"");
         }
         if (executionStartTime.after(leadTime)) {
-            throw new DateException("The execution start time is greater than lead time");
+            throw new BusinessException("The execution start time is greater than lead time");
         }
         if (executionStartTime.before(new Date())) {
-            throw new DateException("The execution start time is less than current Date");
+            throw new BusinessException("The execution start time is less than current Date");
         }
     }
 }

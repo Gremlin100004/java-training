@@ -1,6 +1,7 @@
 package com.senla.carservice.util;
 
-import com.senla.carservice.enumeration.DefaultValue;
+import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.ApplicationState;
 
@@ -12,19 +13,17 @@ import java.io.ObjectOutputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+@Singleton
 public class Serializer {
-    // для простановки ВСЕХ настроек использовать механизм из ДЗ-8
-    // или убираешь настройки из пропертей и оставляешь только те, что требовались в ДЗ-7
-    // или (лучше) работаешь со всем настройками в проекте одинаковым способом
-    private static final String FILE_PATH_SERIALIZE = PropertyLoader
-        .getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(), DefaultValue.FILE_PATH_SERIALIZE.toString());
+    @ConfigProperty
+    private String filePathSerialize;
 
-    private Serializer() {
+    public Serializer() {
     }
 
-    public static void serializeEntities(ApplicationState applicationState) {
+    public void serializeEntities(ApplicationState applicationState) {
         ClassLoader classLoader = Serializer.class.getClassLoader();
-        URL url = classLoader.getResource(FILE_PATH_SERIALIZE);
+        URL url = classLoader.getResource(filePathSerialize);
         if (url == null) {
             throw new BusinessException("Url is null");
         }
@@ -36,9 +35,9 @@ public class Serializer {
         }
     }
 
-    public static ApplicationState deserializeEntities() {
+    public ApplicationState deserializeEntities() {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(
-            Thread.currentThread().getContextClassLoader().getResourceAsStream(FILE_PATH_SERIALIZE))) {
+            Thread.currentThread().getContextClassLoader().getResourceAsStream(filePathSerialize))) {
             return (ApplicationState) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new BusinessException("Error deserialize objects");

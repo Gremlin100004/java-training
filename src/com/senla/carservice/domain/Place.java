@@ -1,9 +1,11 @@
 package com.senla.carservice.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Place extends AEntity {
+public class Place extends AEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Integer number;
     private Boolean busyStatus;
     private List<Order> orders = new ArrayList<>();

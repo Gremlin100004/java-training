@@ -1,7 +1,7 @@
-package com.senla.carservice.container.annotationhandler;
+package com.senla.carservice.container.dependencyinjection.annotationhandler;
 
-import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.container.contex.Context;
+import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.exception.BusinessException;
 
 import java.lang.reflect.Field;
@@ -13,19 +13,17 @@ public class DependencyInjectionAnnotationHandler {
         this.context = context;
     }
 
-    public <T> T configure(T inputObject) {
-        for (Field field : inputObject.getClass().getDeclaredFields()) {
+    public void configure(Object classObject) {
+        for (Field field : classObject.getClass().getDeclaredFields()) {
             if (field.isAnnotationPresent(Dependency.class)) {
-                // считается, что нужно вернуть прежнее значение Accessible
                 field.setAccessible(true);
-                Object object = context.getObject(field.getType().getName());
                 try {
-                    field.set(inputObject, object);
+                    field.set(classObject, context.getObject(field.getType()));
                 } catch (IllegalAccessException e) {
                     throw new BusinessException("Error set value to a field");
                 }
+                field.setAccessible(false);
             }
         }
-        return inputObject;
     }
 }

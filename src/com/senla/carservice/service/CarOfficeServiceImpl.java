@@ -1,7 +1,7 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.ApplicationState;
@@ -25,6 +25,15 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     private PlaceRepository placeRepository;
     @Dependency
     private OrderRepository orderRepository;
+    @Dependency
+    private Serializer serializer;
+    @Dependency
+    private CsvPlace csvPlace;
+    @Dependency
+    private CsvOrder csvOrder;
+    @Dependency
+    private CsvMaster csvMaster;
+    private static final int NUMBER_DAY = 1;
 
     public CarOfficeServiceImpl() {
     }
@@ -42,7 +51,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         }
         Date leadTimeOrder = orderRepository.getLastOrder().getLeadTime();
         Date DayDate = new Date();
-        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay); DateUtil.addDays(currentDay, 1)) {
+        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay); DateUtil.addDays(currentDay, NUMBER_DAY)) {
             if (masterRepository.getFreeMasters(currentDay).isEmpty() ||
                 placeRepository.getFreePlaces(currentDay).isEmpty()) {
                 DayDate = currentDay;
@@ -56,12 +65,12 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     @Override
     public void importEntities() {
-        masterRepository.updateListMaster(CsvMaster.importMasters(orderRepository.getOrders()));
-        placeRepository.updateListPlace(CsvPlace.importPlaces(orderRepository.getOrders()));
-        List<Order> orders = CsvOrder.importOrder(masterRepository.getMasters(), placeRepository.getPlaces());
+        masterRepository.updateListMaster(csvMaster.importMasters(orderRepository.getOrders()));
+        placeRepository.updateListPlace(csvPlace.importPlaces(orderRepository.getOrders()));
+        List<Order> orders = csvOrder.importOrder(masterRepository.getMasters(), placeRepository.getPlaces());
         orderRepository.updateListOrder(orders);
-        masterRepository.updateListMaster(CsvMaster.importMasters(orders));
-        placeRepository.updateListPlace(CsvPlace.importPlaces(orders));
+        masterRepository.updateListMaster(csvMaster.importMasters(orders));
+        placeRepository.updateListPlace(csvPlace.importPlaces(orders));
     }
 
     @Override
@@ -69,9 +78,9 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         checkOrders();
         checkMasters();
         checkPlaces();
-        CsvOrder.exportOrder(orderRepository.getOrders());
-        CsvMaster.exportMasters(masterRepository.getMasters());
-        CsvPlace.exportPlaces(placeRepository.getPlaces());
+        csvOrder.exportOrder(orderRepository.getOrders());
+        csvMaster.exportMasters(masterRepository.getMasters());
+        csvPlace.exportPlaces(placeRepository.getPlaces());
     }
 
     @Override
@@ -83,12 +92,12 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         applicationState.setMasters(masterRepository.getMasters());
         applicationState.setPlaces(placeRepository.getPlaces());
         applicationState.setOrders(orderRepository.getOrders());
-        Serializer.serializeEntities(applicationState);
+        serializer.serializeEntities(applicationState);
     }
 
     @Override
     public void deserializeEntities() {
-        ApplicationState applicationState = Serializer.deserializeEntities();
+        ApplicationState applicationState = serializer.deserializeEntities();
         if (applicationState == null) {
             return;
         }

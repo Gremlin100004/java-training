@@ -1,40 +1,30 @@
 package com.senla.carservice.container;
 
-import com.senla.carservice.container.annotationhandler.DependencyInjectionAnnotationHandler;
-import com.senla.carservice.container.annotationhandler.PropertyDependencyAnnotationHandler;
 import com.senla.carservice.container.configurator.Configurator;
 import com.senla.carservice.container.contex.Context;
-import com.senla.carservice.enumeration.DefaultValue;
-import com.senla.carservice.util.PropertyLoader;
+import com.senla.carservice.container.dependencyinjection.annotationhandler.DependencyInjectionAnnotationHandler;
+import com.senla.carservice.container.enumaration.PropertyValue;
+import com.senla.carservice.container.property.PropertyLoader;
+import com.senla.carservice.container.propertyinjection.annotationhandler.PropertyDependencyAnnotationHandler;
 
 public class Container {
-    private Context context;
+    private static Context context;
 
-    public Container(String projectPackage) {
-        initialization(projectPackage);
+    static {
+        initialize(PropertyLoader.getPropertyValue(PropertyValue.PROPERTY_FILE_NAME.toString(),
+                                                   PropertyValue.PACKAGE_PROJECT.toString()));
     }
 
-    public Container() {
-        // модуль инъекции получил зависимость от проекта
-        initialization(PropertyLoader.getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
-                                                       DefaultValue.PACKAGE_PROJECT.toString()));
-    }
-
-    // нейминг
-    private void initialization(String projectPackage) {
+    private static void initialize(String projectPackage) {
         Configurator configurator = new Configurator(projectPackage);
-        // что мешает новый объект сразу сохранить в поле класса?
-        Context context = new Context(configurator);
+        context = new Context(configurator);
         context.setPropertyDependency(new PropertyDependencyAnnotationHandler());
         context.setDependencyInjection(new DependencyInjectionAnnotationHandler(context));
         context.createSingletons();
         context.configureSingletons();
-        this.context = context;
     }
 
-    // не совсем правильное использование дженериков - на вход должен приходить класс Class<T> objectClass
-    @SuppressWarnings("unchecked")
-    public <T> T getObject(String inputClass) {
-        return (T) context.getObject(inputClass);
+    public static <T> T getObject(Class<T> objectClass) {
+        return context.getObject(objectClass);
     }
 }

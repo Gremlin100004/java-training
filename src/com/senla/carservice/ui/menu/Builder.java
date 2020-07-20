@@ -1,7 +1,7 @@
 package com.senla.carservice.ui.menu;
 
-import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.controller.CarOfficeController;
 import com.senla.carservice.controller.MasterController;
 import com.senla.carservice.controller.OrderController;
@@ -25,6 +25,8 @@ public class Builder {
     private OrderController orderController;
     @Dependency
     private PlaceController placeController;
+    private static final int INDEX_OFFSET = 1;
+    private static final int MAX_INDEX = 999;
 
     public Builder() {
     }
@@ -183,7 +185,7 @@ public class Builder {
                 if (index == 0) {
                     return;
                 }
-                message = orderController.closeOrder(index - 1);
+                message = orderController.closeOrder(index - INDEX_OFFSET);
                 Printer.printInfo(message);
             }
         }, listOrderMenu));
@@ -217,7 +219,7 @@ public class Builder {
                     return;
                 }
                 message = orderController.shiftLeadTime(
-                    index - 1, ScannerUtil.getStringDateUser(
+                    index - INDEX_OFFSET, ScannerUtil.getStringDateUser(
                         "Enter the planing time start to execute the order in format " +
                         "\"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"", true),
                     ScannerUtil.getStringDateUser(
@@ -251,7 +253,7 @@ public class Builder {
                     return;
                 }
                 index = ScannerUtil.getIntUser("Enter the index number of the master to view orders:");
-                String message = orderController.getMasterOrders(index - 1);
+                String message = orderController.getMasterOrders(index - INDEX_OFFSET);
                 Printer.printInfo(message);
             }, listOrderMenu));
     }
@@ -264,7 +266,7 @@ public class Builder {
                     return;
                 }
                 index = ScannerUtil.getIntUser("Enter the index number of the order to view masters:");
-                Printer.printInfo(orderController.getOrderMasters(index - 1));
+                Printer.printInfo(orderController.getOrderMasters(index - INDEX_OFFSET));
             }, listOrderMenu));
     }
 
@@ -422,13 +424,15 @@ public class Builder {
 
     private void addMaster(String delimiter, MasterController masterController) {
         Printer.printInfo("Add master:");
-        TestData.getArrayMasterNames().forEach(masterName -> Printer.printInfo(masterController.addMaster(masterName)));
+        TestData.getArrayMasterNames()
+            .forEach(masterName -> Printer.printInfo(masterController.addMaster(masterName)));
         Printer.printInfo(delimiter);
     }
 
     private void addPlace(String delimiter, PlaceController placeController) {
         Printer.printInfo("Add place to service:");
-        TestData.getArrayPlaceNumber().forEach(placeNumber -> Printer.printInfo(placeController.addPlace(placeNumber)));
+        TestData.getArrayPlaceNumber()
+            .forEach(placeNumber -> Printer.printInfo(placeController.addPlace(placeNumber)));
         Printer.printInfo(delimiter);
     }
 
@@ -461,19 +465,19 @@ public class Builder {
             if (index == 0) {
                 return;
             }
-            message = orderController.deleteOrder(index - 1);
+            message = orderController.deleteOrder(index - INDEX_OFFSET);
             Printer.printInfo(message);
         }
     }
 
     private void deleteMaster() {
         int index = ScannerUtil.getIntUser("Enter the index number of the master to delete:");
-        Printer.printInfo(masterController.deleteMaster(index - 1));
+        Printer.printInfo(masterController.deleteMaster(index - INDEX_OFFSET));
     }
 
     private void deleteGarage() {
         int index = ScannerUtil.getIntUser("Enter the index number of the place to delete:");
-        Printer.printInfo(placeController.deletePlace(index - 1));
+        Printer.printInfo(placeController.deletePlace(index - INDEX_OFFSET));
     }
 
     private void completeOrder() {
@@ -484,7 +488,7 @@ public class Builder {
             if (index == 0) {
                 return;
             }
-            message = orderController.completeOrder(index - 1);
+            message = orderController.completeOrder(index - INDEX_OFFSET);
             Printer.printInfo(message);
         }
     }
@@ -497,7 +501,7 @@ public class Builder {
             if (index == 0) {
                 return;
             }
-            message = orderController.cancelOrder(index - 1);
+            message = orderController.cancelOrder(index - INDEX_OFFSET);
             Printer.printInfo(message);
         }
     }
@@ -542,8 +546,8 @@ public class Builder {
         Printer.printInfo(masterController.getFreeMasters(executionStartTime));
         Printer.printInfo("0. Stop adding");
         int quit = 0;
-        int index = 999;
-        while (quit == 0 && index == 999) {
+        int index = MAX_INDEX;
+        while (quit == 0 && index == MAX_INDEX) {
             List<Integer> statusInt = addMasters(quit);
             quit = statusInt.get(0);
             index = statusInt.get(1);
@@ -553,14 +557,14 @@ public class Builder {
 
     private List<Integer> addMasters(int quit) {
         String message = "";
-        int index = 999;
+        int index = MAX_INDEX;
         boolean userAnswer;
         while (!message.equals("masters add successfully")) {
             index = ScannerUtil.getIntUser("Enter the index number of the master to add:");
             if (index == 0) {
                 break;
             }
-            message = orderController.addOrderMasters(index - 1);
+            message = orderController.addOrderMasters(index - INDEX_OFFSET);
             Printer.printInfo(message);
             userAnswer = ScannerUtil.isAnotherMaster();
             if (userAnswer) {
@@ -581,7 +585,7 @@ public class Builder {
         Printer.printInfo("0. Stop adding");
         while (!message.equals("place add to order successfully")) {
             index = ScannerUtil.getIntUser("Enter the index number of the place to add in order:");
-            message = orderController.addOrderPlace(index - 1, executionStartTime);
+            message = orderController.addOrderPlace(index - INDEX_OFFSET, executionStartTime);
             Printer.printInfo(message);
         }
     }

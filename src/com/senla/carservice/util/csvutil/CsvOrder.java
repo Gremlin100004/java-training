@@ -1,13 +1,12 @@
 package com.senla.carservice.util.csvutil;
 
-import com.senla.carservice.container.annotation.Property;
+import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.enumeration.DefaultValue;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
-import com.senla.carservice.util.PropertyLoader;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,46 +14,45 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Singleton
 public class CsvOrder {
-    @Property
-    private static final String ORDER_PATH = PropertyLoader.getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
-                                                                             DefaultValue.PROPERTY_ORDER_CSV_FILE_PATH
-                                                                                 .toString());
-    private static final String FIELD_SEPARATOR = PropertyLoader
-        .getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
-                          DefaultValue.PROPERTY_MASTER_FIELD_SEPARATOR.toString());
-    private static final String ID_SEPARATOR = PropertyLoader
-        .getPropertyValue(DefaultValue.PROPERTY_FILE_NAME.toString(),
-                          DefaultValue.PROPERTY_MASTER_ID_SEPARATOR.toString());
+    @ConfigProperty
+    private String orderPath;
+    @ConfigProperty
+    private String fieldSeparator;
+    @ConfigProperty
+    private String idSeparator;
+    private static final int SIZE_INDEX = 1;
 
-    private CsvOrder() {
+    public CsvOrder() {
     }
 
-    public static void exportOrder(List<Order> orders) {
-        List<String> valueOrderCsv = orders.stream().map(CsvOrder::convertOrderToCsv).collect(Collectors.toList());
-        FileUtil.saveCsv(valueOrderCsv, ORDER_PATH);
+    public void exportOrder(List<Order> orders) {
+        List<String> valueOrderCsv = orders.stream()
+            .map(this::convertOrderToCsv)
+            .collect(Collectors.toList());
+        FileUtil.saveCsv(valueOrderCsv, orderPath);
     }
 
-    public static List<Order> importOrder(List<Master> masters, List<Place> places) {
-        List<String> csvLinesOrder = FileUtil.getCsv(ORDER_PATH);
-        List<Order> orders = new ArrayList<>();
-        csvLinesOrder.stream()
+    public List<Order> importOrder(List<Master> masters, List<Place> places) {
+        List<String> csvLinesOrder = FileUtil.getCsv(orderPath);
+        return csvLinesOrder.stream()
             .map(line -> getOrderFromCsv(line, masters, places))
-            .forEachOrdered(order -> {
-                if (order.getMasters().isEmpty()) {
-                    throw new BusinessException("masters not imported");
-                }
-                orders.add(order);
-            });
-        return orders;
+            .peek(
+                order -> {
+                    if (order.getMasters().isEmpty()) {
+                        throw new BusinessException("masters not imported");
+                    }
+                })
+            .collect(Collectors.toList());
     }
 
-    private static Order getOrderFromCsv(String line, List<Master> masters, List<Place> places) {
+    private Order getOrderFromCsv(String line, List<Master> masters, List<Place> places) {
         if (line == null || masters == null || places == null) {
             throw new BusinessException("argument is null");
         }
-        List<String> values = Arrays.asList((line.split(ID_SEPARATOR))[0].split(FIELD_SEPARATOR));
-        List<String> arrayIdMaster = Arrays.asList(line.split(ID_SEPARATOR)[1].split(FIELD_SEPARATOR));
+        List<String> values = Arrays.asList((line.split(idSeparator))[0].split(fieldSeparator));
+        List<String> arrayIdMaster = Arrays.asList(line.split(idSeparator)[1].split(fieldSeparator));
         Order order = new Order(ParameterUtil.getValueLong(values.get(0)),
                                 ParameterUtil.checkValueString(values.get(5)),
                                 ParameterUtil.checkValueString(values.get(6)),
@@ -70,7 +68,7 @@ public class CsvOrder {
         return order;
     }
 
-    private static List<Master> getMastersById(List<Master> masters, List<String> arrayIdMaster) {
+    private List<Master> getMastersById(List<Master> masters, List<String> arrayIdMaster) {
         if (masters == null || arrayIdMaster == null) {
             throw new BusinessException("argument is null");
         }
@@ -83,7 +81,7 @@ public class CsvOrder {
         return orderMasters;
     }
 
-    private static Place getPlaceById(List<Place> places, Long id) {
+    private Place getPlaceById(List<Place> places, Long id) {
         if (places == null || id == null) {
             throw new BusinessException("argument is null");
         }
@@ -93,43 +91,43 @@ public class CsvOrder {
             .orElse(null);
     }
 
-    private static String convertOrderToCsv(Order order) {
+    private String convertOrderToCsv(Order order) {
         if (order == null) {
             throw new BusinessException("argument is null");
         }
         StringBuilder stringValue = new StringBuilder();
         stringValue.append(order.getId());
-        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(fieldSeparator);
         stringValue.append(DateUtil.getStringFromDate(order.getCreationTime(), true));
-        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(fieldSeparator);
         stringValue.append(DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
-        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(fieldSeparator);
         stringValue.append(DateUtil.getStringFromDate(order.getLeadTime(), true));
-        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(fieldSeparator);
         stringValue.append(order.getPlace().getId());
-        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(fieldSeparator);
         stringValue.append(order.getAutomaker());
-        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(fieldSeparator);
         stringValue.append(order.getModel());
-        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(fieldSeparator);
         stringValue.append(order.getRegistrationNumber());
-        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(fieldSeparator);
         stringValue.append(order.getPrice());
-        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(fieldSeparator);
         stringValue.append(order.getStatus());
-        stringValue.append(FIELD_SEPARATOR);
+        stringValue.append(fieldSeparator);
         stringValue.append(order.isDeleteStatus());
-        stringValue.append(FIELD_SEPARATOR);
-        stringValue.append(ID_SEPARATOR);
+        stringValue.append(fieldSeparator);
+        stringValue.append(idSeparator);
         int bound = order.getMasters().size();
         for (int i = 0; i < bound; i++) {
-            if (i == order.getMasters().size() - 1) {
+            if (i == order.getMasters().size() - SIZE_INDEX) {
                 stringValue.append(order.getMasters().get(i).getId());
             } else {
-                stringValue.append(order.getMasters().get(i).getId()).append(FIELD_SEPARATOR);
+                stringValue.append(order.getMasters().get(i).getId()).append(fieldSeparator);
             }
         }
-        stringValue.append(ID_SEPARATOR);
+        stringValue.append(idSeparator);
         return stringValue.toString();
     }
 }

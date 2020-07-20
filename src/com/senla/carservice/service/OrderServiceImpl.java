@@ -1,12 +1,12 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.container.annotation.Dependency;
-import com.senla.carservice.container.annotation.Property;
 import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.container.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.enumeration.Status;
+import com.senla.carservice.domain.enumaration.Status;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.OrderRepository;
@@ -28,7 +28,7 @@ public class OrderServiceImpl implements OrderService {
     private PlaceRepository placeRepository;
     @Dependency
     private MasterRepository masterRepository;
-    @Property
+    @ConfigProperty
     private boolean isBlockShiftTime;
 
     public OrderServiceImpl() {

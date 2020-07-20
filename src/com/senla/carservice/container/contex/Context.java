@@ -1,8 +1,8 @@
 package com.senla.carservice.container.contex;
 
-import com.senla.carservice.container.annotationhandler.DependencyInjectionAnnotationHandler;
-import com.senla.carservice.container.annotationhandler.PropertyDependencyAnnotationHandler;
 import com.senla.carservice.container.configurator.Configurator;
+import com.senla.carservice.container.dependencyinjection.annotationhandler.DependencyInjectionAnnotationHandler;
+import com.senla.carservice.container.propertyinjection.annotationhandler.PropertyDependencyAnnotationHandler;
 import com.senla.carservice.exception.BusinessException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -27,34 +27,31 @@ public class Context {
         this.propertyDependency = propertyDependency;
     }
 
-    // а зачем void методу дженерик тип?
-    public <T> void createSingletons() {
-        for (Class<?> classSingleton : configurator.getSingletonClasses()) {
-            T rawObject = createRawObject(classSingleton);
-            if (classSingleton.getInterfaces().length == 0) {
-                singletons.put(classSingleton.getName(), rawObject);
-            } else {
-                // работает только с первым интерфейсом? не очень удобно
-                singletons.put(classSingleton.getInterfaces()[0].getName(), rawObject);
-            }
+    public void createSingletons() {
+        for (Map.Entry<String, Class<?>> singletonEntry : configurator.getSingletonClasses().entrySet()) {
+            singletons.put(singletonEntry.getKey(), createRawObject(singletonEntry.getValue()));
         }
     }
 
     public void configureSingletons() {
-        singletons.values().forEach(this::configureObject);
+        for (Object classObject : singletons.values()) {
+            configureObject(classObject);
+        }
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getObject(String stringNameClass) {
-        T customizedObject = (T) singletons.get(stringNameClass);
-        if (customizedObject != null) {
-            return customizedObject;
+    public <T> T getObject(Class<T> objectClass) {
+        T classObject = (T) singletons.get(objectClass.getName());
+        if (classObject != null) {
+            return classObject;
         }
-        Class<?> classImplementation = configurator.getPrototypeClasses(stringNameClass);
+        Class<?> classImplementation = configurator.getPrototypeClass(objectClass.getName());
         if (classImplementation == null) {
             throw new BusinessException("Error input class name");
         }
-        return configureObject(createRawObject(classImplementation));
+        classObject = createRawObject(classImplementation);
+        configureObject(classObject);
+        return classObject;
     }
 
     @SuppressWarnings("unchecked")
@@ -66,12 +63,8 @@ public class Context {
         }
     }
 
-    // лучше пусть все три метода будут воид: configureObject, configure, configure
-    // иначе жуткая путаница с хранением объектов, создается впечатление, что возвращается
-    // какой-то другой объект
-    private <T> T configureObject(T rawObject) {
-        T configureObject = propertyDependency.configure(rawObject);
-        configureObject = dependencyInjection.configure(configureObject);
-        return configureObject;
+    private void configureObject(Object classObject) {
+        propertyDependency.configure(classObject);
+        dependencyInjection.configure(classObject);
     }
 }

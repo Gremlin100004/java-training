@@ -1,9 +1,8 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.container.annotation.Dependency;
 import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.PlaceService;
@@ -28,13 +27,13 @@ public class CarOfficeController {
         if (dateFree == null) {
             return "error date";
         }
-        Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
         try {
+            Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
             int numberFreeMasters = masterService.getNumberFreeMastersByDate(startDayDate);
             int numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate);
             return "- number free places in service: " + numberFreePlace + "\n- number free masters in service: " +
                    numberFreeMasters;
-        } catch (BusinessException | DateException e) {
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }

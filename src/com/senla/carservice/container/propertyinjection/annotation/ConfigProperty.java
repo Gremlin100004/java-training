@@ -1,4 +1,6 @@
-package com.senla.carservice.container.annotation;
+package com.senla.carservice.container.propertyinjection.annotation;
+
+import com.senla.carservice.container.propertyinjection.enumaration.TypeField;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,12 +9,10 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-// в задании указано точное название для аннотации
-public @interface Property {
+public @interface ConfigProperty {
     String configName() default "";
 
     String propertyName() default "";
 
-    // для типа лучше использовать енам
-    String type() default "";
+    TypeField type() default TypeField.DEFAULT;
 }

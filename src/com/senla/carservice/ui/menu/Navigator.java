@@ -8,6 +8,7 @@ import java.util.List;
 @Singleton
 public class Navigator {
     private Menu currentMenu;
+    private static final int INDEX_OFFSET = 1;
 
     public Navigator() {
     }
@@ -26,7 +27,7 @@ public class Navigator {
             Printer.printInfo("There is no such item!!!");
             return;
         }
-        MenuItem menuItem = menuItems.get(index - 1);
+        MenuItem menuItem = menuItems.get(index - INDEX_OFFSET);
         menuItem.doAction();
         this.currentMenu = menuItem.getNextMenu();
     }
