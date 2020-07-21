@@ -1,6 +1,5 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.domain.Master;
 
@@ -67,8 +66,8 @@ public class MasterRepositoryImpl implements MasterRepository {
     @Override
     public List<Master> getFreeMasters(Date date) {
         return this.masters.stream()
-            .filter(master -> master.getOrders().isEmpty() ||
-                              date.before(master.getOrders().get(master.getOrders().size() - SIZE_INDEX).getLeadTime()))
-            .collect(Collectors.toList());
+                .filter(master -> master.getOrders().isEmpty() ||
+                        date.before(master.getOrders().get(master.getOrders().size() - SIZE_INDEX).getLeadTime()))
+                .collect(Collectors.toList());
     }
 }

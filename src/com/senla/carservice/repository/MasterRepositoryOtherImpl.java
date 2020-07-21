@@ -65,8 +65,8 @@ public class MasterRepositoryOtherImpl implements MasterRepository {
     @Override
     public List<Master> getFreeMasters(Date date) {
         return this.masters.stream()
-            .filter(master -> master.getOrders().isEmpty() ||
-                              date.before(master.getOrders().get(master.getOrders().size() - 1).getLeadTime()))
-            .collect(Collectors.toList());
+                .filter(master -> master.getOrders().isEmpty() ||
+                        date.before(master.getOrders().get(master.getOrders().size() - 1).getLeadTime()))
+                .collect(Collectors.toList());
     }
 }
