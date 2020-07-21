@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Config
 public class ConfigFile {
-    private Map<String, Class<?>> implementationClasses = new HashMap<>(){{
+    private Map<String, Class<?>> implementationClasses = new HashMap<>() {{
         put(MasterRepository.class.getName(), MasterRepositoryOtherImpl.class);
     }};
 }
