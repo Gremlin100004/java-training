@@ -19,12 +19,14 @@ public class PropertyDependencyAnnotationHandler {
             }
             ConfigProperty annotation = field.getAnnotation(ConfigProperty.class);
             String propertyFileName = getPropertyFileName(annotation);
-            String propertyName = getPropertyName(
-                annotation, inputObject.getClass().getName() + POINT + field.getName());
+            // отформатирую перенос, так чуть лучше читается
+            String propertyName = getPropertyName(annotation,
+                    inputObject.getClass().getName() + POINT + field.getName());
             Class<?> fieldType = getFieldType(annotation, field.getType());
             String value = PropertyLoader.getPropertyValue(propertyFileName, propertyName);
             field.setAccessible(true);
             injectValueInField(field, value, fieldType, inputObject);
+            // это зачем?
             field.setAccessible(true);
         }
     }

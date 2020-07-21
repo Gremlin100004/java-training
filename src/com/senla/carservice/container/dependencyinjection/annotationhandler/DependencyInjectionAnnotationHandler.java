@@ -22,6 +22,9 @@ public class DependencyInjectionAnnotationHandler {
                 } catch (IllegalAccessException e) {
                     throw new BusinessException("Error set value to a field");
                 }
+                // если выбросится исключение, эта строчка не выполнится
+                // в данном случае это не важно, но на будущее имей в виду
+                // такие строки надо помещать в блок файнали
                 field.setAccessible(false);
             }
         }

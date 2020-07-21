@@ -13,6 +13,7 @@ public class PropertyLoader {
 
     public static String getPropertyValue(String propertyFileName, String propertyName) {
         ClassLoader classLoader = PropertyLoader.class.getClassLoader();
+        // не экономь буквы, уж stream и то понятней, чем in
         try (InputStream in = classLoader.getResourceAsStream(propertyFileName)) {
             Properties properties = new Properties();
             properties.load(in);

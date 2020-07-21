@@ -12,6 +12,7 @@ public class Configurator {
     private final PackageScanner packageScanner;
     private final Map<String, Class<?>> prototypeClasses = new HashMap<>();
     private final Map<String, Class<?>> singletonClasses = new HashMap<>();
+    // привязка к неймингу - не лучшее решение
     private static final String CLASS_IMPLEMENTATION_ATTRIBUTE = "Impl";
 
     public Configurator(String packageName) {

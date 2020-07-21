@@ -14,6 +14,7 @@ public enum TypeField {
         this.aClass = aClass;
     }
 
+    // нейминг
     public Class<?> getaClass() {
         return aClass;
     }
