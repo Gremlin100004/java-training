@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Singleton
+
 public class MasterRepositoryImpl implements MasterRepository {
 
     private final List<Master> masters;
