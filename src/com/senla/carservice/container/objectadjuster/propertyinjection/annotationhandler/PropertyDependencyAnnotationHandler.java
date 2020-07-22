@@ -1,16 +1,18 @@
-package com.senla.carservice.container.propertyinjection.annotationhandler;
+package com.senla.carservice.container.objectadjuster.propertyinjection.annotationhandler;
 
+import com.senla.carservice.container.objectadjuster.AnnotationHandler;
 import com.senla.carservice.container.property.PropertyLoader;
-import com.senla.carservice.container.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.container.propertyinjection.enumaration.DefaultValue;
-import com.senla.carservice.container.propertyinjection.enumaration.TypeField;
+import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
+import com.senla.carservice.container.objectadjuster.propertyinjection.enumeration.DefaultValue;
+import com.senla.carservice.container.objectadjuster.propertyinjection.enumeration.TypeField;
 import com.senla.carservice.exception.BusinessException;
 
 import java.lang.reflect.Field;
 
-public class PropertyDependencyAnnotationHandler {
-    private static final String POINT = ".";
+public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
+    private static final String CLASS_NAME_SEPARATOR = ".";
 
+    @Override
     public void configure(Object inputObject) {
         Class<?> implementClass = inputObject.getClass();
         for (Field field : implementClass.getDeclaredFields()) {
@@ -19,21 +21,19 @@ public class PropertyDependencyAnnotationHandler {
             }
             ConfigProperty annotation = field.getAnnotation(ConfigProperty.class);
             String propertyFileName = getPropertyFileName(annotation);
-            // отформатирую перенос, так чуть лучше читается
             String propertyName = getPropertyName(annotation,
-                    inputObject.getClass().getName() + POINT + field.getName());
+                                                  inputObject.getClass().getName() + CLASS_NAME_SEPARATOR +
+                                                  field.getName());
             Class<?> fieldType = getFieldType(annotation, field.getType());
             String value = PropertyLoader.getPropertyValue(propertyFileName, propertyName);
             field.setAccessible(true);
             injectValueInField(field, value, fieldType, inputObject);
-            // это зачем?
-            field.setAccessible(true);
         }
     }
 
     private String getPropertyFileName(ConfigProperty annotation) {
         if (annotation.configName().isEmpty()) {
-            return DefaultValue.PROPERTY_FILE_NAME.toString();
+            return DefaultValue.PROPERTY_FILE_NAME.getValue();
         } else {
             return annotation.propertyName();
         }
@@ -51,7 +51,7 @@ public class PropertyDependencyAnnotationHandler {
         if (annotation.type().equals(TypeField.DEFAULT)) {
             return defaultType;
         } else {
-            return annotation.type().getaClass();
+            return annotation.type().getReferenceDataTypeClass();
         }
     }
 

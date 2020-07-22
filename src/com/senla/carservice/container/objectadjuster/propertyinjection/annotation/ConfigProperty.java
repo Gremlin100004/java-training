@@ -1,6 +1,6 @@
-package com.senla.carservice.container.propertyinjection.annotation;
+package com.senla.carservice.container.objectadjuster.propertyinjection.annotation;
 
-import com.senla.carservice.container.propertyinjection.enumaration.TypeField;
+import com.senla.carservice.container.objectadjuster.propertyinjection.enumeration.TypeField;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,9 +1,11 @@
 package com.senla.carservice.container.configurator;
 
+import com.senla.carservice.container.objectadjuster.AnnotationHandler;
 import com.senla.carservice.container.annotation.Prototype;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.exception.BusinessException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +14,15 @@ public class Configurator {
     private final PackageScanner packageScanner;
     private final Map<String, Class<?>> prototypeClasses = new HashMap<>();
     private final Map<String, Class<?>> singletonClasses = new HashMap<>();
-    // привязка к неймингу - не лучшее решение
-    private static final String CLASS_IMPLEMENTATION_ATTRIBUTE = "Impl";
+    private final List<Class<?>> annotationHandlerClasses = new ArrayList<>();
 
     public Configurator(String packageName) {
         packageScanner = new PackageScanner(packageName);
         initialize();
+    }
+
+    public List<Class<?>> getAnnotationHandlerClasses() {
+        return annotationHandlerClasses;
     }
 
     public Class<?> getPrototypeClass(String className) {
@@ -38,20 +43,27 @@ public class Configurator {
                 singletonClasses.put(getKeyName(classPackage), classPackage);
             } else if (classPackage.isAnnotationPresent(Prototype.class)) {
                 prototypeClasses.put(getKeyName(classPackage), classPackage);
+            } else {
+                for (Class<?> classInterface : classPackage.getInterfaces()) {
+                    if (classInterface.equals(AnnotationHandler.class)){
+                        annotationHandlerClasses.add(classPackage);
+                        break;
+                    }
+                }
             }
         }
     }
 
     private String getKeyName(Class<?> classPackage) {
-        if (classPackage.getSimpleName().contains(CLASS_IMPLEMENTATION_ATTRIBUTE)) {
+        if (classPackage.getInterfaces().length == 0){
+            return classPackage.getName();
+        } else {
             for (Class<?> classInterface : classPackage.getInterfaces()) {
-                if (classPackage.getSimpleName().contains(classInterface.getSimpleName())) {
+                if (classInterface.getName().contains(packageScanner.getPackageProject())) {
                     return classInterface.getName();
                 }
             }
-            throw new BusinessException("Error use interface with implemented class");
-        } else {
-            return classPackage.getName();
         }
+        return classPackage.getName();
     }
 }

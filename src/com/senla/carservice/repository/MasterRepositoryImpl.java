@@ -1,6 +1,6 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.domain.Master;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.util.DateUtil;

@@ -1,7 +1,7 @@
 package com.senla.carservice.util;
 
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.propertyinjection.annotation.ConfigProperty;
+import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.ApplicationState;
 

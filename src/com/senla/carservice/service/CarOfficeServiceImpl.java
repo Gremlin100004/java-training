@@ -1,7 +1,7 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.ApplicationState;
@@ -50,18 +50,17 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             throw new BusinessException("There are no places");
         }
         Date leadTimeOrder = orderRepository.getLastOrder().getLeadTime();
-        // нейминг
-        Date DayDate = new Date();
+        Date dayDate = new Date();
         for (Date currentDay = new Date(); leadTimeOrder.before(currentDay); DateUtil.addDays(currentDay, NUMBER_DAY)) {
             if (masterRepository.getFreeMasters(currentDay).isEmpty() ||
                 placeRepository.getFreePlaces(currentDay).isEmpty()) {
-                DayDate = currentDay;
+                dayDate = currentDay;
                 currentDay = DateUtil.bringStartOfDayDate(currentDay);
             } else {
                 break;
             }
         }
-        return DayDate;
+        return dayDate;
     }
 
     @Override

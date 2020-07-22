@@ -1,7 +1,7 @@
 package com.senla.carservice.ui.menu;
 
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.controller.CarOfficeController;
 import com.senla.carservice.controller.MasterController;
 import com.senla.carservice.controller.OrderController;

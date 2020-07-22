@@ -1,4 +1,4 @@
-package com.senla.carservice.container.dependencyinjection.annotation;
+package com.senla.carservice.container.objectadjuster.dependencyinjection.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

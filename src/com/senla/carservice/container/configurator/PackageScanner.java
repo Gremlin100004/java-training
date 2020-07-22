@@ -40,6 +40,10 @@ public class PackageScanner {
         }
     }
 
+    public String getPackageProject() {
+        return packageProject;
+    }
+
     private List<Class<?>> getClassByPath(List<String> filesStringPaths) {
         return filesStringPaths.stream()
             .map(file -> file.replace(SLASH, POINT).substring(file.replace(SLASH, POINT).lastIndexOf(packageProject))

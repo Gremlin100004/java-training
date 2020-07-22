@@ -1,8 +1,8 @@
 package com.senla.carservice.util.csvutil;
 
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.dependencyinjection.annotation.Dependency;
-import com.senla.carservice.container.propertyinjection.annotation.ConfigProperty;
+import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;

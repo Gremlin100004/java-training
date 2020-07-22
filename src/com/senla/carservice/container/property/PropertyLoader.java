@@ -13,10 +13,9 @@ public class PropertyLoader {
 
     public static String getPropertyValue(String propertyFileName, String propertyName) {
         ClassLoader classLoader = PropertyLoader.class.getClassLoader();
-        // не экономь буквы, уж stream и то понятней, чем in
-        try (InputStream in = classLoader.getResourceAsStream(propertyFileName)) {
+        try (InputStream inputStream = classLoader.getResourceAsStream(propertyFileName)) {
             Properties properties = new Properties();
-            properties.load(in);
+            properties.load(inputStream);
             return properties.getProperty(propertyName);
         } catch (IOException e) {
             throw new BusinessException("load resource problem");
