@@ -1,8 +1,8 @@
 package com.senla.carservice.container.configurator;
 
-import com.senla.carservice.container.objectadjuster.AnnotationHandler;
 import com.senla.carservice.container.annotation.Prototype;
 import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.objectadjuster.AnnotationHandler;
 import com.senla.carservice.exception.BusinessException;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class Configurator {
                 prototypeClasses.put(getKeyName(classPackage), classPackage);
             } else {
                 for (Class<?> classInterface : classPackage.getInterfaces()) {
-                    if (classInterface.equals(AnnotationHandler.class)){
+                    if (classInterface.equals(AnnotationHandler.class)) {
                         annotationHandlerClasses.add(classPackage);
                         break;
                     }
@@ -55,7 +55,7 @@ public class Configurator {
     }
 
     private String getKeyName(Class<?> classPackage) {
-        if (classPackage.getInterfaces().length == 0){
+        if (classPackage.getInterfaces().length == 0) {
             return classPackage.getName();
         } else {
             for (Class<?> classInterface : classPackage.getInterfaces()) {

@@ -32,16 +32,16 @@ public class Builder {
     }
 
     public void buildMenu() {
-        this.rootMenu = new Menu(MenuTittle.CAR_SERVICE_MENU.toString());
-        Menu mastersMenu = new Menu(MenuTittle.MASTERS.toString());
-        Menu ordersMenu = new Menu(MenuTittle.ORDERS.toString());
-        Menu placesMenu = new Menu(MenuTittle.PLACES.toString());
-        Menu listOrderMenu = new Menu(MenuTittle.ORDERS_LIST.toString());
-        Menu executedOrderMenu = new Menu(MenuTittle.LIST_OF_ORDERS_CURRENTLY_BEING_EXECUTED.toString());
-        Menu periodOrderMenu = new Menu(MenuTittle.ORDERS_LIST_FOR_A_PERIOD_OF_TIME.toString());
-        Menu completedOrderMenu = new Menu(MenuTittle.COMPLETED_ORDERS.toString());
-        Menu deletedOrderMenu = new Menu(MenuTittle.DELETED_ORDERS.toString());
-        Menu canceledOrderMenu = new Menu(MenuTittle.CANCELED_ORDERS.toString());
+        this.rootMenu = new Menu(MenuTittle.CAR_SERVICE_MENU.getValue());
+        Menu mastersMenu = new Menu(MenuTittle.MASTERS.getValue());
+        Menu ordersMenu = new Menu(MenuTittle.ORDERS.getValue());
+        Menu placesMenu = new Menu(MenuTittle.PLACES.getValue());
+        Menu listOrderMenu = new Menu(MenuTittle.ORDERS_LIST.getValue());
+        Menu executedOrderMenu = new Menu(MenuTittle.LIST_OF_ORDERS_CURRENTLY_BEING_EXECUTED.getValue());
+        Menu periodOrderMenu = new Menu(MenuTittle.ORDERS_LIST_FOR_A_PERIOD_OF_TIME.getValue());
+        Menu completedOrderMenu = new Menu(MenuTittle.COMPLETED_ORDERS.getValue());
+        Menu deletedOrderMenu = new Menu(MenuTittle.DELETED_ORDERS.getValue());
+        Menu canceledOrderMenu = new Menu(MenuTittle.CANCELED_ORDERS.getValue());
         setMenuItemRootMenu(mastersMenu, ordersMenu, placesMenu);
         setMenuItemRootMenuPart();
         createItemMastersMenu(mastersMenu);
@@ -63,16 +63,16 @@ public class Builder {
 
     private void setMenuItemRootMenu(Menu mastersMenu, Menu ordersMenu, Menu placesMenu) {
         this.rootMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.MASTERS.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), mastersMenu));
+            new MenuItem(MenuTittle.MASTERS.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), mastersMenu));
         this.rootMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.ORDERS.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), ordersMenu));
+            new MenuItem(MenuTittle.ORDERS.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), ordersMenu));
         this.rootMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.PLACES.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), placesMenu));
+            new MenuItem(MenuTittle.PLACES.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), placesMenu));
         this.rootMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.GET_THE_NUMBER_OF_AVAILABLE_SEATS_AT_THE_CAR_SERVICE.toString(), () -> {
+            new MenuItem(MenuTittle.GET_THE_NUMBER_OF_AVAILABLE_SEATS_AT_THE_CAR_SERVICE.getValue(), () -> {
                 String date =
                     ScannerUtil.getStringDateUser("Enter the date in format dd.mm.yyyy, example:\"10.10.2010\"", false);
                 Printer.printInfo(carOfficeController.getFreePlacesMastersByDate(date));
@@ -80,71 +80,71 @@ public class Builder {
     }
 
     private void setMenuItemRootMenuPart() {
-        this.rootMenu.getMenuItems().add(new MenuItem(MenuTittle.GET_THE_CLOSEST_FREE_DATE.toString(),
+        this.rootMenu.getMenuItems().add(new MenuItem(MenuTittle.GET_THE_CLOSEST_FREE_DATE.getValue(),
                                                       () -> Printer.printInfo(carOfficeController.getNearestFreeDate()),
                                                       this.rootMenu));
-        this.rootMenu.getMenuItems().add(new MenuItem(MenuTittle.FILL_IN_TEST_DATA.toString(), () -> {
+        this.rootMenu.getMenuItems().add(new MenuItem(MenuTittle.FILL_IN_TEST_DATA.getValue(), () -> {
             String delimiter = "***********************************************************************";
             Printer.printInfo(delimiter);
             addMaster(delimiter, masterController);
             addPlace(delimiter, placeController);
-            Printer.printInfo(MenuTittle.ADD_NEW_ORDERS_TO_CAR_SERVICE.toString());
+            Printer.printInfo(MenuTittle.ADD_NEW_ORDERS_TO_CAR_SERVICE.getValue());
             addOrderDate(orderController);
         }, this.rootMenu));
         this.rootMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.EXPORT_OF_ALL_ENTITIES.toString(),
+            new MenuItem(MenuTittle.EXPORT_OF_ALL_ENTITIES.getValue(),
                          () -> Printer.printInfo(carOfficeController.exportEntities()), this.rootMenu));
         this.rootMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.IMPORT_OF_ALL_ENTITIES.toString(),
+            new MenuItem(MenuTittle.IMPORT_OF_ALL_ENTITIES.getValue(),
                          () -> Printer.printInfo(carOfficeController.importEntities()), this.rootMenu));
     }
 
     private void createItemMastersMenu(Menu mastersMenu) {
         mastersMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-            new MenuItem(MenuTittle.ADD_MASTER.toString(), () -> Printer
+            new MenuItem(MenuTittle.ADD_MASTER.getValue(), () -> Printer
                 .printInfo(masterController.addMaster(ScannerUtil.getStringUser("Enter the name of master"))),
-                         mastersMenu), new MenuItem(MenuTittle.DELETE_MASTER.toString(), () -> {
+                         mastersMenu), new MenuItem(MenuTittle.DELETE_MASTER.getValue(), () -> {
                 if (isCheckMaster()) {
                     return;
                 }
                 deleteMaster();
             }, mastersMenu),
-            new MenuItem(MenuTittle.SHOW_A_LIST_OF_MASTERS_SORTED_ALPHABETICALLY.toString(),
+            new MenuItem(MenuTittle.SHOW_A_LIST_OF_MASTERS_SORTED_ALPHABETICALLY.getValue(),
                          () -> Printer.printInfo(masterController.getMasterByAlphabet()), mastersMenu),
-            new MenuItem(MenuTittle.SHOW_LIST_OF_MASTERS_SORTED_BY_BUSY.toString(),
+            new MenuItem(MenuTittle.SHOW_LIST_OF_MASTERS_SORTED_BY_BUSY.getValue(),
                          () -> Printer.printInfo(masterController.getMasterByBusy()), mastersMenu),
-            new MenuItem(MenuTittle.PREVIOUS_MENU.toString(), () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()),
+            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(), () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()),
                          this.rootMenu))));
     }
 
     private void createItemPlacesMenu(Menu placesMenu) {
         placesMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SHOW_LIST_OF_PLACES.toString(),
+            new MenuItem(MenuTittle.SHOW_LIST_OF_PLACES.getValue(),
                          () -> Printer.printInfo(placeController.getArrayPlace()), placesMenu));
         placesMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.ADD_PLACE.toString(), () ->
+            new MenuItem(MenuTittle.ADD_PLACE.getValue(), () ->
                 Printer.printInfo(placeController.addPlace(ScannerUtil.getIntUser("Enter the number of place"))),
                          placesMenu));
-        placesMenu.getMenuItems().add(new MenuItem(MenuTittle.DELETE_PLACE.toString(), () -> {
+        placesMenu.getMenuItems().add(new MenuItem(MenuTittle.DELETE_PLACE.getValue(), () -> {
             if (isCheckPlace()) {
                 return;
             }
             deleteGarage();
         }, placesMenu));
         placesMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.PREVIOUS_MENU.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), this.rootMenu));
+            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), this.rootMenu));
     }
 
     private void createItemOrderMenu(List<Menu> menus) {
         menus.get(0).setMenuItems(new ArrayList<>(Arrays.asList(
-            new MenuItem(MenuTittle.LIST_OF_ORDERS.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), menus.get(1)),
-            new MenuItem(MenuTittle.LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), menus.get(2)),
-            new MenuItem(MenuTittle.LIST_OF_ORDERS_FOR_A_PERIOD_OF_TIME.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), menus.get(3)),
-            new MenuItem(MenuTittle.PREVIOUS_MENU.toString(), () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()),
+            new MenuItem(MenuTittle.LIST_OF_ORDERS.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(1)),
+            new MenuItem(MenuTittle.LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(2)),
+            new MenuItem(MenuTittle.LIST_OF_ORDERS_FOR_A_PERIOD_OF_TIME.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(3)),
+            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(), () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()),
                          this.rootMenu)
                                                                )));
     }
@@ -161,9 +161,9 @@ public class Builder {
 
     private void addItemListOrderMenuPartOne(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SHOW_ORDERS.toString(), this::isCheckOrder, listOrderMenu));
-        listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.ADD_ORDER.toString(), this::addOrder, listOrderMenu));
-        listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.DELETE_THE_ORDER.toString(), () -> {
+            new MenuItem(MenuTittle.SHOW_ORDERS.getValue(), this::isCheckOrder, listOrderMenu));
+        listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.ADD_ORDER.getValue(), this::addOrder, listOrderMenu));
+        listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.DELETE_THE_ORDER.getValue(), () -> {
             if (isCheckOrder()) {
                 return;
             }
@@ -173,7 +173,7 @@ public class Builder {
     }
 
     private void addItemListOrderMenuPartTwo(Menu listOrderMenu) {
-        listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.CLOSE_THE_ORDER.toString(), () -> {
+        listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.CLOSE_THE_ORDER.getValue(), () -> {
             if (isCheckOrder()) {
                 return;
             }
@@ -189,7 +189,7 @@ public class Builder {
                 Printer.printInfo(message);
             }
         }, listOrderMenu));
-        listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.CANCEL_THE_ORDER.toString(), () -> {
+        listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.CANCEL_THE_ORDER.getValue(), () -> {
             if (isCheckOrder()) {
                 return;
             }
@@ -200,14 +200,14 @@ public class Builder {
 
     private void addItemListOrderMenuPartThree(Menu listOrderMenu) {
         listOrderMenu.getMenuItems()
-            .add(new MenuItem(MenuTittle.TRANSFER_THE_ORDER_TO_EXECUTION_STATUS.toString(), () -> {
+            .add(new MenuItem(MenuTittle.TRANSFER_THE_ORDER_TO_EXECUTION_STATUS.getValue(), () -> {
                 if (isCheckOrder()) {
                     return;
                 }
                 Printer.printInfo("0. Previous menu");
                 completeOrder();
             }, listOrderMenu));
-        listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.SHIFT_THE_LEAD_TIME.toString(), () -> {
+        listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.SHIFT_THE_LEAD_TIME.getValue(), () -> {
             if (isCheckOrder()) {
                 return;
             }
@@ -232,22 +232,22 @@ public class Builder {
 
     private void addItemListOrderMenuPartFour(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_FILING_DATE.toString(),
+            new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_FILING_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getOrdersSortByFilingDate()), listOrderMenu));
         listOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_EXECUTION_DATE.toString(),
+            new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_EXECUTION_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getOrdersSortByExecutionDate()), listOrderMenu));
         listOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_PLANNED_START_DATE.toString(),
+            new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_PLANNED_START_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getOrdersSortByPlannedStartDate()), listOrderMenu));
         listOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_PRICE.toString(),
+            new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_PRICE.getValue(),
                          () -> Printer.printInfo(orderController.getOrdersSortByPrice()), listOrderMenu));
     }
 
     private void addItemListOrderMenuPartFive(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.GET_ORDERS_EXECUTED_CONCRETE_MASTER.toString(), () -> {
+            new MenuItem(MenuTittle.GET_ORDERS_EXECUTED_CONCRETE_MASTER.getValue(), () -> {
                 int index;
                 if (isCheckMaster()) {
                     return;
@@ -260,7 +260,7 @@ public class Builder {
 
     private void addItemListOrderMenuPartSix(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.GET_A_MASTER_PERFORMING_A_SPECIFIC_ORDER.toString(), () -> {
+            new MenuItem(MenuTittle.GET_A_MASTER_PERFORMING_A_SPECIFIC_ORDER.getValue(), () -> {
                 int index;
                 if (isCheckOrder()) {
                     return;
@@ -272,32 +272,32 @@ public class Builder {
 
     private void addItemListOrderMenuPartSeven(Menu listOrderMenu, Menu ordersMenu) {
         listOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.PREVIOUS_MENU.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), ordersMenu));
+            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), ordersMenu));
     }
 
     private void createItemExecutedOrderMenu(Menu executedOrderMenu, Menu ordersMenu) {
         executedOrderMenu.setMenuItems(new ArrayList<>(Arrays.asList(
-            new MenuItem(MenuTittle.GET_LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME_SORT_BY_FILING_DATE.toString(),
+            new MenuItem(MenuTittle.GET_LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME_SORT_BY_FILING_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getExecuteOrderFilingDate()), executedOrderMenu),
-            new MenuItem(MenuTittle.GET_LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME_SORT_BY_EXECUTION_DATE.toString(),
+            new MenuItem(MenuTittle.GET_LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME_SORT_BY_EXECUTION_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getExecuteOrderExecutionDate()), executedOrderMenu),
-            new MenuItem(MenuTittle.GET_LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME_SORT_BY_PRICE.toString(),
+            new MenuItem(MenuTittle.GET_LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME_SORT_BY_PRICE.getValue(),
                          () -> Printer.printInfo(orderController.getExecuteOrderExecutionDate()), executedOrderMenu),
-            new MenuItem(MenuTittle.PREVIOUS_MENU.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), ordersMenu))));
+            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), ordersMenu))));
     }
 
     private void createItemPeriodOrderMenu(List<Menu> menus) {
         menus.get(0).setMenuItems(new ArrayList<>(Arrays.asList(
-            new MenuItem(MenuTittle.COMPLETED_ORDERS.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), menus.get(1)),
-            new MenuItem(MenuTittle.DELETED_ORDERS.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), menus.get(2)),
-            new MenuItem(MenuTittle.CANCELED_ORDERS.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), menus.get(3)),
-            new MenuItem(MenuTittle.PREVIOUS_MENU.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), menus.get(4)))));
+            new MenuItem(MenuTittle.COMPLETED_ORDERS.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(1)),
+            new MenuItem(MenuTittle.DELETED_ORDERS.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(2)),
+            new MenuItem(MenuTittle.CANCELED_ORDERS.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(3)),
+            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(4)))));
     }
 
     private void createItemCompletedOrderMenu(Menu completedOrderMenu, Menu periodOrderMenu) {
@@ -307,7 +307,7 @@ public class Builder {
 
     private void addItemCompletedOrderPartOne(Menu completedOrderMenu) {
         completedOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SORT_BY_FILING_DATE.toString(),
+            new MenuItem(MenuTittle.SORT_BY_FILING_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getCompletedOrdersFilingDate(
                              ScannerUtil.getStringDateUser(
                                  "Enter the beginning date of period in format dd.mm.yyyy," +
@@ -316,7 +316,7 @@ public class Builder {
                                  "Enter the end date of period in format dd.mm.yyyy," +
                                  " example:\"10.10.2010 10:00\"", true))), completedOrderMenu));
         completedOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.toString(),
+            new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getCompletedOrdersExecutionDate(
                              ScannerUtil.getStringDateUser(
                                  "Enter the beginning date of period in format dd.mm.yyyy," +
@@ -328,7 +328,7 @@ public class Builder {
 
     private void addItemCompletedOrderPartTwo(Menu completedOrderMenu, Menu periodOrderMenu) {
         completedOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SORT_BY_PRICE.toString(),
+            new MenuItem(MenuTittle.SORT_BY_PRICE.getValue(),
                          () -> Printer.printInfo(orderController.getCompletedOrdersPrice(
                              ScannerUtil.getStringDateUser(
                                  "Enter the beginning date of period in format dd.mm.yyyy," +
@@ -337,8 +337,8 @@ public class Builder {
                                  "Enter the end date of period in format dd.mm.yyyy," +
                                  " example:\"10.10.2010 10:00\"", true))), completedOrderMenu));
         completedOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.PREVIOUS_MENU.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), periodOrderMenu));
+            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
     }
 
     private void createItemDeletedOrderMenu(Menu deletedOrderMenu, Menu periodOrderMenu) {
@@ -348,7 +348,7 @@ public class Builder {
 
     private void addItemDeletedOrderPartOne(Menu deletedOrderMenu) {
         deletedOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SORT_BY_FILING_DATE.toString(),
+            new MenuItem(MenuTittle.SORT_BY_FILING_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getDeletedOrdersFilingDate(
                              ScannerUtil.getStringDateUser(
                                  "Enter the beginning date of period in format dd.mm.yyyy," +
@@ -357,7 +357,7 @@ public class Builder {
                                  "Enter the end date of period in format dd.mm.yyyy," +
                                  " example:\"10.10.2010 10:00\"", true))), deletedOrderMenu));
         deletedOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.toString(),
+            new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getDeletedOrdersExecutionDate(
                              ScannerUtil.getStringDateUser(
                                  "Enter the beginning date of period in format dd.mm.yyyy," +
@@ -369,7 +369,7 @@ public class Builder {
 
     private void addItemDeletedOrderPartTwo(Menu deletedOrderMenu, Menu periodOrderMenu) {
         deletedOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SORT_BY_PRICE.toString(),
+            new MenuItem(MenuTittle.SORT_BY_PRICE.getValue(),
                          () -> Printer.printInfo(orderController.getDeletedOrdersPrice(
                              ScannerUtil.getStringDateUser(
                                  "Enter the beginning date of period in format dd.mm.yyyy," +
@@ -378,8 +378,8 @@ public class Builder {
                                  "Enter the end date of period in format dd.mm.yyyy," +
                                  " example:\"10.10.2010 10:00\"", true))), deletedOrderMenu));
         deletedOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.PREVIOUS_MENU.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), periodOrderMenu));
+            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
     }
 
     private void createItemCanceledOrderMenu(Menu canceledOrderMenu, Menu periodOrderMenu) {
@@ -389,7 +389,7 @@ public class Builder {
 
     private void addItemCanceledOrderPartOne(Menu canceledOrderMenu) {
         canceledOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SORT_BY_FILING_DATE.toString(),
+            new MenuItem(MenuTittle.SORT_BY_FILING_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getCanceledOrdersFilingDate(
                              ScannerUtil.getStringDateUser(
                                  "Enter the beginning date of period in format dd.mm.yyyy," +
@@ -398,7 +398,7 @@ public class Builder {
                                  "Enter the end date of period in format dd.mm.yyyy," +
                                  " example:\"10.10.2010 10:00\"", true))), canceledOrderMenu));
         canceledOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.toString(),
+            new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getCanceledOrdersExecutionDate(
                              ScannerUtil.getStringDateUser(
                                  "Enter the beginning date of period in format dd.mm.yyyy," +
@@ -410,7 +410,7 @@ public class Builder {
 
     private void addItemCanceledOrderPartTwo(Menu canceledOrderMenu, Menu periodOrderMenu) {
         canceledOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SORT_BY_PRICE.toString(),
+            new MenuItem(MenuTittle.SORT_BY_PRICE.getValue(),
                          () -> Printer.printInfo(orderController.getCanceledOrdersPrice(
                              ScannerUtil.getStringDateUser("Enter the beginning date of period in " +
                                                            "format dd.mm.yyyy, example:\"10.10.2010 10:00\"", true),
@@ -418,8 +418,8 @@ public class Builder {
                                  "Enter the end date of period in format dd.mm.yyyy, " +
                                  "example:\"10.10.2010 10:00\"", true))), canceledOrderMenu));
         canceledOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.PREVIOUS_MENU.toString(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.toString()), periodOrderMenu));
+            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
+                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
     }
 
     private void addMaster(String delimiter, MasterController masterController) {

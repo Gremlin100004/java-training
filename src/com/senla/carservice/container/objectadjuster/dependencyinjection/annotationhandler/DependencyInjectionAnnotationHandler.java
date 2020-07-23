@@ -1,7 +1,7 @@
 package com.senla.carservice.container.objectadjuster.dependencyinjection.annotationhandler;
 
-import com.senla.carservice.container.objectadjuster.AnnotationHandler;
 import com.senla.carservice.container.contex.Context;
+import com.senla.carservice.container.objectadjuster.AnnotationHandler;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.exception.BusinessException;
 

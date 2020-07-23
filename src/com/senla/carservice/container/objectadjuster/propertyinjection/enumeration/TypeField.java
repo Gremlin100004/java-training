@@ -13,11 +13,8 @@ public enum TypeField {
     TypeField(final Class<?> referenceDataTypeClass) {
         this.referenceDataTypeClass = referenceDataTypeClass;
     }
-    
+
     public Class<?> getReferenceDataTypeClass() {
         return referenceDataTypeClass;
     }
 }
-
-
-

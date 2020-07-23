@@ -1,10 +1,10 @@
 package com.senla.carservice.container.objectadjuster.propertyinjection.annotationhandler;
 
 import com.senla.carservice.container.objectadjuster.AnnotationHandler;
-import com.senla.carservice.container.property.PropertyLoader;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.container.objectadjuster.propertyinjection.enumeration.DefaultValue;
 import com.senla.carservice.container.objectadjuster.propertyinjection.enumeration.TypeField;
+import com.senla.carservice.container.property.PropertyLoader;
 import com.senla.carservice.exception.BusinessException;
 
 import java.lang.reflect.Field;

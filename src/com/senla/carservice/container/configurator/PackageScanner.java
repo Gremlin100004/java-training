@@ -14,10 +14,10 @@ import java.util.stream.Stream;
 
 public class PackageScanner {
     private final String packageProject;
-    private static final char POINT = '.';
-    private static final char SLASH = '/';
-    private static final String CLASS_LITERAL = ".class";
-    private static final String EMPTY_LITERAL = "";
+    private static final char REPLACEMENT_CHARACTER = '.';
+    private static final char CHARACTER_TO_INSERT = '/';
+    private static final String CLASS_REPLACEMENT_CHARACTER = ".class";
+    private static final String CLASS_CHARACTER_TO_INSERT = "";
 
     public PackageScanner(String packageProject) {
         this.packageProject = packageProject;
@@ -28,7 +28,7 @@ public class PackageScanner {
         if (classLoader == null) {
             throw new BusinessException("ClassLoader error");
         }
-        URL url = classLoader.getResource(packageProject.replace(POINT, SLASH));
+        URL url = classLoader.getResource(packageProject.replace(REPLACEMENT_CHARACTER, CHARACTER_TO_INSERT));
         if (url == null) {
             throw new BusinessException("Error project package");
         }
@@ -46,8 +46,11 @@ public class PackageScanner {
 
     private List<Class<?>> getClassByPath(List<String> filesStringPaths) {
         return filesStringPaths.stream()
-            .map(file -> file.replace(SLASH, POINT).substring(file.replace(SLASH, POINT).lastIndexOf(packageProject))
-                    .replace(CLASS_LITERAL, EMPTY_LITERAL))
+            .map(file -> file.replace(CHARACTER_TO_INSERT,
+                                      REPLACEMENT_CHARACTER).substring(file.replace(CHARACTER_TO_INSERT,
+                                                                                    REPLACEMENT_CHARACTER)
+                                                                           .lastIndexOf(packageProject))
+                .replace(CLASS_REPLACEMENT_CHARACTER, CLASS_CHARACTER_TO_INSERT))
             .map(className -> {
                 try {
                     return Class.forName(className);

@@ -1,7 +1,7 @@
 package com.senla.carservice.container.contex;
 
-import com.senla.carservice.container.objectadjuster.AnnotationHandler;
 import com.senla.carservice.container.configurator.Configurator;
+import com.senla.carservice.container.objectadjuster.AnnotationHandler;
 import com.senla.carservice.exception.BusinessException;
 
 import java.lang.reflect.Field;
