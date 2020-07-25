@@ -1,11 +1,15 @@
 package com.senla.carservice.domain;
 
+import com.senla.carservice.domain.enumaration.Status;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Order extends AEntity {
+public class Order extends AEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Date creationTime;
     private Date executionStartTime;
     private Date leadTime;
@@ -115,5 +119,22 @@ public class Order extends AEntity {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+               "creationTime=" + creationTime +
+               ", executionStartTime=" + executionStartTime +
+               ", leadTime=" + leadTime +
+               ", masters=" + masters +
+               ", place=" + place +
+               ", automaker='" + automaker + '\'' +
+               ", model='" + model + '\'' +
+               ", registrationNumber='" + registrationNumber + '\'' +
+               ", price=" + price +
+               ", status=" + status +
+               ", deleteStatus=" + deleteStatus +
+               '}';
     }
 }

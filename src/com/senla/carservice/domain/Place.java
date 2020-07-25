@@ -1,8 +1,14 @@
 package com.senla.carservice.domain;
 
-public class Place extends AEntity {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Place extends AEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Integer number;
     private Boolean busyStatus;
+    private List<Order> orders = new ArrayList<>();
 
     public Place() {
     }
@@ -16,15 +22,32 @@ public class Place extends AEntity {
         return number;
     }
 
-    public Boolean isBusyStatus() {
+    public Boolean getBusyStatus() {
         return busyStatus;
     }
 
-    public void setNumber(Integer number) {
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setNumber(final Integer number) {
         this.number = number;
     }
 
-    public void setBusyStatus(Boolean busyStatus) {
+    public void setBusyStatus(final Boolean busyStatus) {
         this.busyStatus = busyStatus;
+    }
+
+    public void setOrders(final List<Order> orders) {
+        this.orders = orders;
+    }
+
+    @Override
+    public String toString() {
+        return "Place{" +
+               "number=" + number +
+               ", busyStatus=" + busyStatus +
+               ", orders=" + orders +
+               '}';
     }
 }

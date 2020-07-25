@@ -1,22 +1,20 @@
 package com.senla.carservice.ui.menu;
 
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.ui.util.Printer;
 
 import java.util.List;
 
+@Singleton
 public class Navigator {
-    private static Navigator instance;
     private Menu currentMenu;
+    private static final int INDEX_OFFSET = 1;
 
-    private Navigator(Menu currentMenu) {
-        this.currentMenu = currentMenu;
+    public Navigator() {
     }
 
-    public static Navigator getInstance(Menu currentMenu) {
-        if (instance == null) {
-            instance = new Navigator(currentMenu);
-        }
-        return instance;
+    public void addCurrentMenu(Menu currentMenu) {
+        this.currentMenu = currentMenu;
     }
 
     public void printMenu() {
@@ -29,7 +27,7 @@ public class Navigator {
             Printer.printInfo("There is no such item!!!");
             return;
         }
-        MenuItem menuItem = menuItems.get(index - 1);
+        MenuItem menuItem = menuItems.get(index - INDEX_OFFSET);
         menuItem.doAction();
         this.currentMenu = menuItem.getNextMenu();
     }

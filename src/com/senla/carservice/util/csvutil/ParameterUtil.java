@@ -1,6 +1,6 @@
-package com.senla.carservice.csvutil;
+package com.senla.carservice.util.csvutil;
 
-import com.senla.carservice.domain.Status;
+import com.senla.carservice.domain.enumaration.Status;
 import com.senla.carservice.exception.BusinessException;
 
 public class ParameterUtil {
@@ -19,12 +19,11 @@ public class ParameterUtil {
     public static Integer getValueInteger(String value) {
         if (value.equals("null")) {
             return null;
-        } else {
-            try {
-                return Integer.parseInt(value);
-            } catch (NumberFormatException e) {
-                throw new BusinessException("wrong structure csv file");
-            }
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new BusinessException("wrong structure csv file");
         }
     }
 

@@ -1,8 +1,8 @@
 package com.senla.carservice.repository;
 
 import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Order;
 
+import java.util.Date;
 import java.util.List;
 
 public interface MasterRepository {
@@ -21,5 +21,5 @@ public interface MasterRepository {
 
     List<Master> getMasters();
 
-    List<Master> getFreeMasters(List<Order> orders);
+    List<Master> getFreeMasters(Date date);
 }

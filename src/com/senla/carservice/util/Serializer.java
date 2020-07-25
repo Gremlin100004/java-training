@@ -1,80 +1,46 @@
 package com.senla.carservice.util;
 
+import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.repository.MasterRepository;
-import com.senla.carservice.repository.MasterRepositoryImpl;
-import com.senla.carservice.repository.OrderRepository;
-import com.senla.carservice.repository.OrderRepositoryImpl;
-import com.senla.carservice.repository.PlaceRepository;
-import com.senla.carservice.repository.PlaceRepositoryImpl;
+import com.senla.carservice.repository.ApplicationState;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Objects;
+import java.net.URISyntaxException;
+import java.net.URL;
 
+@Singleton
 public class Serializer {
-    private static final ClassLoader CLASS_LOADER = PropertyLoader.class.getClassLoader();
-    private static final String MASTER_SER = PropertyLoader.getPropertyValue("serializableMaster");
-    private static final String PLACE_SER = PropertyLoader.getPropertyValue("serializablePlace");
-    private static final String ORDER_SER = PropertyLoader.getPropertyValue("serializableOrder");
+    @ConfigProperty
+    private String filePathSerialize;
 
-    private Serializer() {
+    public Serializer() {
     }
 
-    public static void serializeMaster(MasterRepository masterRepository) {
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(
-            Objects.requireNonNull(CLASS_LOADER.getResource(MASTER_SER)).getFile()))) {
-            objectOutputStream.writeObject(masterRepository);
-        } catch (IOException e) {
-            throw new BusinessException("Serialize masters problem");
+    public void serializeEntities(ApplicationState applicationState) {
+        ClassLoader classLoader = Serializer.class.getClassLoader();
+        URL url = classLoader.getResource(filePathSerialize);
+        if (url == null) {
+            throw new BusinessException("Url is null");
+        }
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+            new FileOutputStream(new File(url.toURI())))) {
+            objectOutputStream.writeObject(applicationState);
+        } catch (IOException | URISyntaxException e) {
+            throw new BusinessException("Error url serialize object");
         }
     }
 
-    public static MasterRepository deserializeMaster() {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(
-            Objects.requireNonNull(CLASS_LOADER.getResource(MASTER_SER)).getFile()))) {
-            return (MasterRepositoryImpl) objectInputStream.readObject();
+    public ApplicationState deserializeEntities() {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(
+            Thread.currentThread().getContextClassLoader().getResourceAsStream(filePathSerialize))) {
+            return (ApplicationState) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new BusinessException("Deserialize masters problem");
-        }
-    }
-
-    public static void serializePlace(PlaceRepository placeRepository) {
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(
-            Objects.requireNonNull(CLASS_LOADER.getResource(PLACE_SER)).getFile()))) {
-            objectOutputStream.writeObject(placeRepository);
-        } catch (IOException e) {
-            throw new BusinessException("Serialize places problem");
-        }
-    }
-
-    public static PlaceRepository deserializePlace() {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(
-            Objects.requireNonNull(CLASS_LOADER.getResource(PLACE_SER)).getFile()))) {
-            return (PlaceRepositoryImpl) objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new BusinessException("Deserialize places problem");
-        }
-    }
-
-    public static void serializeOrder(OrderRepository orderRepository) {
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(
-            Objects.requireNonNull(CLASS_LOADER.getResource(ORDER_SER)).getFile()))) {
-            objectOutputStream.writeObject(orderRepository);
-        } catch (IOException e) {
-            throw new BusinessException("Serialize orders problem");
-        }
-    }
-
-    public static OrderRepository deserializeOrder() {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(
-            Objects.requireNonNull(CLASS_LOADER.getResource(ORDER_SER)).getFile()))) {
-            return (OrderRepositoryImpl) objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new BusinessException("Deserialize orders problem");
+            throw new BusinessException("Error deserialize objects");
         }
     }
 }

@@ -1,20 +1,17 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.csvutil.CsvOrder;
+import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.domain.Status;
+import com.senla.carservice.domain.enumaration.Status;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
-import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.repository.OrderRepository;
-import com.senla.carservice.repository.OrderRepositoryImpl;
 import com.senla.carservice.repository.PlaceRepository;
-import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
-import com.senla.carservice.util.PropertyLoader;
-import com.senla.carservice.util.Serializer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -23,23 +20,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Singleton
 public class OrderServiceImpl implements OrderService {
-    private static OrderService instance;
-    private final OrderRepository orderRepository;
-    private final PlaceRepository placeRepository;
-    private final MasterRepository masterRepository;
+    @Dependency
+    private OrderRepository orderRepository;
+    @Dependency
+    private PlaceRepository placeRepository;
+    @Dependency
+    private MasterRepository masterRepository;
+    @ConfigProperty
+    private boolean isBlockShiftTime;
 
-    private OrderServiceImpl() {
-        orderRepository = OrderRepositoryImpl.getInstance();
-        placeRepository = PlaceRepositoryImpl.getInstance();
-        masterRepository = MasterRepositoryImpl.getInstance();
-    }
-
-    public static OrderService getInstance() {
-        if (instance == null) {
-            instance = new OrderServiceImpl();
-        }
-        return instance;
+    public OrderServiceImpl() {
     }
 
     @Override
@@ -66,8 +58,8 @@ public class OrderServiceImpl implements OrderService {
         if (!orders.isEmpty()) {
             orders = sortOrderByPeriod(orders, executionStartTime, leadTime);
         }
-        int numberFreeMasters = masterRepository.getMasters().size() - orders
-            .stream().mapToInt(order -> order.getMasters().size()).sum();
+        int numberFreeMasters = masterRepository.getMasters().size() - orders.stream()
+            .mapToInt(order -> order.getMasters().size()).sum();
         int numberFreePlace = orderRepository.getOrders().size() - orders.size();
         if (numberFreeMasters == 0) {
             throw new BusinessException("The number of masters is zero");
@@ -85,13 +77,15 @@ public class OrderServiceImpl implements OrderService {
         checkOrders();
         Order currentOrder = orderRepository.getLastOrder();
         List<Master> masters = currentOrder.getMasters();
-        masters.stream().filter(orderMaster -> orderMaster.equals(master)).forEachOrdered(orderMaster -> {
-            throw new BusinessException("This master already exists");
-        });
+        masters.stream()
+            .filter(orderMaster -> orderMaster.equals(master))
+            .forEachOrdered(orderMaster -> {
+                throw new BusinessException("This master already exists");
+            });
         masters.add(master);
         currentOrder.setMasters(masters);
         orderRepository.updateOrder(currentOrder);
-        master.setNumberOrder(master.getNumberOrder() != null ? master.getNumberOrder() + 1 : 1);
+        master.getOrders().add(currentOrder);
         masterRepository.updateMaster(master);
     }
 
@@ -100,6 +94,8 @@ public class OrderServiceImpl implements OrderService {
         checkOrders();
         Order currentOrder = orderRepository.getLastOrder();
         currentOrder.setPlace(place);
+        place.getOrders().add(currentOrder);
+        placeRepository.updatePlace(place);
         orderRepository.updateOrder(currentOrder);
     }
 
@@ -126,11 +122,13 @@ public class OrderServiceImpl implements OrderService {
         order.setLeadTime(new Date());
         order.setStatus(Status.CANCELED);
         order.getMasters().forEach(master -> {
-            master.setNumberOrder(master.getNumberOrder() - 1);
+            master.getOrders().remove(order);
             masterRepository.updateMaster(master);
         });
-        order.getPlace().setBusyStatus(false);
-        placeRepository.updatePlace(order.getPlace());
+        Place place = order.getPlace();
+        place.setBusyStatus(false);
+        place.getOrders().remove(order);
+        placeRepository.updatePlace(place);
         orderRepository.updateOrder(order);
     }
 
@@ -139,8 +137,13 @@ public class OrderServiceImpl implements OrderService {
         checkStatusOrder(order);
         order.setLeadTime(new Date());
         order.setStatus(Status.COMPLETED);
-        order.getMasters().forEach(master -> master.setNumberOrder(master.getNumberOrder() - 1));
-        order.getPlace().setBusyStatus(false);
+        order.getMasters().forEach(master -> {
+            master.getOrders().remove(order);
+            masterRepository.updateMaster(master);
+        });
+        Place place = order.getPlace();
+        place.setBusyStatus(false);
+        place.getOrders().remove(order);
         placeRepository.updatePlace(order.getPlace());
         orderRepository.updateOrder(order);
     }
@@ -152,13 +155,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("shiftTime"))) {
+        if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
         DateUtil.checkDateTime(executionStartTime, leadTime);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(leadTime);
         order.setExecutionStartTime(executionStartTime);
+        Place place = order.getPlace();
+        place.getOrders().set(place.getOrders().indexOf(order), order);
+        order.getMasters().forEach(master -> {
+            master.getOrders().set(master.getOrders().indexOf(order), order);
+            masterRepository.updateMaster(master);
+        });
+        placeRepository.updatePlace(place);
         orderRepository.updateOrder(order);
     }
 
@@ -188,13 +198,6 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream()
             .sorted(Comparator.comparing(Order::getExecutionStartTime, Comparator.nullsLast(Comparator.naturalOrder())))
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Order> getOrderByPeriod(Date startPeriod, Date endPeriod) {
-        checkOrders();
-        DateUtil.checkPeriodTime(startPeriod, endPeriod);
-        return sortOrderByPeriod(orderRepository.getOrders(), startPeriod, endPeriod);
     }
 
     @Override
@@ -247,18 +250,6 @@ public class OrderServiceImpl implements OrderService {
         return sortOrderByPeriod(orderRepository.getDeletedOrders(), startPeriod, endPeriod);
     }
 
-    @Override
-    public void serializeOrder() {
-        Serializer.serializeOrder(OrderRepositoryImpl.getInstance());
-    }
-
-    @Override
-    public void deserializeOrder() {
-        OrderRepository orderRepositoryRestore = Serializer.deserializeOrder();
-        orderRepository.updateListOrder(orderRepositoryRestore.getOrders());
-        orderRepository.updateGenerator(orderRepositoryRestore.getIdGeneratorOrder());
-    }
-
     private void checkOrders() {
         if (orderRepository.getOrders().isEmpty()) {
             throw new BusinessException("There are no orders");
@@ -283,7 +274,8 @@ public class OrderServiceImpl implements OrderService {
         }
         List<Order> sortArrayOrder = new ArrayList<>();
         orders.forEach(order -> {
-            if (order.getLeadTime().compareTo(startPeriod) >= 0 && order.getLeadTime().compareTo(endPeriod) <= 0) {
+            if (order.getLeadTime().after(startPeriod) && order.getLeadTime().equals(startPeriod) &&
+                order.getLeadTime().before(endPeriod) && order.getLeadTime().equals(endPeriod)) {
                 sortArrayOrder.add(order);
             }
         });
@@ -315,19 +307,5 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus().equals(Status.CANCELED)) {
             throw new BusinessException("The order has been canceled");
         }
-    }
-
-    @Override
-    public void exportOrder() {
-        checkOrders();
-        checkMasters();
-        checkPlaces();
-        CsvOrder.exportOrder(orderRepository.getOrders());
-    }
-
-    @Override
-    public void importOrder() {
-        CsvOrder.importOrder(masterRepository.getMasters(), placeRepository.getPlaces())
-            .forEach(orderRepository::updateOrder);
     }
 }

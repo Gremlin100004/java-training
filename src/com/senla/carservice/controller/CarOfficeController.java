@@ -1,66 +1,74 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.domain.Order;
+import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.CarOfficeService;
-import com.senla.carservice.service.CarOfficeServiceImpl;
 import com.senla.carservice.service.MasterService;
-import com.senla.carservice.service.MasterServiceImpl;
-import com.senla.carservice.service.OrderService;
-import com.senla.carservice.service.OrderServiceImpl;
 import com.senla.carservice.service.PlaceService;
-import com.senla.carservice.service.PlaceServiceImpl;
 import com.senla.carservice.util.DateUtil;
 
 import java.util.Date;
-import java.util.List;
 
+@Singleton
 public class CarOfficeController {
-    private static CarOfficeController instance;
-    private final CarOfficeService carOfficeService;
-    private final OrderService orderService;
-    private final MasterService masterService;
-    private final PlaceService placeService;
+    @Dependency
+    private CarOfficeService carOfficeService;
+    @Dependency
+    private MasterService masterService;
+    @Dependency
+    private PlaceService placeService;
 
-    private CarOfficeController() {
-        carOfficeService = CarOfficeServiceImpl.getInstance();
-        orderService = OrderServiceImpl.getInstance();
-        masterService = MasterServiceImpl.getInstance();
-        placeService = PlaceServiceImpl.getInstance();
+    public CarOfficeController() {
     }
 
-    public static CarOfficeController getInstance() {
-        if (instance == null) {
-            instance = new CarOfficeController();
-        }
-        return instance;
-    }
-
-    public String getFreePlacesByDate(String date) {
+    public String getFreePlacesMastersByDate(String date) {
         Date dateFree = DateUtil.getDatesFromString(date, false);
         if (dateFree == null) {
             return "error date";
         }
-        Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
-        Date endDayDate = DateUtil.bringEndOfDayDate(dateFree);
         try {
-            List<Order> orders = orderService.getOrderByPeriod(startDayDate, endDayDate);
-            int numberFreeMasters = masterService.getNumberFreeMastersByDate(startDayDate, endDayDate, orders);
-            int numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate, endDayDate, orders);
-            return String.format("- number free places in service: %s\n- number free masters in service: %s",
-                                 numberFreePlace, numberFreeMasters);
-        } catch (BusinessException | DateException e) {
+            Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
+            int numberFreeMasters = masterService.getNumberFreeMastersByDate(startDayDate);
+            int numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate);
+            return "- number free places in service: " + numberFreePlace + "\n- number free masters in service: " +
+                   numberFreeMasters;
+        } catch (BusinessException e) {
             return e.getMessage();
         }
     }
 
     public String getNearestFreeDate() {
         try {
-            return String
-                .format("Nearest free date: %s", DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate()));
+            return "Nearest free date: " + DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false);
         } catch (BusinessException e) {
             return e.getMessage();
         }
+    }
+
+    public String exportEntities() {
+        try {
+            carOfficeService.exportEntities();
+            return "Export completed successfully!";
+        } catch (BusinessException e) {
+            return e.getMessage();
+        }
+    }
+
+    public String importEntities() {
+        try {
+            carOfficeService.importEntities();
+            return "Imported completed successfully!";
+        } catch (BusinessException e) {
+            return e.getMessage();
+        }
+    }
+
+    public void serializeEntities() {
+        carOfficeService.serializeEntities();
+    }
+
+    public void deserializeEntities() {
+        carOfficeService.deserializeEntities();
     }
 }

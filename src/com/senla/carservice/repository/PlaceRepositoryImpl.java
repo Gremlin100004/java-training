@@ -1,30 +1,30 @@
 package com.senla.carservice.repository;
 
-import com.senla.carservice.domain.Order;
+import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.util.PropertyLoader;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
-    private static PlaceRepository instance;
-    private static final long serialVersionUID = 1L;
+@Singleton
+public class PlaceRepositoryImpl implements PlaceRepository {
     private final List<Place> places;
-    private final IdGenerator idGeneratorPlace;
+    @ConfigProperty
+    private Boolean isBlockAddPlace;
+    @ConfigProperty
+    private Boolean isBlockDeletePlace;
+    @Dependency
+    private IdGenerator idGeneratorPlace;
+    private static final int SIZE_INDEX = 1;
+    private static final int PLACE_INDEX = -1;
 
-    private PlaceRepositoryImpl() {
+    public PlaceRepositoryImpl() {
         this.places = new ArrayList<>();
-        this.idGeneratorPlace = new IdGenerator();
-    }
-
-    public static PlaceRepository getInstance() {
-        if (instance == null) {
-            instance = new PlaceRepositoryImpl();
-        }
-        return instance;
     }
 
     @Override
@@ -38,19 +38,23 @@ public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
     }
 
     @Override
-    public List<Place> getFreePlaces(List<Order> orders) {
-        List<Place> freePlaces = new ArrayList<>(this.places);
-        orders.forEach(order -> freePlaces.remove(order.getPlace()));
-        return freePlaces;
+    public List<Place> getFreePlaces(Date startDayDate) {
+        return this.places.stream()
+            .filter(place -> place.getOrders().isEmpty() ||
+                             startDayDate.before(place.getOrders().get(place.getOrders().size() - SIZE_INDEX).getLeadTime()))
+            .collect(Collectors.toList());
     }
 
     @Override
     public void addPlace(Place addPlace) {
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("placeAdd")))
+        if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
-        this.places.stream().filter(place -> place.getNumber().equals(addPlace.getNumber())).forEachOrdered(place -> {
-            throw new BusinessException("Such a number exists");
-        });
+        }
+        this.places.stream()
+            .filter(place -> place.getNumber().equals(addPlace.getNumber()))
+            .forEach(place -> {
+                throw new BusinessException("Such a number exists");
+            });
         addPlace.setId(this.idGeneratorPlace.getId());
         this.places.add(addPlace);
     }
@@ -58,7 +62,7 @@ public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
     @Override
     public void updatePlace(Place place) {
         int index = this.places.indexOf(place);
-        if (index == -1){
+        if (index == PLACE_INDEX) {
             this.places.add(place);
         } else {
             this.places.set(index, place);
@@ -67,9 +71,12 @@ public class PlaceRepositoryImpl implements PlaceRepository, Serializable {
 
     @Override
     public void deletePlace(Place place) {
-        if (place.isBusyStatus()) throw new BusinessException("Place is busy");
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("placeDelete")))
+        if (place.getBusyStatus()) {
+            throw new BusinessException("Place is busy");
+        }
+        if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
+        }
         this.places.remove(place);
     }
 

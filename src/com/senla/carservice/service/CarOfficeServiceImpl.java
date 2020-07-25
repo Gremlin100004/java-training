@@ -1,41 +1,45 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.repository.ApplicationState;
 import com.senla.carservice.repository.MasterRepository;
-import com.senla.carservice.repository.MasterRepositoryImpl;
 import com.senla.carservice.repository.OrderRepository;
-import com.senla.carservice.repository.OrderRepositoryImpl;
 import com.senla.carservice.repository.PlaceRepository;
-import com.senla.carservice.repository.PlaceRepositoryImpl;
 import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.util.Serializer;
+import com.senla.carservice.util.csvutil.CsvMaster;
+import com.senla.carservice.util.csvutil.CsvOrder;
+import com.senla.carservice.util.csvutil.CsvPlace;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Singleton
 public class CarOfficeServiceImpl implements CarOfficeService {
-    private static CarOfficeService instance;
-    private final MasterRepository masterRepository;
-    private final PlaceRepository placeRepository;
-    private final OrderRepository orderRepository;
+    @Dependency
+    private MasterRepository masterRepository;
+    @Dependency
+    private PlaceRepository placeRepository;
+    @Dependency
+    private OrderRepository orderRepository;
+    @Dependency
+    private Serializer serializer;
+    @Dependency
+    private CsvPlace csvPlace;
+    @Dependency
+    private CsvOrder csvOrder;
+    @Dependency
+    private CsvMaster csvMaster;
+    private static final int NUMBER_DAY = 1;
 
-    private CarOfficeServiceImpl() {
-        masterRepository = MasterRepositoryImpl.getInstance();
-        placeRepository = PlaceRepositoryImpl.getInstance();
-        orderRepository = OrderRepositoryImpl.getInstance();
-    }
-
-    public static CarOfficeService getInstance() {
-        if (instance == null) {
-            instance = new CarOfficeServiceImpl();
-        }
-        return instance;
+    public CarOfficeServiceImpl() {
     }
 
     @Override
     public Date getNearestFreeDate() {
-        Date startDayDate = new Date();
         if (masterRepository.getMasters().isEmpty()) {
             throw new BusinessException("There are no masters");
         }
@@ -45,21 +49,81 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         if (placeRepository.getPlaces().isEmpty()) {
             throw new BusinessException("There are no places");
         }
-        for (Date endDayDate = DateUtil.bringEndOfDayDate(startDayDate);
-             orderRepository.getLastOrder().getLeadTime().compareTo(endDayDate) <= 0; DateUtil.addDays(endDayDate, 1)) {
-            startDayDate = DateUtil.bringStartOfDayDate(endDayDate);
-            List<Order> sortArrayOrder = new ArrayList<>();
-            for (Order order : orderRepository.getOrders()) {
-                if (order.getLeadTime().compareTo(startDayDate) >= 0 &&
-                    order.getLeadTime().compareTo(endDayDate) <= 0) {
-                    sortArrayOrder.add(order);
-                }
-            }
-            if (!masterRepository.getFreeMasters(sortArrayOrder).isEmpty() &&
-                !placeRepository.getFreePlaces(sortArrayOrder).isEmpty()) {
-                return DateUtil.addDays(startDayDate, -1);
+        Date leadTimeOrder = orderRepository.getLastOrder().getLeadTime();
+        Date dayDate = new Date();
+        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay); DateUtil.addDays(currentDay, NUMBER_DAY)) {
+            if (masterRepository.getFreeMasters(currentDay).isEmpty() ||
+                placeRepository.getFreePlaces(currentDay).isEmpty()) {
+                dayDate = currentDay;
+                currentDay = DateUtil.bringStartOfDayDate(currentDay);
+            } else {
+                break;
             }
         }
-        return startDayDate;
+        return dayDate;
+    }
+
+    @Override
+    public void importEntities() {
+        masterRepository.updateListMaster(csvMaster.importMasters(orderRepository.getOrders()));
+        placeRepository.updateListPlace(csvPlace.importPlaces(orderRepository.getOrders()));
+        List<Order> orders = csvOrder.importOrder(masterRepository.getMasters(), placeRepository.getPlaces());
+        orderRepository.updateListOrder(orders);
+        masterRepository.updateListMaster(csvMaster.importMasters(orders));
+        placeRepository.updateListPlace(csvPlace.importPlaces(orders));
+    }
+
+    @Override
+    public void exportEntities() {
+        checkOrders();
+        checkMasters();
+        checkPlaces();
+        csvOrder.exportOrder(orderRepository.getOrders());
+        csvMaster.exportMasters(masterRepository.getMasters());
+        csvPlace.exportPlaces(placeRepository.getPlaces());
+    }
+
+    @Override
+    public void serializeEntities() {
+        ApplicationState applicationState = new ApplicationState();
+        applicationState.setIdGeneratorMaster(masterRepository.getIdGeneratorMaster());
+        applicationState.setIdGeneratorPlace(placeRepository.getIdGeneratorPlace());
+        applicationState.setIdGeneratorOrder(orderRepository.getIdGeneratorOrder());
+        applicationState.setMasters(masterRepository.getMasters());
+        applicationState.setPlaces(placeRepository.getPlaces());
+        applicationState.setOrders(orderRepository.getOrders());
+        serializer.serializeEntities(applicationState);
+    }
+
+    @Override
+    public void deserializeEntities() {
+        ApplicationState applicationState = serializer.deserializeEntities();
+        if (applicationState == null) {
+            return;
+        }
+        masterRepository.updateGenerator(applicationState.getIdGeneratorMaster());
+        masterRepository.updateListMaster(applicationState.getMasters());
+        placeRepository.updateGenerator(applicationState.getIdGeneratorPlace());
+        placeRepository.updateListPlace(applicationState.getPlaces());
+        orderRepository.updateGenerator(applicationState.getIdGeneratorOrder());
+        orderRepository.updateListOrder(applicationState.getOrders());
+    }
+
+    private void checkOrders() {
+        if (orderRepository.getOrders().isEmpty()) {
+            throw new BusinessException("There are no orders");
+        }
+    }
+
+    private void checkMasters() {
+        if (masterRepository.getMasters().isEmpty()) {
+            throw new BusinessException("There are no masters");
+        }
+    }
+
+    private void checkPlaces() {
+        if (placeRepository.getPlaces().isEmpty()) {
+            throw new BusinessException("There are no places");
+        }
     }
 }

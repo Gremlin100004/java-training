@@ -1,32 +1,29 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.domain.Status;
+import com.senla.carservice.domain.enumaration.Status;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.util.PropertyLoader;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderRepositoryImpl implements OrderRepository, Serializable {
-    private static OrderRepository instance;
-    private static final long serialVersionUID = 1L;
+@Singleton
+public class OrderRepositoryImpl implements OrderRepository {
     private final List<Order> orders;
-    private final IdGenerator idGeneratorOrder;
+    @ConfigProperty
+    private Boolean isBlockDeleteOrder;
+    @Dependency
+    private IdGenerator idGeneratorOrder;
+    private static final int SIZE_INDEX = 1;
+    private static final int ORDER_INDEX = -1;
 
-    private OrderRepositoryImpl() {
+    public OrderRepositoryImpl() {
         this.orders = new ArrayList<>();
-        this.idGeneratorOrder = new IdGenerator();
-    }
-
-    public static OrderRepository getInstance() {
-        if (instance == null) {
-            instance = new OrderRepositoryImpl();
-        }
-        return instance;
     }
 
     @Override
@@ -41,59 +38,42 @@ public class OrderRepositoryImpl implements OrderRepository, Serializable {
 
     @Override
     public Order getLastOrder() {
-        return this.orders.get(orders.size() - 1);
+        return this.orders.get(orders.size() - SIZE_INDEX);
     }
 
     @Override
     public List<Order> getCompletedOrders() {
-        List<Order> completedOrders = new ArrayList<>();
-        this.orders.forEach(order -> {
-            if (order.getStatus().equals(Status.COMPLETED)) {
-                completedOrders.add(order);
-            }
-        });
-        return completedOrders;
+        return this.orders.stream()
+            .filter(order -> order.getStatus().equals(Status.COMPLETED))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> getDeletedOrders() {
-        List<Order> deletedOrders = new ArrayList<>();
-        this.orders.forEach(order -> {
-            if (order.isDeleteStatus()) {
-                deletedOrders.add(order);
-            }
-        });
-        return deletedOrders;
+        return this.orders.stream()
+            .filter(Order::isDeleteStatus)
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> getCanceledOrders() {
-        List<Order> canceledOrders = new ArrayList<>();
-        this.orders.forEach(order -> {
-            if (order.getStatus().equals(Status.CANCELED)) {
-                canceledOrders.add(order);
-            }
-        });
-        return canceledOrders;
+        return this.orders.stream()
+            .filter(order -> order.getStatus().equals(Status.CANCELED))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> getRunningOrders() {
-        List<Order> arrayOder = new ArrayList<>();
-        this.orders.forEach(order -> {
-            if (order.getStatus().equals(Status.PERFORM) && !order.isDeleteStatus()) {
-                arrayOder.add(order);
-            }
-        });
-        return arrayOder;
+        return this.orders.stream()
+            .filter(order -> order.getStatus().equals(Status.PERFORM) && !order.isDeleteStatus())
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> getMasterOrders(Master master) {
-        return this.orders.stream().filter(order -> !order.isDeleteStatus() &&
-                                                    order.getMasters().stream().anyMatch(masterService ->
-                                                                                             masterService
-                                                                                                 .equals(master)))
+        return this.orders.stream()
+            .filter(order -> !order.isDeleteStatus() && order.getMasters().stream()
+                .anyMatch(masterService -> masterService.equals(master)))
             .collect(Collectors.toList());
     }
 
@@ -110,7 +90,7 @@ public class OrderRepositoryImpl implements OrderRepository, Serializable {
 
     @Override
     public void deleteOrder(Order order) {
-        if (!Boolean.parseBoolean(PropertyLoader.getPropertyValue("deleteOrder"))) {
+        if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
         checkStatusOrderDelete(order);
@@ -136,7 +116,7 @@ public class OrderRepositoryImpl implements OrderRepository, Serializable {
 
     private void update(Order order) {
         int index = this.orders.indexOf(order);
-        if (index == -1) {
+        if (index == ORDER_INDEX) {
             this.orders.add(order);
         } else {
             this.orders.set(index, order);
