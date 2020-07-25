@@ -48,6 +48,7 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
     }
 
     private Class<?> getFieldType(ConfigProperty annotation, Class<?> defaultType) {
+        // енам можно сравнивать через двойное равно, это поможет избежать НПЕ
         if (annotation.type().equals(TypeField.DEFAULT)) {
             return defaultType;
         } else {
@@ -55,6 +56,10 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
         }
     }
 
+    // метод надеется, что кто-то, кто будет вызывать этот метод, разблокирует поле за него
+    // но если тот, кто будет вызывать этот метод, забудет разблокировать поле,
+    // то будет исключение
+    // как думаешь, это удобный метод?
     private void injectValueInField(Field field, String value, Class<?> fieldType, Object inputObject) {
         try {
             if (fieldType.equals(Boolean.class)) {

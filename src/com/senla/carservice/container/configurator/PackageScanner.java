@@ -23,6 +23,10 @@ public class PackageScanner {
         this.packageProject = packageProject;
     }
 
+    // название метода вводит в заблуждение - кажется, что оно возвращает классы массивов
+    // использовать английский порядок слов при нейминге с двумя существительными (главное слово ставится
+    // последним)
+    // а еще лучше просто getClasses()
     public List<Class<?>> getArrayClasses() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
@@ -44,21 +48,25 @@ public class PackageScanner {
         return packageProject;
     }
 
+    // я отформатирую
+    // старайся избегать смещения кода за счет отступов в конец строки (вправо), потому
+    // что рабочая зона как раз находится слева
     private List<Class<?>> getClassByPath(List<String> filesStringPaths) {
-        return filesStringPaths.stream()
-            .map(file -> file.replace(CHARACTER_TO_INSERT,
-                                      REPLACEMENT_CHARACTER).substring(file.replace(CHARACTER_TO_INSERT,
-                                                                                    REPLACEMENT_CHARACTER)
-                                                                           .lastIndexOf(packageProject))
-                .replace(CLASS_REPLACEMENT_CHARACTER, CLASS_CHARACTER_TO_INSERT))
-            .map(className -> {
-                try {
-                    return Class.forName(className);
-                } catch (ClassNotFoundException e) {
-                    throw new BusinessException("Error name class");
-                }
-            })
-            .collect(Collectors.toList());
+        return filesStringPaths
+                .stream()
+                .map(file -> file.replace(CHARACTER_TO_INSERT, REPLACEMENT_CHARACTER)
+                        .substring(file
+                                .replace(CHARACTER_TO_INSERT, REPLACEMENT_CHARACTER)
+                                .lastIndexOf(packageProject))
+                        .replace(CLASS_REPLACEMENT_CHARACTER, CLASS_CHARACTER_TO_INSERT))
+                .map(className -> {
+                    try {
+                        return Class.forName(className);
+                    } catch (ClassNotFoundException e) {
+                        throw new BusinessException("Error name class");
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     private static List<String> getStringFilesPaths(String stringPath) {

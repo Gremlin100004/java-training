@@ -20,9 +20,15 @@ public class Context {
         this.configurator = configurator;
     }
 
+    // метод принимает в себя объект этого же класса? точно хорошее решение?
+    // почему не использовать this? вдруг придет объект другого контекста, что тогда -
+    // будет два контекста в приложении?
     public void createAnnotationHandlers(Context context) {
         for (Class<?> classImplementation : configurator.getAnnotationHandlerClasses()) {
             AnnotationHandler annotationHandler = createRawObject(classImplementation);
+            // просто как вариант: чтобы не передавать контекст через рефлекшн, можно сделать
+            // сеттер в интерфейсе для контекста и просто сетать туда контекст
+            // второй вариант - добавить контекст в аргументы метода configure()
             for (Field field : annotationHandler.getClass().getDeclaredFields()) {
                 if (field.getType().equals(Context.class)) {
                     field.setAccessible(true);
@@ -52,6 +58,7 @@ public class Context {
 
     @SuppressWarnings("unchecked")
     public <T> T getObject(Class<T> objectClass) {
+        // название переменной classObject вводит в заблуждение
         T classObject = (T) singletons.get(objectClass.getName());
         if (classObject != null) {
             return classObject;
@@ -65,6 +72,9 @@ public class Context {
         return classObject;
     }
 
+    // если используешь дженерики, то используй их до конца - в том числе можно пропробовать
+    // добавить их в Class<?>
+    // только нужно разобраться, кто кого экстендит (это было в видео Борисова)
     @SuppressWarnings("unchecked")
     private <T> T createRawObject(Class<?> classImplementation) {
         try {

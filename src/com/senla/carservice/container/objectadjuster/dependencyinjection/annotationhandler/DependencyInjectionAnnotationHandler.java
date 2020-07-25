@@ -21,6 +21,8 @@ public class DependencyInjectionAnnotationHandler implements AnnotationHandler {
                 try {
                     field.set(classObject, context.getObject(field.getType()));
                 } catch (IllegalAccessException e) {
+                    // это не похоже на бизнес исключение
+                    // не забываем про независимость от основного проекта
                     throw new BusinessException("Error set value to a field");
                 }
             }

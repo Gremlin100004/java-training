@@ -9,6 +9,7 @@ public class Container {
     private static Context context;
 
     static {
+        // метод getPropertyValue может вернуть нал, что вызовет НПЕ в классе PackageScanner
         initialize(PropertyLoader.getPropertyValue(PropertyKey.PROPERTY_FILE_NAME.getValue(),
                                                    PropertyKey.PACKAGE_PROJECT.getValue()));
     }
