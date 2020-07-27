@@ -5,9 +5,15 @@ import com.senla.multithreading.taskthree.repository.RepositoryNumberImpl;
 import com.senla.multithreading.taskthree.thread.Consumer;
 import com.senla.multithreading.taskthree.thread.Manufacturer;
 
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class Main {
     public static void main(String[] args) {
-        RepositoryNumber repositoryNumber = new RepositoryNumberImpl();
+        Lock lock = new ReentrantLock();
+        Condition condition = lock.newCondition();
+        RepositoryNumber repositoryNumber = new RepositoryNumberImpl(condition, lock);
         Consumer consumer = new Consumer(repositoryNumber);
         Manufacturer manufacturer = new Manufacturer(repositoryNumber);
         new Thread(manufacturer).start();

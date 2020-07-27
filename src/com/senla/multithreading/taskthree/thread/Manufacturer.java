@@ -11,7 +11,7 @@ public class Manufacturer implements Runnable {
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
         int i = 0;
         while (i < 100){
             int randomNumber = Randomizer.getRandomNumber();
