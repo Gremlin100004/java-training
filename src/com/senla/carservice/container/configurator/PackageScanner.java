@@ -23,11 +23,7 @@ public class PackageScanner {
         this.packageProject = packageProject;
     }
 
-    // название метода вводит в заблуждение - кажется, что оно возвращает классы массивов
-    // использовать английский порядок слов при нейминге с двумя существительными (главное слово ставится
-    // последним)
-    // а еще лучше просто getClasses()
-    public List<Class<?>> getArrayClasses() {
+    public List<Class<?>> getClasses() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             throw new BusinessException("ClassLoader error");
@@ -48,9 +44,6 @@ public class PackageScanner {
         return packageProject;
     }
 
-    // я отформатирую
-    // старайся избегать смещения кода за счет отступов в конец строки (вправо), потому
-    // что рабочая зона как раз находится слева
     private List<Class<?>> getClassByPath(List<String> filesStringPaths) {
         return filesStringPaths
                 .stream()

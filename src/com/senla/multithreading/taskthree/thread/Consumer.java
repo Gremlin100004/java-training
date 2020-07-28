@@ -3,7 +3,6 @@ package com.senla.multithreading.taskthree.thread;
 import com.senla.multithreading.taskthree.repository.RepositoryNumber;
 
 public class Consumer implements Runnable {
-    //    private ConsumerService consumerService;
     private RepositoryNumber repositoryNumber;
 
     public Consumer(RepositoryNumber repositoryNumber) {

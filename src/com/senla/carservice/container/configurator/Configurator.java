@@ -34,7 +34,7 @@ public class Configurator {
     }
 
     private void initialize() {
-        List<Class<?>> classesOfPackage = packageScanner.getArrayClasses();
+        List<Class<?>> classesOfPackage = packageScanner.getClasses();
         if (classesOfPackage.isEmpty()) {
             throw new BusinessException("there are no classes");
         }

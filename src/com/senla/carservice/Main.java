@@ -10,7 +10,6 @@ public class Main {
         carOfficeController.deserializeEntities();
         MenuController menuController = Container.getObject(MenuController.class);
 
-        menuController.configure();
         menuController.run();
         carOfficeController.serializeEntities();
     }
