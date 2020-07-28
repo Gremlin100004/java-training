@@ -1,10 +1,19 @@
 package com.senla.multithreading.taskfour;
 
+import com.senla.multithreading.taskfour.thread.ServiceThread;
+
 public class Main {
     public static void main(String[] args) {
-        Integer repetitionsNumber = 10;
-        Integer sleepTime = 500;
-        ServiceStream serviceStream = new ServiceStream(repetitionsNumber, sleepTime);
-        new Thread(serviceStream).start();
+        int sleepTime = 1;
+        int flowDelayTime = 10000;
+        ServiceThread serviceThread = new ServiceThread(sleepTime);
+        Thread daemonThread = new Thread(serviceThread);
+        daemonThread.setDaemon(true);
+        daemonThread.start();
+        try {
+            Thread.sleep(flowDelayTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
