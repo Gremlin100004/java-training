@@ -1,4 +1,6 @@
-package com.senla.multithreading.taskone.statethread.thread;
+package com.senla.multithreading.taskone.thread;
+
+import com.senla.multithreading.taskone.exception.ThreadException;
 
 public class AdditionalThread implements Runnable {
     @Override
@@ -6,7 +8,7 @@ public class AdditionalThread implements Runnable {
         try {
             Thread.sleep(2000);
         } catch (Exception e){
-            e.printStackTrace();
+            throw new ThreadException("Error thread sleep");
         }
     }
 }

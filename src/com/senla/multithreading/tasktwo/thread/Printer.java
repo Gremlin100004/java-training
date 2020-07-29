@@ -1,13 +1,13 @@
-package com.senla.multithreading.tasktwo.names.thread;
+package com.senla.multithreading.tasktwo.thread;
 
-import com.senla.multithreading.tasktwo.names.exception.ThreadException;
+import com.senla.multithreading.tasktwo.exception.ThreadException;
 
-public class ThreadPrinter implements Runnable {
-    private final Integer repetitionsNumber;
+public class Printer implements Runnable {
+    private final Integer numberOfCycles;
     private final Integer sleepTime;
 
-    public ThreadPrinter(Integer repetitionsNumber, Integer sleepTime) {
-        this.repetitionsNumber = repetitionsNumber;
+    public Printer(Integer numberOfCycles, Integer sleepTime) {
+        this.numberOfCycles = numberOfCycles;
         this.sleepTime = sleepTime;
     }
 
@@ -16,15 +16,15 @@ public class ThreadPrinter implements Runnable {
         if (sleepTime == null) {
             throw new ThreadException("Sleep time error");
         }
-        if (repetitionsNumber == null) {
+        if (numberOfCycles == null) {
             throw new ThreadException("Repeat number error");
         }
-        for (int i = 0; i < repetitionsNumber; i++) {
+        for (int i = 0; i < numberOfCycles; i++) {
             System.out.println(Thread.currentThread().getName());
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
-                throw new ThreadException("Repeat number error");
+                throw new ThreadException("Error thread sleep");
             }
         }
     }

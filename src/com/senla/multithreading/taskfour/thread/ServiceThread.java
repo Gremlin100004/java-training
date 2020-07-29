@@ -11,8 +11,8 @@ public class ServiceThread implements Runnable {
 
     @Override
     public void run() {
-        while (true){
-            System.out.println(String.format("%1$TH:%1$TM:%1$TS", System.currentTimeMillis()));
+        while (true) {
+            System.out.printf("%1$TH:%1$TM:%1$TS%n", System.currentTimeMillis());
             try {
                 Thread.sleep(millisecondsSleepTime);
             } catch (InterruptedException e) {
