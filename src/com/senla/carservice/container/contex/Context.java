@@ -4,7 +4,6 @@ import com.senla.carservice.container.configurator.Configurator;
 import com.senla.carservice.container.objectadjuster.AnnotationHandler;
 import com.senla.carservice.exception.BusinessException;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,24 +15,13 @@ public class Context {
     private final List<AnnotationHandler> annotationHandlers = new ArrayList<>();
     private final Configurator configurator;
 
-    public Context(final Configurator configurator) {
+    public Context(Configurator configurator) {
         this.configurator = configurator;
     }
 
-    public void createAnnotationHandlers(Context context) {
+    public void createAnnotationHandlers() {
         for (Class<?> classImplementation : configurator.getAnnotationHandlerClasses()) {
-            AnnotationHandler annotationHandler = createRawObject(classImplementation);
-            for (Field field : annotationHandler.getClass().getDeclaredFields()) {
-                if (field.getType().equals(Context.class)) {
-                    field.setAccessible(true);
-                    try {
-                        field.set(annotationHandler, context);
-                        break;
-                    } catch (IllegalAccessException e) {
-                        throw new BusinessException("Error set value to a field");
-                    }
-                }
-            }
+            AnnotationHandler annotationHandler = (AnnotationHandler) createRawObject(classImplementation);
             annotationHandlers.add(annotationHandler);
         }
     }
@@ -45,38 +33,37 @@ public class Context {
     }
 
     public void configureSingletons() {
-        for (Object classObject : singletons.values()) {
-            configureObject(classObject);
+        for (Object classInstance : singletons.values()) {
+            configureObject(classInstance);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getObject(Class<T> objectClass) {
-        T classObject = (T) singletons.get(objectClass.getName());
-        if (classObject != null) {
-            return classObject;
+    public <T> T getObject(Class<? extends T> objectClass) {
+        T classInstance = (T) singletons.get(objectClass.getName());
+        if (classInstance != null) {
+            return classInstance;
         }
         Class<?> classImplementation = configurator.getPrototypeClass(objectClass.getName());
         if (classImplementation == null) {
             throw new BusinessException("Error input class name");
         }
-        classObject = createRawObject(classImplementation);
-        configureObject(classObject);
-        return classObject;
+        classInstance = (T) createRawObject(classImplementation);
+        configureObject(classInstance);
+        return classInstance;
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T createRawObject(Class<?> classImplementation) {
+    private <T> T createRawObject(Class<? extends T> classImplementation) {
         try {
-            return (T) classImplementation.getDeclaredConstructor().newInstance();
+            return classImplementation.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new BusinessException("Problem create object");
         }
     }
 
-    private void configureObject(Object classObject) {
+    private void configureObject(Object classInstance) {
         for (AnnotationHandler annotationHandler : annotationHandlers) {
-            annotationHandler.configure(classObject);
+            annotationHandler.configure(classInstance, this);
         }
     }
 }

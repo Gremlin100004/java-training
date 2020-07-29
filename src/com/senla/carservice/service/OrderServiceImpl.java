@@ -286,13 +286,13 @@ public class OrderServiceImpl implements OrderService {
         if (order.isDeleteStatus()) {
             throw new BusinessException("The order has been deleted");
         }
-        if (order.getStatus().equals(Status.COMPLETED)) {
+        if (order.getStatus() == Status.COMPLETED) {
             throw new BusinessException("The order has been completed");
         }
-        if (order.getStatus().equals(Status.PERFORM)) {
+        if (order.getStatus() == Status.PERFORM) {
             throw new BusinessException("Order is being executed");
         }
-        if (order.getStatus().equals(Status.CANCELED)) {
+        if (order.getStatus() == Status.CANCELED) {
             throw new BusinessException("The order has been canceled");
         }
     }
@@ -301,10 +301,10 @@ public class OrderServiceImpl implements OrderService {
         if (order.isDeleteStatus()) {
             throw new BusinessException("The order has been deleted");
         }
-        if (order.getStatus().equals(Status.COMPLETED)) {
+        if (order.getStatus() == Status.COMPLETED) {
             throw new BusinessException("The order has been completed");
         }
-        if (order.getStatus().equals(Status.CANCELED)) {
+        if (order.getStatus() == Status.CANCELED) {
             throw new BusinessException("The order has been canceled");
         }
     }
