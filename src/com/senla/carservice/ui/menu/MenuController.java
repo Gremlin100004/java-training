@@ -14,6 +14,11 @@ public class MenuController {
     public MenuController() {
     }
 
+    // вызов этого метода лучше сделать из метода ран,
+    // иначе пользоваться таким классом очень неудобно - можно забыть вызывать configure()
+    // или вызывать его дважды
+    // учитывая, что метод ран вызывается единожды в приложении, будет норм, если поместить эту логику
+    // туда
     public void configure() {
         builder.buildMenu();
         navigator.addCurrentMenu(builder.getRootMenu());

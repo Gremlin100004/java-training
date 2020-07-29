@@ -7,6 +7,7 @@ public enum TypeField {
     BOOLEAN(Boolean.class),
     INTEGER(Integer.class),
     DOUBLE(Double.class),
+    // почему стринг класс?
     DEFAULT(String.class);
     private final Class<?> referenceDataTypeClass;
 
