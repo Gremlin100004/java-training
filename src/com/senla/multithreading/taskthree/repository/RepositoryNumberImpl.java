@@ -17,6 +17,7 @@ public class RepositoryNumberImpl implements RepositoryNumber {
         this.randomNumbersBuffer = IntBuffer.wrap(new int[limitBuffer]);
     }
 
+    // почему метод не синхронизирован?
     @Override
     public void addRandomNumber(int randomNumber) {
         if (randomNumbersBuffer.position() >= randomNumbersBuffer.limit()) {

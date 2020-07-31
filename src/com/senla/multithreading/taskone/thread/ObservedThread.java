@@ -11,6 +11,8 @@ public class ObservedThread implements Runnable {
 
     @Override
     public void run() {
+        // можно вынести в отдельный синхронайзд метод, если нужно - можно даже в
+        // отдельный класс
         try {
             synchronized (synchronizationObject) {
                 synchronizationObject.wait();

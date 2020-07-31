@@ -5,6 +5,7 @@ import com.senla.multithreading.taskfour.exception.ThreadException;
 public class ServiceThread implements Runnable {
     private final Integer millisecondsSleepTime;
 
+    // перевод secondsSleepTime: время сна секунд
     public ServiceThread(int secondsSleepTime) {
         this.millisecondsSleepTime = secondsSleepTime * 1000;
     }
