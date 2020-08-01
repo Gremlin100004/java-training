@@ -1,4 +1,4 @@
-package com.senla.multithreading.taskone.exception;
+package com.senla.multithreading.common.exception;
 
 public class ThreadException extends RuntimeException {
     public ThreadException(String message) {
