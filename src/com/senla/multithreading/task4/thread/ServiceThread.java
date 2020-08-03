@@ -18,6 +18,7 @@ public class ServiceThread extends Thread {
 
     @Override
     public void run() {
+        // попробуй while (!isInterrupted())
         while (true) {
             System.out.printf("%1$TH:%1$TM:%1$TS%n", System.currentTimeMillis());
             try {

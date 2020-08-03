@@ -13,6 +13,7 @@ public class Consumer extends Thread {
         validate();
     }
 
+    // порядок методов в классе
     private void validate() {
         if (numberRepository == null) {
             throw new ThreadException("Error object NumberRepository");

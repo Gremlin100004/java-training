@@ -37,6 +37,8 @@ public class Main {
     }
 
     private static void showStageBlocked(Thread observedThread) {
+        // если что, статик методы как раз синхронизируются по классу, можно попробовать
+        // просто пометить метод synchronized
         synchronized (Main.class) {
             Main.class.notify();
         }
