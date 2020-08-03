@@ -51,7 +51,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         }
         Date leadTimeOrder = orderRepository.getLastOrder().getLeadTime();
         Date dayDate = new Date();
-        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay); DateUtil.addDays(currentDay, NUMBER_DAY)) {
+        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay); currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
             if (masterRepository.getFreeMasters(currentDay).isEmpty() ||
                 placeRepository.getFreePlaces(currentDay).isEmpty()) {
                 dayDate = currentDay;

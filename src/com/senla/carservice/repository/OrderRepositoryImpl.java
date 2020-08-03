@@ -44,7 +44,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<Order> getCompletedOrders() {
         return this.orders.stream()
-            .filter(order -> order.getStatus().equals(Status.COMPLETED))
+            .filter(order -> order.getStatus() == Status.COMPLETED)
             .collect(Collectors.toList());
     }
 
@@ -58,14 +58,14 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<Order> getCanceledOrders() {
         return this.orders.stream()
-            .filter(order -> order.getStatus().equals(Status.CANCELED))
+            .filter(order -> order.getStatus() == Status.CANCELED)
             .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> getRunningOrders() {
         return this.orders.stream()
-            .filter(order -> order.getStatus().equals(Status.PERFORM) && !order.isDeleteStatus())
+            .filter(order -> order.getStatus() == Status.PERFORM && !order.isDeleteStatus())
             .collect(Collectors.toList());
     }
 
@@ -127,10 +127,10 @@ public class OrderRepositoryImpl implements OrderRepository {
         if (order.isDeleteStatus()) {
             throw new BusinessException("The order has been deleted");
         }
-        if (order.getStatus().equals(Status.PERFORM)) {
+        if (order.getStatus() == Status.PERFORM) {
             throw new BusinessException("Order is being executed");
         }
-        if (order.getStatus().equals(Status.WAIT)) {
+        if (order.getStatus() == Status.WAIT) {
             throw new BusinessException("The order is being waited");
         }
     }

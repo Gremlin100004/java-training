@@ -1,5 +1,6 @@
 package com.senla.carservice.container.objectadjuster.propertyinjection.annotationhandler;
 
+import com.senla.carservice.container.contex.Context;
 import com.senla.carservice.container.objectadjuster.AnnotationHandler;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.container.objectadjuster.propertyinjection.enumeration.DefaultValue;
@@ -13,8 +14,8 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
     private static final String CLASS_NAME_SEPARATOR = ".";
 
     @Override
-    public void configure(Object inputObject) {
-        Class<?> implementClass = inputObject.getClass();
+    public void configure(Object classInstance, Context context) {
+        Class<?> implementClass = classInstance.getClass();
         for (Field field : implementClass.getDeclaredFields()) {
             if (!field.isAnnotationPresent(ConfigProperty.class)) {
                 continue;
@@ -22,12 +23,11 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
             ConfigProperty annotation = field.getAnnotation(ConfigProperty.class);
             String propertyFileName = getPropertyFileName(annotation);
             String propertyName = getPropertyName(annotation,
-                                                  inputObject.getClass().getName() + CLASS_NAME_SEPARATOR +
+                                                  classInstance.getClass().getName() + CLASS_NAME_SEPARATOR +
                                                   field.getName());
             Class<?> fieldType = getFieldType(annotation, field.getType());
             String value = PropertyLoader.getPropertyValue(propertyFileName, propertyName);
-            field.setAccessible(true);
-            injectValueInField(field, value, fieldType, inputObject);
+            injectValueInField(field, value, fieldType, classInstance);
         }
     }
 
@@ -48,7 +48,7 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
     }
 
     private Class<?> getFieldType(ConfigProperty annotation, Class<?> defaultType) {
-        if (annotation.type().equals(TypeField.DEFAULT)) {
+        if (annotation.type() == TypeField.DEFAULT) {
             return defaultType;
         } else {
             return annotation.type().getReferenceDataTypeClass();
@@ -56,6 +56,7 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
     }
 
     private void injectValueInField(Field field, String value, Class<?> fieldType, Object inputObject) {
+        field.setAccessible(true);
         try {
             if (fieldType.equals(Boolean.class)) {
                 field.set(inputObject, Boolean.parseBoolean(value));

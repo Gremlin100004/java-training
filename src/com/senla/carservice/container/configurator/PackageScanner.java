@@ -23,7 +23,7 @@ public class PackageScanner {
         this.packageProject = packageProject;
     }
 
-    public List<Class<?>> getArrayClasses() {
+    public List<Class<?>> getClasses() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             throw new BusinessException("ClassLoader error");
@@ -45,20 +45,21 @@ public class PackageScanner {
     }
 
     private List<Class<?>> getClassByPath(List<String> filesStringPaths) {
-        return filesStringPaths.stream()
-            .map(file -> file.replace(CHARACTER_TO_INSERT,
-                                      REPLACEMENT_CHARACTER).substring(file.replace(CHARACTER_TO_INSERT,
-                                                                                    REPLACEMENT_CHARACTER)
-                                                                           .lastIndexOf(packageProject))
-                .replace(CLASS_REPLACEMENT_CHARACTER, CLASS_CHARACTER_TO_INSERT))
-            .map(className -> {
-                try {
-                    return Class.forName(className);
-                } catch (ClassNotFoundException e) {
-                    throw new BusinessException("Error name class");
-                }
-            })
-            .collect(Collectors.toList());
+        return filesStringPaths
+                .stream()
+                .map(file -> file.replace(CHARACTER_TO_INSERT, REPLACEMENT_CHARACTER)
+                        .substring(file
+                                .replace(CHARACTER_TO_INSERT, REPLACEMENT_CHARACTER)
+                                .lastIndexOf(packageProject))
+                        .replace(CLASS_REPLACEMENT_CHARACTER, CLASS_CHARACTER_TO_INSERT))
+                .map(className -> {
+                    try {
+                        return Class.forName(className);
+                    } catch (ClassNotFoundException e) {
+                        throw new BusinessException("Error name class");
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     private static List<String> getStringFilesPaths(String stringPath) {

@@ -14,12 +14,9 @@ public class MenuController {
     public MenuController() {
     }
 
-    public void configure() {
+    public void run() {
         builder.buildMenu();
         navigator.addCurrentMenu(builder.getRootMenu());
-    }
-
-    public void run() {
         int answer = 1;
         while (answer != 0) {
             this.navigator.printMenu();
