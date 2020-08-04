@@ -1,20 +1,21 @@
 package com.senla.multithreading.task1;
 
 import com.senla.multithreading.common.exception.ThreadException;
-import com.senla.multithreading.task1.runnable.RunnableImpl;
+import com.senla.multithreading.task1.runnable.Observable;
 
 public class Main {
     public static void main(String[] args) {
-        Thread observedThread = new Thread(new RunnableImpl(Main.class));
-        showStages(observedThread);
+        Synchronizer synchronizer = new Synchronizer();
+        Thread observedThread = new Thread(new Observable(synchronizer));
+        showStages(observedThread, synchronizer);
     }
 
-    private static void showStages(Thread observedThread) {
+    private static void showStages(Thread observedThread, Synchronizer synchronizer) {
         showStageNew(observedThread);
         showStageRunnable(observedThread);
         showStageWaiting(observedThread);
-        showStageBlocked(observedThread);
-        showStageTimedWaiting(observedThread);
+        showStageBlocked(observedThread, synchronizer);
+        showStageTimedWaiting(observedThread, synchronizer);
         showStageTerminated(observedThread);
     }
 
@@ -36,20 +37,14 @@ public class Main {
         System.out.println(observedThread.getState());
     }
 
-    private static void showStageBlocked(Thread observedThread) {
-        // если что, статик методы как раз синхронизируются по классу, можно попробовать
-        // просто пометить метод synchronized
-        synchronized (Main.class) {
-            Main.class.notify();
-        }
+    private static synchronized void showStageBlocked(Thread observedThread, Synchronizer synchronizer) {
+        synchronizer.unblockThread();
         System.out.println(observedThread.getState());
     }
 
-    private static void showStageTimedWaiting(Thread observedThread) {
+    private static synchronized void showStageTimedWaiting(Thread observedThread, Synchronizer synchronizer) {
         System.out.println(observedThread.getState());
-        synchronized (Main.class) {
-            Main.class.notify();
-        }
+        synchronizer.unblockThread();
     }
 
     private static void showStageTerminated(Thread observedThread) {
