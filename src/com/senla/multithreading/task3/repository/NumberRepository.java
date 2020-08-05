@@ -5,6 +5,7 @@ import com.senla.multithreading.common.exception.ThreadException;
 import java.nio.IntBuffer;
 
 public class NumberRepository {
+    // аррей лист прекрасно бы справился с ролью буфера
     private final IntBuffer randomNumbersBuffer;
 
     public NumberRepository(int bufferLimit) {
