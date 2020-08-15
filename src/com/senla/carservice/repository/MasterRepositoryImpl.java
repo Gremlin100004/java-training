@@ -1,5 +1,6 @@
 package com.senla.carservice.repository;
 
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.domain.Master;
 
@@ -8,9 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Singleton
 public class MasterRepositoryImpl implements MasterRepository {
-
     private final List<Master> masters;
     @Dependency
     private IdGenerator idGeneratorMaster;

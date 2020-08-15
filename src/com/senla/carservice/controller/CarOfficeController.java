@@ -63,12 +63,4 @@ public class CarOfficeController {
             return e.getMessage();
         }
     }
-
-    public void serializeEntities() {
-        carOfficeService.serializeEntities();
-    }
-
-    public void deserializeEntities() {
-        carOfficeService.deserializeEntities();
-    }
 }

@@ -1,11 +1,9 @@
 package com.senla.carservice.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Master extends AEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class Master extends AEntity {
     private String name;
     private List<Order> orders = new ArrayList<>();
 

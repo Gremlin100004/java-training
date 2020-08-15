@@ -2,14 +2,12 @@ package com.senla.carservice.domain;
 
 import com.senla.carservice.domain.enumaration.Status;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Order extends AEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class Order extends AEntity {
     private Date creationTime;
     private Date executionStartTime;
     private Date leadTime;

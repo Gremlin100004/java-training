@@ -4,12 +4,10 @@ import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.repository.ApplicationState;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.OrderRepository;
 import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.util.DateUtil;
-import com.senla.carservice.util.Serializer;
 import com.senla.carservice.util.csvutil.CsvMaster;
 import com.senla.carservice.util.csvutil.CsvOrder;
 import com.senla.carservice.util.csvutil.CsvPlace;
@@ -25,8 +23,6 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     private PlaceRepository placeRepository;
     @Dependency
     private OrderRepository orderRepository;
-    @Dependency
-    private Serializer serializer;
     @Dependency
     private CsvPlace csvPlace;
     @Dependency
@@ -81,32 +77,6 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         csvOrder.exportOrder(orderRepository.getOrders());
         csvMaster.exportMasters(masterRepository.getMasters());
         csvPlace.exportPlaces(placeRepository.getPlaces());
-    }
-
-    @Override
-    public void serializeEntities() {
-        ApplicationState applicationState = new ApplicationState();
-        applicationState.setIdGeneratorMaster(masterRepository.getIdGeneratorMaster());
-        applicationState.setIdGeneratorPlace(placeRepository.getIdGeneratorPlace());
-        applicationState.setIdGeneratorOrder(orderRepository.getIdGeneratorOrder());
-        applicationState.setMasters(masterRepository.getMasters());
-        applicationState.setPlaces(placeRepository.getPlaces());
-        applicationState.setOrders(orderRepository.getOrders());
-        serializer.serializeEntities(applicationState);
-    }
-
-    @Override
-    public void deserializeEntities() {
-        ApplicationState applicationState = serializer.deserializeEntities();
-        if (applicationState == null) {
-            return;
-        }
-        masterRepository.updateGenerator(applicationState.getIdGeneratorMaster());
-        masterRepository.updateListMaster(applicationState.getMasters());
-        placeRepository.updateGenerator(applicationState.getIdGeneratorPlace());
-        placeRepository.updateListPlace(applicationState.getPlaces());
-        orderRepository.updateGenerator(applicationState.getIdGeneratorOrder());
-        orderRepository.updateListOrder(applicationState.getOrders());
     }
 
     private void checkOrders() {
