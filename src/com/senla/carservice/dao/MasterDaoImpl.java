@@ -28,7 +28,7 @@ public class MasterDaoImpl implements MasterDao {
                                                             "FROM orders " +
                                                             "JOIN orders_masters " +
                                                             "ON orders.id = orders_masters.order_id " +
-                                                            "WHERE orders_masters.master_id = 2";
+                                                            "WHERE orders_masters.master_id = ";
     private static final String SQL_REQUEST_TO_GET_FREE_MASTERS = "SELECT DISTINCT masters.id, masters.name " +
                                                                   "FROM masters " +
                                                                   "INNER JOIN orders_masters " +
@@ -100,11 +100,11 @@ public class MasterDaoImpl implements MasterDao {
             List<Master> masters = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(sqlRequest);
             while (resultSet.next()) {
-                ResultSet resultSetOrders = statement.executeQuery(SQL_REQUEST_TO_GET_ORDERS);
+                List<Order> orders = new ArrayList<>();
                 Master master = new Master();
                 master.setId(resultSet.getLong("id"));
                 master.setName(resultSet.getString("name"));
-                List<Order> orders = new ArrayList<>();
+                ResultSet resultSetOrders = statement.executeQuery(SQL_REQUEST_TO_GET_ORDERS + master.getId());
                 while (resultSetOrders.next()) {
                     Order order = new Order(resultSetOrders.getLong("id"),
                                             resultSetOrders.getString("automaker"),
