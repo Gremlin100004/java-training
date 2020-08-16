@@ -24,18 +24,18 @@ INSERT INTO masters VALUES
 (22, 'Uriy');
 
 INSERT INTO places VALUES
-(1, false),
-(2, false),
-(3, false),
-(4, false),
-(5, false),
-(6, false),
-(7, false),
-(8, false),
-(9, false),
-(10, false),
-(11, false),
-(12, false);
+(1, 1, false),
+(2, 2, false),
+(3, 3, false),
+(4, 4, false),
+(5, 5, false),
+(6, 6, false),
+(7, 7, false),
+(8, 8, false),
+(9, 9, false),
+(10, 10, false),
+(11, 11, false),
+(12, 12, false);
 
 INSERT INTO orders VALUES
 (1, NOW(), '2020-09-11 10:00', '2020-09-11 18:00', 'Lexus', 'LS', '1234 AB-7', '360.99', 'WAIT', false, 1),

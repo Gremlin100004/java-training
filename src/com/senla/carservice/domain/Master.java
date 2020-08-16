@@ -22,11 +22,11 @@ public class Master extends AEntity {
         return orders;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public void setOrders(final List<Order> orders) {
+    public void setOrders(List<Order> orders) {
         this.orders = orders;
     }
 

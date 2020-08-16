@@ -8,9 +8,10 @@ PRIMARY KEY pk_masters (id)
 );
 
 CREATE TABLE IF NOT EXISTS places(
+id INT NOT NULL AUTO_INCREMENT,
 number INT NOT NULL UNIQUE,
 busy_status BOOLEAN DEFAULT false,
-PRIMARY KEY pk_places (number)
+PRIMARY KEY pk_places (id)
 );
 
 CREATE TABLE IF NOT EXISTS orders(
@@ -24,9 +25,9 @@ registrationNumber VARCHAR(50),
 price DECIMAL(7,2),
 status VARCHAR(10),
 delete_status BOOLEAN DEFAULT false,
-place_number INT NOT NULL,
+place_id INT NOT NULL,
 PRIMARY KEY pk_orders (id),
-FOREIGN KEY fk_orders (place_number) REFERENCES places (number)
+FOREIGN KEY fk_orders (place_id) REFERENCES places (id)
 );
 
 CREATE TABLE IF NOT EXISTS orders_masters(
@@ -37,12 +38,6 @@ FOREIGN KEY fk_orders_masters_masters (master_id) REFERENCES masters (id)
 );
 
 CREATE UNIQUE INDEX masters_id_idx ON masters (id);
-CREATE INDEX places_number_idx ON places (number);
+CREATE UNIQUE INDEX places_id_idx ON places (id);
 CREATE UNIQUE INDEX orders_id_idx ON orders (id);
 COMMIT;
-
-SELECT DISTINCT masters.id, masters.name
-FROM masters
-INNER JOIN orders_masters ON masters.id = orders_masters.master_id
-LEFT JOIN orders ON orders_masters.order_id = orders.id
-WHERE orders.lead_time > '2020-09-15 00:00:00';

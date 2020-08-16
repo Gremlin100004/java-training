@@ -4,6 +4,7 @@ import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.dao.connection.DatabaseConnection;
 import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 
@@ -23,6 +24,11 @@ public class MasterDaoImpl implements MasterDao {
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE masters SET name=? WHERE id=?";
     private static final String SQL_REQUEST_TO_DELETE_RECORD = "DELETE FROM masters WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT * FROM masters";
+    private static final String SQL_REQUEST_TO_GET_ORDERS = "SELECT * " +
+                                                            "FROM orders " +
+                                                            "JOIN orders_masters " +
+                                                            "ON orders.id = orders_masters.order_id " +
+                                                            "WHERE orders_masters.master_id = 2";
     private static final String SQL_REQUEST_TO_GET_FREE_MASTERS = "SELECT DISTINCT masters.id, masters.name " +
                                                                   "FROM masters " +
                                                                   "INNER JOIN orders_masters " +
@@ -81,31 +87,32 @@ public class MasterDaoImpl implements MasterDao {
 
     @Override
     public List<Master> getMasters() {
-        try (Statement statement = databaseConnection.getConnection().createStatement()) {
-            List<Master> masters = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_ALL_RECORDS);
-            while (resultSet.next()) {
-                Master master = new Master();
-                master.setId(resultSet.getLong("id"));
-                master.setName(resultSet.getString("name"));
-                masters.add(master);
-            }
-            return masters;
-
-        } catch (SQLException ex) {
-            throw new BusinessException("Error request get record masters");
-        }
+        return getMastersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS);
     }
 
     @Override
     public List<Master> getFreeMasters(Date date) {
+        return getMastersFromDatabase(SQL_REQUEST_TO_GET_FREE_MASTERS + DateUtil.getStringFromDate(date, true));
+    }
+
+    private List<Master> getMastersFromDatabase(String sqlRequest){
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             List<Master> masters = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_FREE_MASTERS + DateUtil.getStringFromDate(date, true));
+            ResultSet resultSet = statement.executeQuery(sqlRequest);
             while (resultSet.next()) {
+                ResultSet resultSetOrders = statement.executeQuery(SQL_REQUEST_TO_GET_ORDERS);
                 Master master = new Master();
                 master.setId(resultSet.getLong("id"));
                 master.setName(resultSet.getString("name"));
+                List<Order> orders = new ArrayList<>();
+                while (resultSetOrders.next()) {
+                    Order order = new Order(resultSetOrders.getLong("id"),
+                                            resultSetOrders.getString("automaker"),
+                                            resultSetOrders.getString("model"),
+                                            resultSetOrders.getString("registrationNumber"));
+                    orders.add(order);
+                }
+                master.setOrders(orders);
                 masters.add(master);
             }
             return masters;
