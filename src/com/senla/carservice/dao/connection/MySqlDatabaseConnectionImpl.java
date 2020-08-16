@@ -9,7 +9,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Singleton
-public class MySqlConnection {
+public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
     @ConfigProperty
     private String userName;
     @ConfigProperty
@@ -18,18 +18,19 @@ public class MySqlConnection {
     private String connectionUrl;
     private Connection connection;
 
-    public void connectToDatabase (){
-        if (connection != null){
-            return;
+    @Override
+    public Connection getConnection() {
+        if (connection == null) {
+            connectToDatabase();
         }
+        return connection;
+    }
+
+    private void connectToDatabase() {
         try (Connection connection = DriverManager.getConnection(connectionUrl, userName, password)) {
             this.connection = connection;
         } catch (SQLException e) {
             throw new BusinessException("Wrong connection to database");
         }
-    }
-
-    public Connection getConnection() {
-        return connection;
     }
 }

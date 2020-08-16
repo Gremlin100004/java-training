@@ -40,3 +40,9 @@ CREATE UNIQUE INDEX masters_id_idx ON masters (id);
 CREATE INDEX places_number_idx ON places (number);
 CREATE UNIQUE INDEX orders_id_idx ON orders (id);
 COMMIT;
+
+SELECT DISTINCT masters.id, masters.name
+FROM masters
+INNER JOIN orders_masters ON masters.id = orders_masters.master_id
+LEFT JOIN orders ON orders_masters.order_id = orders.id
+WHERE orders.lead_time > '2020-09-15 00:00:00';

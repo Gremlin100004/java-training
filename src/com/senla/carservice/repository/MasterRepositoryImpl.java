@@ -65,9 +65,12 @@ public class MasterRepositoryImpl implements MasterRepository {
 
     @Override
     public List<Master> getFreeMasters(Date date) {
-        return this.masters.stream()
-                .filter(master -> master.getOrders().isEmpty() ||
-                        date.before(master.getOrders().get(master.getOrders().size() - SIZE_INDEX).getLeadTime()))
-                .collect(Collectors.toList());
+        List<Master> list = new ArrayList<>();
+        for (Master master : this.masters) {
+            if (master.getOrders().isEmpty() || date.before(master.getOrders().get(master.getOrders().size() - SIZE_INDEX).getLeadTime())) {
+                list.add(master);
+            }
+        }
+        return list;
     }
 }
