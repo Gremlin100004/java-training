@@ -36,4 +36,8 @@ master_id INT NOT NULL,
 FOREIGN KEY fk_orders_masters_orders (order_id) REFERENCES orders (id),
 FOREIGN KEY fk_orders_masters_masters (master_id) REFERENCES masters (id)
 );
+
+CREATE UNIQUE INDEX masters_id_idx ON masters (id);
+CREATE INDEX places_number_idx ON places (number);
+CREATE UNIQUE INDEX orders_id_idx ON orders (id);
 COMMIT;
