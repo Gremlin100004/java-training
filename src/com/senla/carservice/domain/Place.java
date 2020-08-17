@@ -1,12 +1,9 @@
 package com.senla.carservice.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Place extends AEntity {
     private Integer number;
     private Boolean busyStatus;
-    private List<Order> orders = new ArrayList<>();
+    private Boolean isDelete;
 
     public Place() {
     }
@@ -24,20 +21,20 @@ public class Place extends AEntity {
         return busyStatus;
     }
 
-    public List<Order> getOrders() {
-        return orders;
+    public Boolean getDelete() {
+        return isDelete;
     }
 
-    public void setNumber(final Integer number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 
-    public void setBusyStatus(final Boolean busyStatus) {
+    public void setBusyStatus(Boolean busyStatus) {
         this.busyStatus = busyStatus;
     }
 
-    public void setOrders(final List<Order> orders) {
-        this.orders = orders;
+    private void setDelete(Boolean delete) {
+        isDelete = delete;
     }
 
     @Override
@@ -45,7 +42,6 @@ public class Place extends AEntity {
         return "Place{" +
                "number=" + number +
                ", busyStatus=" + busyStatus +
-               ", orders=" + orders +
                '}';
     }
 }

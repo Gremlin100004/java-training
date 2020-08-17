@@ -4,7 +4,6 @@ import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.dao.connection.DatabaseConnection;
 import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 
@@ -20,15 +19,10 @@ import java.util.List;
 public class MasterDaoImpl implements MasterDao {
     @ConfigProperty
     private DatabaseConnection databaseConnection;
-    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO masters VALUES (NULL, ?)";
+    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO masters VALUES (NULL, ?, ?)";
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE masters SET name=? WHERE id=?";
-    private static final String SQL_REQUEST_TO_DELETE_RECORD = "DELETE FROM masters WHERE id=?";
+    private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE masters SET delete_status=true WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT * FROM masters";
-    private static final String SQL_REQUEST_TO_GET_ORDERS = "SELECT * " +
-                                                            "FROM orders " +
-                                                            "JOIN orders_masters " +
-                                                            "ON orders.id = orders_masters.order_id " +
-                                                            "WHERE orders_masters.master_id = ";
     private static final String SQL_REQUEST_TO_GET_FREE_MASTERS = "SELECT DISTINCT masters.id, masters.name " +
                                                                   "FROM masters " +
                                                                   "INNER JOIN orders_masters " +
@@ -42,9 +36,10 @@ public class MasterDaoImpl implements MasterDao {
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_ADD_RECORD)) {
             statement.setString(1, master.getName());
+            statement.setBoolean(2, master.getDelete());
             statement.execute();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            throw new BusinessException("Error request add record masters");
         }
     }
 
@@ -53,7 +48,8 @@ public class MasterDaoImpl implements MasterDao {
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_UPDATE_RECORD)) {
             statement.setString(1, master.getName());
-            statement.setLong(2, master.getId());
+            statement.setBoolean(2, master.getDelete());
+            statement.setLong(3, master.getId());
             statement.execute();
         } catch (SQLException ex) {
             throw new BusinessException("Error request update record masters");
@@ -66,7 +62,8 @@ public class MasterDaoImpl implements MasterDao {
             .prepareStatement(SQL_REQUEST_TO_UPDATE_RECORD)) {
             for (Master master : masters) {
                 statement.setString(1, master.getName());
-                statement.setLong(2, master.getId());
+                statement.setBoolean(2, master.getDelete());
+                statement.setLong(3, master.getId());
                 statement.execute();
             }
         } catch (SQLException ex) {
@@ -100,23 +97,13 @@ public class MasterDaoImpl implements MasterDao {
             List<Master> masters = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery(sqlRequest);
             while (resultSet.next()) {
-                List<Order> orders = new ArrayList<>();
                 Master master = new Master();
                 master.setId(resultSet.getLong("id"));
                 master.setName(resultSet.getString("name"));
-                ResultSet resultSetOrders = statement.executeQuery(SQL_REQUEST_TO_GET_ORDERS + master.getId());
-                while (resultSetOrders.next()) {
-                    Order order = new Order(resultSetOrders.getLong("id"),
-                                            resultSetOrders.getString("automaker"),
-                                            resultSetOrders.getString("model"),
-                                            resultSetOrders.getString("registrationNumber"));
-                    orders.add(order);
-                }
-                master.setOrders(orders);
+                master.setDelete(resultSet.getBoolean("delete_status"));
                 masters.add(master);
             }
             return masters;
-
         } catch (SQLException ex) {
             throw new BusinessException("Error request get record masters");
         }

@@ -1,11 +1,8 @@
 package com.senla.carservice.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Master extends AEntity {
     private String name;
-    private List<Order> orders = new ArrayList<>();
+    private Boolean isDelete;
 
     public Master() {
     }
@@ -18,23 +15,22 @@ public class Master extends AEntity {
         return name;
     }
 
-    public List<Order> getOrders() {
-        return orders;
+    public Boolean getDelete() {
+        return isDelete;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    public void setDelete(Boolean delete) {
+        isDelete = delete;
     }
 
     @Override
     public String toString() {
         return "Master{" +
                "name='" + name + '\'' +
-               ", orders=" + orders +
                '}';
     }
 }
