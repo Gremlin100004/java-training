@@ -33,7 +33,7 @@ public class Place extends AEntity {
         this.busyStatus = busyStatus;
     }
 
-    private void setDelete(Boolean delete) {
+    public void setDelete(Boolean delete) {
         isDelete = delete;
     }
 

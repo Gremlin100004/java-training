@@ -54,11 +54,11 @@ public class PlaceRepositoryImpl implements PlaceRepository {
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
-        this.places.stream()
-            .filter(place -> place.getNumber().equals(addPlace.getNumber()))
-            .forEach(place -> {
+        for (Place place : this.places) {
+            if (place.getNumber().equals(addPlace.getNumber())) {
                 throw new BusinessException("Such a number exists");
-            });
+            }
+        }
         addPlace.setId(this.idGeneratorPlace.getId());
         this.places.add(addPlace);
     }
