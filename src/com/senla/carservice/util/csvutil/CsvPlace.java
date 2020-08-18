@@ -58,9 +58,9 @@ public class CsvPlace {
         place.setId(ParameterUtil.getValueLong(values.get(0)));
         place.setNumber(ParameterUtil.getValueInteger(values.get(1)));
         place.setBusyStatus(ParameterUtil.getValueBoolean(values.get(2)));
-        if (!arrayIdOrder.isEmpty()) {
-            place.setOrders(csvMaster.getOrdersById(orders, arrayIdOrder));
-        }
+//        if (!arrayIdOrder.isEmpty()) {
+//            place.setOrders(csvMaster.getOrdersById(orders, arrayIdOrder));
+//        }
         return place;
     }
 
@@ -76,15 +76,15 @@ public class CsvPlace {
         stringValue.append(place.getBusyStatus());
         stringValue.append(fieldSeparator);
         stringValue.append(idSeparator);
-        List<Order> orders = place.getOrders();
-        int bound = orders.size();
-        for (int i = 0; i < bound; i++) {
-            if (i == orders.size() - SIZE_INDEX) {
-                stringValue.append(orders.get(i).getId());
-            } else {
-                stringValue.append(orders.get(i).getId()).append(fieldSeparator);
-            }
-        }
+//        List<Order> orders = place.getOrders();
+//        int bound = orders.size();
+//        for (int i = 0; i < bound; i++) {
+//            if (i == orders.size() - SIZE_INDEX) {
+//                stringValue.append(orders.get(i).getId());
+//            } else {
+//                stringValue.append(orders.get(i).getId()).append(fieldSeparator);
+//            }
+//        }
         stringValue.append(idSeparator);
         return stringValue.toString();
     }

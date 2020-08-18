@@ -49,7 +49,7 @@ public class CsvMaster {
         Master master = new Master();
         master.setId(ParameterUtil.getValueLong(values.get(0)));
         master.setName(values.get(1));
-        master.setOrders(getOrdersById(orders, arrayIdOrder));
+//        master.setOrders(getOrdersById(orders, arrayIdOrder));
         return master;
     }
 
@@ -63,15 +63,15 @@ public class CsvMaster {
         stringValue.append(master.getName());
         stringValue.append(fieldSeparator);
         stringValue.append(idSeparator);
-        List<Order> orders = master.getOrders();
-        IntStream.range(0, orders.size())
-            .forEachOrdered(i -> {
-                if (i == orders.size() - SIZE_INDEX) {
-                    stringValue.append(orders.get(i).getId());
-                } else {
-                    stringValue.append(orders.get(i).getId()).append(fieldSeparator);
-                }
-            });
+//        List<Order> orders = master.getOrders();
+//        IntStream.range(0, orders.size())
+//            .forEachOrdered(i -> {
+//                if (i == orders.size() - SIZE_INDEX) {
+//                    stringValue.append(orders.get(i).getId());
+//                } else {
+//                    stringValue.append(orders.get(i).getId()).append(fieldSeparator);
+//                }
+//            });
         stringValue.append(idSeparator);
         return stringValue.toString();
     }

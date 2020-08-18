@@ -39,10 +39,14 @@ public class PlaceRepositoryImpl implements PlaceRepository {
 
     @Override
     public List<Place> getFreePlaces(Date startDayDate) {
-        return this.places.stream()
-            .filter(place -> place.getOrders().isEmpty() ||
-                             startDayDate.before(place.getOrders().get(place.getOrders().size() - SIZE_INDEX).getLeadTime()))
-            .collect(Collectors.toList());
+        List<Place> list = new ArrayList<>();
+//        for (Place place : this.places) {
+//            if (place.getOrders().isEmpty() ||
+//                    startDayDate.before(place.getOrders().get(place.getOrders().size() - SIZE_INDEX).getLeadTime())) {
+//                list.add(place);
+//            }
+//        }
+        return list;
     }
 
     @Override

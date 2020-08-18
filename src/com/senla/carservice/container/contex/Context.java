@@ -53,6 +53,15 @@ public class Context {
         return classInstance;
     }
 
+    public <T> void setSingleton(T singleton) {
+        for (Map.Entry<String, Class<?>> singletonEntry : configurator.getSingletonClasses().entrySet()) {
+            if (singletonEntry.getValue().equals(singleton.getClass())){
+                singletons.put(singletonEntry.getKey(), singleton);
+                break;
+            }
+        }
+    }
+
     private <T> T createRawObject(Class<? extends T> classImplementation) {
         try {
             return classImplementation.getDeclaredConstructor().newInstance();

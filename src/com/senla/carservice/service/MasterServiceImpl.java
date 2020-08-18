@@ -7,6 +7,7 @@ import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.OrderRepository;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -64,10 +65,11 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public List<Master> getMasterByBusy() {
         checkMasters();
-        return masterRepository.getMasters().stream()
-            .sorted(Comparator.comparing(master -> master.getOrders().size(),
-                                         Comparator.nullsFirst(Comparator.naturalOrder())))
-            .collect(Collectors.toList());
+        List<Master> list = new ArrayList<>();
+        list.addAll(masterRepository.getMasters());
+//        list.sort(Comparator.comparing(master -> master.getOrders().size(),
+//                Comparator.nullsFirst(Comparator.naturalOrder())));
+        return list;
     }
 
     private void checkMasters() {

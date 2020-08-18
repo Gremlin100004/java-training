@@ -85,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
         masters.add(master);
         currentOrder.setMasters(masters);
         orderRepository.updateOrder(currentOrder);
-        master.getOrders().add(currentOrder);
+//        master.getOrders().add(currentOrder);
         masterRepository.updateMaster(master);
     }
 
@@ -94,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
         checkOrders();
         Order currentOrder = orderRepository.getLastOrder();
         currentOrder.setPlace(place);
-        place.getOrders().add(currentOrder);
+//        place.getOrders().add(currentOrder);
         placeRepository.updatePlace(place);
         orderRepository.updateOrder(currentOrder);
     }
@@ -121,13 +121,13 @@ public class OrderServiceImpl implements OrderService {
         checkStatusOrder(order);
         order.setLeadTime(new Date());
         order.setStatus(Status.CANCELED);
-        order.getMasters().forEach(master -> {
-            master.getOrders().remove(order);
+        for (Master master : order.getMasters()) {
+//            master.getOrders().remove(order);
             masterRepository.updateMaster(master);
-        });
+        }
         Place place = order.getPlace();
         place.setBusyStatus(false);
-        place.getOrders().remove(order);
+//        place.getOrders().remove(order);
         placeRepository.updatePlace(place);
         orderRepository.updateOrder(order);
     }
@@ -137,13 +137,13 @@ public class OrderServiceImpl implements OrderService {
         checkStatusOrder(order);
         order.setLeadTime(new Date());
         order.setStatus(Status.COMPLETED);
-        order.getMasters().forEach(master -> {
-            master.getOrders().remove(order);
+        for (Master master : order.getMasters()) {
+//            master.getOrders().remove(order);
             masterRepository.updateMaster(master);
-        });
+        }
         Place place = order.getPlace();
         place.setBusyStatus(false);
-        place.getOrders().remove(order);
+//        place.getOrders().remove(order);
         placeRepository.updatePlace(order.getPlace());
         orderRepository.updateOrder(order);
     }
@@ -163,11 +163,11 @@ public class OrderServiceImpl implements OrderService {
         order.setLeadTime(leadTime);
         order.setExecutionStartTime(executionStartTime);
         Place place = order.getPlace();
-        place.getOrders().set(place.getOrders().indexOf(order), order);
-        order.getMasters().forEach(master -> {
-            master.getOrders().set(master.getOrders().indexOf(order), order);
+//        place.getOrders().set(place.getOrders().indexOf(order), order);
+        for (Master master : order.getMasters()) {
+//            master.getOrders().set(master.getOrders().indexOf(order), order);
             masterRepository.updateMaster(master);
-        });
+        }
         placeRepository.updatePlace(place);
         orderRepository.updateOrder(order);
     }
