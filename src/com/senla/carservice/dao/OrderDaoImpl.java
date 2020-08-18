@@ -3,62 +3,32 @@ package com.senla.carservice.dao;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 
+import java.sql.ResultSet;
 import java.util.List;
 
-public class OrderDaoImpl implements OrderDao{
+public class OrderDaoImpl extends AbstractDao implements OrderDao{
     @Override
-    public Order getLastOrder() {
+    protected <T> List<T> parseResultSet(final ResultSet resultSet) {
         return null;
     }
 
     @Override
-    public List<Order> getCompletedOrders() {
+    protected <T> String getCreateRequest(final T object) {
         return null;
     }
 
     @Override
-    public List<Order> getDeletedOrders() {
+    protected String getReadAllRequest() {
         return null;
     }
 
     @Override
-    public List<Order> getCanceledOrders() {
+    protected <T> String getUpdateRequest(final T object) {
         return null;
     }
 
     @Override
-    public List<Order> getRunningOrders() {
+    protected <T> String getDeleteRequest(final T object) {
         return null;
-    }
-
-    @Override
-    public List<Order> getMasterOrders(final Master master) {
-        return null;
-    }
-
-    @Override
-    public List<Master> getOrderMasters(final Order order) {
-        return null;
-    }
-
-    @Override
-    public void createRecord(final Object object) {
-    }
-
-    @Override
-    public List<Object> getAllRecords() {
-        return null;
-    }
-
-    @Override
-    public void updateRecord(Object object) {
-    }
-
-    @Override
-    public void updateAllRecords(Object object) {
-    }
-
-    @Override
-    public void deleteRecord(Object object) {
     }
 }

@@ -2,21 +2,18 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.repository.MasterRepository;
 import com.senla.carservice.repository.OrderRepository;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Singleton
 public class MasterServiceImpl implements MasterService {
     @Dependency
-    private MasterRepository masterRepository;
+    private MasterDao masterDao;
     @Dependency
     private OrderRepository orderRepository;
 
@@ -24,19 +21,24 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Master> getMasters() {
-        checkMasters();
-        return masterRepository.getMasters();
+        List<Master> masters = masterDao.getAllRecords();
+        if (masters.isEmpty()) {
+            throw new BusinessException("There are no masters");
+        }
+        return masters;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void addMaster(String name) {
-        masterRepository.addMaster(new Master(name));
+        masterDao.updateRecord(new Master(name));
     }
 
     @Override
     public List<Master> getFreeMastersByDate(Date executeDate) {
-        List<Master> freeMasters = getFreeMaster(executeDate);
+        List<Master> freeMasters = masterDao.getFreeMasters(executeDate);
         if (freeMasters.isEmpty()) {
             throw new BusinessException("There are no free masters");
         }
@@ -45,41 +47,30 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public int getNumberFreeMastersByDate(Date startDayDate) {
-        return getFreeMaster(startDayDate).size();
+        return masterDao.getFreeMasters(startDayDate).size();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void deleteMaster(Master master) {
-        checkMasters();
-        masterRepository.deleteMaster(master);
+        masterDao.deleteRecord(master);
     }
 
     @Override
     public List<Master> getMasterByAlphabet() {
-        checkMasters();
-        return masterRepository.getMasters().stream()
-            .sorted(Comparator.comparing(Master::getName, Comparator.nullsLast(Comparator.naturalOrder())))
-            .collect(Collectors.toList());
+        List<Master> masters = masterDao.getMasterByAlphabet();
+        if (masters.isEmpty()) {
+            throw new BusinessException("There are no masters");
+        }
+        return masters;
     }
 
     @Override
     public List<Master> getMasterByBusy() {
-        checkMasters();
-        List<Master> list = new ArrayList<>();
-        list.addAll(masterRepository.getMasters());
-//        list.sort(Comparator.comparing(master -> master.getOrders().size(),
-//                Comparator.nullsFirst(Comparator.naturalOrder())));
-        return list;
-    }
-
-    private void checkMasters() {
-        if (masterRepository.getMasters().isEmpty()) {
+        List<Master> masters = masterDao.getMasterByBusy();
+        if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }
-    }
-
-    private List<Master> getFreeMaster(Date startDate) {
-        checkMasters();
-        return masterRepository.getFreeMasters(startDate);
+        return masters;
     }
 }

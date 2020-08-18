@@ -34,15 +34,19 @@ public class StringMaster {
             .append(SPLIT_COLUMNS + END_OF_LINE);
         stringBuilder.append(line);
         int bound = masters.size();
-        for (int i = 0; i < bound; i++) {
-            stringBuilder.append(SPLIT_COLUMNS)
+        IntStream.range(0, bound)
+            .forEach(i -> {
+                stringBuilder.append(SPLIT_COLUMNS)
                     .append(StringUtil.fillStringSpace(String.valueOf(i + INDEX_ADDITION), LENGTH_SPACE_FIRST_COLUMN));
-            stringBuilder.append(SPLIT_COLUMNS)
+                stringBuilder.append(SPLIT_COLUMNS)
                     .append(StringUtil.fillStringSpace(masters.get(i).getName(), LENGTH_SPACE_SECOND_COLUMN));
-            stringBuilder.append(SPLIT_COLUMNS);
-            stringBuilder.append(SPLIT_COLUMNS + END_OF_LINE);
-        }
+                stringBuilder.append(SPLIT_COLUMNS)
+                    .append(StringUtil.fillStringSpace(String.valueOf(masters.get(i).getNumberOrders()),
+                                                       LENGTH_SPACE_THIRD_COLUMN));
+                stringBuilder.append(SPLIT_COLUMNS + END_OF_LINE);
+            });
         stringBuilder.append(line);
         return stringBuilder.toString();
+
     }
 }

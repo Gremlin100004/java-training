@@ -25,10 +25,19 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
         }
         return connection;
     }
+    @Override
+    public void closeConnection(){
+        try {
+            if (connection != null && !connection.isClosed())
+            connection.close();
+        } catch (SQLException e) {
+            throw new BusinessException("Error close connection");
+        }
+    }
 
     private void connectToDatabase() {
-        try (Connection connection = DriverManager.getConnection(connectionUrl, userName, password)) {
-            this.connection = connection;
+        try {
+            this.connection = DriverManager.getConnection(connectionUrl, userName, password);
         } catch (SQLException e) {
             throw new BusinessException("Wrong connection to database");
         }
