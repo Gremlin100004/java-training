@@ -3,6 +3,7 @@ package com.senla.carservice.service;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
+import com.senla.carservice.dao.OrderDao;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class OrderServiceImpl implements OrderService {
     @Dependency
-    private OrderRepository orderRepository;
+    private OrderDao orderDao;
     @Dependency
     private PlaceRepository placeRepository;
     @Dependency
@@ -35,24 +36,28 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Order> getOrders() {
+        List<Order> orders = orderDao.getAllRecords();
         checkOrders();
-        return orderRepository.getOrders();
+        //TODO check
+        return orders;
     }
 
     @Override
     public void addOrder(String automaker, String model, String registrationNumber) {
+        //TODO check
         checkMasters();
         checkPlaces();
-        orderRepository.addOrder(new Order(orderRepository.getIdGeneratorOrder().getId(),
-                                           automaker, model, registrationNumber));
+        orderDao.createRecord(new Order(automaker, model, registrationNumber));
     }
 
     @Override
     public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
         DateUtil.checkDateTime(executionStartTime, leadTime);
+        //TODO check
         checkOrders();
-        Order currentOrder = orderRepository.getLastOrder();
+        Order currentOrder = orderDao.getLastOrder();
         List<Order> orders = new ArrayList<>(orderRepository.getOrders());
         orders.remove(currentOrder);
         if (!orders.isEmpty()) {
@@ -77,11 +82,11 @@ public class OrderServiceImpl implements OrderService {
         checkOrders();
         Order currentOrder = orderRepository.getLastOrder();
         List<Master> masters = currentOrder.getMasters();
-        masters.stream()
-            .filter(orderMaster -> orderMaster.equals(master))
-            .forEachOrdered(orderMaster -> {
+        for (Master orderMaster : masters) {
+            if (orderMaster.equals(master)) {
                 throw new BusinessException("This master already exists");
-            });
+            }
+        }
         masters.add(master);
         currentOrder.setMasters(masters);
         orderRepository.updateOrder(currentOrder);
@@ -164,13 +169,13 @@ public class OrderServiceImpl implements OrderService {
         order.setExecutionStartTime(executionStartTime);
         Place place = order.getPlace();
 //        place.getOrders().set(place.getOrders().indexOf(order), order);
-        for (Master master : order.getMasters()) {
+//        for (Master master : order.getMasters()) {
 //            master.getOrders().set(master.getOrders().indexOf(order), order);
-            masterRepository.updateMaster(master);
+//            masterRepository.updateMaster(master);
         }
-        placeRepository.updatePlace(place);
-        orderRepository.updateOrder(order);
-    }
+//        placeRepository.updatePlace(place);
+//        orderRepository.updateOrder(order);
+//    }
 
     @Override
     public List<Order> sortOrderByCreationTime(List<Order> orders) {

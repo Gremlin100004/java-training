@@ -59,9 +59,4 @@ CREATE UNIQUE INDEX orders_id_idx
 ON orders (id);
 COMMIT;
 
-SELECT DISTINCT orders.id, orders.creation_time, orders.execution_start_time, orders.lead_time, orders.automaker, orders.model,
-orders.registration_number, orders.price, orders.status, orders.delete_status, orders.place_id, masters.id AS master_ID
-FROM orders JOIN orders_masters
-ON orders.id = orders_masters.order_id
-JOIN masters
-ON orders_masters.master_id = masters.id GROUP BY orders.id;
+SELECT orders.id, orders.creation_time, orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, places.busy_status AS place_busy_status, places.delete_status AS place_delete_status FROM orders JOIN places ON orders.place_id = places.id;
