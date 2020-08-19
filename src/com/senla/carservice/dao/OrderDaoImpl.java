@@ -56,7 +56,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     private static final String SQL_REQUEST_TO_GET_NUMBER_MASTER_ORDERS = "SELECT COUNT(order_id) AS amount_of_elements " +
           "FROM orders_masters WHERE master_id=";
     private static final String SQL_REQUEST_SORT_BY_PRICE = " ORDER BY price";
-    private static final String SQL_REQUEST_SORT_FILING_DATE = "ORDER BY creation_time";
+    private static final String SQL_REQUEST_SORT_FILING_DATE = " ORDER BY creation_time";
     private static final String SQL_REQUEST_SORT_EXECUTION_DATE = " ORDER BY lead_time";
     private static final String SQL_REQUEST_SORT_PLANNED_START_DATE = "ORDER BY execution_start_time";
     private static final String SQL_REQUEST_EXECUTE_ORDERS = " WHERE orders.status='PERFORM'";
