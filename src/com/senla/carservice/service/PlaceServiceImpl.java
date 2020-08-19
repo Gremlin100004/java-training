@@ -6,7 +6,6 @@ import com.senla.carservice.container.objectadjuster.propertyinjection.annotatio
 import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.repository.PlaceRepository;
 
 import java.util.Date;
 import java.util.List;

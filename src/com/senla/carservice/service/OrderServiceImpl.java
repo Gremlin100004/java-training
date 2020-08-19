@@ -4,13 +4,13 @@ import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.dao.OrderDao;
+import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.enumaration.Status;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.repository.MasterRepository;
-import com.senla.carservice.repository.OrderRepository;
 import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.util.DateUtil;
 
@@ -26,7 +26,7 @@ public class OrderServiceImpl implements OrderService {
     @Dependency
     private OrderDao orderDao;
     @Dependency
-    private PlaceRepository placeRepository;
+    private PlaceDao placeDao;
     @Dependency
     private MasterRepository masterRepository;
     @ConfigProperty
@@ -45,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void addOrder(String automaker, String model, String registrationNumber) {
         //TODO check
         checkMasters();
@@ -53,19 +54,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
         DateUtil.checkDateTime(executionStartTime, leadTime);
         //TODO check
         checkOrders();
         Order currentOrder = orderDao.getLastOrder();
-        List<Order> orders = new ArrayList<>(orderRepository.getOrders());
-        orders.remove(currentOrder);
-        if (!orders.isEmpty()) {
-            orders = sortOrderByPeriod(orders, executionStartTime, leadTime);
-        }
-        int numberFreeMasters = masterRepository.getMasters().size() - orders.stream()
-            .mapToInt(order -> order.getMasters().size()).sum();
-        int numberFreePlace = orderRepository.getOrders().size() - orders.size();
+        String stringExecutionStartTime = DateUtil.getStringFromDate(executionStartTime, true);
+        String stringLeadTime = DateUtil.getStringFromDate(leadTime, true);
+        int numberFreeMasters = orderDao.getNumberFreeMasters(stringExecutionStartTime, stringLeadTime);
+        int numberFreePlace = orderDao.getNumberFreePlaces(stringExecutionStartTime, stringLeadTime);
         if (numberFreeMasters == 0) {
             throw new BusinessException("The number of masters is zero");
         }
@@ -74,91 +72,86 @@ public class OrderServiceImpl implements OrderService {
         }
         currentOrder.setExecutionStartTime(executionStartTime);
         currentOrder.setLeadTime(leadTime);
-        orderRepository.updateOrder(currentOrder);
+        orderDao.updateRecord(currentOrder);
     }
 
     @Override
     public void addOrderMasters(Master master) {
         checkOrders();
-        Order currentOrder = orderRepository.getLastOrder();
-        List<Master> masters = currentOrder.getMasters();
+        //TODO check
+        Order currentOrder = orderDao.getLastOrder();
+        List<Master> masters = orderDao.getOrderMasters(currentOrder);
         for (Master orderMaster : masters) {
             if (orderMaster.equals(master)) {
                 throw new BusinessException("This master already exists");
             }
         }
         masters.add(master);
-        currentOrder.setMasters(masters);
-        orderRepository.updateOrder(currentOrder);
-//        master.getOrders().add(currentOrder);
-        masterRepository.updateMaster(master);
+        orderDao.createRecordTableOrdersMasters(currentOrder, master);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void addOrderPlace(Place place) {
         checkOrders();
-        Order currentOrder = orderRepository.getLastOrder();
+        //TODO check
+        Order currentOrder = orderDao.getLastOrder();
         currentOrder.setPlace(place);
-//        place.getOrders().add(currentOrder);
-        placeRepository.updatePlace(place);
-        orderRepository.updateOrder(currentOrder);
+        orderDao.updateRecord(currentOrder);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void addOrderPrice(BigDecimal price) {
         checkOrders();
-        Order currentOrder = orderRepository.getLastOrder();
+        //TODO check
+        Order currentOrder = orderDao.getLastOrder();
         currentOrder.setPrice(price);
-        orderRepository.updateOrder(currentOrder);
+        orderDao.updateRecord(currentOrder);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void completeOrder(Order order) {
         checkStatusOrder(order);
         order.setStatus(Status.PERFORM);
         order.setExecutionStartTime(new Date());
         order.getPlace().setBusyStatus(true);
-        orderRepository.updateOrder(order);
+        orderDao.updateRecord(order);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void cancelOrder(Order order) {
         checkStatusOrder(order);
         order.setLeadTime(new Date());
         order.setStatus(Status.CANCELED);
-        for (Master master : order.getMasters()) {
-//            master.getOrders().remove(order);
-            masterRepository.updateMaster(master);
-        }
+        orderDao.updateRecord(order);
         Place place = order.getPlace();
         place.setBusyStatus(false);
-//        place.getOrders().remove(order);
-        placeRepository.updatePlace(place);
-        orderRepository.updateOrder(order);
+        placeDao.updateRecord(place);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void closeOrder(Order order) {
         checkStatusOrder(order);
         order.setLeadTime(new Date());
         order.setStatus(Status.COMPLETED);
-        for (Master master : order.getMasters()) {
-//            master.getOrders().remove(order);
-            masterRepository.updateMaster(master);
-        }
+        orderDao.updateRecord(order);
         Place place = order.getPlace();
         place.setBusyStatus(false);
-//        place.getOrders().remove(order);
-        placeRepository.updatePlace(order.getPlace());
-        orderRepository.updateOrder(order);
+        placeDao.updateRecord(place);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void deleteOrder(Order order) {
-        orderRepository.deleteOrder(order);
+        orderDao.deleteRecord(order);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
@@ -167,15 +160,76 @@ public class OrderServiceImpl implements OrderService {
         checkStatusOrderShiftTime(order);
         order.setLeadTime(leadTime);
         order.setExecutionStartTime(executionStartTime);
-        Place place = order.getPlace();
-//        place.getOrders().set(place.getOrders().indexOf(order), order);
-//        for (Master master : order.getMasters()) {
-//            master.getOrders().set(master.getOrders().indexOf(order), order);
-//            masterRepository.updateMaster(master);
-        }
-//        placeRepository.updatePlace(place);
-//        orderRepository.updateOrder(order);
-//    }
+        orderDao.updateRecord(order);
+    }
+
+    public List<Order> getOrdersSortByFilingDate() {
+
+        return null;
+    }
+
+    public List<Order> getOrdersSortByExecutionDate() {
+        return null;
+    }
+
+    public List<Order> getOrdersSortByPlannedStartDate() {
+        return null;
+    }
+
+    public List<Order> getOrdersSortByPrice() {
+        return null;
+    }
+
+    public List<Order> getExecuteOrderFilingDate() {
+        return null;
+    }
+
+    public List<Order> getCompletedOrdersFilingDate() {
+        return null;
+    }
+
+    public List<Order> getCompletedOrdersExecutionDate() {
+        return null;
+    }
+
+    public List<Order> getCompletedOrdersPrice() {
+        return null;
+    }
+
+    public List<Order> getCanceledOrdersFilingDate() {
+        return null;
+    }
+
+    public List<Order> getCanceledOrdersExecutionDate() {
+        return null;
+    }
+
+    public List<Order> getCanceledOrdersPrice() {
+        return null;
+    }
+
+    public List<Order> getDeletedOrdersFilingDate() {
+        return null;
+    }
+
+    public List<Order> getDeletedOrdersExecutionDate() {
+        return null;
+    }
+
+    public List<Order> getDeletedOrdersPrice() {
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public List<Order> sortOrderByCreationTime(List<Order> orders) {
