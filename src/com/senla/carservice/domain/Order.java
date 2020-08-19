@@ -22,7 +22,6 @@ public class Order extends AEntity {
 
     public Order(Long id, String automaker, String model, String registrationNumber) {
         super.setId(id);
-        this.creationTime = new Date();
         this.automaker = automaker;
         this.model = model;
         this.registrationNumber = registrationNumber;
