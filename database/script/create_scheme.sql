@@ -67,4 +67,4 @@ SELECT COUNT(order_id) AS amount_of_elements FROM orders_masters WHERE master_id
 
 SELECT orders.id, orders.creation_time, orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, places.busy_status AS place_busy_status, places.delete_status AS place_delete_status FROM orders JOIN places ON orders.place_id = places.id WHERE orders.status='PERFORM' ORDER BY price;
 
-SELECT * FROM orders ORDER BY execution_start_time;
+SELECT orders.id, orders.creation_time, orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, places.busy_status AS place_busy_status, places.delete_status AS place_delete_status  FROM orders JOIN orders_masters ON orders_masters.order_id = orders.id JOIN places ON orders.place_id=places.id WHERE orders_masters.master_id=1;

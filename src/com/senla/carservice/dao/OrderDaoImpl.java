@@ -42,14 +42,15 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
           "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
           "orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, " +
           "places.busy_status AS place_busy_status, places.delete_status AS place_delete_status FROM orders JOIN " +
-          "places ON orders.place_id = places.id";
+          "places ON orders.place_id = places.id ORDER BY orders.id DESC LIMIT 1";
     private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE orders SET delete_status=true WHERE id=";
     private static final String SQL_REQUEST_TO_GET_NUMBER_FREE_MASTERS = "SELECT COUNT(masters.id) AS amount_of_elements " +
           "FROM orders JOIN orders_masters ON orders_masters.order_id = orders.id JOIN masters ON orders_masters.master_id = " +
           "masters.id WHERE orders.lead_time > '";
     private static final String SQL_REQUEST_TO_GET_NUMBER_FREE_PLACES = "SELECT COUNT(places.id) AS amount_of_elements FROM " +
           "orders JOIN places ON places.id = orders.place_id WHERE orders.lead_time > '";
-    private static final String SQL_CONDITION = "' AND orders.lead_time < '";
+    private static final String SQL_CONDITION_END_TIME = " AND orders.lead_time < '";
+    private static final String SQL_CONDITION_START_TIME = " AND orders.lead_time > '";
     private static final String SQL_END_CONDITION = "'";
     private static final String SQL_REQUEST_TO_GET_ORDER_MASTER = "SELECT masters.id, masters.name , masters.delete_status " +
           "FROM masters JOIN orders_masters ON orders_masters.master_id = masters.id WHERE orders_masters.order_id=";
@@ -63,6 +64,12 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     private static final String SQL_REQUEST_COMPLETED_ORDERS = " WHERE orders.status='COMPLETED'";
     private static final String SQL_REQUEST_CANCELED_ORDERS = " WHERE orders.status='CANCELED'";
     private static final String SQL_REQUEST_DELETED_ORDERS = " WHERE orders.status='DELETED'";
+    private static final String SQL_REQUEST_GET_MASTER_ORDERS = "SELECT orders.id, orders.creation_time, " +
+           "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
+           "orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, " +
+           "places.busy_status AS place_busy_status, places.delete_status AS place_delete_status  FROM orders JOIN " +
+           "orders_masters ON orders_masters.order_id = orders.id JOIN places ON orders.place_id=places.id " +
+           "WHERE orders_masters.master_id=";
 
 
 
@@ -78,21 +85,19 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
 
     @Override
     public Order getLastOrder() {
-        Order order = getOrdersFromDatabase(SQL_REQUEST_TO_GET_LAST_RECORD).get(0);
-        //TODO check null and request
-        return order;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_LAST_RECORD).get(0);
     }
 
     @Override
     public int getNumberFreeMasters(String startPeriod, String endPeriod){
-        return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_FREE_MASTERS + startPeriod +
-                                 SQL_CONDITION + endPeriod + SQL_END_CONDITION);
+        return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_FREE_MASTERS + startPeriod + SQL_END_CONDITION +
+                SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION);
     }
 
     @Override
     public int getNumberFreePlaces(String startPeriod, String endPeriod){
-        return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_FREE_PLACES + startPeriod +
-                                 SQL_CONDITION + endPeriod + SQL_END_CONDITION);
+        return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_FREE_PLACES + startPeriod + SQL_END_CONDITION +
+                SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION);
     }
 
     @Override
@@ -109,110 +114,113 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
 
     @Override
     public List<Order> getOrdersSortByFilingDate() {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_SORT_FILING_DATE);
     }
 
 
     @Override
     public List<Order> getOrdersSortByExecutionDate() {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_SORT_EXECUTION_DATE);
     }
 
 
     @Override
     public List<Order> getOrdersSortByPlannedStartDate() {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_SORT_PLANNED_START_DATE);
     }
 
 
     @Override
     public List<Order> getOrdersSortByPrice() {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_SORT_BY_PRICE);
     }
 
 
     @Override
     public List<Order> getExecuteOrderSortByFilingDate() {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_EXECUTE_ORDERS + SQL_REQUEST_SORT_FILING_DATE);
     }
 
     @Override
     public List<Order> getExecuteOrderSortExecutionDate() {
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_EXECUTE_ORDERS + SQL_REQUEST_SORT_EXECUTION_DATE);
     }
 
 
     @Override
     public List<Order> getCompletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_COMPLETED_ORDERS +
+                SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_FILING_DATE);
     }
 
 
     @Override
     public List<Order> getCompletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_COMPLETED_ORDERS +
+                SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_EXECUTION_DATE);
     }
 
 
     @Override
     public List<Order> getCompletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_COMPLETED_ORDERS +
+                SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_BY_PRICE);
     }
 
 
     @Override
     public List<Order> getCanceledOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_CANCELED_ORDERS +
+                SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_FILING_DATE);
     }
 
 
     @Override
     public List<Order> getCanceledOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_CANCELED_ORDERS +
+                SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_EXECUTION_DATE);
     }
 
 
     @Override
     public List<Order> getCanceledOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_CANCELED_ORDERS +
+                SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_BY_PRICE);
     }
 
 
     @Override
     public List<Order> getDeletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_DELETED_ORDERS +
+                SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_FILING_DATE);
     }
 
 
     @Override
     public List<Order> getDeletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_DELETED_ORDERS +
+                SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_EXECUTION_DATE);
     }
 
 
     @Override
     public List<Order> getDeletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_DELETED_ORDERS +
+                SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_BY_PRICE);
     }
 
     @Override
     public List<Order> getMasterOrders(Master master){
-
-        return null;
+        return getOrdersFromDatabase(SQL_REQUEST_GET_MASTER_ORDERS + master.getId());
     }
 
     @Override
