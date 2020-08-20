@@ -313,6 +313,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     }
 
     private List<Order> getOrdersFromDatabase(String request){
+        System.out.println(request);
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(request);
             return parseResultSet(resultSet);
@@ -322,6 +323,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     }
 
     private int getIntFromRequest(String request){
+        System.out.println(request);
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(request);
             return resultSet.getInt("amount_of_elements");

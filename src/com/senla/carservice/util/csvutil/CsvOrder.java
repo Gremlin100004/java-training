@@ -36,15 +36,15 @@ public class CsvOrder {
 
     public List<Order> importOrder(List<Master> masters, List<Place> places) {
         List<String> csvLinesOrder = FileUtil.getCsv(orderPath);
-        return csvLinesOrder.stream()
-            .map(line -> getOrderFromCsv(line, masters, places))
-            .peek(
-                order -> {
-                    if (order.getMasters().isEmpty()) {
-                        throw new BusinessException("masters not imported");
-                    }
-                })
-            .collect(Collectors.toList());
+        List<Order> list = new ArrayList<>();
+        for (String line : csvLinesOrder) {
+            Order order = getOrderFromCsv(line, masters, places);
+//            if (order.getMasters().isEmpty()) {
+//                throw new BusinessException("masters not imported");
+//            }
+            list.add(order);
+        }
+        return list;
     }
 
     private Order getOrderFromCsv(String line, List<Master> masters, List<Place> places) {
@@ -53,19 +53,20 @@ public class CsvOrder {
         }
         List<String> values = Arrays.asList((line.split(idSeparator))[0].split(fieldSeparator));
         List<String> arrayIdMaster = Arrays.asList(line.split(idSeparator)[1].split(fieldSeparator));
-        Order order = new Order(ParameterUtil.getValueLong(values.get(0)),
-                                ParameterUtil.checkValueString(values.get(5)),
-                                ParameterUtil.checkValueString(values.get(6)),
-                                ParameterUtil.checkValueString(values.get(7)));
-        order.setCreationTime(DateUtil.getDatesFromString(values.get(1), true));
-        order.setExecutionStartTime(DateUtil.getDatesFromString(values.get(2), true));
-        order.setLeadTime(DateUtil.getDatesFromString(values.get(3), true));
-        order.setPlace(getPlaceById(places, Long.valueOf(values.get(4))));
-        order.setPrice(new BigDecimal(values.get(8)));
-        order.setStatus(ParameterUtil.getValueStatus(values.get(9)));
-        order.setDeleteStatus(ParameterUtil.getValueBoolean(values.get(10)));
-        order.setMasters(getMastersById(masters, arrayIdMaster));
-        return order;
+//        Order order = new Order(ParameterUtil.getValueLong(values.get(0)),
+//                                ParameterUtil.checkValueString(values.get(5)),
+//                                ParameterUtil.checkValueString(values.get(6)),
+//                                ParameterUtil.checkValueString(values.get(7)));
+//        order.setCreationTime(DateUtil.getDatesFromString(values.get(1), true));
+//        order.setExecutionStartTime(DateUtil.getDatesFromString(values.get(2), true));
+//        order.setLeadTime(DateUtil.getDatesFromString(values.get(3), true));
+//        order.setPlace(getPlaceById(places, Long.valueOf(values.get(4))));
+//        order.setPrice(new BigDecimal(values.get(8)));
+//        order.setStatus(ParameterUtil.getValueStatus(values.get(9)));
+//        order.setDeleteStatus(ParameterUtil.getValueBoolean(values.get(10)));
+//        order.setMasters(getMastersById(masters, arrayIdMaster));
+//        return order;
+        return null;
     }
 
     private List<Master> getMastersById(List<Master> masters, List<String> arrayIdMaster) {
@@ -119,14 +120,14 @@ public class CsvOrder {
         stringValue.append(order.isDeleteStatus());
         stringValue.append(fieldSeparator);
         stringValue.append(idSeparator);
-        int bound = order.getMasters().size();
-        for (int i = 0; i < bound; i++) {
-            if (i == order.getMasters().size() - SIZE_INDEX) {
-                stringValue.append(order.getMasters().get(i).getId());
-            } else {
-                stringValue.append(order.getMasters().get(i).getId()).append(fieldSeparator);
-            }
-        }
+//        int bound = order.getMasters().size();
+//        for (int i = 0; i < bound; i++) {
+//            if (i == order.getMasters().size() - SIZE_INDEX) {
+//                stringValue.append(order.getMasters().get(i).getId());
+//            } else {
+//                stringValue.append(order.getMasters().get(i).getId()).append(fieldSeparator);
+//            }
+//        }
         stringValue.append(idSeparator);
         return stringValue.toString();
     }

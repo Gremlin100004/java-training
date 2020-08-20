@@ -10,6 +10,7 @@ public class Master extends AEntity {
 
     public Master(String name) {
         this.name = name;
+        isDelete = false;
     }
 
     public String getName() {

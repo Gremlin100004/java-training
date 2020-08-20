@@ -2,11 +2,11 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.dao.MasterDao;
+import com.senla.carservice.dao.OrderDao;
+import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.repository.MasterRepository;
-import com.senla.carservice.repository.OrderRepository;
-import com.senla.carservice.repository.PlaceRepository;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.csvutil.CsvMaster;
 import com.senla.carservice.util.csvutil.CsvOrder;
@@ -18,11 +18,11 @@ import java.util.List;
 @Singleton
 public class CarOfficeServiceImpl implements CarOfficeService {
     @Dependency
-    private MasterRepository masterRepository;
+    private MasterDao masterDao;
     @Dependency
-    private PlaceRepository placeRepository;
+    private PlaceDao placeDao;
     @Dependency
-    private OrderRepository orderRepository;
+    private OrderDao orderDao;
     @Dependency
     private CsvPlace csvPlace;
     @Dependency
@@ -36,20 +36,20 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     @Override
     public Date getNearestFreeDate() {
-        if (masterRepository.getMasters().isEmpty()) {
+        if (masterDao.getAllRecords().isEmpty()) {
             throw new BusinessException("There are no masters");
         }
-        if (orderRepository.getOrders().isEmpty()) {
+        if (orderDao.getAllRecords().isEmpty()) {
             throw new BusinessException("There are no orders");
         }
-        if (placeRepository.getPlaces().isEmpty()) {
+        if (placeDao.getAllRecords().isEmpty()) {
             throw new BusinessException("There are no places");
         }
-        Date leadTimeOrder = orderRepository.getLastOrder().getLeadTime();
+        Date leadTimeOrder = orderDao.getLastOrder().getLeadTime();
         Date dayDate = new Date();
         for (Date currentDay = new Date(); leadTimeOrder.before(currentDay); currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
-            if (masterRepository.getFreeMasters(currentDay).isEmpty() ||
-                placeRepository.getFreePlaces(currentDay).isEmpty()) {
+            if (masterDao.getFreeMasters(currentDay).isEmpty() ||
+                placeDao.getFreePlaces(currentDay).isEmpty()) {
                 dayDate = currentDay;
                 currentDay = DateUtil.bringStartOfDayDate(currentDay);
             } else {
@@ -61,12 +61,12 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     @Override
     public void importEntities() {
-        masterRepository.updateListMaster(csvMaster.importMasters(orderRepository.getOrders()));
-        placeRepository.updateListPlace(csvPlace.importPlaces(orderRepository.getOrders()));
-        List<Order> orders = csvOrder.importOrder(masterRepository.getMasters(), placeRepository.getPlaces());
-        orderRepository.updateListOrder(orders);
-        masterRepository.updateListMaster(csvMaster.importMasters(orders));
-        placeRepository.updateListPlace(csvPlace.importPlaces(orders));
+//        masterDao.updateListMaster(csvMaster.importMasters(orderDao.getOrders()));
+//        placeDao.updateListPlace(csvPlace.importPlaces(orderDao.getOrders()));
+//        List<Order> orders = csvOrder.importOrder(masterDao.getMasters(), placeDao.getPlaces());
+//        orderDao.updateListOrder(orders);
+//        masterDao.updateListMaster(csvMaster.importMasters(orders));
+//        placeDao.updateListPlace(csvPlace.importPlaces(orders));
     }
 
     @Override
@@ -74,25 +74,25 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         checkOrders();
         checkMasters();
         checkPlaces();
-        csvOrder.exportOrder(orderRepository.getOrders());
-        csvMaster.exportMasters(masterRepository.getMasters());
-        csvPlace.exportPlaces(placeRepository.getPlaces());
+//        csvOrder.exportOrder(orderDao.getOrders());
+//        csvMaster.exportMasters(masterDao.getMasters());
+//        csvPlace.exportPlaces(placeDao.getPlaces());
     }
 
     private void checkOrders() {
-        if (orderRepository.getOrders().isEmpty()) {
+        if (orderDao.getAllRecords().isEmpty()) {
             throw new BusinessException("There are no orders");
         }
     }
 
     private void checkMasters() {
-        if (masterRepository.getMasters().isEmpty()) {
+        if (masterDao.getAllRecords().isEmpty()) {
             throw new BusinessException("There are no masters");
         }
     }
 
     private void checkPlaces() {
-        if (placeRepository.getPlaces().isEmpty()) {
+        if (placeDao.getAllRecords().isEmpty()) {
             throw new BusinessException("There are no places");
         }
     }

@@ -26,9 +26,8 @@ public class ConstructorDependencyInjectionAnnotationHandler implements Annotati
                     object = context.getObject(classTypes[i]);
                 }
                 try {
+                    //TODO objects
                     context.setSingleton(constructor.newInstance(object));
-//                    Object object2 = constructor.newInstance(object);
-//                    System.out.println(object2.getClass().getName());
                 } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
                     throw new InitializationException("Error set value to a constructor");
                 }

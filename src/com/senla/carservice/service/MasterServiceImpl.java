@@ -5,7 +5,6 @@ import com.senla.carservice.container.objectadjuster.dependencyinjection.annotat
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.repository.OrderRepository;
 
 import java.util.Date;
 import java.util.List;
@@ -14,8 +13,6 @@ import java.util.List;
 public class MasterServiceImpl implements MasterService {
     @Dependency
     private MasterDao masterDao;
-    @Dependency
-    private OrderRepository orderRepository;
 
     public MasterServiceImpl() {
     }
@@ -33,7 +30,7 @@ public class MasterServiceImpl implements MasterService {
     @Override
     @SuppressWarnings("unchecked")
     public void addMaster(String name) {
-        masterDao.updateRecord(new Master(name));
+        masterDao.createRecord(new Master(name));
     }
 
     @Override

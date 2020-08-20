@@ -16,8 +16,9 @@ import java.util.List;
 
 @Singleton
 public class MasterDaoImpl extends AbstractDao implements MasterDao {
-    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO masters VALUES (NULL";
+    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO masters VALUES (NULL, ";
     private static final String END_REQUEST_TO_ADD_RECORD = ")";
+    private static final String SQL_STRING_WRAPPER = "'";
     private static final String SEPARATOR = ", ";
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE masters SET name=";
     private static final String FIELD_DELETE_STATUS = " delete_status=";
@@ -32,7 +33,7 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
     private static final String SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET = "SELECT DISTINCT masters.id, masters.name, " +
             "masters.delete_status, COUNT(orders.id) AS number_orders FROM masters JOIN orders_masters ON masters.id = " +
             "orders_masters.master_id LEFT JOIN orders ON orders_masters.order_id = orders.id GROUP BY masters.id " +
-            "ORDER BY COUNT(orders.id) DESC";
+            "ORDER BY masters.name";
     private static final String SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY = "SELECT DISTINCT masters.id, masters.name, " +
             "masters.delete_status, COUNT(orders.id) AS number_orders FROM masters JOIN orders_masters ON masters.id = " +
             "orders_masters.master_id LEFT JOIN orders ON orders_masters.order_id = orders.id GROUP BY masters.id " +
@@ -55,11 +56,13 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
 
     @Override
     public List<Master> getMasterByAlphabet() {
+        System.out.println(SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET);
         return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET);
     }
 
     @Override
     public List<Master> getMasterByBusy() {
+        System.out.println(SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY);
         return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY);
     }
 
@@ -85,8 +88,8 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
     @Override
     protected String getCreateRequest(Object object) {
         Master master = (Master) object;
-        return SQL_REQUEST_TO_ADD_RECORD + master.getName() + SEPARATOR + master.getDelete() +
-                END_REQUEST_TO_ADD_RECORD;
+        return SQL_REQUEST_TO_ADD_RECORD + SQL_STRING_WRAPPER + master.getName() + SQL_STRING_WRAPPER + SEPARATOR
+               + master.getDelete() + END_REQUEST_TO_ADD_RECORD;
     }
 
     @Override
