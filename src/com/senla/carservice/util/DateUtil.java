@@ -58,14 +58,14 @@ public class DateUtil {
         }
     }
 
-    public static void checkDateTime(Date executionStartTime, Date leadTime) {
+    public static void checkDateTime(Date executionStartTime, Date leadTime, Boolean periodTime) {
         if (executionStartTime == null || leadTime == null) {
-            throw new BusinessException("Error date format, should be \"dd.MM.yyyy hh:mm\"");
+            throw new BusinessException("Error date format, should be \"dd-MM-yyyy hh:mm\"");
         }
         if (executionStartTime.after(leadTime)) {
             throw new BusinessException("The execution start time is greater than lead time");
         }
-        if (executionStartTime.before(new Date())) {
+        if (executionStartTime.before(new Date()) && !periodTime) {
             throw new BusinessException("The execution start time is less than current Date");
         }
     }

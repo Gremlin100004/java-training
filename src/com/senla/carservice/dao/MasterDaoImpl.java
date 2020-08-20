@@ -60,7 +60,7 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
 
     @Override
     public List<Master> getMasterByBusy() {
-        return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET);
+        return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY);
     }
 
     @Override

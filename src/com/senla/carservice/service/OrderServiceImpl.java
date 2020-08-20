@@ -3,6 +3,7 @@ package com.senla.carservice.service;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
+import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.dao.OrderDao;
 import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.domain.Master;
@@ -10,16 +11,13 @@ import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.enumaration.Status;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.repository.MasterRepository;
-import com.senla.carservice.repository.PlaceRepository;
+import com.senla.carservice.service.enumaration.SortParameter;
 import com.senla.carservice.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Singleton
 public class OrderServiceImpl implements OrderService {
@@ -28,7 +26,7 @@ public class OrderServiceImpl implements OrderService {
     @Dependency
     private PlaceDao placeDao;
     @Dependency
-    private MasterRepository masterRepository;
+    private MasterDao masterDao;
     @ConfigProperty
     private boolean isBlockShiftTime;
 
@@ -39,15 +37,15 @@ public class OrderServiceImpl implements OrderService {
     @SuppressWarnings("unchecked")
     public List<Order> getOrders() {
         List<Order> orders = orderDao.getAllRecords();
-        checkOrders();
-        //TODO check
+        if (orders.isEmpty()) {
+            throw new BusinessException("There are no orders");
+        }
         return orders;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void addOrder(String automaker, String model, String registrationNumber) {
-        //TODO check
         checkMasters();
         checkPlaces();
         orderDao.createRecord(new Order(automaker, model, registrationNumber));
@@ -56,10 +54,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @SuppressWarnings("unchecked")
     public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
-        DateUtil.checkDateTime(executionStartTime, leadTime);
-        //TODO check
-        checkOrders();
+        DateUtil.checkDateTime(executionStartTime, leadTime, false);
         Order currentOrder = orderDao.getLastOrder();
+        if (currentOrder == null) {
+            throw new BusinessException("There are no orders");
+        }
         String stringExecutionStartTime = DateUtil.getStringFromDate(executionStartTime, true);
         String stringLeadTime = DateUtil.getStringFromDate(leadTime, true);
         int numberFreeMasters = orderDao.getNumberFreeMasters(stringExecutionStartTime, stringLeadTime);
@@ -77,9 +76,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void addOrderMasters(Master master) {
-        checkOrders();
-        //TODO check
         Order currentOrder = orderDao.getLastOrder();
+        if (currentOrder == null) {
+            throw new BusinessException("There are no orders");
+        }
         List<Master> masters = orderDao.getOrderMasters(currentOrder);
         for (Master orderMaster : masters) {
             if (orderMaster.equals(master)) {
@@ -87,15 +87,16 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         masters.add(master);
-        orderDao.createRecordTableOrdersMasters(currentOrder, master);
+        orderDao.createRecordTableManyToMany(currentOrder, master);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void addOrderPlace(Place place) {
-        checkOrders();
-        //TODO check
         Order currentOrder = orderDao.getLastOrder();
+        if (currentOrder == null) {
+            throw new BusinessException("There are no orders");
+        }
         currentOrder.setPlace(place);
         orderDao.updateRecord(currentOrder);
     }
@@ -103,9 +104,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @SuppressWarnings("unchecked")
     public void addOrderPrice(BigDecimal price) {
-        checkOrders();
-        //TODO check
         Order currentOrder = orderDao.getLastOrder();
+        if (currentOrder == null) {
+            throw new BusinessException("There are no orders");
+        }
         currentOrder.setPrice(price);
         orderDao.updateRecord(currentOrder);
     }
@@ -156,189 +158,94 @@ public class OrderServiceImpl implements OrderService {
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
-        DateUtil.checkDateTime(executionStartTime, leadTime);
+        DateUtil.checkDateTime(executionStartTime, leadTime, false);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(leadTime);
         order.setExecutionStartTime(executionStartTime);
         orderDao.updateRecord(order);
     }
 
-    public List<Order> getOrdersSortByFilingDate() {
-
-        return null;
-    }
-
-    public List<Order> getOrdersSortByExecutionDate() {
-        return null;
-    }
-
-    public List<Order> getOrdersSortByPlannedStartDate() {
-        return null;
-    }
-
-    public List<Order> getOrdersSortByPrice() {
-        return null;
-    }
-
-    public List<Order> getExecuteOrderFilingDate() {
-        return null;
-    }
-
-    public List<Order> getCompletedOrdersFilingDate() {
-        return null;
-    }
-
-    public List<Order> getCompletedOrdersExecutionDate() {
-        return null;
-    }
-
-    public List<Order> getCompletedOrdersPrice() {
-        return null;
-    }
-
-    public List<Order> getCanceledOrdersFilingDate() {
-        return null;
-    }
-
-    public List<Order> getCanceledOrdersExecutionDate() {
-        return null;
-    }
-
-    public List<Order> getCanceledOrdersPrice() {
-        return null;
-    }
-
-    public List<Order> getDeletedOrdersFilingDate() {
-        return null;
-    }
-
-    public List<Order> getDeletedOrdersExecutionDate() {
-        return null;
-    }
-
-    public List<Order> getDeletedOrdersPrice() {
-        return null;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
-    public List<Order> sortOrderByCreationTime(List<Order> orders) {
-        return orders.stream()
-            .sorted(Comparator.comparing(Order::getCreationTime, Comparator.nullsLast(Comparator.naturalOrder())))
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Order> sortOrderByLeadTime(List<Order> orders) {
-        return orders.stream()
-            .sorted(Comparator.comparing(Order::getLeadTime, Comparator.nullsLast(Comparator.naturalOrder())))
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Order> sortOrderByPrice(List<Order> orders) {
-        return orders.stream()
-            .sorted(Comparator.comparing(Order::getPrice, Comparator.nullsLast(Comparator.naturalOrder())))
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Order> sortOrderByStartTime(List<Order> orders) {
-        return orders.stream()
-            .sorted(Comparator.comparing(Order::getExecutionStartTime, Comparator.nullsLast(Comparator.naturalOrder())))
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Order> getCurrentRunningOrders() {
-        checkOrders();
-        if (orderRepository.getRunningOrders().isEmpty()) {
-            throw new BusinessException("There are no orders with status PERFORM");
+    public List<Order> getSortOrders(SortParameter sortParameter) {
+        List<Order> orders = new ArrayList<>();
+        if (sortParameter.equals(SortParameter.SORT_BY_FILING_DATE)){
+            orders = orderDao.getOrdersSortByFilingDate();
+        } else if (sortParameter.equals(SortParameter.SORT_BY_EXECUTION_DATE)){
+            orders = orderDao.getOrdersSortByExecutionDate();
+        } else if (sortParameter.equals(SortParameter.BY_PLANNED_START_DATE)){
+            orders = orderDao.getOrdersSortByPlannedStartDate();
+        } else if (sortParameter.equals(SortParameter.SORT_BY_PRICE)){
+            orders = orderDao.getOrdersSortByPrice();
+        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE)){
+            orders = orderDao.getExecuteOrderSortByFilingDate();
+        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE)){
+            orders = orderDao.getExecuteOrderSortExecutionDate();
         }
-        return orderRepository.getRunningOrders();
+        if (orders.isEmpty()) {
+            throw new BusinessException("There are no orders");
+        }
+        return orders;
+    }
+
+    @Override
+    public List<Order> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter) {
+        List<Order> orders = new ArrayList<>();
+        DateUtil.checkDateTime(startPeriodDate, endPeriodDate, true);
+        String stringStartPeriodDate = DateUtil.getStringFromDate(startPeriodDate, true);
+        String stringEndPeriodDate = DateUtil.getStringFromDate(endPeriodDate, true);
+        if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE)){
+            orders = orderDao.getCompletedOrdersSortByFilingDate(stringStartPeriodDate, stringEndPeriodDate);
+        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE)){
+            orders = orderDao.getCompletedOrdersSortByExecutionDate(stringStartPeriodDate, stringEndPeriodDate);
+        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE)){
+            orders = orderDao.getCompletedOrdersSortByPrice(stringStartPeriodDate, stringEndPeriodDate);
+        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE)){
+            orders = orderDao.getCanceledOrdersSortByFilingDate(stringStartPeriodDate, stringEndPeriodDate);
+        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE)){
+            orders = orderDao.getCanceledOrdersSortByExecutionDate(stringStartPeriodDate, stringEndPeriodDate);
+        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_PRICE)){
+            orders = orderDao.getCanceledOrdersSortByPrice(stringStartPeriodDate, stringEndPeriodDate);
+        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE)){
+            orders = orderDao.getDeletedOrdersSortByFilingDate(stringStartPeriodDate, stringEndPeriodDate);
+        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE)){
+            orders = orderDao.getDeletedOrdersSortByExecutionDate(stringStartPeriodDate, stringEndPeriodDate);
+        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)){
+            orders = orderDao.getDeletedOrdersSortByPrice(stringStartPeriodDate, stringEndPeriodDate);
+        }
+        if (orders.isEmpty()) {
+            throw new BusinessException("There are no orders");
+        }
+        return orders;
     }
 
     @Override
     public List<Order> getMasterOrders(Master master) {
-        checkOrders();
-        if (orderRepository.getMasterOrders(master).isEmpty()) {
+        List<Order> orders = orderDao.getMasterOrders(master);
+        if (orders.isEmpty()) {
             throw new BusinessException("Master doesn't have any orders");
         }
-        return orderRepository.getMasterOrders(master);
+        return orders;
     }
 
     @Override
     public List<Master> getOrderMasters(Order order) {
-        if (orderRepository.getOrderMasters(order).isEmpty()) {
+        List<Master> masters = orderDao.getOrderMasters(order);
+        if (masters.isEmpty()) {
             throw new BusinessException("There are no masters in order");
         }
-        return orderRepository.getOrderMasters(order);
-    }
-
-    @Override
-    public List<Order> getCompletedOrders(Date startPeriod, Date endPeriod) {
-        if (sortOrderByPeriod(orderRepository.getCompletedOrders(), startPeriod, endPeriod).isEmpty()) {
-            throw new BusinessException("There are no orders with status COMPLETED");
-        }
-        return (sortOrderByPeriod(orderRepository.getCompletedOrders(), startPeriod, endPeriod));
-    }
-
-    @Override
-    public List<Order> getCanceledOrders(Date startPeriod, Date endPeriod) {
-        if (sortOrderByPeriod(orderRepository.getCanceledOrders(), startPeriod, endPeriod).isEmpty()) {
-            throw new BusinessException("There are no orders with status CANCELED");
-        }
-        return sortOrderByPeriod(orderRepository.getCanceledOrders(), startPeriod, endPeriod);
-    }
-
-    @Override
-    public List<Order> getDeletedOrders(Date startPeriod, Date endPeriod) {
-        if (sortOrderByPeriod(orderRepository.getDeletedOrders(), startPeriod, endPeriod).isEmpty()) {
-            throw new BusinessException("There are no deleted orders");
-        }
-        return sortOrderByPeriod(orderRepository.getDeletedOrders(), startPeriod, endPeriod);
-    }
-
-    private void checkOrders() {
-        if (orderRepository.getOrders().isEmpty()) {
-            throw new BusinessException("There are no orders");
-        }
+        return masters;
     }
 
     private void checkMasters() {
-        if (masterRepository.getMasters().isEmpty()) {
+        if (masterDao.getAllRecords().isEmpty()) {
             throw new BusinessException("There are no masters");
         }
     }
 
     private void checkPlaces() {
-        if (placeRepository.getPlaces().isEmpty()) {
+        if (masterDao.getAllRecords().isEmpty()) {
             throw new BusinessException("There are no places");
         }
-    }
-
-    private List<Order> sortOrderByPeriod(List<Order> orders, Date startPeriod, Date endPeriod) {
-        if (orders.isEmpty()) {
-            throw new BusinessException("There are no orders");
-        }
-        List<Order> sortArrayOrder = new ArrayList<>();
-        orders.forEach(order -> {
-            if (order.getLeadTime().after(startPeriod) && order.getLeadTime().equals(startPeriod) &&
-                order.getLeadTime().before(endPeriod) && order.getLeadTime().equals(endPeriod)) {
-                sortArrayOrder.add(order);
-            }
-        });
-        return sortArrayOrder;
     }
 
     private void checkStatusOrder(Order order) {

@@ -96,6 +96,126 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     }
 
     @Override
+    public void createRecordTableManyToMany(Order order, Master master){
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(
+            SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS)) {
+            statement.setLong(1, order.getId());
+            statement.setLong(2, master.getId());
+            statement.execute();
+        } catch (SQLException ex) {
+            throw new BusinessException("Error request update records table orders_masters");
+        }
+    }
+
+    @Override
+    public List<Order> getOrdersSortByFilingDate() {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getOrdersSortByExecutionDate() {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getOrdersSortByPlannedStartDate() {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getOrdersSortByPrice() {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getExecuteOrderSortByFilingDate() {
+
+        return null;
+    }
+
+    @Override
+    public List<Order> getExecuteOrderSortExecutionDate() {
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getCompletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getCompletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getCompletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getCanceledOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getCanceledOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getCanceledOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getDeletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getDeletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
+
+        return null;
+    }
+
+
+    @Override
+    public List<Order> getDeletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
+
+        return null;
+    }
+
+    @Override
+    public List<Order> getMasterOrders(Master master){
+
+        return null;
+    }
+
+    @Override
     public List<Master> getOrderMasters(Order order){
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_ORDER_MASTER + order.getId());
@@ -110,18 +230,6 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
             return masters;
         } catch (SQLException ex) {
             throw new BusinessException("Error request get records order masters");
-        }
-    }
-
-    @Override
-    public void createRecordTableOrdersMasters(Order order, Master master){
-        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(
-            SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS)) {
-            statement.setLong(1, order.getId());
-            statement.setLong(2, master.getId());
-            statement.execute();
-        } catch (SQLException ex) {
-            throw new BusinessException("Error request update records table orders_masters");
         }
     }
 
@@ -195,8 +303,6 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
         Order order = (Order) object;
         return SQL_REQUEST_TO_DELETE_RECORD + order.getId();
     }
-
-
 
     private List<Order> getOrdersFromDatabase(String request){
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
