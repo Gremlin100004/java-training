@@ -8,6 +8,25 @@ public class ScannerUtil {
     private ScannerUtil() {
     }
 
+    public static String getStringUser(String textForUser, boolean isNumber) {
+        Scanner scanner = new Scanner(System.in);
+        String textUser = null;
+        boolean isText = false;
+        while (!isText) {
+            Printer.printInfo(textForUser);
+            textUser = scanner.nextLine();
+            if (!Checker.isSymbolsString(textUser) && !isNumber) {
+                isText = true;
+            } else if (!Checker.isSymbolsStringNumber(textUser) && isNumber){
+                isText = true;
+            }
+            else {
+                Printer.printInfo("You enter wrong value!!!");
+            }
+        }
+        return textUser;
+    }
+
     public static String getStringUser(String textForUser) {
         Scanner scanner = new Scanner(System.in);
         String textUser = null;

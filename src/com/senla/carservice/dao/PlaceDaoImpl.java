@@ -16,15 +16,16 @@ import java.util.List;
 
 @Singleton
 public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
-    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO places VALUES (NULL";
+    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO places VALUES (NULL, ";
     private static final String END_REQUEST_TO_ADD_RECORD = ")";
     private static final String SEPARATOR = ", ";
-    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE places SET name=";
+    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE places SET number=";
     private static final String FIELD_BUSY_STATUS = " busy_status=";
     private static final String FIELD_DELETE_STATUS = " delete_status=";
     private static final String PRIMARY_KEY_FIELD = " WHERE id=";
     private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE places SET delete_status=true WHERE id=";
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT * FROM places";
+    private static final String SQL_REQUEST_TO_GET_NUMBER_RECORDS = "SELECT COUNT(places.id) AS number_places FROM places";
     private static final String SQL_REQUEST_TO_GET_FREE_PLACES = "SELECT DISTINCT places.id, places.number" +
          "FROM places JOIN orders ON places.id = orders.place_id WHERE orders.lead_time > ";
 
@@ -44,6 +45,17 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
             return parseResultSet(resultSet);
         } catch (SQLException ex) {
             throw new BusinessException("Error request get record masters");
+        }
+    }
+
+    @Override
+    public int getNumberPlace(){
+        try (Statement statement = databaseConnection.getConnection().createStatement()) {
+            ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_NUMBER_RECORDS);
+            resultSet.next();
+            return resultSet.getInt("number_places");
+        } catch (SQLException ex) {
+            throw new BusinessException("Error request get number places");
         }
     }
 
@@ -81,8 +93,8 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     @Override
     protected String getUpdateRequest(Object object) {
         Place place = (Place) object;
-        return SQL_REQUEST_TO_UPDATE_RECORD + place.getNumber() + FIELD_DELETE_STATUS + place.getDelete() +
-               FIELD_BUSY_STATUS + place.getDelete() + PRIMARY_KEY_FIELD + place.getId();
+        return SQL_REQUEST_TO_UPDATE_RECORD + place.getNumber() + SEPARATOR + FIELD_DELETE_STATUS +
+               place.getDelete() + SEPARATOR + FIELD_BUSY_STATUS + place.getDelete() + PRIMARY_KEY_FIELD + place.getId();
     }
 
     @Override

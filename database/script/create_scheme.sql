@@ -61,10 +61,4 @@ COMMIT;
 
 
 
-SELECT COUNT(places.id) AS amount_of_elements FROM orders JOIN places ON places.id = orders.place_id WHERE orders.lead_time > '2020-09-15 00:00' AND orders.lead_time < '2020-09-16 00:00';
-
-SELECT COUNT(order_id) AS amount_of_elements FROM orders_masters WHERE master_id=1;
-
-SELECT orders.id, orders.creation_time, orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, places.busy_status AS place_busy_status, places.delete_status AS place_delete_status FROM orders JOIN places ON orders.place_id = places.id WHERE orders.status='PERFORM' ORDER BY price;
-
-SELECT orders.id, orders.creation_time, orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, places.busy_status AS place_busy_status, places.delete_status AS place_delete_status  FROM orders JOIN orders_masters ON orders_masters.order_id = orders.id JOIN places ON orders.place_id=places.id WHERE orders_masters.master_id=1;
+SELECT COUNT(masters.id) FROM masters;

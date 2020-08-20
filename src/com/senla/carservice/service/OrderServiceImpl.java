@@ -61,8 +61,8 @@ public class OrderServiceImpl implements OrderService {
         }
         String stringExecutionStartTime = DateUtil.getStringFromDate(executionStartTime, true);
         String stringLeadTime = DateUtil.getStringFromDate(leadTime, true);
-        int numberFreeMasters = orderDao.getNumberFreeMasters(stringExecutionStartTime, stringLeadTime);
-        int numberFreePlace = orderDao.getNumberFreePlaces(stringExecutionStartTime, stringLeadTime);
+        int numberFreeMasters = masterDao.getNumberMasters() - orderDao.getNumberBusyMasters(stringExecutionStartTime, stringLeadTime);
+        int numberFreePlace = placeDao.getNumberPlace() - orderDao.getNumberBusyPlaces(stringExecutionStartTime, stringLeadTime);
         if (numberFreeMasters == 0) {
             throw new BusinessException("The number of masters is zero");
         }
@@ -75,10 +75,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void addOrderMasters(Master master) {
+    public void addOrderMasters(int index) {
         Order currentOrder = orderDao.getLastOrder();
+        Master master = (Master) masterDao.getAllRecords().get(index);
         if (currentOrder == null) {
             throw new BusinessException("There are no orders");
+        }
+        if (master.getDelete()){
+            throw new BusinessException("Master has been deleted");
         }
         List<Master> masters = orderDao.getOrderMasters(currentOrder);
         for (Master orderMaster : masters) {
@@ -86,8 +90,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new BusinessException("This master already exists");
             }
         }
-        masters.add(master);
-        orderDao.createRecordTableManyToMany(currentOrder, master);
+        orderDao.addRecordToTableManyToMany(currentOrder, master);
     }
 
     @Override

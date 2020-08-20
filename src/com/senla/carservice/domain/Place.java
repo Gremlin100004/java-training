@@ -11,6 +11,7 @@ public class Place extends AEntity {
     public Place(Integer number) {
         this.number = number;
         this.busyStatus = false;
+        this.isDelete = false;
     }
 
     public Integer getNumber() {

@@ -51,7 +51,7 @@ public class OrderController {
             if (masterService.getMasters().size() < index || index < 0) {
                 return "There is no such master";
             } else {
-                orderService.addOrderMasters(masterService.getMasters().get(index));
+                orderService.addOrderMasters(index);
                 return "masters add successfully";
             }
         } catch (BusinessException e) {

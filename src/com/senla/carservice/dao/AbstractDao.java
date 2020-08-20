@@ -43,6 +43,7 @@ public abstract class AbstractDao implements GenericDao {
     @Override
     public void updateRecord(Object object) {
         String request = getUpdateRequest(object);
+        System.out.println(request);
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             statement.execute(request);
         } catch (SQLException ex) {

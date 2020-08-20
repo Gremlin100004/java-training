@@ -10,7 +10,7 @@ import java.util.Date;
 public class DateUtil {
     private static final int START_DAY_HOUR = 0;
     private static final int START_DAY_MINUTE = 0;
-    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-dd-MM hh:mm");
+    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
     private DateUtil() {
@@ -60,7 +60,7 @@ public class DateUtil {
 
     public static void checkDateTime(Date executionStartTime, Date leadTime, Boolean periodTime) {
         if (executionStartTime == null || leadTime == null) {
-            throw new BusinessException("Error date format, should be \"dd-MM-yyyy hh:mm\"");
+            throw new BusinessException("Error date format, should be \"yyyy-MM-dd hh:mm\"");
         }
         if (executionStartTime.after(leadTime)) {
             throw new BusinessException("The execution start time is greater than lead time");

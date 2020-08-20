@@ -18,6 +18,7 @@ public class Order extends AEntity {
     private boolean deleteStatus;
 
     public Order(String automaker, String model, String registrationNumber) {
+        this.creationTime = new Date();
         this.automaker = automaker;
         this.model = model;
         this.registrationNumber = registrationNumber;

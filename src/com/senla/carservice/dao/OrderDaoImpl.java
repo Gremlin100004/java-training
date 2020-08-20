@@ -8,6 +8,7 @@ import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.enumaration.Status;
 import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.util.DateUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,10 +19,13 @@ import java.util.List;
 
 @Singleton
 public class OrderDaoImpl extends AbstractDao implements OrderDao{
-    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO orders VALUES (NULL";
+    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO orders VALUES (NULL, ";
     private static final String SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS = "INSERT INTO orders_masters VALUES (?, ?)";
     private static final String END_REQUEST_TO_ADD_RECORD = ")";
     private static final String SEPARATOR = ", ";
+    private static final String SQL_STRING_WRAPPER = "'";
+    private static final String SQL_NULL_DATE = "'1111-01-01 00:00'";
+    private static final String SQL_DEFAULT_PLACE_ID = "1";
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE orders SET creation_time=";
     private static final String FIELD_EXECUTION_START_TIME = " execution_start_time=";
     private static final String FIELD_LEAD_TIME = " lead_time=";
@@ -89,25 +93,26 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     }
 
     @Override
-    public int getNumberFreeMasters(String startPeriod, String endPeriod){
+    public int getNumberBusyMasters(String startPeriod, String endPeriod){
         return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_FREE_MASTERS + startPeriod + SQL_END_CONDITION +
                 SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION);
     }
 
     @Override
-    public int getNumberFreePlaces(String startPeriod, String endPeriod){
+    public int getNumberBusyPlaces(String startPeriod, String endPeriod){
         return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_FREE_PLACES + startPeriod + SQL_END_CONDITION +
                 SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION);
     }
 
-    @Override
-    public void createRecordTableManyToMany(Order order, Master master){
+    public void addRecordToTableManyToMany(Order order, Master master){
+        System.out.println(order.getId());
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(
             SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS)) {
             statement.setLong(1, order.getId());
             statement.setLong(2, master.getId());
             statement.execute();
         } catch (SQLException ex) {
+            ex.printStackTrace();
             throw new BusinessException("Error request update records table orders_masters");
         }
     }
@@ -261,6 +266,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
                 place.setBusyStatus(resultSet.getBoolean("place_busy_status"));
                 place.setDelete(resultSet.getBoolean("place_delete_status"));
                 order.setPlace(place);
+                order.setId(resultSet.getLong("id"));
                 orders.add(order);
             }
             return orders;
@@ -272,17 +278,18 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     @Override
     protected String getCreateRequest(Object object) {
         Order order = (Order) object;
-        return SQL_REQUEST_TO_ADD_RECORD + order.getCreationTime() +
-                SEPARATOR + order.getExecutionStartTime() +
-                SEPARATOR + order.getLeadTime() +
-                SEPARATOR + order.getAutomaker() +
-                SEPARATOR + order.getModel() +
-                SEPARATOR + order.getRegistrationNumber() +
-                SEPARATOR + order.getRegistrationNumber() +
-                SEPARATOR + order.getPrice() +
-                SEPARATOR + order.getStatus() +
-                SEPARATOR + order.getPlace().getId() +
-                END_REQUEST_TO_ADD_RECORD;
+        return SQL_REQUEST_TO_ADD_RECORD +
+               SQL_STRING_WRAPPER + DateUtil.getStringFromDate(order.getCreationTime(), true) + SQL_STRING_WRAPPER +
+               SEPARATOR + SQL_NULL_DATE +
+               SEPARATOR + SQL_NULL_DATE +
+               SEPARATOR + SQL_STRING_WRAPPER + order.getAutomaker() + SQL_STRING_WRAPPER +
+               SEPARATOR + SQL_STRING_WRAPPER + order.getModel() + SQL_STRING_WRAPPER +
+               SEPARATOR + SQL_STRING_WRAPPER + order.getRegistrationNumber() + SQL_STRING_WRAPPER +
+               SEPARATOR + order.getPrice() +
+               SEPARATOR + SQL_STRING_WRAPPER + order.getStatus() + SQL_STRING_WRAPPER +
+               SEPARATOR + order.isDeleteStatus() +
+               SEPARATOR + SQL_DEFAULT_PLACE_ID +
+               END_REQUEST_TO_ADD_RECORD;
     }
 
     @Override
@@ -293,17 +300,20 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     @Override
     protected String getUpdateRequest(Object object) {
         Order order = (Order) object;
-        return SQL_REQUEST_TO_UPDATE_RECORD + order.getCreationTime() +
-                FIELD_EXECUTION_START_TIME + order.getExecutionStartTime() +
-                FIELD_LEAD_TIME + order.getLeadTime() +
-                FIELD_AUTOMAKERS + order.getAutomaker() +
-                FIELD_MODEL + order.getModel() +
-                FIELD_REGISTRATION_NUMBER + order.getRegistrationNumber() +
-                FIELD_PRICE + order.getPrice() +
-                FIELD_STATUS + order.getStatus() +
-                FIELD_DELETE_STATUS + order.isDeleteStatus() +
-                FIELD_PLACE_ID + order.getPlace().getId() +
-                PRIMARY_KEY_FIELD + order.getId();
+        return SQL_REQUEST_TO_UPDATE_RECORD +
+               SQL_STRING_WRAPPER + DateUtil.getStringFromDate(order.getCreationTime(), true) + SQL_STRING_WRAPPER +
+               SEPARATOR + FIELD_EXECUTION_START_TIME +
+               SQL_STRING_WRAPPER + DateUtil.getStringFromDate(order.getExecutionStartTime(), true) + SQL_STRING_WRAPPER +
+               SEPARATOR + FIELD_LEAD_TIME +
+               SQL_STRING_WRAPPER + DateUtil.getStringFromDate(order.getLeadTime(), true) + SQL_STRING_WRAPPER +
+               SEPARATOR + FIELD_AUTOMAKERS + SQL_STRING_WRAPPER + order.getAutomaker() + SQL_STRING_WRAPPER +
+               SEPARATOR + FIELD_MODEL + SQL_STRING_WRAPPER + order.getModel() + SQL_STRING_WRAPPER +
+               SEPARATOR + FIELD_REGISTRATION_NUMBER + SQL_STRING_WRAPPER + order.getRegistrationNumber() + SQL_STRING_WRAPPER +
+               SEPARATOR + FIELD_PRICE + order.getPrice() +
+               SEPARATOR + FIELD_STATUS + SQL_STRING_WRAPPER + order.getStatus() + SQL_STRING_WRAPPER +
+               SEPARATOR + FIELD_DELETE_STATUS + order.isDeleteStatus() +
+               SEPARATOR + FIELD_PLACE_ID + order.getPlace().getId() +
+               PRIMARY_KEY_FIELD + order.getId();
     }
 
     @Override
@@ -326,8 +336,10 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
         System.out.println(request);
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(request);
+            resultSet.next();
             return resultSet.getInt("amount_of_elements");
         } catch (SQLException ex) {
+            ex.printStackTrace();
             throw new BusinessException("Error request get records orders");
         }
     }

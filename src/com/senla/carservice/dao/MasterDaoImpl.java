@@ -23,13 +23,15 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE masters SET name=";
     private static final String FIELD_DELETE_STATUS = " delete_status=";
     private static final String PRIMARY_KEY_FIELD = " WHERE id=";
+    private static final String SQL_REQUEST_TO_GET_NUMBER_RECORDS = "SELECT COUNT(masters.id) AS number_masters FROM masters";
     private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE masters SET delete_status=true WHERE id=";
+    private static final String SQL_REQUEST_GROUP_BY = "GROUP BY masters.id";
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT DISTINCT masters.id, masters.name, " +
             "masters.delete_status, COUNT(orders.id) AS number_orders FROM masters JOIN orders_masters ON masters.id = " +
             "orders_masters.master_id LEFT JOIN orders ON orders_masters.order_id = orders.id GROUP BY masters.id";
-    private static final String SQL_REQUEST_TO_GET_FREE_MASTERS = "SELECT DISTINCT masters.id, masters.name " +
-            "FROM masters INNER JOIN orders_masters ON masters.id = orders_masters.master_id LEFT JOIN orders " +
-            "ON orders_masters.order_id = orders.id WHERE orders.lead_time > ";
+    private static final String SQL_REQUEST_TO_GET_FREE_MASTERS = "SELECT DISTINCT masters.id, masters.name, " +
+            "masters.delete_status, COUNT(orders.id) AS number_orders FROM masters INNER JOIN orders_masters ON masters.id " +
+            "= orders_masters.master_id LEFT JOIN orders ON orders_masters.order_id = orders.id WHERE orders.lead_time > ";
     private static final String SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET = "SELECT DISTINCT masters.id, masters.name, " +
             "masters.delete_status, COUNT(orders.id) AS number_orders FROM masters JOIN orders_masters ON masters.id = " +
             "orders_masters.master_id LEFT JOIN orders ON orders_masters.order_id = orders.id GROUP BY masters.id " +
@@ -51,19 +53,29 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
 
     @Override
     public List<Master> getFreeMasters(Date date) {
-        return getMastersFromDatabase(SQL_REQUEST_TO_GET_FREE_MASTERS + DateUtil.getStringFromDate(date, true));
+        return getMastersFromDatabase(SQL_REQUEST_TO_GET_FREE_MASTERS + SQL_STRING_WRAPPER +
+              DateUtil.getStringFromDate(date, true) + SQL_STRING_WRAPPER + SQL_REQUEST_GROUP_BY);
     }
 
     @Override
     public List<Master> getMasterByAlphabet() {
-        System.out.println(SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET);
         return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET);
     }
 
     @Override
     public List<Master> getMasterByBusy() {
-        System.out.println(SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY);
         return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY);
+    }
+
+    @Override
+    public int getNumberMasters() {
+        try (Statement statement = databaseConnection.getConnection().createStatement()) {
+            ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_NUMBER_RECORDS);
+            resultSet.next();
+            return resultSet.getInt("number_masters");
+        } catch (SQLException ex) {
+            throw new BusinessException("Error request get number masters");
+        }
     }
 
     @Override
@@ -111,6 +123,7 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
     }
 
     private List<Master> getMastersFromDatabase(String request){
+        System.out.println(request);
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(request);
             return parseResultSet(resultSet);

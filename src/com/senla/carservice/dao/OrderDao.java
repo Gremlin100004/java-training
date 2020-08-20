@@ -9,13 +9,13 @@ public interface OrderDao extends GenericDao {
 
     Order getLastOrder();
 
-    int getNumberFreeMasters(String startPeriod, String endPeriod);
+    int getNumberBusyMasters(String startPeriod, String endPeriod);
 
-    int getNumberFreePlaces(String startPeriod, String endPeriod);
+    int getNumberBusyPlaces(String startPeriod, String endPeriod);
 
     List<Master> getOrderMasters(Order order);
 
-    void createRecordTableManyToMany(Order order, Master master);
+    void addRecordToTableManyToMany(Order order, Master master);
 
     List<Order> getOrdersSortByFilingDate();
 
