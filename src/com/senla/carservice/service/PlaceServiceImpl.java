@@ -50,7 +50,7 @@ public class PlaceServiceImpl implements PlaceService {
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
-        placeDao.updateRecord(place);
+        placeDao.deleteRecord(place);
     }
 
     @Override

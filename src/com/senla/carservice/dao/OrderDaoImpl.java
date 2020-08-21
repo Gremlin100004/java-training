@@ -19,24 +19,13 @@ import java.util.List;
 
 @Singleton
 public class OrderDaoImpl extends AbstractDao implements OrderDao{
-    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO orders VALUES (NULL, ";
+    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO orders VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS = "INSERT INTO orders_masters VALUES (?, ?)";
-    private static final String END_REQUEST_TO_ADD_RECORD = ")";
-    private static final String SEPARATOR = ", ";
-    private static final String SQL_STRING_WRAPPER = "'";
     private static final String SQL_NULL_DATE = "'1111-01-01 00:00'";
-    private static final String SQL_DEFAULT_PLACE_ID = "1";
-    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE orders SET creation_time=";
-    private static final String FIELD_EXECUTION_START_TIME = " execution_start_time=";
-    private static final String FIELD_LEAD_TIME = " lead_time=";
-    private static final String FIELD_AUTOMAKERS = " automaker=";
-    private static final String FIELD_MODEL = " model=";
-    private static final String FIELD_REGISTRATION_NUMBER = " registration_number=";
-    private static final String FIELD_PRICE = " price=";
-    private static final String FIELD_STATUS = " status=";
-    private static final String FIELD_DELETE_STATUS = " delete_status=";
-    private static final String FIELD_PLACE_ID = " place_id=";
-    private static final String PRIMARY_KEY_FIELD = " WHERE id=";
+    private static final int SQL_DEFAULT_PLACE_ID = 1;
+    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE orders SET creation_time=?, execution_start_time=? " +
+            "lead_time=?, automaker=?, model=?, registration_number=?, price=?, status=?, delete_status=?, place_id=? " +
+            "WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT orders.id, orders.creation_time, " +
           "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
           "orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, " +
@@ -276,20 +265,57 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     }
 
     @Override
-    protected String getCreateRequest(Object object) {
+    protected <T> void fillStatementCreate(PreparedStatement statement, T object) {
         Order order = (Order) object;
-        return SQL_REQUEST_TO_ADD_RECORD +
-               SQL_STRING_WRAPPER + DateUtil.getStringFromDate(order.getCreationTime(), true) + SQL_STRING_WRAPPER +
-               SEPARATOR + SQL_NULL_DATE +
-               SEPARATOR + SQL_NULL_DATE +
-               SEPARATOR + SQL_STRING_WRAPPER + order.getAutomaker() + SQL_STRING_WRAPPER +
-               SEPARATOR + SQL_STRING_WRAPPER + order.getModel() + SQL_STRING_WRAPPER +
-               SEPARATOR + SQL_STRING_WRAPPER + order.getRegistrationNumber() + SQL_STRING_WRAPPER +
-               SEPARATOR + order.getPrice() +
-               SEPARATOR + SQL_STRING_WRAPPER + order.getStatus() + SQL_STRING_WRAPPER +
-               SEPARATOR + order.isDeleteStatus() +
-               SEPARATOR + SQL_DEFAULT_PLACE_ID +
-               END_REQUEST_TO_ADD_RECORD;
+        try {
+            statement.setString(1, DateUtil.getStringFromDate(order.getCreationTime(), true));
+            statement.setString(2, SQL_NULL_DATE);
+            statement.setString(3, SQL_NULL_DATE);
+            statement.setString(4, order.getAutomaker());
+            statement.setString(5, order.getModel());
+            statement.setString(6, order.getRegistrationNumber());
+            statement.setBigDecimal(7, order.getPrice());
+            statement.setString(8, String.valueOf(order.getStatus()));
+            statement.setBoolean(9, order.isDeleteStatus());
+            statement.setLong(10, SQL_DEFAULT_PLACE_ID);
+        } catch (SQLException e) {
+            throw new BusinessException("Error fill statement for create request");
+        }
+    }
+
+    @Override
+    protected <T> void fillStatementUpdate(PreparedStatement statement, T object) {
+        Order order = (Order) object;
+        try {
+            statement.setString(1, DateUtil.getStringFromDate(order.getCreationTime(), true));
+            statement.setString(2, DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
+            statement.setString(3, DateUtil.getStringFromDate(order.getLeadTime(), true));
+            statement.setString(4, order.getAutomaker());
+            statement.setString(5, order.getModel());
+            statement.setString(6, order.getRegistrationNumber());
+            statement.setBigDecimal(7, order.getPrice());
+            statement.setString(8, String.valueOf(order.getStatus()));
+            statement.setBoolean(9, order.isDeleteStatus());
+            statement.setLong(10, order.getPlace().getId());
+            statement.setLong(11, order.getId());
+        } catch (SQLException e) {
+            throw new BusinessException("Error fill statement for update request");
+        }
+    }
+
+    @Override
+    protected <T> void fillStatementDelete(PreparedStatement statement, T object) {
+        Order order = (Order) object;
+        try {
+            statement.setLong(1, order.getId());
+        } catch (SQLException e) {
+            throw new BusinessException("Error fill statement for update request");
+        }
+    }
+
+    @Override
+    protected String getCreateRequest() {
+        return SQL_REQUEST_TO_ADD_RECORD;
     }
 
     @Override
@@ -298,32 +324,16 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     }
 
     @Override
-    protected String getUpdateRequest(Object object) {
-        Order order = (Order) object;
-        return SQL_REQUEST_TO_UPDATE_RECORD +
-               SQL_STRING_WRAPPER + DateUtil.getStringFromDate(order.getCreationTime(), true) + SQL_STRING_WRAPPER +
-               SEPARATOR + FIELD_EXECUTION_START_TIME +
-               SQL_STRING_WRAPPER + DateUtil.getStringFromDate(order.getExecutionStartTime(), true) + SQL_STRING_WRAPPER +
-               SEPARATOR + FIELD_LEAD_TIME +
-               SQL_STRING_WRAPPER + DateUtil.getStringFromDate(order.getLeadTime(), true) + SQL_STRING_WRAPPER +
-               SEPARATOR + FIELD_AUTOMAKERS + SQL_STRING_WRAPPER + order.getAutomaker() + SQL_STRING_WRAPPER +
-               SEPARATOR + FIELD_MODEL + SQL_STRING_WRAPPER + order.getModel() + SQL_STRING_WRAPPER +
-               SEPARATOR + FIELD_REGISTRATION_NUMBER + SQL_STRING_WRAPPER + order.getRegistrationNumber() + SQL_STRING_WRAPPER +
-               SEPARATOR + FIELD_PRICE + order.getPrice() +
-               SEPARATOR + FIELD_STATUS + SQL_STRING_WRAPPER + order.getStatus() + SQL_STRING_WRAPPER +
-               SEPARATOR + FIELD_DELETE_STATUS + order.isDeleteStatus() +
-               SEPARATOR + FIELD_PLACE_ID + order.getPlace().getId() +
-               PRIMARY_KEY_FIELD + order.getId();
+    protected String getUpdateRequest() {
+        return SQL_REQUEST_TO_UPDATE_RECORD;
     }
 
     @Override
-    protected String getDeleteRequest(Object object) {
-        Order order = (Order) object;
-        return SQL_REQUEST_TO_DELETE_RECORD + order.getId();
+    protected String getDeleteRequest() {
+        return SQL_REQUEST_TO_DELETE_RECORD;
     }
 
     private List<Order> getOrdersFromDatabase(String request){
-        System.out.println(request);
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(request);
             return parseResultSet(resultSet);

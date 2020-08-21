@@ -4,6 +4,7 @@ USE car_service;
 CREATE TABLE IF NOT EXISTS masters(
 id INT NOT NULL AUTO_INCREMENT,
 name VARCHAR(10),
+number_orders INT DEFAULT 0,
 delete_status BOOLEAN DEFAULT false,
 PRIMARY KEY pk_masters (id)
 );
@@ -46,7 +47,7 @@ ADD CONSTRAINT fk_orders_masters_orders
 FOREIGN KEY (order_id)
 REFERENCES orders (id) ON DELETE CASCADE;
 
-ALTER TABLE JOIN places ON places.id = orders.place_id
+ALTER TABLE orders_masters
 ADD CONSTRAINT fk_orders_masters_masters
 FOREIGN KEY (master_id)
 REFERENCES masters (id) ON DELETE CASCADE;
@@ -59,6 +60,4 @@ CREATE UNIQUE INDEX orders_id_idx
 ON orders (id);
 COMMIT;
 
-
-
-SELECT COUNT(masters.id) FROM masters;
+SELECT DISTINCT id, name, number_orders, delete_status FROM masters;

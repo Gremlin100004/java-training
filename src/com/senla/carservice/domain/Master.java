@@ -11,6 +11,7 @@ public class Master extends AEntity {
     public Master(String name) {
         this.name = name;
         isDelete = false;
+        numberOrders = 0;
     }
 
     public String getName() {

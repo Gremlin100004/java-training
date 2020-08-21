@@ -3,10 +3,12 @@ package com.senla.carservice.dao;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.ConstructorDependency;
 import com.senla.carservice.dao.connection.DatabaseConnection;
+import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,18 +18,14 @@ import java.util.List;
 
 @Singleton
 public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
-    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO places VALUES (NULL, ";
-    private static final String END_REQUEST_TO_ADD_RECORD = ")";
-    private static final String SEPARATOR = ", ";
-    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE places SET number=";
-    private static final String FIELD_BUSY_STATUS = " busy_status=";
-    private static final String FIELD_DELETE_STATUS = " delete_status=";
-    private static final String PRIMARY_KEY_FIELD = " WHERE id=";
-    private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE places SET delete_status=true WHERE id=";
+    private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO places VALUES (NULL, ?, ?, ?)";
+    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE places SET number=?, busy_status=?, delete_status=? " +
+         "WHERE id=?";
+    private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE places SET delete_status=true WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT * FROM places";
     private static final String SQL_REQUEST_TO_GET_NUMBER_RECORDS = "SELECT COUNT(places.id) AS number_places FROM places";
     private static final String SQL_REQUEST_TO_GET_FREE_PLACES = "SELECT DISTINCT places.id, places.number" +
-         "FROM places JOIN orders ON places.id = orders.place_id WHERE orders.lead_time > ";
+         "FROM places LEFT JOIN orders ON places.id = orders.place_id WHERE orders.lead_time > ";
 
     @ConstructorDependency
     public PlaceDaoImpl(DatabaseConnection databaseConnection) {
@@ -39,6 +37,7 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
 
     @Override
     public List<Place> getFreePlaces(Date executeDate) {
+        //ToDO get free place
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_FREE_PLACES +
                                                          DateUtil.getStringFromDate(executeDate, true));
@@ -79,10 +78,43 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     }
 
     @Override
-    protected String getCreateRequest(Object object) {
+    protected <T> void fillStatementCreate(PreparedStatement statement, T object) {
         Place place = (Place) object;
-        return SQL_REQUEST_TO_ADD_RECORD + place.getNumber() + SEPARATOR + place.getBusyStatus() + SEPARATOR
-               + place.getDelete() + END_REQUEST_TO_ADD_RECORD;
+        try {
+            statement.setInt(1, place.getNumber());
+            statement.setBoolean(2, place.getBusyStatus());
+            statement.setBoolean(3, place.getDelete());
+        } catch (SQLException e) {
+            throw new BusinessException("Error fill statement for create request");
+        }
+    }
+
+    @Override
+    protected <T> void fillStatementUpdate(PreparedStatement statement, T object) {
+        Place place = (Place) object;
+        try {
+            statement.setInt(1, place.getNumber());
+            statement.setBoolean(2, place.getBusyStatus());
+            statement.setBoolean(3, place.getDelete());
+            statement.setLong(4, place.getId());
+        } catch (SQLException e) {
+            throw new BusinessException("Error fill statement for update request");
+        }
+    }
+
+    @Override
+    protected <T> void fillStatementDelete(PreparedStatement statement, T object) {
+        Place place = (Place) object;
+        try {
+            statement.setLong(1, place.getId());
+        } catch (SQLException e) {
+            throw new BusinessException("Error fill statement for create request");
+        }
+    }
+
+    @Override
+    protected String getCreateRequest() {
+        return SQL_REQUEST_TO_ADD_RECORD;
     }
 
     @Override
@@ -91,15 +123,12 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     }
 
     @Override
-    protected String getUpdateRequest(Object object) {
-        Place place = (Place) object;
-        return SQL_REQUEST_TO_UPDATE_RECORD + place.getNumber() + SEPARATOR + FIELD_DELETE_STATUS +
-               place.getDelete() + SEPARATOR + FIELD_BUSY_STATUS + place.getDelete() + PRIMARY_KEY_FIELD + place.getId();
+    protected String getUpdateRequest() {
+        return SQL_REQUEST_TO_UPDATE_RECORD;
     }
 
     @Override
-    protected String getDeleteRequest(Object object) {
-        Place place = (Place) object;
-        return SQL_REQUEST_TO_DELETE_RECORD + place.getId();
+    protected String getDeleteRequest() {
+        return SQL_REQUEST_TO_DELETE_RECORD;
     }
 }

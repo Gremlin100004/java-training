@@ -471,6 +471,7 @@ public class Builder {
     }
 
     private void deleteMaster() {
+        Printer.printInfo(masterController.getMasters());
         int index = ScannerUtil.getIntUser("Enter the index number of the master to delete:");
         Printer.printInfo(masterController.deleteMaster(index - INDEX_OFFSET));
     }

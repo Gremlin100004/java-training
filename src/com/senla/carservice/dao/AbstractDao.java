@@ -21,8 +21,10 @@ public abstract class AbstractDao implements GenericDao {
 
     @Override
     public void createRecord(Object object) {
-        String request = getCreateRequest(object);
+        String request = getCreateRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
+            fillStatementCreate(statement, object);
+            System.out.println(statement.toString());
             statement.execute();
         } catch (SQLException ex) {
             throw new BusinessException("Error request add record");
@@ -32,8 +34,8 @@ public abstract class AbstractDao implements GenericDao {
     @Override
     public List<Object> getAllRecords() {
         String request = getReadAllRequest();
-        try (Statement statement = databaseConnection.getConnection().createStatement()) {
-            ResultSet resultSet = statement.executeQuery(request);
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
+            ResultSet resultSet = statement.executeQuery();
             return parseResultSet(resultSet);
         } catch (Exception e) {
             throw new BusinessException("Error request get all records");
@@ -42,9 +44,9 @@ public abstract class AbstractDao implements GenericDao {
 
     @Override
     public void updateRecord(Object object) {
-        String request = getUpdateRequest(object);
-        System.out.println(request);
-        try (Statement statement = databaseConnection.getConnection().createStatement()) {
+        String request = getUpdateRequest();
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
+            fillStatementUpdate(statement, object);
             statement.execute(request);
         } catch (SQLException ex) {
             throw new BusinessException("Error request update record");
@@ -53,33 +55,41 @@ public abstract class AbstractDao implements GenericDao {
 
     @Override
     public void updateAllRecords(List objects) {
-        try (Statement statement = databaseConnection.getConnection().createStatement()) {
-            for (Object object : objects){
-                String request = getUpdateRequest(object);
+        for (Object object : objects) {
+            String request = getUpdateRequest();
+            try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
+                fillStatementUpdate(statement, object);
                 statement.execute(request);
+            } catch (SQLException ex) {
+                throw new BusinessException("Error request update all records");
             }
-        } catch (SQLException ex) {
-            throw new BusinessException("Error request update all records");
         }
     }
 
     @Override
     public void deleteRecord(Object object) {
-        String request = getDeleteRequest(object);
-        try (Statement statement = databaseConnection.getConnection().createStatement()) {
-            statement.execute(request);
+        String request = getDeleteRequest();
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
+            fillStatementDelete(statement, object);
+            statement.execute();
         } catch (SQLException ex) {
             throw new BusinessException("Error request delete record");
         }
     }
 
+    protected abstract <T> void fillStatementCreate(PreparedStatement statement, T object);
+
+    protected abstract <T> void fillStatementUpdate(PreparedStatement statement, T object);
+
+    protected abstract <T> void fillStatementDelete(PreparedStatement statement, T object);
+
     protected abstract <T> List<T> parseResultSet(ResultSet resultSet);
 
-    protected abstract <T> String getCreateRequest(T object);
+    protected abstract String getCreateRequest();
+
+    protected abstract String getUpdateRequest();
 
     protected abstract String getReadAllRequest();
 
-    protected abstract <T> String getUpdateRequest(T object);
-
-    protected abstract <T> String getDeleteRequest(T object);
+    protected abstract String getDeleteRequest();
 }
