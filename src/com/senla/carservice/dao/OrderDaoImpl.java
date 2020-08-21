@@ -21,9 +21,9 @@ import java.util.List;
 public class OrderDaoImpl extends AbstractDao implements OrderDao{
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO orders VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS = "INSERT INTO orders_masters VALUES (?, ?)";
-    private static final String SQL_NULL_DATE = "'1111-01-01 00:00'";
+    private static final String SQL_NULL_DATE = "1111-01-01 00:00";
     private static final int SQL_DEFAULT_PLACE_ID = 1;
-    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE orders SET creation_time=?, execution_start_time=? " +
+    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE orders SET creation_time=?, execution_start_time=?, " +
             "lead_time=?, automaker=?, model=?, registration_number=?, price=?, status=?, delete_status=?, place_id=? " +
             "WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT orders.id, orders.creation_time, " +

@@ -27,11 +27,11 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
             "delete_status FROM masters ORDER BY masters.name";
     private static final String SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY = "SELECT DISTINCT id, name, number_orders, " +
             "delete_status FROM masters ORDER BY number_orders";
-    private static final String SQL_REQUEST_TO_GET_FREE_MASTERS = "SELECT DISTINCT masters.id, masters.name, master.number_orders" +
-            "FROM masters JOIN orders_masters ON masters.id = orders_masters.master_id JOIN orders " +
+    private static final String SQL_REQUEST_TO_GET_FREE_MASTERS = "SELECT DISTINCT masters.id, masters.name, masters.number_orders, " +
+            "masters.delete_status FROM masters JOIN orders_masters ON masters.id = orders_masters.master_id JOIN orders " +
             "ON orders_masters.order_id = orders.id WHERE orders.lead_time > ?";
-    private static final String SQL_REQUEST_TO_GET_FREE_MASTERS_ZERO_ORDER = "SELECT DISTINCT id, name, number_orders" +
-            "FROM masters WHERE number_orders = 0";
+    private static final String SQL_REQUEST_TO_GET_FREE_MASTERS_ZERO_ORDER = "SELECT DISTINCT id, name, number_orders, " +
+            "delete_status FROM masters WHERE number_orders = 0";
 
 
     @ConstructorDependency
@@ -133,7 +133,7 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
             }
             return masters;
         } catch (SQLException ex) {
-            throw new BusinessException("Error request get record masters");
+            throw new BusinessException("Error request parse result record masters");
         }
     }
 

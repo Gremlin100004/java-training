@@ -24,8 +24,8 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE places SET delete_status=true WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT * FROM places";
     private static final String SQL_REQUEST_TO_GET_NUMBER_RECORDS = "SELECT COUNT(places.id) AS number_places FROM places";
-    private static final String SQL_REQUEST_TO_GET_FREE_PLACES = "SELECT DISTINCT places.id, places.number" +
-         "FROM places LEFT JOIN orders ON places.id = orders.place_id WHERE orders.lead_time > ";
+    private static final String SQL_REQUEST_TO_GET_FREE_PLACES = "SELECT DISTINCT places.id, places.number, places.busy_status, " +
+         "places.delete_status FROM places LEFT JOIN orders ON places.id = orders.place_id WHERE orders.lead_time > ?";
 
     @ConstructorDependency
     public PlaceDaoImpl(DatabaseConnection databaseConnection) {
@@ -38,19 +38,19 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     @Override
     public List<Place> getFreePlaces(Date executeDate) {
         //ToDO get free place
-        try (Statement statement = databaseConnection.getConnection().createStatement()) {
-            ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_FREE_PLACES +
-                                                         DateUtil.getStringFromDate(executeDate, true));
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_TO_GET_FREE_PLACES)) {
+            statement.setString(1, DateUtil.getStringFromDate(executeDate, true));
+            ResultSet resultSet = statement.executeQuery();
             return parseResultSet(resultSet);
         } catch (SQLException ex) {
-            throw new BusinessException("Error request get record masters");
+            throw new BusinessException("Error request get number free masters");
         }
     }
 
     @Override
     public int getNumberPlace(){
-        try (Statement statement = databaseConnection.getConnection().createStatement()) {
-            ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_NUMBER_RECORDS);
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_TO_GET_NUMBER_RECORDS)) {
+            ResultSet resultSet = statement.executeQuery();
             resultSet.next();
             return resultSet.getInt("number_places");
         } catch (SQLException ex) {

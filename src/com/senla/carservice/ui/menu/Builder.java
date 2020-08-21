@@ -104,7 +104,7 @@ public class Builder {
             new MenuItem(MenuTittle.ADD_MASTER.getValue(), () -> Printer
                 .printInfo(masterController.addMaster(ScannerUtil.getStringUser("Enter the name of master", false))),
                          mastersMenu), new MenuItem(MenuTittle.DELETE_MASTER.getValue(), () -> {
-                if (isCheckMaster()) {
+                if (isCheckMaster(true)) {
                     return;
                 }
                 deleteMaster();
@@ -126,7 +126,7 @@ public class Builder {
                 Printer.printInfo(placeController.addPlace(ScannerUtil.getIntUser("Enter the number of place"))),
                          placesMenu));
         placesMenu.getMenuItems().add(new MenuItem(MenuTittle.DELETE_PLACE.getValue(), () -> {
-            if (isCheckPlace()) {
+            if (isCheckPlace(true)) {
                 return;
             }
             deleteGarage();
@@ -249,7 +249,7 @@ public class Builder {
         listOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.GET_ORDERS_EXECUTED_CONCRETE_MASTER.getValue(), () -> {
                 int index;
-                if (isCheckMaster()) {
+                if (isCheckMaster(true)) {
                     return;
                 }
                 index = ScannerUtil.getIntUser("Enter the index number of the master to view orders:");
@@ -510,7 +510,7 @@ public class Builder {
     private void addOrder() {
         String message = "";
         while (!message.equals("order add successfully!")) {
-            if (isCheckMaster() || isCheckPlace()) {
+            if (isCheckMaster(false) || isCheckPlace(false)) {
                 return;
             }
             String automaker = ScannerUtil.getStringUser("Enter the automaker of car", false);
@@ -598,16 +598,23 @@ public class Builder {
 
     private boolean isCheckOrder() {
         String message = orderController.getOrders();
+        Printer.printInfo(message);
         return message.equals("There are no orders");
     }
 
-    private boolean isCheckMaster() {
+    private boolean isCheckMaster(boolean isPrint) {
         String message = masterController.getMasters();
+        if (isPrint){
+            Printer.printInfo(message);
+        }
         return message.equals("There are no masters");
     }
 
-    private boolean isCheckPlace() {
+    private boolean isCheckPlace(boolean isPrint) {
         String message = placeController.getArrayPlace();
+        if (isPrint){
+            Printer.printInfo(message);
+        }
         return message.equals("There are no places");
     }
 }

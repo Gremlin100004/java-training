@@ -24,7 +24,6 @@ public abstract class AbstractDao implements GenericDao {
         String request = getCreateRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             fillStatementCreate(statement, object);
-            System.out.println(statement.toString());
             statement.execute();
         } catch (SQLException ex) {
             throw new BusinessException("Error request add record");
@@ -47,7 +46,7 @@ public abstract class AbstractDao implements GenericDao {
         String request = getUpdateRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             fillStatementUpdate(statement, object);
-            statement.execute(request);
+            statement.execute();
         } catch (SQLException ex) {
             throw new BusinessException("Error request update record");
         }
@@ -59,7 +58,7 @@ public abstract class AbstractDao implements GenericDao {
             String request = getUpdateRequest();
             try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
                 fillStatementUpdate(statement, object);
-                statement.execute(request);
+                statement.execute();
             } catch (SQLException ex) {
                 throw new BusinessException("Error request update all records");
             }
