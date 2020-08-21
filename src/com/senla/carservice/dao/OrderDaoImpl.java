@@ -36,7 +36,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
           "orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, " +
           "places.busy_status AS place_busy_status, places.delete_status AS place_delete_status FROM orders JOIN " +
           "places ON orders.place_id = places.id ORDER BY orders.id DESC LIMIT 1";
-    private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE orders SET delete_status=true WHERE id=";
+    private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE orders SET delete_status=true WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_NUMBER_FREE_MASTERS = "SELECT COUNT(masters.id) AS amount_of_elements " +
           "FROM orders JOIN orders_masters ON orders_masters.order_id = orders.id JOIN masters ON orders_masters.master_id = " +
           "masters.id WHERE orders.lead_time > '";
@@ -45,14 +45,13 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     private static final String SQL_CONDITION_END_TIME = " AND orders.lead_time < '";
     private static final String SQL_CONDITION_START_TIME = " AND orders.lead_time > '";
     private static final String SQL_END_CONDITION = "'";
-    private static final String SQL_REQUEST_TO_GET_ORDER_MASTER = "SELECT masters.id, masters.name , masters.delete_status " +
-          "FROM masters JOIN orders_masters ON orders_masters.master_id = masters.id WHERE orders_masters.order_id=";
-    private static final String SQL_REQUEST_TO_GET_NUMBER_MASTER_ORDERS = "SELECT COUNT(order_id) AS amount_of_elements " +
-          "FROM orders_masters WHERE master_id=";
+    private static final String SQL_REQUEST_TO_GET_ORDER_MASTER = "SELECT masters.id, masters.name, masters.number_orders," +
+            " masters.delete_status FROM masters JOIN orders_masters ON orders_masters.master_id = masters.id " +
+            "WHERE orders_masters.order_id=";
     private static final String SQL_REQUEST_SORT_BY_PRICE = " ORDER BY price";
     private static final String SQL_REQUEST_SORT_FILING_DATE = " ORDER BY creation_time";
     private static final String SQL_REQUEST_SORT_EXECUTION_DATE = " ORDER BY lead_time";
-    private static final String SQL_REQUEST_SORT_PLANNED_START_DATE = "ORDER BY execution_start_time";
+    private static final String SQL_REQUEST_SORT_PLANNED_START_DATE = " ORDER BY execution_start_time";
     private static final String SQL_REQUEST_EXECUTE_ORDERS = " WHERE orders.status='PERFORM'";
     private static final String SQL_REQUEST_COMPLETED_ORDERS = " WHERE orders.status='COMPLETED'";
     private static final String SQL_REQUEST_CANCELED_ORDERS = " WHERE orders.status='CANCELED'";
@@ -62,7 +61,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
            "orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, " +
            "places.busy_status AS place_busy_status, places.delete_status AS place_delete_status  FROM orders JOIN " +
            "orders_masters ON orders_masters.order_id = orders.id JOIN places ON orders.place_id=places.id " +
-           "WHERE orders_masters.master_id=";
+           "WHERE orders_masters.master_id=?";
 
 
 
@@ -145,7 +144,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     public List<Order> getCompletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
         return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_COMPLETED_ORDERS +
                 SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_FILING_DATE);
+                SQL_END_CONDITION + SQL_REQUEST_SORT_FILING_DATE);
     }
 
 
@@ -153,7 +152,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     public List<Order> getCompletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
         return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_COMPLETED_ORDERS +
                 SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_EXECUTION_DATE);
+                SQL_END_CONDITION + SQL_REQUEST_SORT_EXECUTION_DATE);
     }
 
 
@@ -161,7 +160,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     public List<Order> getCompletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
         return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_COMPLETED_ORDERS +
                 SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_BY_PRICE);
+                SQL_END_CONDITION + SQL_REQUEST_SORT_BY_PRICE);
     }
 
 
@@ -169,7 +168,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     public List<Order> getCanceledOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
         return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_CANCELED_ORDERS +
                 SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_FILING_DATE);
+                SQL_END_CONDITION + SQL_REQUEST_SORT_FILING_DATE);
     }
 
 
@@ -177,7 +176,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     public List<Order> getCanceledOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
         return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_CANCELED_ORDERS +
                 SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_EXECUTION_DATE);
+                SQL_END_CONDITION + SQL_REQUEST_SORT_EXECUTION_DATE);
     }
 
 
@@ -185,7 +184,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     public List<Order> getCanceledOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
         return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_CANCELED_ORDERS +
                 SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_BY_PRICE);
+                SQL_END_CONDITION + SQL_REQUEST_SORT_BY_PRICE);
     }
 
 
@@ -193,7 +192,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     public List<Order> getDeletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
         return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_DELETED_ORDERS +
                 SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_FILING_DATE);
+                SQL_END_CONDITION + SQL_REQUEST_SORT_FILING_DATE);
     }
 
 
@@ -201,7 +200,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     public List<Order> getDeletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
         return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_DELETED_ORDERS +
                 SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_EXECUTION_DATE);
+                SQL_END_CONDITION + SQL_REQUEST_SORT_EXECUTION_DATE);
     }
 
 
@@ -209,12 +208,18 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     public List<Order> getDeletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
         return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_DELETED_ORDERS +
                 SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-                SQL_CONDITION_END_TIME + SQL_REQUEST_SORT_BY_PRICE);
+                SQL_END_CONDITION + SQL_REQUEST_SORT_BY_PRICE);
     }
 
     @Override
     public List<Order> getMasterOrders(Master master){
-        return getOrdersFromDatabase(SQL_REQUEST_GET_MASTER_ORDERS + master.getId());
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_GET_MASTER_ORDERS)) {
+            statement.setLong(1, master.getId());
+            ResultSet resultSet = statement.executeQuery();
+            return parseResultSet(resultSet);
+        } catch (SQLException ex) {
+            throw new BusinessException("Error request get master orders");
+        }
     }
 
     @Override
@@ -226,7 +231,8 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
                 Master master = new Master();
                 master.setId(resultSet.getLong("id"));
                 master.setName(resultSet.getString("name"));
-                master.setNumberOrders(getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_MASTER_ORDERS + master.getId()));
+                master.setDelete(resultSet.getBoolean("delete_status"));
+                master.setNumberOrders(resultSet.getInt("number_orders"));
                 masters.add(master);
             }
             return masters;
@@ -334,6 +340,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     }
 
     private List<Order> getOrdersFromDatabase(String request){
+        System.out.println(request);
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(request);
             return parseResultSet(resultSet);
@@ -343,7 +350,6 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao{
     }
 
     private int getIntFromRequest(String request){
-        System.out.println(request);
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(request);
             resultSet.next();

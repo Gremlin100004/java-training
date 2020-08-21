@@ -120,15 +120,6 @@ public class CsvOrder {
         stringValue.append(order.isDeleteStatus());
         stringValue.append(fieldSeparator);
         stringValue.append(idSeparator);
-//        int bound = order.getMasters().size();
-//        for (int i = 0; i < bound; i++) {
-//            if (i == order.getMasters().size() - SIZE_INDEX) {
-//                stringValue.append(order.getMasters().get(i).getId());
-//            } else {
-//                stringValue.append(order.getMasters().get(i).getId()).append(fieldSeparator);
-//            }
-//        }
-        stringValue.append(idSeparator);
         return stringValue.toString();
     }
 }

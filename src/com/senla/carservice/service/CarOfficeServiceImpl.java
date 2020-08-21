@@ -5,13 +5,16 @@ import com.senla.carservice.container.objectadjuster.dependencyinjection.annotat
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.dao.OrderDao;
 import com.senla.carservice.dao.PlaceDao;
+import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.csvutil.CsvMaster;
 import com.senla.carservice.util.csvutil.CsvOrder;
 import com.senla.carservice.util.csvutil.CsvPlace;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -71,29 +74,37 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     @Override
     public void exportEntities() {
-        checkOrders();
-        checkMasters();
-        checkPlaces();
-//        csvOrder.exportOrder(orderDao.getOrders());
-//        csvMaster.exportMasters(masterDao.getMasters());
-//        csvPlace.exportPlaces(placeDao.getPlaces());
+        List<Order> orders = getOrders();
+        List<Master> masters = getMasters();
+        List<Place> places = getPlaces();
+        csvOrder.exportOrder(orders);
+        csvMaster.exportMasters(masters);
+        csvPlace.exportPlaces(places);
     }
-
-    private void checkOrders() {
-        if (orderDao.getAllRecords().isEmpty()) {
+    @SuppressWarnings("unchecked")
+    private List<Order> getOrders() {
+        List<Order> orders = orderDao.getAllRecords();
+        if (orders.isEmpty()) {
             throw new BusinessException("There are no orders");
         }
+        return orders;
     }
 
-    private void checkMasters() {
-        if (masterDao.getAllRecords().isEmpty()) {
+    @SuppressWarnings("unchecked")
+    private List<Master> getMasters() {
+        List<Master> masters = masterDao.getAllRecords();
+        if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }
+        return masters;
     }
 
-    private void checkPlaces() {
-        if (placeDao.getAllRecords().isEmpty()) {
+    @SuppressWarnings("unchecked")
+    private List<Place> getPlaces() {
+        List<Place> places = placeDao.getAllRecords();
+        if (places.isEmpty()) {
             throw new BusinessException("There are no places");
         }
+        return places;
     }
 }
