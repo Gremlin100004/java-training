@@ -96,30 +96,26 @@ public class CsvOrder {
         if (order == null) {
             throw new BusinessException("argument is null");
         }
-        StringBuilder stringValue = new StringBuilder();
-        stringValue.append(order.getId());
-        stringValue.append(fieldSeparator);
-        stringValue.append(DateUtil.getStringFromDate(order.getCreationTime(), true));
-        stringValue.append(fieldSeparator);
-        stringValue.append(DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
-        stringValue.append(fieldSeparator);
-        stringValue.append(DateUtil.getStringFromDate(order.getLeadTime(), true));
-        stringValue.append(fieldSeparator);
-        stringValue.append(order.getPlace().getId());
-        stringValue.append(fieldSeparator);
-        stringValue.append(order.getAutomaker());
-        stringValue.append(fieldSeparator);
-        stringValue.append(order.getModel());
-        stringValue.append(fieldSeparator);
-        stringValue.append(order.getRegistrationNumber());
-        stringValue.append(fieldSeparator);
-        stringValue.append(order.getPrice());
-        stringValue.append(fieldSeparator);
-        stringValue.append(order.getStatus());
-        stringValue.append(fieldSeparator);
-        stringValue.append(order.isDeleteStatus());
-        stringValue.append(fieldSeparator);
-        stringValue.append(idSeparator);
-        return stringValue.toString();
+        return order.getId() +
+                fieldSeparator +
+                DateUtil.getStringFromDate(order.getCreationTime(), true) +
+                fieldSeparator +
+                DateUtil.getStringFromDate(order.getExecutionStartTime(), true) +
+                fieldSeparator +
+                DateUtil.getStringFromDate(order.getLeadTime(), true) +
+                fieldSeparator +
+                order.getPlace().getId() +
+                fieldSeparator +
+                order.getAutomaker() +
+                fieldSeparator +
+                order.getModel() +
+                fieldSeparator +
+                order.getRegistrationNumber() +
+                fieldSeparator +
+                order.getPrice() +
+                fieldSeparator +
+                order.getStatus() +
+                fieldSeparator +
+                order.isDeleteStatus();
     }
 }

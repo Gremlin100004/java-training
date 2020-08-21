@@ -63,8 +63,9 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void importEntities() {
-//        masterDao.updateListMaster(csvMaster.importMasters(orderDao.getOrders()));
+        masterDao.updateAllRecords(csvMaster.importMasters());
 //        placeDao.updateListPlace(csvPlace.importPlaces(orderDao.getOrders()));
 //        List<Order> orders = csvOrder.importOrder(masterDao.getMasters(), placeDao.getPlaces());
 //        orderDao.updateListOrder(orders);
