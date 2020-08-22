@@ -19,20 +19,21 @@ import java.util.List;
 public class MasterDaoImpl extends AbstractDao implements MasterDao {
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO masters VALUES (NULL, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE masters SET name=?, number_orders=?, delete_status=? WHERE id=?";
+    private static final String SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST = "INSERT INTO masters(id, name, number_orders, " +
+        "delete_status) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, name = ?, number_orders = ?, delete_status = ?";
     private static final String SQL_REQUEST_TO_GET_NUMBER_RECORDS = "SELECT COUNT(masters.id) AS number_masters FROM masters";
     private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE masters SET delete_status=true WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT DISTINCT id, name, number_orders, delete_status " +
-            "FROM masters";
+        "FROM masters";
     private static final String SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET = "SELECT DISTINCT id, name, number_orders, " +
-            "delete_status FROM masters ORDER BY masters.name";
+        "delete_status FROM masters ORDER BY masters.name";
     private static final String SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY = "SELECT DISTINCT id, name, number_orders, " +
-            "delete_status FROM masters ORDER BY number_orders";
+        "delete_status FROM masters ORDER BY number_orders";
     private static final String SQL_REQUEST_TO_GET_FREE_MASTERS = "SELECT DISTINCT masters.id, masters.name, masters.number_orders, " +
-            "masters.delete_status FROM masters JOIN orders_masters ON masters.id = orders_masters.master_id JOIN orders " +
-            "ON orders_masters.order_id = orders.id WHERE orders.lead_time > ?";
+        "masters.delete_status FROM masters JOIN orders_masters ON masters.id = orders_masters.master_id JOIN orders " +
+        "ON orders_masters.order_id = orders.id WHERE orders.lead_time > ?";
     private static final String SQL_REQUEST_TO_GET_FREE_MASTERS_ZERO_ORDER = "SELECT DISTINCT id, name, number_orders, " +
-            "delete_status FROM masters WHERE number_orders = 0";
-
+        "delete_status FROM masters WHERE number_orders = 0";
 
     @ConstructorDependency
     public MasterDaoImpl(DatabaseConnection databaseConnection) {
@@ -45,14 +46,16 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
     @Override
     public List<Master> getFreeMasters(Date date) {
         List<Master> masters;
-        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_TO_GET_FREE_MASTERS)) {
+        try (PreparedStatement statement = databaseConnection.getConnection()
+            .prepareStatement(SQL_REQUEST_TO_GET_FREE_MASTERS)) {
             statement.setString(1, DateUtil.getStringFromDate(date, true));
             ResultSet resultSet = statement.executeQuery();
             masters = parseResultSet(resultSet);
         } catch (SQLException ex) {
             throw new BusinessException("Error request get records masters");
         }
-        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_TO_GET_FREE_MASTERS_ZERO_ORDER)) {
+        try (PreparedStatement statement = databaseConnection.getConnection()
+            .prepareStatement(SQL_REQUEST_TO_GET_FREE_MASTERS_ZERO_ORDER)) {
             ResultSet resultSet = statement.executeQuery();
             List<Master> freeMasters = parseResultSet(resultSet);
             masters.addAll(freeMasters);
@@ -109,6 +112,23 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
     }
 
     @Override
+    protected <T> void fillStatementUpdateAll(final PreparedStatement statement, final T object) {
+        Master master = (Master) object;
+        try {
+            statement.setLong(1, master.getId());
+            statement.setString(2, master.getName());
+            statement.setInt(3, master.getNumberOrders());
+            statement.setBoolean(4, master.getDelete());
+            statement.setLong(5, master.getId());
+            statement.setString(6, master.getName());
+            statement.setInt(7, master.getNumberOrders());
+            statement.setBoolean(8, master.getDelete());
+        } catch (SQLException e) {
+            throw new BusinessException("Error fill statement for update all records request");
+        }
+    }
+
+    @Override
     protected void fillStatementDelete(PreparedStatement statement, Object object) {
         Master master = (Master) object;
         try {
@@ -116,6 +136,31 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
         } catch (SQLException e) {
             throw new BusinessException("Error fill statement for delete request");
         }
+    }
+
+    @Override
+    protected String getCreateRequest() {
+        return SQL_REQUEST_TO_ADD_RECORD;
+    }
+
+    @Override
+    protected String getReadAllRequest() {
+        return SQL_REQUEST_TO_GET_ALL_RECORDS;
+    }
+
+    @Override
+    protected String getUpdateRequest() {
+        return SQL_REQUEST_TO_UPDATE_RECORD;
+    }
+
+    @Override
+    protected String getUpdateAllRecordsRequest() {
+        return SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST;
+    }
+
+    @Override
+    protected String getDeleteRequest() {
+        return SQL_REQUEST_TO_DELETE_RECORD;
     }
 
     @Override
@@ -137,30 +182,9 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
         }
     }
 
-    @Override
-    protected String getCreateRequest() {
-        return SQL_REQUEST_TO_ADD_RECORD;
-    }
-
-    @Override
-    protected String getReadAllRequest() {
-        return SQL_REQUEST_TO_GET_ALL_RECORDS;
-    }
-
-    @Override
-    protected String getUpdateRequest() {
-        return SQL_REQUEST_TO_UPDATE_RECORD;
-    }
-
-    @Override
-    protected String getDeleteRequest() {
-        return SQL_REQUEST_TO_DELETE_RECORD;
-    }
-
-    private List<Master> getMastersFromDatabase(String request){
+    private List<Master> getMastersFromDatabase(String request) {
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             ResultSet resultSet = statement.executeQuery();
-
             return parseResultSet(resultSet);
         } catch (SQLException ex) {
             throw new BusinessException("Error request get records masters");

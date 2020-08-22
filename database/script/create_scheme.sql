@@ -59,3 +59,6 @@ ON places (id);
 CREATE UNIQUE INDEX orders_id_idx
 ON orders (id);
 COMMIT;
+
+INSERT INTO masters(id, name, number_orders, delete_status) VALUES(23, 'pedik', 0, 0)
+ON DUPLICATE KEY UPDATE id = 23, name = 'test2', delete_status = 0;
