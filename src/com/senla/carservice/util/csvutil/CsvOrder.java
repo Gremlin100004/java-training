@@ -2,7 +2,6 @@ package com.senla.carservice.util.csvutil;
 
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
@@ -20,9 +19,6 @@ public class CsvOrder {
     private String orderPath;
     @ConfigProperty
     private String fieldSeparator;
-    @ConfigProperty
-    private String idSeparator;
-    private static final int SIZE_INDEX = 1;
 
     public CsvOrder() {
     }
@@ -34,52 +30,33 @@ public class CsvOrder {
         FileUtil.saveCsv(valueOrderCsv, orderPath);
     }
 
-    public List<Order> importOrder(List<Master> masters, List<Place> places) {
+    public List<Order> importOrder(List<Place> places) {
         List<String> csvLinesOrder = FileUtil.getCsv(orderPath);
         List<Order> list = new ArrayList<>();
         for (String line : csvLinesOrder) {
-            Order order = getOrderFromCsv(line, masters, places);
-//            if (order.getMasters().isEmpty()) {
-//                throw new BusinessException("masters not imported");
-//            }
+            Order order = getOrderFromCsv(line, places);
             list.add(order);
         }
         return list;
     }
 
-    private Order getOrderFromCsv(String line, List<Master> masters, List<Place> places) {
-        if (line == null || masters == null || places == null) {
+    private Order getOrderFromCsv(String line, List<Place> places) {
+        if (line == null || places == null) {
             throw new BusinessException("argument is null");
         }
-        List<String> values = Arrays.asList((line.split(idSeparator))[0].split(fieldSeparator));
-        List<String> arrayIdMaster = Arrays.asList(line.split(idSeparator)[1].split(fieldSeparator));
-//        Order order = new Order(ParameterUtil.getValueLong(values.get(0)),
-//                                ParameterUtil.checkValueString(values.get(5)),
-//                                ParameterUtil.checkValueString(values.get(6)),
-//                                ParameterUtil.checkValueString(values.get(7)));
-//        order.setCreationTime(DateUtil.getDatesFromString(values.get(1), true));
-//        order.setExecutionStartTime(DateUtil.getDatesFromString(values.get(2), true));
-//        order.setLeadTime(DateUtil.getDatesFromString(values.get(3), true));
-//        order.setPlace(getPlaceById(places, Long.valueOf(values.get(4))));
-//        order.setPrice(new BigDecimal(values.get(8)));
-//        order.setStatus(ParameterUtil.getValueStatus(values.get(9)));
-//        order.setDeleteStatus(ParameterUtil.getValueBoolean(values.get(10)));
-//        order.setMasters(getMastersById(masters, arrayIdMaster));
-//        return order;
-        return null;
-    }
-
-    private List<Master> getMastersById(List<Master> masters, List<String> arrayIdMaster) {
-        if (masters == null || arrayIdMaster == null) {
-            throw new BusinessException("argument is null");
-        }
-        List<Master> orderMasters = new ArrayList<>();
-        masters
-            .forEach(master -> arrayIdMaster.stream()
-                .filter(stringIndex -> master.getId().equals(ParameterUtil.getValueLong(stringIndex)))
-                .map(stringIndex -> master)
-                .forEach(orderMasters::add));
-        return orderMasters;
+        List<String> values = Arrays.asList((line.split(fieldSeparator)));
+        Order order = new Order(ParameterUtil.checkValueString(values.get(5)),
+                                ParameterUtil.checkValueString(values.get(6)),
+                                ParameterUtil.checkValueString(values.get(7)));
+        order.setId(Long.valueOf(values.get(0)));
+        order.setCreationTime(DateUtil.getDatesFromString(values.get(1), true));
+        order.setExecutionStartTime(DateUtil.getDatesFromString(values.get(2), true));
+        order.setLeadTime(DateUtil.getDatesFromString(values.get(3), true));
+        order.setPlace(getPlaceById(places, Long.valueOf(values.get(4))));
+        order.setPrice(new BigDecimal(values.get(8)));
+        order.setStatus(ParameterUtil.getValueStatus(values.get(9)));
+        order.setDeleteStatus(ParameterUtil.getValueBoolean(values.get(10)));
+        return order;
     }
 
     private Place getPlaceById(List<Place> places, Long id) {
@@ -97,25 +74,25 @@ public class CsvOrder {
             throw new BusinessException("argument is null");
         }
         return order.getId() +
-                fieldSeparator +
-                DateUtil.getStringFromDate(order.getCreationTime(), true) +
-                fieldSeparator +
-                DateUtil.getStringFromDate(order.getExecutionStartTime(), true) +
-                fieldSeparator +
-                DateUtil.getStringFromDate(order.getLeadTime(), true) +
-                fieldSeparator +
-                order.getPlace().getId() +
-                fieldSeparator +
-                order.getAutomaker() +
-                fieldSeparator +
-                order.getModel() +
-                fieldSeparator +
-                order.getRegistrationNumber() +
-                fieldSeparator +
-                order.getPrice() +
-                fieldSeparator +
-                order.getStatus() +
-                fieldSeparator +
-                order.isDeleteStatus();
+               fieldSeparator +
+               DateUtil.getStringFromDate(order.getCreationTime(), true) +
+               fieldSeparator +
+               DateUtil.getStringFromDate(order.getExecutionStartTime(), true) +
+               fieldSeparator +
+               DateUtil.getStringFromDate(order.getLeadTime(), true) +
+               fieldSeparator +
+               order.getPlace().getId() +
+               fieldSeparator +
+               order.getAutomaker() +
+               fieldSeparator +
+               order.getModel() +
+               fieldSeparator +
+               order.getRegistrationNumber() +
+               fieldSeparator +
+               order.getPrice() +
+               fieldSeparator +
+               order.getStatus() +
+               fieldSeparator +
+               order.isDeleteStatus();
     }
 }

@@ -14,7 +14,6 @@ import com.senla.carservice.util.csvutil.CsvMaster;
 import com.senla.carservice.util.csvutil.CsvOrder;
 import com.senla.carservice.util.csvutil.CsvPlace;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,7 +49,8 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         }
         Date leadTimeOrder = orderDao.getLastOrder().getLeadTime();
         Date dayDate = new Date();
-        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay); currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
+        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
+             currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
             if (masterDao.getFreeMasters(currentDay).isEmpty() ||
                 placeDao.getFreePlaces(currentDay).isEmpty()) {
                 dayDate = currentDay;
@@ -66,11 +66,9 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @SuppressWarnings("unchecked")
     public void importEntities() {
         masterDao.updateAllRecords(csvMaster.importMasters());
-//        placeDao.updateListPlace(csvPlace.importPlaces(orderDao.getOrders()));
-//        List<Order> orders = csvOrder.importOrder(masterDao.getMasters(), placeDao.getPlaces());
-//        orderDao.updateListOrder(orders);
-//        masterDao.updateListMaster(csvMaster.importMasters(orders));
-//        placeDao.updateListPlace(csvPlace.importPlaces(orders));
+        placeDao.updateAllRecords(csvPlace.importPlaces());
+        List<Order> orders = csvOrder.importOrder(placeDao.getAllRecords());
+        orderDao.updateAllRecords(orders);
     }
 
     @Override
@@ -82,6 +80,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         csvMaster.exportMasters(masters);
         csvPlace.exportPlaces(places);
     }
+
     @SuppressWarnings("unchecked")
     private List<Order> getOrders() {
         List<Order> orders = orderDao.getAllRecords();
