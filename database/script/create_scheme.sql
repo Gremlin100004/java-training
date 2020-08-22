@@ -59,5 +59,3 @@ ON places (id);
 CREATE UNIQUE INDEX orders_id_idx
 ON orders (id);
 COMMIT;
-
-SELECT DISTINCT id, name, number_orders, delete_status FROM masters;

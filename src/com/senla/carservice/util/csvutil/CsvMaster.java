@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class CsvMaster {
-
     @ConfigProperty
     private String masterPath;
     @ConfigProperty
@@ -21,6 +20,9 @@ public class CsvMaster {
     }
 
     public void exportMasters(List<Master> masters) {
+        if (masters == null) {
+            throw new BusinessException("argument is null");
+        }
         FileUtil.saveCsv(masters.stream()
                              .map(this::convertToCsv)
                              .collect(Collectors.toList()),
@@ -52,11 +54,11 @@ public class CsvMaster {
             throw new BusinessException("argument is null");
         }
         return master.getId() +
-                fieldSeparator +
-                master.getName() +
-                fieldSeparator +
-                master.getNumberOrders() +
-                fieldSeparator +
-                master.getDelete();
+               fieldSeparator +
+               master.getName() +
+               fieldSeparator +
+               master.getNumberOrders() +
+               fieldSeparator +
+               master.getDelete();
     }
 }
