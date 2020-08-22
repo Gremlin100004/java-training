@@ -4,6 +4,7 @@ import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.dao.PlaceDao;
+import com.senla.carservice.dao.connection.DatabaseConnection;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
 
@@ -18,6 +19,8 @@ public class PlaceServiceImpl implements PlaceService {
     private Boolean isBlockAddPlace;
     @ConfigProperty
     private Boolean isBlockDeletePlace;
+    @Dependency
+    private DatabaseConnection databaseConnection;
 
     public PlaceServiceImpl() {
     }

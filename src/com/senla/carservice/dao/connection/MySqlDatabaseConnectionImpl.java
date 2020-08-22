@@ -35,6 +35,46 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
         }
     }
 
+    @Override
+    public void disableAutoCommit(){
+        try {
+            if (connection != null && !connection.isClosed())
+                connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new BusinessException("Error disable AutoCommit");
+        }
+    }
+
+    @Override
+    public void enableAutoCommit(){
+        try {
+            if (connection != null && !connection.isClosed())
+                connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new BusinessException("Error enable AutoCommit");
+        }
+    }
+
+    @Override
+    public void commitTransaction(){
+        try {
+            if (connection != null && !connection.isClosed())
+                connection.commit();
+        } catch (SQLException e) {
+            throw new BusinessException("Error enable AutoCommit");
+        }
+    }
+
+    @Override
+    public void rollBackTransaction(){
+        try {
+            if (connection != null && !connection.isClosed())
+                connection.rollback();
+        } catch (SQLException e) {
+            throw new BusinessException("Error enable AutoCommit");
+        }
+    }
+
     private void connectToDatabase() {
         try {
             this.connection = DriverManager.getConnection(connectionUrl, userName, password);

@@ -6,4 +6,12 @@ public interface DatabaseConnection {
     Connection getConnection();
 
     void closeConnection();
+
+    void disableAutoCommit();
+
+    void enableAutoCommit();
+
+    void commitTransaction();
+
+    void rollBackTransaction();
 }

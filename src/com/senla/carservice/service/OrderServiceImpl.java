@@ -6,6 +6,7 @@ import com.senla.carservice.container.objectadjuster.propertyinjection.annotatio
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.dao.OrderDao;
 import com.senla.carservice.dao.PlaceDao;
+import com.senla.carservice.dao.connection.DatabaseConnection;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
@@ -29,6 +30,8 @@ public class OrderServiceImpl implements OrderService {
     private MasterDao masterDao;
     @ConfigProperty
     private boolean isBlockShiftTime;
+    @Dependency
+    private DatabaseConnection databaseConnection;
 
     public OrderServiceImpl() {
     }
