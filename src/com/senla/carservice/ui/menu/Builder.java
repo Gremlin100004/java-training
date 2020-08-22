@@ -83,14 +83,6 @@ public class Builder {
         this.rootMenu.getMenuItems().add(new MenuItem(MenuTittle.GET_THE_CLOSEST_FREE_DATE.getValue(),
                                                       () -> Printer.printInfo(carOfficeController.getNearestFreeDate()),
                                                       this.rootMenu));
-        this.rootMenu.getMenuItems().add(new MenuItem(MenuTittle.FILL_IN_TEST_DATA.getValue(), () -> {
-            String delimiter = "***********************************************************************";
-            Printer.printInfo(delimiter);
-            addMaster(delimiter, masterController);
-            addPlace(delimiter, placeController);
-            Printer.printInfo(MenuTittle.ADD_NEW_ORDERS_TO_CAR_SERVICE.getValue());
-            addOrderDate(orderController);
-        }, this.rootMenu));
         this.rootMenu.getMenuItems().add(
             new MenuItem(MenuTittle.EXPORT_OF_ALL_ENTITIES.getValue(),
                          () -> Printer.printInfo(carOfficeController.exportEntities()), this.rootMenu));
