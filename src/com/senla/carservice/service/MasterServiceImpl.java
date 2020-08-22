@@ -23,20 +23,11 @@ public class MasterServiceImpl implements MasterService {
     @Override
     @SuppressWarnings("unchecked")
     public List<Master> getMasters() {
-        try {
-            databaseConnection.disableAutoCommit();
-            List<Master> masters = masterDao.getAllRecords();
-            if (masters.isEmpty()) {
-                throw new BusinessException("There are no masters");
-            }
-            databaseConnection.commitTransaction();
-            return masters;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
-        } finally {
-            databaseConnection.enableAutoCommit();
+        List<Master> masters = masterDao.getAllRecords();
+        if (masters.isEmpty()) {
+            throw new BusinessException("There are no masters");
         }
+        return masters;
     }
 
     @Override
@@ -56,35 +47,16 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getFreeMastersByDate(Date executeDate) {
-        try {
-            databaseConnection.disableAutoCommit();
-            List<Master> freeMasters = masterDao.getFreeMasters(executeDate);
-            if (freeMasters.isEmpty()) {
-                throw new BusinessException("There are no free masters");
-            }
-            databaseConnection.commitTransaction();
-            return freeMasters;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get free masters");
-        } finally {
-            databaseConnection.enableAutoCommit();
+        List<Master> freeMasters = masterDao.getFreeMasters(executeDate);
+        if (freeMasters.isEmpty()) {
+            throw new BusinessException("There are no free masters");
         }
+        return freeMasters;
     }
 
     @Override
     public int getNumberFreeMastersByDate(Date startDayDate) {
-        try {
-            databaseConnection.disableAutoCommit();
-            int numberMasters = masterDao.getFreeMasters(startDayDate).size();
-            databaseConnection.commitTransaction();
-            return numberMasters;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get number free masters");
-        } finally {
-            databaseConnection.enableAutoCommit();
-        }
+        return masterDao.getFreeMasters(startDayDate).size();
     }
 
     @Override
@@ -104,37 +76,19 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getMasterByAlphabet() {
-        try {
-            databaseConnection.disableAutoCommit();
-            List<Master> masters = masterDao.getMasterByAlphabet();
-            if (masters.isEmpty()) {
-                throw new BusinessException("There are no masters");
-            }
-            databaseConnection.commitTransaction();
-            return masters;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
-        } finally {
-            databaseConnection.enableAutoCommit();
+        List<Master> masters = masterDao.getMasterByAlphabet();
+        if (masters.isEmpty()) {
+            throw new BusinessException("There are no masters");
         }
+        return masters;
     }
 
     @Override
     public List<Master> getMasterByBusy() {
-        try {
-            databaseConnection.disableAutoCommit();
-            List<Master> masters = masterDao.getMasterByBusy();
-            if (masters.isEmpty()) {
-                throw new BusinessException("There are no masters");
-            }
-            databaseConnection.commitTransaction();
-            return masters;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
-        } finally {
-            databaseConnection.enableAutoCommit();
+        List<Master> masters = masterDao.getMasterByBusy();
+        if (masters.isEmpty()) {
+            throw new BusinessException("There are no masters");
         }
+        return masters;
     }
 }

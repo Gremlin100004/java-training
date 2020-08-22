@@ -28,20 +28,11 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     @SuppressWarnings("unchecked")
     public List<Place> getPlaces() {
-        try {
-            databaseConnection.disableAutoCommit();
-            List<Place> places = placeDao.getAllRecords();
-            if (places.isEmpty()) {
-                throw new BusinessException("There are no places");
-            }
-            databaseConnection.commitTransaction();
-            return places;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get places");
-        } finally {
-            databaseConnection.enableAutoCommit();
+        List<Place> places = placeDao.getAllRecords();
+        if (places.isEmpty()) {
+            throw new BusinessException("There are no places");
         }
+        return places;
     }
 
     @Override
@@ -85,34 +76,15 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public int getNumberFreePlaceByDate(Date startDayDate) {
-        try {
-            databaseConnection.disableAutoCommit();
-            int numberPlace = placeDao.getAllRecords().size();
-            databaseConnection.commitTransaction();
-            return numberPlace;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get number free places");
-        } finally {
-            databaseConnection.enableAutoCommit();
-        }
+        return placeDao.getAllRecords().size();
     }
 
     @Override
     public List<Place> getFreePlaceByDate(Date executeDate) {
-        try {
-            databaseConnection.disableAutoCommit();
-            List<Place> freePlace = placeDao.getFreePlaces(executeDate);
-            if (freePlace.isEmpty()) {
-                throw new BusinessException("There are no free places");
-            }
-            databaseConnection.commitTransaction();
-            return freePlace;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get free places");
-        } finally {
-            databaseConnection.enableAutoCommit();
+        List<Place> freePlace = placeDao.getFreePlaces(executeDate);
+        if (freePlace.isEmpty()) {
+            throw new BusinessException("There are no free places");
         }
+        return freePlace;
     }
 }

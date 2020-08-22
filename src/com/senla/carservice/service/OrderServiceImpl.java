@@ -49,125 +49,215 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @SuppressWarnings("unchecked")
     public void addOrder(String automaker, String model, String registrationNumber) {
-        checkMasters();
-        checkPlaces();
-        orderDao.createRecord(new Order(automaker, model, registrationNumber));
+        try {
+            databaseConnection.disableAutoCommit();
+            checkMasters();
+            checkPlaces();
+            orderDao.createRecord(new Order(automaker, model, registrationNumber));
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction get masters");
+        } finally {
+            databaseConnection.enableAutoCommit();
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
-        DateUtil.checkDateTime(executionStartTime, leadTime, false);
-        Order currentOrder = orderDao.getLastOrder();
-        if (currentOrder == null) {
-            throw new BusinessException("There are no orders");
+        try {
+            databaseConnection.disableAutoCommit();
+            DateUtil.checkDateTime(executionStartTime, leadTime, false);
+            Order currentOrder = orderDao.getLastOrder();
+            if (currentOrder == null) {
+                throw new BusinessException("There are no orders");
+            }
+            String stringExecutionStartTime = DateUtil.getStringFromDate(executionStartTime, true);
+            String stringLeadTime = DateUtil.getStringFromDate(leadTime, true);
+            int numberFreeMasters = masterDao.getNumberMasters() - orderDao.getNumberBusyMasters(stringExecutionStartTime, stringLeadTime);
+            int numberFreePlace = placeDao.getNumberPlace() - orderDao.getNumberBusyPlaces(stringExecutionStartTime, stringLeadTime);
+            if (numberFreeMasters == 0) {
+                throw new BusinessException("The number of masters is zero");
+            }
+            if (numberFreePlace == 0) {
+                throw new BusinessException("The number of places is zero");
+            }
+            currentOrder.setExecutionStartTime(executionStartTime);
+            currentOrder.setLeadTime(leadTime);
+            orderDao.updateRecord(currentOrder);
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction get masters");
+        } finally {
+            databaseConnection.enableAutoCommit();
         }
-        String stringExecutionStartTime = DateUtil.getStringFromDate(executionStartTime, true);
-        String stringLeadTime = DateUtil.getStringFromDate(leadTime, true);
-        int numberFreeMasters = masterDao.getNumberMasters() - orderDao.getNumberBusyMasters(stringExecutionStartTime, stringLeadTime);
-        int numberFreePlace = placeDao.getNumberPlace() - orderDao.getNumberBusyPlaces(stringExecutionStartTime, stringLeadTime);
-        if (numberFreeMasters == 0) {
-            throw new BusinessException("The number of masters is zero");
-        }
-        if (numberFreePlace == 0) {
-            throw new BusinessException("The number of places is zero");
-        }
-        currentOrder.setExecutionStartTime(executionStartTime);
-        currentOrder.setLeadTime(leadTime);
-        orderDao.updateRecord(currentOrder);
     }
 
     @Override
     public void addOrderMasters(int index) {
-        Order currentOrder = orderDao.getLastOrder();
-        Master master = (Master) masterDao.getAllRecords().get(index);
-        if (currentOrder == null) {
-            throw new BusinessException("There are no orders");
-        }
-        if (master.getDelete()){
-            throw new BusinessException("Master has been deleted");
-        }
-        for (Master orderMaster : currentOrder.getMasters()) {
-            if (orderMaster.equals(master)) {
-                throw new BusinessException("This master already exists");
+        try {
+            databaseConnection.disableAutoCommit();
+            Order currentOrder = orderDao.getLastOrder();
+            Master master = (Master) masterDao.getAllRecords().get(index);
+            if (currentOrder == null) {
+                throw new BusinessException("There are no orders");
             }
+            if (master.getDelete()){
+                throw new BusinessException("Master has been deleted");
+            }
+            for (Master orderMaster : currentOrder.getMasters()) {
+                if (orderMaster.equals(master)) {
+                    throw new BusinessException("This master already exists");
+                }
+            }
+            orderDao.addRecordToTableManyToMany(currentOrder);
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction get masters");
+        } finally {
+            databaseConnection.enableAutoCommit();
         }
-        orderDao.addRecordToTableManyToMany(currentOrder);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void addOrderPlace(Place place) {
-        Order currentOrder = orderDao.getLastOrder();
-        if (currentOrder == null) {
-            throw new BusinessException("There are no orders");
+        try {
+            databaseConnection.disableAutoCommit();
+            Order currentOrder = orderDao.getLastOrder();
+            if (currentOrder == null) {
+                throw new BusinessException("There are no orders");
+            }
+            currentOrder.setPlace(place);
+            orderDao.updateRecord(currentOrder);
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction get masters");
+        } finally {
+            databaseConnection.enableAutoCommit();
         }
-        currentOrder.setPlace(place);
-        orderDao.updateRecord(currentOrder);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void addOrderPrice(BigDecimal price) {
-        Order currentOrder = orderDao.getLastOrder();
-        if (currentOrder == null) {
-            throw new BusinessException("There are no orders");
+        try {
+            databaseConnection.disableAutoCommit();
+            Order currentOrder = orderDao.getLastOrder();
+            if (currentOrder == null) {
+                throw new BusinessException("There are no orders");
+            }
+            currentOrder.setPrice(price);
+            orderDao.updateRecord(currentOrder);
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction get masters");
+        } finally {
+            databaseConnection.enableAutoCommit();
         }
-        currentOrder.setPrice(price);
-        orderDao.updateRecord(currentOrder);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void completeOrder(Order order) {
-        checkStatusOrder(order);
-        order.setStatus(Status.PERFORM);
-        order.setExecutionStartTime(new Date());
-        order.getPlace().setBusyStatus(true);
-        orderDao.updateRecord(order);
+        try {
+            databaseConnection.disableAutoCommit();
+            checkStatusOrder(order);
+            order.setStatus(Status.PERFORM);
+            order.setExecutionStartTime(new Date());
+            order.getPlace().setBusyStatus(true);
+            orderDao.updateRecord(order);
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction get masters");
+        } finally {
+            databaseConnection.enableAutoCommit();
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void cancelOrder(Order order) {
-        checkStatusOrder(order);
-        order.setLeadTime(new Date());
-        order.setStatus(Status.CANCELED);
-        orderDao.updateRecord(order);
-        Place place = order.getPlace();
-        place.setBusyStatus(false);
-        placeDao.updateRecord(place);
+        try {
+            databaseConnection.disableAutoCommit();
+            checkStatusOrder(order);
+            order.setLeadTime(new Date());
+            order.setStatus(Status.CANCELED);
+            orderDao.updateRecord(order);
+            Place place = order.getPlace();
+            place.setBusyStatus(false);
+            placeDao.updateRecord(place);
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction get masters");
+        } finally {
+            databaseConnection.enableAutoCommit();
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void closeOrder(Order order) {
-        checkStatusOrder(order);
-        order.setLeadTime(new Date());
-        order.setStatus(Status.COMPLETED);
-        orderDao.updateRecord(order);
-        Place place = order.getPlace();
-        place.setBusyStatus(false);
-        placeDao.updateRecord(place);
+        try {
+            databaseConnection.disableAutoCommit();
+            checkStatusOrder(order);
+            order.setLeadTime(new Date());
+            order.setStatus(Status.COMPLETED);
+            orderDao.updateRecord(order);
+            Place place = order.getPlace();
+            place.setBusyStatus(false);
+            placeDao.updateRecord(place);
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction get masters");
+        } finally {
+            databaseConnection.enableAutoCommit();
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void deleteOrder(Order order) {
-        orderDao.deleteRecord(order);
+        try {
+            databaseConnection.disableAutoCommit();
+            orderDao.deleteRecord(order);
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction get masters");
+        } finally {
+            databaseConnection.enableAutoCommit();
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
-        if (isBlockShiftTime) {
-            throw new BusinessException("Permission denied");
+        try {
+            databaseConnection.disableAutoCommit();
+            if (isBlockShiftTime) {
+                throw new BusinessException("Permission denied");
+            }
+            DateUtil.checkDateTime(executionStartTime, leadTime, false);
+            checkStatusOrderShiftTime(order);
+            order.setLeadTime(leadTime);
+            order.setExecutionStartTime(executionStartTime);
+            orderDao.updateRecord(order);
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction get masters");
+        } finally {
+            databaseConnection.enableAutoCommit();
         }
-        DateUtil.checkDateTime(executionStartTime, leadTime, false);
-        checkStatusOrderShiftTime(order);
-        order.setLeadTime(leadTime);
-        order.setExecutionStartTime(executionStartTime);
-        orderDao.updateRecord(order);
     }
 
     @Override
