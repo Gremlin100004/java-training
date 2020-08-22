@@ -3,7 +3,7 @@ package com.senla.carservice.domain;
 public class Place extends AEntity {
     private Integer number;
     private Boolean busyStatus;
-    private Boolean isDelete;
+    private Boolean deleteStatus;
 
     public Place() {
     }
@@ -11,7 +11,7 @@ public class Place extends AEntity {
     public Place(Integer number) {
         this.number = number;
         this.busyStatus = false;
-        this.isDelete = false;
+        this.deleteStatus = false;
     }
 
     public Integer getNumber() {
@@ -23,7 +23,7 @@ public class Place extends AEntity {
     }
 
     public Boolean getDelete() {
-        return isDelete;
+        return deleteStatus;
     }
 
     public void setNumber(Integer number) {
@@ -35,7 +35,7 @@ public class Place extends AEntity {
     }
 
     public void setDelete(Boolean delete) {
-        isDelete = delete;
+        deleteStatus = delete;
     }
 
     @Override

@@ -13,7 +13,6 @@ import com.senla.carservice.util.DateUtil;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE orders SET creation_time=?, execution_start_time=?, " +
         "lead_time=?, automaker=?, model=?, registration_number=?, price=?, status=?, delete_status=?, place_id=? " +
         "WHERE id=?";
-    private static final String SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST = "INSERT INTO masters(id, creation_time, " +
+    private static final String SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST = "INSERT INTO orders(id, creation_time, " +
         "execution_start_time, lead_time, automaker, model, registration_number, price, status, delete_status, place_id) " +
         "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, creation_time = ?, execution_start_time = ?, " +
         "lead_time = ?, automaker = ?, model = ?, registration_number = ?, price = ?, status = ?, delete_status = ?, place_id = ?";
@@ -49,9 +48,9 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     private static final String SQL_CONDITION_END_TIME = " AND orders.lead_time < '";
     private static final String SQL_CONDITION_START_TIME = " AND orders.lead_time > '";
     private static final String SQL_END_CONDITION = "'";
-    private static final String SQL_REQUEST_TO_GET_ORDER_MASTER = "SELECT masters.id, masters.name, masters.number_orders, " +
+    private static final String SQL_REQUEST_TO_GET_ORDER_MASTERS = "SELECT masters.id, masters.name, masters.number_orders, " +
         "masters.delete_status FROM masters JOIN orders_masters ON orders_masters.master_id = masters.id " +
-        "WHERE orders_masters.order_id=";
+        "WHERE orders_masters.order_id = ?";
     private static final String SQL_REQUEST_SORT_BY_PRICE = " ORDER BY price";
     private static final String SQL_REQUEST_SORT_FILING_DATE = " ORDER BY creation_time";
     private static final String SQL_REQUEST_SORT_EXECUTION_DATE = " ORDER BY lead_time";
@@ -92,13 +91,14 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
                                  SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION);
     }
 
-    public void addRecordToTableManyToMany(Order order, Master master) {
-        System.out.println(order.getId());
+    public void addRecordToTableManyToMany(Order order) {
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(
             SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS)) {
             statement.setLong(1, order.getId());
-            statement.setLong(2, master.getId());
-            statement.execute();
+            for (Master master: order.getMasters()){
+                statement.setLong(2, master.getId());
+                statement.execute();
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
             throw new BusinessException("Error request update records table orders_masters");
@@ -222,25 +222,6 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     }
 
     @Override
-    public List<Master> getOrderMasters(Order order) {
-        try (Statement statement = databaseConnection.getConnection().createStatement()) {
-            ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_ORDER_MASTER + order.getId());
-            List<Master> masters = new ArrayList<>();
-            while (resultSet.next()) {
-                Master master = new Master();
-                master.setId(resultSet.getLong("id"));
-                master.setName(resultSet.getString("name"));
-                master.setDelete(resultSet.getBoolean("delete_status"));
-                master.setNumberOrders(resultSet.getInt("number_orders"));
-                masters.add(master);
-            }
-            return masters;
-        } catch (SQLException ex) {
-            throw new BusinessException("Error request get records order masters");
-        }
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     protected List<Order> parseResultSet(ResultSet resultSet) {
         try {
@@ -261,6 +242,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
                 place.setDelete(resultSet.getBoolean("place_delete_status"));
                 order.setPlace(place);
                 order.setId(resultSet.getLong("id"));
+                fillTheOrderWithMasters(order);
                 orders.add(order);
             }
             return orders;
@@ -375,9 +357,8 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     }
 
     private List<Order> getOrdersFromDatabase(String request) {
-        System.out.println(request);
-        try (Statement statement = databaseConnection.getConnection().createStatement()) {
-            ResultSet resultSet = statement.executeQuery(request);
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
+            ResultSet resultSet = statement.executeQuery();
             return parseResultSet(resultSet);
         } catch (SQLException ex) {
             throw new BusinessException("Error request get records orders");
@@ -385,13 +366,32 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     }
 
     private int getIntFromRequest(String request) {
-        try (Statement statement = databaseConnection.getConnection().createStatement()) {
-            ResultSet resultSet = statement.executeQuery(request);
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
+            ResultSet resultSet = statement.executeQuery();
             resultSet.next();
             return resultSet.getInt("amount_of_elements");
         } catch (SQLException ex) {
             ex.printStackTrace();
             throw new BusinessException("Error request get records orders");
+        }
+    }
+
+    private void fillTheOrderWithMasters(Order order) {
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_TO_GET_ORDER_MASTERS)) {
+            statement.setLong(1, order.getId());
+            ResultSet resultSet = statement.executeQuery();
+            List<Master> masters = new ArrayList<>();
+            while (resultSet.next()) {
+                Master master = new Master();
+                master.setId(resultSet.getLong("id"));
+                master.setName(resultSet.getString("name"));
+                master.setDelete(resultSet.getBoolean("delete_status"));
+                master.setNumberOrders(resultSet.getInt("number_orders"));
+                masters.add(master);
+            }
+            order.setMasters(masters);
+        } catch (SQLException ex) {
+            throw new BusinessException("Error request get records order masters");
         }
     }
 }

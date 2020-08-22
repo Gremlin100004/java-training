@@ -13,9 +13,7 @@ public interface OrderDao extends GenericDao {
 
     int getNumberBusyPlaces(String startPeriod, String endPeriod);
 
-    List<Master> getOrderMasters(Order order);
-
-    void addRecordToTableManyToMany(Order order, Master master);
+    void addRecordToTableManyToMany(Order order);
 
     List<Order> getOrdersSortByFilingDate();
 

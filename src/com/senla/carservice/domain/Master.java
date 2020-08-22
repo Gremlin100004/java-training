@@ -2,7 +2,7 @@ package com.senla.carservice.domain;
 
 public class Master extends AEntity {
     private String name;
-    private Boolean isDelete;
+    private Boolean deleteStatus;
     private Integer numberOrders;
 
     public Master() {
@@ -10,7 +10,7 @@ public class Master extends AEntity {
 
     public Master(String name) {
         this.name = name;
-        isDelete = false;
+        deleteStatus = false;
         numberOrders = 0;
     }
 
@@ -19,7 +19,7 @@ public class Master extends AEntity {
     }
 
     public Boolean getDelete() {
-        return isDelete;
+        return deleteStatus;
     }
 
     public Integer getNumberOrders() {
@@ -31,7 +31,7 @@ public class Master extends AEntity {
     }
 
     public void setDelete(Boolean delete) {
-        isDelete = delete;
+        deleteStatus = delete;
     }
 
     public void setNumberOrders(final Integer numberOrders) {
@@ -42,7 +42,7 @@ public class Master extends AEntity {
     public String toString() {
         return "Master{" +
                "name='" + name + '\'' +
-               ", isDelete=" + isDelete +
+               ", isDelete=" + deleteStatus +
                ", numberOrders=" + numberOrders +
                '}';
     }

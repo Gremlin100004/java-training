@@ -67,7 +67,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     public void importEntities() {
         masterDao.updateAllRecords(csvMaster.importMasters());
         placeDao.updateAllRecords(csvPlace.importPlaces());
-        List<Order> orders = csvOrder.importOrder(placeDao.getAllRecords());
+        List<Order> orders = csvOrder.importOrder(masterDao.getAllRecords(), placeDao.getAllRecords());
         orderDao.updateAllRecords(orders);
     }
 

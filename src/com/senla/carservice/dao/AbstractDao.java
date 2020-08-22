@@ -6,7 +6,6 @@ import com.senla.carservice.exception.BusinessException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 public abstract class AbstractDao implements GenericDao {
@@ -57,7 +56,7 @@ public abstract class AbstractDao implements GenericDao {
         for (Object object : objects) {
             String request = getUpdateAllRecordsRequest();
             try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
-                fillStatementUpdate(statement, object);
+                fillStatementUpdateAll(statement, object);
                 statement.execute();
             } catch (SQLException ex) {
                 throw new BusinessException("Error request update all records");

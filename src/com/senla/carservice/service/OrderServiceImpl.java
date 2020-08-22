@@ -84,13 +84,12 @@ public class OrderServiceImpl implements OrderService {
         if (master.getDelete()){
             throw new BusinessException("Master has been deleted");
         }
-        List<Master> masters = orderDao.getOrderMasters(currentOrder);
-        for (Master orderMaster : masters) {
+        for (Master orderMaster : currentOrder.getMasters()) {
             if (orderMaster.equals(master)) {
                 throw new BusinessException("This master already exists");
             }
         }
-        orderDao.addRecordToTableManyToMany(currentOrder, master);
+        orderDao.addRecordToTableManyToMany(currentOrder);
     }
 
     @Override
@@ -232,7 +231,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Master> getOrderMasters(Order order) {
-        List<Master> masters = orderDao.getOrderMasters(order);
+        List<Master> masters = order.getMasters();
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters in order");
         }

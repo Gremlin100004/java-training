@@ -3,7 +3,9 @@ package com.senla.carservice.domain;
 import com.senla.carservice.domain.enumaration.Status;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Order extends AEntity {
     private Date creationTime;
@@ -16,6 +18,7 @@ public class Order extends AEntity {
     private BigDecimal price;
     private Status status;
     private boolean deleteStatus;
+    private List<Master> masters;
 
     public Order(String automaker, String model, String registrationNumber) {
         this.creationTime = new Date();
@@ -24,6 +27,7 @@ public class Order extends AEntity {
         this.registrationNumber = registrationNumber;
         this.status = Status.WAIT;
         this.deleteStatus = false;
+        this.masters = new ArrayList<>();
     }
 
     public String getAutomaker() {
@@ -66,6 +70,10 @@ public class Order extends AEntity {
         return deleteStatus;
     }
 
+    public List<Master> getMasters() {
+        return masters;
+    }
+
     public void setCreationTime(Date creationTime) {
         this.creationTime = creationTime;
     }
@@ -104,6 +112,10 @@ public class Order extends AEntity {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public void setMasters(List<Master> masters) {
+        this.masters = masters;
     }
 
     @Override

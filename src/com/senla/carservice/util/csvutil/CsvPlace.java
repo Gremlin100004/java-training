@@ -45,6 +45,7 @@ public class CsvPlace {
         place.setId(ParameterUtil.getValueLong(values.get(0)));
         place.setNumber(ParameterUtil.getValueInteger(values.get(1)));
         place.setBusyStatus(ParameterUtil.getValueBoolean(values.get(2)));
+        place.setDelete(ParameterUtil.getValueBoolean(values.get(3)));
         return place;
     }
 

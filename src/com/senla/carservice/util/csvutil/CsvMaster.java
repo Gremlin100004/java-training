@@ -44,8 +44,8 @@ public class CsvMaster {
         Master master = new Master();
         master.setId(ParameterUtil.getValueLong(values.get(0)));
         master.setName(values.get(1));
-        master.setNumberOrders(Integer.valueOf(values.get(1)));
-        master.setDelete(Boolean.valueOf(values.get(1)));
+        master.setNumberOrders(Integer.valueOf(values.get(2)));
+        master.setDelete(Boolean.valueOf(values.get(3)));
         return master;
     }
 
