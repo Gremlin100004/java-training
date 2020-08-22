@@ -68,7 +68,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             return dayDate;
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction get day");
         } finally {
             databaseConnection.enableAutoCommit();
         }
@@ -86,7 +86,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction import entities");
         } finally {
             databaseConnection.enableAutoCommit();
         }
@@ -106,7 +106,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction export entities");
         } finally {
             databaseConnection.enableAutoCommit();
         }
@@ -114,55 +114,28 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     @SuppressWarnings("unchecked")
     private List<Order> getOrders() {
-        try {
-            databaseConnection.disableAutoCommit();
-            List<Order> orders = orderDao.getAllRecords();
-            if (orders.isEmpty()) {
-                throw new BusinessException("There are no orders");
-            }
-            databaseConnection.commitTransaction();
-            return orders;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
-        } finally {
-            databaseConnection.enableAutoCommit();
+        List<Order> orders = orderDao.getAllRecords();
+        if (orders.isEmpty()) {
+            throw new BusinessException("There are no orders");
         }
+        return orders;
     }
 
     @SuppressWarnings("unchecked")
     private List<Master> getMasters() {
-        try {
-            databaseConnection.disableAutoCommit();
-            List<Master> masters = masterDao.getAllRecords();
-            if (masters.isEmpty()) {
-                throw new BusinessException("There are no masters");
-            }
-            databaseConnection.commitTransaction();
-            return masters;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
-        } finally {
-            databaseConnection.enableAutoCommit();
+        List<Master> masters = masterDao.getAllRecords();
+        if (masters.isEmpty()) {
+            throw new BusinessException("There are no masters");
         }
+        return masters;
     }
 
     @SuppressWarnings("unchecked")
     private List<Place> getPlaces() {
-        try {
-            databaseConnection.disableAutoCommit();
-            List<Place> places = placeDao.getAllRecords();
-            if (places.isEmpty()) {
-                throw new BusinessException("There are no places");
-            }
-            databaseConnection.commitTransaction();
-            return places;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
-        } finally {
-            databaseConnection.enableAutoCommit();
+        List<Place> places = placeDao.getAllRecords();
+        if (places.isEmpty()) {
+            throw new BusinessException("There are no places");
         }
+        return places;
     }
 }
