@@ -38,7 +38,10 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
     @Override
     public void disableAutoCommit(){
         try {
-            if (connection != null && !connection.isClosed())
+            if (connection == null) {
+                connectToDatabase();
+            }
+            if (!connection.isClosed())
                 connection.setAutoCommit(false);
         } catch (SQLException e) {
             throw new BusinessException("Error disable AutoCommit");
@@ -61,7 +64,7 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
             if (connection != null && !connection.isClosed())
                 connection.commit();
         } catch (SQLException e) {
-            throw new BusinessException("Error enable AutoCommit");
+            throw new BusinessException("Error commit transaction");
         }
     }
 
@@ -71,7 +74,7 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
             if (connection != null && !connection.isClosed())
                 connection.rollback();
         } catch (SQLException e) {
-            throw new BusinessException("Error enable AutoCommit");
+            throw new BusinessException("Error rollback transaction");
         }
     }
 

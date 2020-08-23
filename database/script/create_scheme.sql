@@ -3,7 +3,7 @@ USE car_service;
 
 CREATE TABLE IF NOT EXISTS masters(
 id INT NOT NULL AUTO_INCREMENT,
-name VARCHAR(10),
+name VARCHAR(20),
 number_orders INT DEFAULT 0,
 delete_status BOOLEAN DEFAULT false,
 PRIMARY KEY pk_masters (id)

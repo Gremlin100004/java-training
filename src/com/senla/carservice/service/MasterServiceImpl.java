@@ -76,7 +76,7 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getMasterByAlphabet() {
-        List<Master> masters = masterDao.getMasterByAlphabet();
+        List<Master> masters = masterDao.getMasterSortByAlphabet();
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }
@@ -85,7 +85,7 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getMasterByBusy() {
-        List<Master> masters = masterDao.getMasterByBusy();
+        List<Master> masters = masterDao.getMasterSortByBusy();
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }

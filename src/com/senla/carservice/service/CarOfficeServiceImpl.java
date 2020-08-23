@@ -83,6 +83,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             placeDao.updateAllRecords(csvPlace.importPlaces());
             List<Order> orders = csvOrder.importOrder(masterDao.getAllRecords(), placeDao.getAllRecords());
             orderDao.updateAllRecords(orders);
+            orders.forEach(orderDao::addRecordToTableManyToMany);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
