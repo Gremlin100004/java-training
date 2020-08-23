@@ -54,7 +54,7 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
             ResultSet resultSet = statement.executeQuery();
             masters = parseResultSet(resultSet);
         } catch (SQLException ex) {
-            throw new BusinessException("Error request get records masters");
+            throw new BusinessException("Error request get free masters");
         }
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_FREE_MASTERS_ZERO_ORDER)) {
@@ -62,7 +62,7 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
             List<Master> freeMasters = parseResultSet(resultSet);
             masters.addAll(freeMasters);
         } catch (SQLException ex) {
-            throw new BusinessException("Error request get records masters");
+            throw new BusinessException("Error request get free masters");
         }
         return masters;
     }

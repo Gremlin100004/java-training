@@ -26,6 +26,9 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     private static final String SQL_REQUEST_TO_GET_NUMBER_RECORDS = "SELECT COUNT(places.id) AS number_places FROM places";
     private static final String SQL_REQUEST_TO_GET_FREE_PLACES = "SELECT DISTINCT places.id, places.number, places.busy_status, " +
         "places.delete_status FROM places LEFT JOIN orders ON places.id = orders.place_id WHERE orders.lead_time > ?";
+    private static final String SQL_REQUEST_TO_GET_FREE_PLACES_ZERO_ORDER = "SELECT DISTINCT places.id, places.number, " +
+        "places.busy_status, places.delete_status FROM places LEFT JOIN orders ON places.id = orders.place_id " +
+        "WHERE orders.place_id IS NULL;";
 
     @ConstructorDependency
     public PlaceDaoImpl(DatabaseConnection databaseConnection) {
@@ -37,15 +40,24 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
 
     @Override
     public List<Place> getFreePlaces(Date executeDate) {
-        //ToDO get free place
+        List<Place> places;
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_FREE_PLACES)) {
             statement.setString(1, DateUtil.getStringFromDate(executeDate, true));
             ResultSet resultSet = statement.executeQuery();
-            return parseResultSet(resultSet);
+            places = parseResultSet(resultSet);
         } catch (SQLException ex) {
-            throw new BusinessException("Error request get number free masters");
+            throw new BusinessException("Error request get free places");
         }
+        try (PreparedStatement statement = databaseConnection.getConnection()
+            .prepareStatement(SQL_REQUEST_TO_GET_FREE_PLACES_ZERO_ORDER)) {
+            ResultSet resultSet = statement.executeQuery();
+            List<Place> freePlaces = parseResultSet(resultSet);
+            places.addAll(freePlaces);
+        } catch (SQLException ex) {
+            throw new BusinessException("Error request get free places");
+        }
+        return places;
     }
 
     @Override

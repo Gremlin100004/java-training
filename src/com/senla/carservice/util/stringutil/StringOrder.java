@@ -1,6 +1,7 @@
 package com.senla.carservice.util.stringutil;
 
 import com.senla.carservice.domain.Order;
+import com.senla.carservice.util.DateUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -67,12 +68,15 @@ public class StringOrder {
                 .append(StringUtil
                             .fillStringSpace(orders.get(i).getRegistrationNumber(), LENGTH_SPACE_FORTH));
             stringBuilder.append(SPLIT_COLUMNS)
-                .append(StringUtil.fillStringSpace(String.valueOf(orders.get(i).getCreationTime()), LENGTH_SPACE_TIME));
+                .append(StringUtil.fillStringSpace(DateUtil.getStringFromDate(orders.get(i).getCreationTime(), true),
+                                                   LENGTH_SPACE_TIME));
             stringBuilder.append(SPLIT_COLUMNS)
                 .append(StringUtil
-                            .fillStringSpace(String.valueOf(orders.get(i).getExecutionStartTime()), LENGTH_SPACE_TIME));
+                            .fillStringSpace(DateUtil.getStringFromDate(orders.get(i).getExecutionStartTime(), true),
+                                                   LENGTH_SPACE_TIME));
             stringBuilder.append(SPLIT_COLUMNS)
-                .append(StringUtil.fillStringSpace(String.valueOf(orders.get(i).getLeadTime()), LENGTH_SPACE_TIME));
+                .append(StringUtil.fillStringSpace(DateUtil.getStringFromDate(orders.get(i).getLeadTime(), true),
+                                                   LENGTH_SPACE_TIME));
             stringBuilder.append(SPLIT_COLUMNS)
                 .append(StringUtil.fillStringSpace(String.valueOf(orders.get(i).getPrice()),
                                                    LENGTH_SPACE_EIGHTH_COLUMN));

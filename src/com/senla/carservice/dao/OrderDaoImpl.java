@@ -100,7 +100,6 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
                 statement.execute();
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new BusinessException("Error request update records table orders_masters");
         }
     }
@@ -371,7 +370,6 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
             resultSet.next();
             return resultSet.getInt("amount_of_elements");
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new BusinessException("Error request get records orders");
         }
     }
