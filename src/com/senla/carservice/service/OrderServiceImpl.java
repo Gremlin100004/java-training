@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction add order");
         } finally {
             databaseConnection.enableAutoCommit();
         }
@@ -89,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction add dead line to order");
         } finally {
             databaseConnection.enableAutoCommit();
         }
@@ -116,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction add masters to order");
         } finally {
             databaseConnection.enableAutoCommit();
         }
@@ -136,7 +136,7 @@ public class OrderServiceImpl implements OrderService {
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction add place to order");
         } finally {
             databaseConnection.enableAutoCommit();
         }
@@ -156,7 +156,7 @@ public class OrderServiceImpl implements OrderService {
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction add price to order");
         } finally {
             databaseConnection.enableAutoCommit();
         }
@@ -175,7 +175,7 @@ public class OrderServiceImpl implements OrderService {
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction transfer order to execution status");
         } finally {
             databaseConnection.enableAutoCommit();
         }
@@ -196,7 +196,7 @@ public class OrderServiceImpl implements OrderService {
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction cancel order");
         } finally {
             databaseConnection.enableAutoCommit();
         }
@@ -217,7 +217,7 @@ public class OrderServiceImpl implements OrderService {
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction close order");
         } finally {
             databaseConnection.enableAutoCommit();
         }
@@ -254,7 +254,7 @@ public class OrderServiceImpl implements OrderService {
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get masters");
+            throw new BusinessException("Error transaction shift lead time");
         } finally {
             databaseConnection.enableAutoCommit();
         }
