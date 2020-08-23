@@ -25,54 +25,60 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
         }
         return connection;
     }
+
     @Override
-    public void closeConnection(){
+    public void closeConnection() {
         try {
-            if (connection != null && !connection.isClosed())
-            connection.close();
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
         } catch (SQLException e) {
             throw new BusinessException("Error close connection");
         }
     }
 
     @Override
-    public void disableAutoCommit(){
+    public void disableAutoCommit() {
         try {
             if (connection == null) {
                 connectToDatabase();
             }
-            if (!connection.isClosed())
+            if (!connection.isClosed()) {
                 connection.setAutoCommit(false);
+            }
         } catch (SQLException e) {
             throw new BusinessException("Error disable AutoCommit");
         }
     }
 
     @Override
-    public void enableAutoCommit(){
+    public void enableAutoCommit() {
         try {
-            if (connection != null && !connection.isClosed())
+            if (connection != null && !connection.isClosed()) {
                 connection.setAutoCommit(true);
+            }
         } catch (SQLException e) {
             throw new BusinessException("Error enable AutoCommit");
         }
     }
 
     @Override
-    public void commitTransaction(){
+    public void commitTransaction() {
         try {
-            if (connection != null && !connection.isClosed())
+            if (connection != null && !connection.isClosed()) {
                 connection.commit();
+            }
         } catch (SQLException e) {
             throw new BusinessException("Error commit transaction");
         }
     }
 
     @Override
-    public void rollBackTransaction(){
+    public void rollBackTransaction() {
         try {
-            if (connection != null && !connection.isClosed())
+            if (connection != null && !connection.isClosed()) {
                 connection.rollback();
+            }
         } catch (SQLException e) {
             throw new BusinessException("Error rollback transaction");
         }

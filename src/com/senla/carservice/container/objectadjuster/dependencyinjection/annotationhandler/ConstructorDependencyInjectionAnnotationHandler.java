@@ -19,15 +19,11 @@ public class ConstructorDependencyInjectionAnnotationHandler implements Annotati
             if (constructor.isAnnotationPresent(ConstructorDependency.class)) {
                 Class[] classTypes = constructor.getParameterTypes();
                 Object[] objects = new Object[classTypes.length];
-                Object object = null;
                 for (int i = 0; i < classTypes.length; i++) {
-                    System.out.println(classTypes[i].getName());
                     objects[i] = context.getObject(classTypes[i]);
-                    object = context.getObject(classTypes[i]);
                 }
                 try {
-                    //TODO objects
-                    context.setSingleton(constructor.newInstance(object));
+                    context.setSingleton(constructor.newInstance(objects));
                 } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
                     throw new InitializationException("Error set value to a constructor");
                 }

@@ -41,37 +41,22 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     @Override
     public Date getNearestFreeDate() {
-        try {
-            databaseConnection.disableAutoCommit();
-            if (masterDao.getAllRecords().isEmpty()) {
-                throw new BusinessException("There are no masters");
+        checkMasters();
+        checkPlaces();
+        checkOrders();
+        Date leadTimeOrder = orderDao.getLastOrder().getLeadTime();
+        Date dayDate = new Date();
+        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
+             currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
+            if (masterDao.getFreeMasters(currentDay).isEmpty() ||
+                placeDao.getFreePlaces(currentDay).isEmpty()) {
+                dayDate = currentDay;
+                currentDay = DateUtil.bringStartOfDayDate(currentDay);
+            } else {
+                break;
             }
-            if (orderDao.getAllRecords().isEmpty()) {
-                throw new BusinessException("There are no orders");
-            }
-            if (placeDao.getAllRecords().isEmpty()) {
-                throw new BusinessException("There are no places");
-            }
-            Date leadTimeOrder = orderDao.getLastOrder().getLeadTime();
-            Date dayDate = new Date();
-            for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
-                 currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
-                if (masterDao.getFreeMasters(currentDay).isEmpty() ||
-                    placeDao.getFreePlaces(currentDay).isEmpty()) {
-                    dayDate = currentDay;
-                    currentDay = DateUtil.bringStartOfDayDate(currentDay);
-                } else {
-                    break;
-                }
-            }
-            databaseConnection.commitTransaction();
-            return dayDate;
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction get day");
-        } finally {
-            databaseConnection.enableAutoCommit();
         }
+        return dayDate;
     }
 
     @Override
@@ -96,20 +81,29 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     @Override
     public void exportEntities() {
-        try {
-            databaseConnection.disableAutoCommit();
-            List<Order> orders = getOrders();
-            List<Master> masters = getMasters();
-            List<Place> places = getPlaces();
-            csvOrder.exportOrder(orders);
-            csvMaster.exportMasters(masters);
-            csvPlace.exportPlaces(places);
-            databaseConnection.commitTransaction();
-        } catch (BusinessException e) {
-            databaseConnection.rollBackTransaction();
-            throw new BusinessException("Error transaction export entities");
-        } finally {
-            databaseConnection.enableAutoCommit();
+        List<Order> orders = getOrders();
+        List<Master> masters = getMasters();
+        List<Place> places = getPlaces();
+        csvOrder.exportOrder(orders);
+        csvMaster.exportMasters(masters);
+        csvPlace.exportPlaces(places);
+    }
+
+    private void checkMasters() {
+        if (masterDao.getAllRecords().isEmpty()) {
+            throw new BusinessException("There are no masters");
+        }
+    }
+
+    private void checkPlaces() {
+        if (placeDao.getAllRecords().isEmpty()) {
+            throw new BusinessException("There are no places");
+        }
+    }
+
+    private void checkOrders() {
+        if (orderDao.getAllRecords().isEmpty()) {
+            throw new BusinessException("There are no orders");
         }
     }
 

@@ -59,9 +59,3 @@ ON places (id);
 CREATE UNIQUE INDEX orders_id_idx
 ON orders (id);
 COMMIT;
-
-SELECT DISTINCT places.id, places.number, places.busy_status, places.delete_status FROM places LEFT JOIN orders ON places.id = orders.place_id WHERE orders.place_id IS NULL;
-
-SELECT [главная таблица].доктор
-FROM [главная таблица] LEFT JOIN Отбор ON [главная таблица].доктор = Отбор.доктор
-WHERE Отбор.доктор Is Null;

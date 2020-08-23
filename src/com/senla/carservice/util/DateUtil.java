@@ -10,7 +10,7 @@ import java.util.Date;
 public class DateUtil {
     private static final int START_DAY_HOUR = 0;
     private static final int START_DAY_MINUTE = 0;
-    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd kk:mm");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
     private DateUtil() {
