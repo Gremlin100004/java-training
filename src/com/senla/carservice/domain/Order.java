@@ -2,18 +2,15 @@ package com.senla.carservice.domain;
 
 import com.senla.carservice.domain.enumaration.Status;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Order extends AEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class Order extends AEntity {
     private Date creationTime;
     private Date executionStartTime;
     private Date leadTime;
-    private List<Master> masters;
     private Place place;
     private String automaker;
     private String model;
@@ -21,9 +18,9 @@ public class Order extends AEntity implements Serializable {
     private BigDecimal price;
     private Status status;
     private boolean deleteStatus;
+    private List<Master> masters;
 
-    public Order(Long id, String automaker, String model, String registrationNumber) {
-        super.setId(id);
+    public Order(String automaker, String model, String registrationNumber) {
         this.creationTime = new Date();
         this.automaker = automaker;
         this.model = model;
@@ -31,10 +28,6 @@ public class Order extends AEntity implements Serializable {
         this.status = Status.WAIT;
         this.deleteStatus = false;
         this.masters = new ArrayList<>();
-    }
-
-    public List<Master> getMasters() {
-        return masters;
     }
 
     public String getAutomaker() {
@@ -77,16 +70,16 @@ public class Order extends AEntity implements Serializable {
         return deleteStatus;
     }
 
+    public List<Master> getMasters() {
+        return masters;
+    }
+
     public void setCreationTime(Date creationTime) {
         this.creationTime = creationTime;
     }
 
     public void setLeadTime(Date leadTime) {
         this.leadTime = leadTime;
-    }
-
-    public void setMasters(List<Master> masters) {
-        this.masters = masters;
     }
 
     public void setPlace(Place place) {
@@ -121,20 +114,23 @@ public class Order extends AEntity implements Serializable {
         this.price = price;
     }
 
+    public void setMasters(List<Master> masters) {
+        this.masters = masters;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
-               "creationTime=" + creationTime +
-               ", executionStartTime=" + executionStartTime +
-               ", leadTime=" + leadTime +
-               ", masters=" + masters +
-               ", place=" + place +
-               ", automaker='" + automaker + '\'' +
-               ", model='" + model + '\'' +
-               ", registrationNumber='" + registrationNumber + '\'' +
-               ", price=" + price +
-               ", status=" + status +
-               ", deleteStatus=" + deleteStatus +
-               '}';
+                "creationTime=" + creationTime +
+                ", executionStartTime=" + executionStartTime +
+                ", leadTime=" + leadTime +
+                ", place=" + place +
+                ", automaker='" + automaker + '\'' +
+                ", model='" + model + '\'' +
+                ", registrationNumber='" + registrationNumber + '\'' +
+                ", price=" + price +
+                ", status=" + status +
+                ", deleteStatus=" + deleteStatus +
+                '}';
     }
 }

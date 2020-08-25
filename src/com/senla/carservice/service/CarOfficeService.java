@@ -8,8 +8,4 @@ public interface CarOfficeService {
     void importEntities();
 
     void exportEntities();
-
-    void serializeEntities();
-
-    void deserializeEntities();
 }

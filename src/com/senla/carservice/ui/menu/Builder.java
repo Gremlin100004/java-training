@@ -83,14 +83,6 @@ public class Builder {
         this.rootMenu.getMenuItems().add(new MenuItem(MenuTittle.GET_THE_CLOSEST_FREE_DATE.getValue(),
                                                       () -> Printer.printInfo(carOfficeController.getNearestFreeDate()),
                                                       this.rootMenu));
-        this.rootMenu.getMenuItems().add(new MenuItem(MenuTittle.FILL_IN_TEST_DATA.getValue(), () -> {
-            String delimiter = "***********************************************************************";
-            Printer.printInfo(delimiter);
-            addMaster(delimiter, masterController);
-            addPlace(delimiter, placeController);
-            Printer.printInfo(MenuTittle.ADD_NEW_ORDERS_TO_CAR_SERVICE.getValue());
-            addOrderDate(orderController);
-        }, this.rootMenu));
         this.rootMenu.getMenuItems().add(
             new MenuItem(MenuTittle.EXPORT_OF_ALL_ENTITIES.getValue(),
                          () -> Printer.printInfo(carOfficeController.exportEntities()), this.rootMenu));
@@ -102,9 +94,9 @@ public class Builder {
     private void createItemMastersMenu(Menu mastersMenu) {
         mastersMenu.setMenuItems(new ArrayList<>(Arrays.asList(
             new MenuItem(MenuTittle.ADD_MASTER.getValue(), () -> Printer
-                .printInfo(masterController.addMaster(ScannerUtil.getStringUser("Enter the name of master"))),
+                .printInfo(masterController.addMaster(ScannerUtil.getStringUser("Enter the name of master", false))),
                          mastersMenu), new MenuItem(MenuTittle.DELETE_MASTER.getValue(), () -> {
-                if (isCheckMaster()) {
+                if (isCheckMaster(true)) {
                     return;
                 }
                 deleteMaster();
@@ -126,7 +118,7 @@ public class Builder {
                 Printer.printInfo(placeController.addPlace(ScannerUtil.getIntUser("Enter the number of place"))),
                          placesMenu));
         placesMenu.getMenuItems().add(new MenuItem(MenuTittle.DELETE_PLACE.getValue(), () -> {
-            if (isCheckPlace()) {
+            if (isCheckPlace(true)) {
                 return;
             }
             deleteGarage();
@@ -221,10 +213,10 @@ public class Builder {
                 message = orderController.shiftLeadTime(
                     index - INDEX_OFFSET, ScannerUtil.getStringDateUser(
                         "Enter the planing time start to execute the order in format " +
-                        "\"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"", true),
+                        "\"yyyy-mm-dd hh:mm\", example:\"2010-10-10 10:00\"", true),
                     ScannerUtil.getStringDateUser(
-                        "Enter the lead time the order in format" + " \"dd.MM.yyyy hh:mm\"," +
-                        " example:\"10.10.2010 10:00\"", true));
+                        "Enter the lead time the order in format" + " \"yyyy-mm-dd hh:mm\"," +
+                        " example:\"2010-10-10 10:00\"", true));
                 Printer.printInfo(message);
             }
         }, listOrderMenu));
@@ -249,7 +241,7 @@ public class Builder {
         listOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.GET_ORDERS_EXECUTED_CONCRETE_MASTER.getValue(), () -> {
                 int index;
-                if (isCheckMaster()) {
+                if (isCheckMaster(true)) {
                     return;
                 }
                 index = ScannerUtil.getIntUser("Enter the index number of the master to view orders:");
@@ -310,20 +302,20 @@ public class Builder {
             new MenuItem(MenuTittle.SORT_BY_FILING_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getCompletedOrdersFilingDate(
                              ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true),
+                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true),
                              ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true))), completedOrderMenu));
+                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true))), completedOrderMenu));
         completedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getCompletedOrdersExecutionDate(
                              ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true),
+                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true),
                              ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true))), completedOrderMenu));
+                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true))), completedOrderMenu));
     }
 
     private void addItemCompletedOrderPartTwo(Menu completedOrderMenu, Menu periodOrderMenu) {
@@ -331,11 +323,11 @@ public class Builder {
             new MenuItem(MenuTittle.SORT_BY_PRICE.getValue(),
                          () -> Printer.printInfo(orderController.getCompletedOrdersPrice(
                              ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true),
+                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true),
                              ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true))), completedOrderMenu));
+                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true))), completedOrderMenu));
         completedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
                          () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
@@ -351,20 +343,20 @@ public class Builder {
             new MenuItem(MenuTittle.SORT_BY_FILING_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getDeletedOrdersFilingDate(
                              ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true),
+                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true),
                              ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true))), deletedOrderMenu));
+                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true))), deletedOrderMenu));
         deletedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getDeletedOrdersExecutionDate(
                              ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true),
+                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true),
                              ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true))), deletedOrderMenu));
+                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true))), deletedOrderMenu));
     }
 
     private void addItemDeletedOrderPartTwo(Menu deletedOrderMenu, Menu periodOrderMenu) {
@@ -372,11 +364,11 @@ public class Builder {
             new MenuItem(MenuTittle.SORT_BY_PRICE.getValue(),
                          () -> Printer.printInfo(orderController.getDeletedOrdersPrice(
                              ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true),
+                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true),
                              ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true))), deletedOrderMenu));
+                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true))), deletedOrderMenu));
         deletedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
                          () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
@@ -392,20 +384,20 @@ public class Builder {
             new MenuItem(MenuTittle.SORT_BY_FILING_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getCanceledOrdersFilingDate(
                              ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true),
+                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true),
                              ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true))), canceledOrderMenu));
+                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true))), canceledOrderMenu));
         canceledOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.getValue(),
                          () -> Printer.printInfo(orderController.getCanceledOrdersExecutionDate(
                              ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true),
+                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true),
                              ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format dd.mm.yyyy," +
-                                 " example:\"10.10.2010 10:00\"", true))), canceledOrderMenu));
+                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
+                                 " example:\"2010-10-10 10:00\"", true))), canceledOrderMenu));
     }
 
     private void addItemCanceledOrderPartTwo(Menu canceledOrderMenu, Menu periodOrderMenu) {
@@ -415,8 +407,8 @@ public class Builder {
                              ScannerUtil.getStringDateUser("Enter the beginning date of period in " +
                                                            "format dd.mm.yyyy, example:\"10.10.2010 10:00\"", true),
                              ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format dd.mm.yyyy, " +
-                                 "example:\"10.10.2010 10:00\"", true))), canceledOrderMenu));
+                                 "Enter the end date of period in format yyyy-mm-dd hh:mm, " +
+                                 "example:\"2010-10-10 10:00\"", true))), canceledOrderMenu));
         canceledOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
                          () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
@@ -471,6 +463,7 @@ public class Builder {
     }
 
     private void deleteMaster() {
+        Printer.printInfo(masterController.getMasters());
         int index = ScannerUtil.getIntUser("Enter the index number of the master to delete:");
         Printer.printInfo(masterController.deleteMaster(index - INDEX_OFFSET));
     }
@@ -509,13 +502,13 @@ public class Builder {
     private void addOrder() {
         String message = "";
         while (!message.equals("order add successfully!")) {
-            if (isCheckMaster() || isCheckPlace()) {
+            if (isCheckMaster(false) || isCheckPlace(false)) {
                 return;
             }
-            String automaker = ScannerUtil.getStringUser("Enter the automaker of car");
-            String model = ScannerUtil.getStringUser("Enter the model of car");
+            String automaker = ScannerUtil.getStringUser("Enter the automaker of car", false);
+            String model = ScannerUtil.getStringUser("Enter the model of car", false);
             String registrationNumber = ScannerUtil.getStringUser
-                ("Enter the registration number of car, example: 1111 AB-7");
+                ("Enter the registration number of car, example: 1111 AB-7", true);
             message = orderController.addOrder(automaker, model, registrationNumber);
             Printer.printInfo(message);
         }
@@ -532,10 +525,10 @@ public class Builder {
         while (!message.equals("deadline add to order successfully")) {
             executionStartTime = ScannerUtil.getStringDateUser(
                 "Enter the planing time start to execute the order in " +
-                "format \"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"", true);
+                "format \"yyyy-mm-dd hh:mm\", example:\"2010-10-10 10:00\"", true);
             leadTime = ScannerUtil.getStringDateUser(
                 "Enter the lead time the order in format " +
-                "\"dd.MM.yyyy hh:mm\", example:\"10.10.2010 10:00\"", true);
+                "\"yyyy-mm-dd hh:mm\", example:\"2010-10-10 10:00\"", true);
             message = orderController.addOrderDeadlines(executionStartTime, leadTime);
             Printer.printInfo(message);
         }
@@ -546,19 +539,23 @@ public class Builder {
         Printer.printInfo(masterController.getFreeMasters(executionStartTime));
         Printer.printInfo("0. Stop adding");
         int quit = 0;
-        int index = MAX_INDEX;
-        while (quit == 0 && index == MAX_INDEX) {
-            List<Integer> statusInt = addMasters(quit);
+        int index;
+        int number_masters = 0;
+        while (quit == 0) {
+            List<Integer> statusInt = addMasters(quit, number_masters);
             quit = statusInt.get(0);
             index = statusInt.get(1);
-            Printer.printInfo("You must add at least one master!!!");
+            number_masters = statusInt.get(2);
+            if (number_masters == 0 && index == 0) {
+                Printer.printInfo("You must add at least one master!!!");
+            }
         }
     }
 
-    private List<Integer> addMasters(int quit) {
+    private List<Integer> addMasters(int quit, int number_masters) {
         String message = "";
         int index = MAX_INDEX;
-        boolean userAnswer;
+        boolean userAnswer = false;
         while (!message.equals("masters add successfully")) {
             index = ScannerUtil.getIntUser("Enter the index number of the master to add:");
             if (index == 0) {
@@ -566,16 +563,17 @@ public class Builder {
             }
             message = orderController.addOrderMasters(index - INDEX_OFFSET);
             Printer.printInfo(message);
-            userAnswer = ScannerUtil.isAnotherMaster();
+            if (message.equals("masters add successfully")){
+                number_masters++;
+                userAnswer = ScannerUtil.isAnotherMaster();
+            }
+
             if (userAnswer) {
-                index = 0;
+                quit++;
                 break;
             }
         }
-        if (index != 0) {
-            quit++;
-        }
-        return new ArrayList<>(Arrays.asList(quit, index));
+        return new ArrayList<>(Arrays.asList(quit, index, number_masters));
     }
 
     private void addPlaceOrder(String executionStartTime) {
@@ -596,15 +594,19 @@ public class Builder {
         return message.equals("There are no orders");
     }
 
-    private boolean isCheckMaster() {
+    private boolean isCheckMaster(boolean isPrint) {
         String message = masterController.getMasters();
-        Printer.printInfo(message);
+        if (isPrint){
+            Printer.printInfo(message);
+        }
         return message.equals("There are no masters");
     }
 
-    private boolean isCheckPlace() {
+    private boolean isCheckPlace(boolean isPrint) {
         String message = placeController.getArrayPlace();
-        Printer.printInfo(message);
+        if (isPrint){
+            Printer.printInfo(message);
+        }
         return message.equals("There are no places");
     }
 }

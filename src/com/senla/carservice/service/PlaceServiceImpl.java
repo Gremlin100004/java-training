@@ -2,9 +2,11 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
+import com.senla.carservice.dao.PlaceDao;
+import com.senla.carservice.dao.connection.DatabaseConnection;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.repository.PlaceRepository;
 
 import java.util.Date;
 import java.util.List;
@@ -12,46 +14,77 @@ import java.util.List;
 @Singleton
 public class PlaceServiceImpl implements PlaceService {
     @Dependency
-    private PlaceRepository placeRepository;
+    private PlaceDao placeDao;
+    @ConfigProperty
+    private Boolean isBlockAddPlace;
+    @ConfigProperty
+    private Boolean isBlockDeletePlace;
+    @Dependency
+    private DatabaseConnection databaseConnection;
 
     public PlaceServiceImpl() {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Place> getPlaces() {
-        checkPlaces();
-        return placeRepository.getPlaces();
+        List<Place> places = placeDao.getAllRecords();
+        if (places.isEmpty()) {
+            throw new BusinessException("There are no places");
+        }
+        return places;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void addPlace(Integer number) {
-        placeRepository.addPlace(new Place(number));
+        try {
+            databaseConnection.disableAutoCommit();
+            if (isBlockAddPlace) {
+                throw new BusinessException("Permission denied");
+            }
+            placeDao.createRecord(new Place(number));
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction add places");
+        } finally {
+            databaseConnection.enableAutoCommit();
+        }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void deletePlace(Place place) {
-        placeRepository.deletePlace(place);
+        try {
+            databaseConnection.disableAutoCommit();
+            if (place.getBusyStatus()) {
+                throw new BusinessException("Place is busy");
+            }
+            if (isBlockDeletePlace) {
+                throw new BusinessException("Permission denied");
+            }
+            placeDao.deleteRecord(place);
+            databaseConnection.commitTransaction();
+        } catch (BusinessException e) {
+            databaseConnection.rollBackTransaction();
+            throw new BusinessException("Error transaction delete place");
+        } finally {
+            databaseConnection.enableAutoCommit();
+        }
     }
 
     @Override
     public int getNumberFreePlaceByDate(Date startDayDate) {
-        checkPlaces();
-        return placeRepository.getFreePlaces(startDayDate).size();
+        return placeDao.getAllRecords().size();
     }
 
     @Override
     public List<Place> getFreePlaceByDate(Date executeDate) {
-        checkPlaces();
-        List<Place> freePlace = placeRepository.getFreePlaces(executeDate);
+        List<Place> freePlace = placeDao.getFreePlaces(executeDate);
         if (freePlace.isEmpty()) {
             throw new BusinessException("There are no free places");
         }
         return freePlace;
-    }
-
-    private void checkPlaces() {
-        if (placeRepository.getPlaces().isEmpty()) {
-            throw new BusinessException("There are no places");
-        }
     }
 }

@@ -14,7 +14,6 @@ public enum MenuTittle {
     GO_TO_MENU("Go to menu"),
     GET_THE_NUMBER_OF_AVAILABLE_SEATS_AT_THE_CAR_SERVICE("Get the number of available seats at the car service"),
     GET_THE_CLOSEST_FREE_DATE("Get the closest free date"),
-    FILL_IN_TEST_DATA("Fill in test data"),
     ADD_NEW_ORDERS_TO_CAR_SERVICE("Add new orders to car service"),
     EXPORT_OF_ALL_ENTITIES("Export of all entities"),
     IMPORT_OF_ALL_ENTITIES("Import of all entities"),

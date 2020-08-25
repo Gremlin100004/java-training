@@ -3,7 +3,6 @@ package com.senla.carservice.controller;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.stringutil.StringPlaces;
@@ -14,8 +13,6 @@ import java.util.Date;
 public class PlaceController {
     @Dependency
     private PlaceService placeService;
-    @Dependency
-    private OrderService orderService;
 
     public PlaceController() {
     }

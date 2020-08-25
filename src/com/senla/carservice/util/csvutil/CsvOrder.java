@@ -53,10 +53,10 @@ public class CsvOrder {
         }
         List<String> values = Arrays.asList((line.split(idSeparator))[0].split(fieldSeparator));
         List<String> arrayIdMaster = Arrays.asList(line.split(idSeparator)[1].split(fieldSeparator));
-        Order order = new Order(ParameterUtil.getValueLong(values.get(0)),
-                                ParameterUtil.checkValueString(values.get(5)),
+        Order order = new Order(ParameterUtil.checkValueString(values.get(5)),
                                 ParameterUtil.checkValueString(values.get(6)),
                                 ParameterUtil.checkValueString(values.get(7)));
+        order.setId(ParameterUtil.getValueLong(values.get(0)));
         order.setCreationTime(DateUtil.getDatesFromString(values.get(1), true));
         order.setExecutionStartTime(DateUtil.getDatesFromString(values.get(2), true));
         order.setLeadTime(DateUtil.getDatesFromString(values.get(3), true));

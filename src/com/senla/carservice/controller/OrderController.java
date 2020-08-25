@@ -6,6 +6,7 @@ import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.PlaceService;
+import com.senla.carservice.service.enumaration.SortParameter;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.stringutil.StringMaster;
 import com.senla.carservice.util.stringutil.StringOrder;
@@ -50,7 +51,7 @@ public class OrderController {
             if (masterService.getMasters().size() < index || index < 0) {
                 return "There is no such master";
             } else {
-                orderService.addOrderMasters(masterService.getMasters().get(index));
+                orderService.addOrderMasters(index);
                 return "masters add successfully";
             }
         } catch (BusinessException e) {
@@ -158,7 +159,7 @@ public class OrderController {
 
     public String getOrdersSortByFilingDate() {
         try {
-            return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime(orderService.getOrders()));
+            return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.SORT_BY_FILING_DATE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -166,7 +167,7 @@ public class OrderController {
 
     public String getOrdersSortByExecutionDate() {
         try {
-            return StringOrder.getStringFromOrder(orderService.sortOrderByLeadTime(orderService.getOrders()));
+            return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.SORT_BY_EXECUTION_DATE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -174,7 +175,7 @@ public class OrderController {
 
     public String getOrdersSortByPlannedStartDate() {
         try {
-            return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime(orderService.getOrders()));
+            return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.BY_PLANNED_START_DATE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -182,7 +183,7 @@ public class OrderController {
 
     public String getOrdersSortByPrice() {
         try {
-            return StringOrder.getStringFromOrder(orderService.sortOrderByPrice(orderService.getOrders()));
+            return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.SORT_BY_PRICE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -191,7 +192,7 @@ public class OrderController {
     public String getExecuteOrderFilingDate() {
         try {
             return StringOrder.getStringFromOrder(
-                orderService.sortOrderByCreationTime(orderService.getCurrentRunningOrders()));
+                orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -200,7 +201,7 @@ public class OrderController {
     public String getExecuteOrderExecutionDate() {
         try {
             return StringOrder.getStringFromOrder(
-                orderService.sortOrderByLeadTime(orderService.getCurrentRunningOrders()));
+                orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -210,8 +211,8 @@ public class OrderController {
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-            return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
-                (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
+            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(
+                    startPeriodDate, endPeriodDate, SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -221,8 +222,8 @@ public class OrderController {
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-            return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime
-                (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
+            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(
+                    startPeriodDate, endPeriodDate, SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE ));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -232,8 +233,8 @@ public class OrderController {
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-            return StringOrder.getStringFromOrder(orderService.sortOrderByPrice
-                (orderService.getCompletedOrders(startPeriodDate, endPeriodDate)));
+            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(
+                    startPeriodDate, endPeriodDate, SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -243,8 +244,8 @@ public class OrderController {
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-            return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
-                (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
+            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(
+                    startPeriodDate, endPeriodDate, SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -254,8 +255,8 @@ public class OrderController {
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-            return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime
-                (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
+            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(
+                    startPeriodDate, endPeriodDate, SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -265,8 +266,8 @@ public class OrderController {
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-            return StringOrder.getStringFromOrder(orderService.sortOrderByPrice
-                (orderService.getCanceledOrders(startPeriodDate, endPeriodDate)));
+            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(
+                    startPeriodDate, endPeriodDate, SortParameter.CANCELED_ORDERS_SORT_BY_PRICE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -276,8 +277,8 @@ public class OrderController {
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-            return StringOrder.getStringFromOrder(orderService.sortOrderByCreationTime
-                (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
+            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(
+                    startPeriodDate, endPeriodDate, SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -287,8 +288,8 @@ public class OrderController {
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-            return StringOrder.getStringFromOrder(orderService.sortOrderByStartTime
-                (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
+            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(
+                    startPeriodDate, endPeriodDate, SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE));
         } catch (BusinessException e) {
             return e.getMessage();
         }
@@ -298,8 +299,9 @@ public class OrderController {
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-            return StringOrder.getStringFromOrder(orderService.sortOrderByPrice
-                (orderService.getDeletedOrders(startPeriodDate, endPeriodDate)));
+            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(
+                    startPeriodDate, endPeriodDate, SortParameter.DELETED_ORDERS_SORT_BY_PRICE
+            ));
         } catch (BusinessException e) {
             return e.getMessage();
         }
