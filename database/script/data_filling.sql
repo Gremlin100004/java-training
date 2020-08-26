@@ -1,4 +1,5 @@
 USE car_service;
+
 INSERT INTO masters VALUES
 (NULL, 'Petya', 2, false),
 (NULL, 'Vasya', 2, false),
@@ -58,3 +59,5 @@ INSERT INTO orders_masters VALUES
 (7, 13), (7, 14), (8, 15), (8, 16),
 (9, 17), (9, 18), (10, 19), (10, 20),
 (11, 21), (11, 22), (12, 1), (12, 2);
+
+COMMIT;
