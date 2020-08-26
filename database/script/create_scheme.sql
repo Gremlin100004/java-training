@@ -1,19 +1,22 @@
-CREATE DATABASE IF NOT EXISTS car_service DEFAULT CHARACTER SET utf8;
-USE car_service;
+DROP DATABASE
+
+CREATE DATABASE IF NOT EXISTS hrinkou_car_service DEFAULT CHARACTER SET utf8;
+
+USE hrinkou_car_service;
 
 CREATE TABLE IF NOT EXISTS masters(
 id INT NOT NULL AUTO_INCREMENT,
 name VARCHAR(20),
 number_orders INT DEFAULT 0,
-delete_status BOOLEAN DEFAULT false,
+is_deleted BOOLEAN DEFAULT false,
 PRIMARY KEY pk_masters (id)
 );
 
 CREATE TABLE IF NOT EXISTS places(
 id INT NOT NULL AUTO_INCREMENT,
 number INT NOT NULL UNIQUE,
-busy_status BOOLEAN DEFAULT false,
-delete_status BOOLEAN DEFAULT false,
+is_busy BOOLEAN DEFAULT false,
+is_deleted BOOLEAN DEFAULT false,
 PRIMARY KEY pk_places (id)
 );
 
@@ -27,7 +30,7 @@ model VARCHAR(50),
 registration_number VARCHAR(50),
 price DECIMAL(7,2),
 status VARCHAR(10),
-delete_status BOOLEAN DEFAULT false,
+is_deleted BOOLEAN DEFAULT false,
 place_id INT NOT NULL,
 PRIMARY KEY pk_orders (id)
 );
@@ -58,4 +61,5 @@ CREATE UNIQUE INDEX places_id_idx
 ON places (id);
 CREATE UNIQUE INDEX orders_id_idx
 ON orders (id);
+
 COMMIT;
