@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public abstract class AbstractDao implements GenericDao {
+public abstract class AbstractDao <T> implements GenericDao<T> {
     protected DatabaseConnection databaseConnection;
 
     public AbstractDao(DatabaseConnection databaseConnection) {
@@ -19,7 +19,7 @@ public abstract class AbstractDao implements GenericDao {
     }
 
     @Override
-    public void createRecord(Object object) {
+    public void createRecord(T object) {
         String request = getCreateRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             fillStatementCreate(statement, object);
@@ -30,7 +30,7 @@ public abstract class AbstractDao implements GenericDao {
     }
 
     @Override
-    public List<Object> getAllRecords() {
+    public List<T> getAllRecords() {
         String request = getReadAllRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             ResultSet resultSet = statement.executeQuery();
@@ -41,7 +41,7 @@ public abstract class AbstractDao implements GenericDao {
     }
 
     @Override
-    public void updateRecord(Object object) {
+    public void updateRecord(T object) {
         String request = getUpdateRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             fillStatementUpdate(statement, object);
@@ -52,8 +52,8 @@ public abstract class AbstractDao implements GenericDao {
     }
 
     @Override
-    public void updateAllRecords(List objects) {
-        for (Object object : objects) {
+    public void updateAllRecords(List<T> objects) {
+        for (T object : objects) {
             String request = getUpdateAllRecordsRequest();
             try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
                 fillStatementUpdateAll(statement, object);
@@ -65,7 +65,7 @@ public abstract class AbstractDao implements GenericDao {
     }
 
     @Override
-    public void deleteRecord(Object object) {
+    public void deleteRecord(T object) {
         String request = getDeleteRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             fillStatementDelete(statement, object);
@@ -75,15 +75,15 @@ public abstract class AbstractDao implements GenericDao {
         }
     }
 
-    protected abstract <T> void fillStatementCreate(PreparedStatement statement, T object);
+    protected abstract void fillStatementCreate(PreparedStatement statement, T object);
 
-    protected abstract <T> void fillStatementUpdate(PreparedStatement statement, T object);
+    protected abstract void fillStatementUpdate(PreparedStatement statement, T object);
 
-    protected abstract <T> void fillStatementUpdateAll(PreparedStatement statement, T object);
+    protected abstract void fillStatementUpdateAll(PreparedStatement statement, T object);
 
-    protected abstract <T> void fillStatementDelete(PreparedStatement statement, T object);
+    protected abstract void fillStatementDelete(PreparedStatement statement, T object);
 
-    protected abstract <T> List<T> parseResultSet(ResultSet resultSet);
+    protected abstract List<T> parseResultSet(ResultSet resultSet);
 
     protected abstract String getCreateRequest();
 

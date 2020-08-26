@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 @Singleton
-public class MasterDaoImpl extends AbstractDao implements MasterDao {
+public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO masters VALUES (NULL, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_GET_ORDER_MASTERS = "SELECT masters.id, masters.name , masters.is_deleted " +
         "FROM masters JOIN orders_masters ON orders_masters.master_id = masters.id WHERE orders_masters.order_id=";
@@ -89,8 +89,7 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
     }
 
     @Override
-    protected void fillStatementCreate(PreparedStatement statement, Object object) {
-        Master master = (Master) object;
+    protected void fillStatementCreate(PreparedStatement statement, Master master) {
         try {
             statement.setString(1, master.getName());
             statement.setInt(2, master.getNumberOrders());
@@ -101,8 +100,7 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
     }
 
     @Override
-    protected void fillStatementUpdate(PreparedStatement statement, Object object) {
-        Master master = (Master) object;
+    protected void fillStatementUpdate(PreparedStatement statement, Master master) {
         try {
             statement.setString(1, master.getName());
             statement.setInt(2, master.getNumberOrders());
@@ -114,8 +112,7 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
     }
 
     @Override
-    protected <T> void fillStatementUpdateAll(final PreparedStatement statement, final T object) {
-        Master master = (Master) object;
+    protected void fillStatementUpdateAll(PreparedStatement statement, Master master) {
         try {
             statement.setLong(1, master.getId());
             statement.setString(2, master.getName());
@@ -131,8 +128,7 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
     }
 
     @Override
-    protected void fillStatementDelete(PreparedStatement statement, Object object) {
-        Master master = (Master) object;
+    protected void fillStatementDelete(PreparedStatement statement, Master master) {
         try {
             statement.setLong(1, master.getId());
         } catch (SQLException e) {
@@ -166,7 +162,6 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected List<Master> parseResultSet(ResultSet resultSet) {
         try {
             List<Master> masters = new ArrayList<>();

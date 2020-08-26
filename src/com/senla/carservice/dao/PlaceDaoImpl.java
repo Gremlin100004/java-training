@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 @Singleton
-public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
+public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO places VALUES (NULL, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE places SET number=?, is_busy=?, is_deleted=? " +
         "WHERE id=?";
@@ -73,8 +73,7 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     }
 
     @Override
-    protected <T> void fillStatementCreate(PreparedStatement statement, T object) {
-        Place place = (Place) object;
+    protected void fillStatementCreate(PreparedStatement statement, Place place) {
         try {
             statement.setInt(1, place.getNumber());
             statement.setBoolean(2, place.getBusyStatus());
@@ -85,8 +84,7 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     }
 
     @Override
-    protected <T> void fillStatementUpdate(PreparedStatement statement, T object) {
-        Place place = (Place) object;
+    protected void fillStatementUpdate(PreparedStatement statement, Place place) {
         try {
             statement.setInt(1, place.getNumber());
             statement.setBoolean(2, place.getBusyStatus());
@@ -98,8 +96,7 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     }
 
     @Override
-    protected <T> void fillStatementUpdateAll(PreparedStatement statement, T object) {
-        Place place = (Place) object;
+    protected void fillStatementUpdateAll(PreparedStatement statement, Place place) {
         try {
             statement.setLong(1, place.getId());
             statement.setInt(2, place.getNumber());
@@ -115,8 +112,7 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     }
 
     @Override
-    protected <T> void fillStatementDelete(PreparedStatement statement, T object) {
-        Place place = (Place) object;
+    protected void fillStatementDelete(PreparedStatement statement, Place place) {
         try {
             statement.setLong(1, place.getId());
         } catch (SQLException e) {
@@ -150,7 +146,6 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected List<Place> parseResultSet(ResultSet resultSet) {
         try {
             List<Place> places = new ArrayList<>();

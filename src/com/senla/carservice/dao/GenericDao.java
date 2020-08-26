@@ -4,13 +4,13 @@ import java.util.List;
 
 public interface GenericDao <T> {
 
-    void createRecord(T object);
+     void createRecord(T object);
 
-    List<T> getAllRecords();
+     List<T> getAllRecords();
 
-    void updateRecord(T object);
+     void updateRecord(T object);
 
-    void updateAllRecords(List<T> objects);
+     void updateAllRecords(List<T> objects);
 
-    void deleteRecord(T object);
+     void deleteRecord(T object);
 }

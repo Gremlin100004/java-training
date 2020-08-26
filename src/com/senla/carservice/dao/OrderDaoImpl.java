@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-public class OrderDaoImpl extends AbstractDao implements OrderDao {
+public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO orders VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS = "INSERT INTO orders_masters VALUES (?, ?)";
     private static final String SQL_NULL_DATE = "1111-01-01 00:00";
@@ -212,7 +212,6 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected List<Order> parseResultSet(ResultSet resultSet) {
         try {
             List<Order> orders = new ArrayList<>();
@@ -243,8 +242,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     }
 
     @Override
-    protected <T> void fillStatementCreate(PreparedStatement statement, T object) {
-        Order order = (Order) object;
+    protected void fillStatementCreate(PreparedStatement statement, Order order) {
         try {
             statement.setString(1, DateUtil.getStringFromDate(order.getCreationTime(), true));
             statement.setString(2, SQL_NULL_DATE);
@@ -262,8 +260,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     }
 
     @Override
-    protected <T> void fillStatementUpdate(PreparedStatement statement, T object) {
-        Order order = (Order) object;
+    protected void fillStatementUpdate(PreparedStatement statement, Order order) {
         try {
             statement.setString(1, DateUtil.getStringFromDate(order.getCreationTime(), true));
             statement.setString(2, DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
@@ -282,8 +279,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     }
 
     @Override
-    protected <T> void fillStatementUpdateAll(PreparedStatement statement, T object) {
-        Order order = (Order) object;
+    protected void fillStatementUpdateAll(PreparedStatement statement, Order order) {
         try {
             statement.setLong(1, order.getId());
             statement.setString(2, DateUtil.getStringFromDate(order.getCreationTime(), true));
@@ -313,8 +309,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     }
 
     @Override
-    protected <T> void fillStatementDelete(PreparedStatement statement, T object) {
-        Order order = (Order) object;
+    protected void fillStatementDelete(PreparedStatement statement, Order order) {
         try {
             statement.setLong(1, order.getId());
         } catch (SQLException e) {

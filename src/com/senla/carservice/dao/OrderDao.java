@@ -5,7 +5,7 @@ import com.senla.carservice.domain.Order;
 
 import java.util.List;
 
-public interface OrderDao extends GenericDao {
+public interface OrderDao extends GenericDao <Order> {
 
     Order getLastOrder();
 
