@@ -21,7 +21,6 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Master> getMasters() {
         List<Master> masters = masterDao.getAllRecords();
         if (masters.isEmpty()) {
@@ -31,7 +30,6 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void addMaster(String name) {
         try {
             databaseConnection.disableAutoCommit();
@@ -60,7 +58,6 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void deleteMaster(Master master) {
         try {
             databaseConnection.disableAutoCommit();

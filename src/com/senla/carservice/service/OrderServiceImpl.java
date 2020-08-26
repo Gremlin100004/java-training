@@ -37,7 +37,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Order> getOrders() {
         List<Order> orders = orderDao.getAllRecords();
         if (orders.isEmpty()) {
@@ -47,7 +46,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void addOrder(String automaker, String model, String registrationNumber) {
         try {
             databaseConnection.disableAutoCommit();
@@ -64,7 +62,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
         try {
             databaseConnection.disableAutoCommit();
@@ -100,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             databaseConnection.disableAutoCommit();
             Order currentOrder = orderDao.getLastOrder();
-            Master master = (Master) masterDao.getAllRecords().get(index);
+            Master master = masterDao.getAllRecords().get(index);
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
             }
@@ -123,7 +120,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void addOrderPlace(Place place) {
         try {
             databaseConnection.disableAutoCommit();
@@ -143,7 +139,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void addOrderPrice(BigDecimal price) {
         try {
             databaseConnection.disableAutoCommit();
@@ -163,7 +158,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void completeOrder(Order order) {
         try {
             databaseConnection.disableAutoCommit();
@@ -182,7 +176,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void cancelOrder(Order order) {
         try {
             databaseConnection.disableAutoCommit();
@@ -203,7 +196,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void closeOrder(Order order) {
         try {
             databaseConnection.disableAutoCommit();
@@ -224,7 +216,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void deleteOrder(Order order) {
         try {
             databaseConnection.disableAutoCommit();
@@ -239,7 +230,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
         try {
             databaseConnection.disableAutoCommit();

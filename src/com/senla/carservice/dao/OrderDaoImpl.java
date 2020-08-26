@@ -37,7 +37,7 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     private static final String SQL_REQUEST_TO_GET_LAST_RECORD = "SELECT orders.id, orders.creation_time, " +
         "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
         "orders.price, orders.status, orders.is_deleted, places.id AS order_place_id, places.number AS place_number, " +
-        "places.is_busy AS place_is_busy, places.is_deleted AS places_is_deleted FROM orders JOIN " +
+        "places.is_busy AS place_is_busy, places.is_deleted AS place_is_deleted FROM orders JOIN " +
         "places ON orders.place_id = places.id ORDER BY orders.id DESC LIMIT 1";
     private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE orders SET is_deleted=true WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_NUMBER_BUSY_MASTERS = "SELECT COUNT(masters.id) AS amount_of_elements " +
@@ -62,7 +62,7 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     private static final String SQL_REQUEST_GET_MASTER_ORDERS = "SELECT orders.id, orders.creation_time, " +
         "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
         "orders.price, orders.status, orders.is_deleted, places.id AS order_place_id, places.number AS place_number, " +
-        "places.is_busy AS place_is_busy, places.is_deleted AS places_is_deleted  FROM orders JOIN " +
+        "places.is_busy AS place_is_busy, places.is_deleted AS place_is_deleted  FROM orders JOIN " +
         "orders_masters ON orders_masters.order_id = orders.id JOIN places ON orders.place_id=places.id " +
         "WHERE orders_masters.master_id=?";
 

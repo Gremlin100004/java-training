@@ -25,10 +25,9 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT * FROM places";
     private static final String SQL_REQUEST_TO_GET_NUMBER_RECORDS = "SELECT COUNT(places.id) AS number_places FROM places";
     private static final String SQL_REQUEST_TO_GET_FREE_PLACES = "SELECT DISTINCT places.id, places.number, places.is_busy, " +
-        "places.is_deleted FROM places LEFT JOIN orders ON places.id = orders.place_id WHERE orders.lead_time > ?";
-    private static final String SQL_REQUEST_TO_GET_FREE_PLACES_ZERO_ORDER = "SELECT DISTINCT places.id, places.number, " +
-        "places.is_busy, places.is_deleted FROM places LEFT JOIN orders ON places.id = orders.place_id " +
-        "WHERE orders.place_id IS NULL;";
+        "places.is_deleted FROM places LEFT JOIN orders ON places.id = orders.place_id WHERE orders.lead_time > ? UNION " +
+        "SELECT DISTINCT places.id, places.number, places.is_busy, places.is_deleted FROM places LEFT JOIN orders ON " +
+        "places.id = orders.place_id WHERE orders.place_id IS NULL";
 
     @ConstructorDependency
     public PlaceDaoImpl(DatabaseConnection databaseConnection) {
@@ -40,24 +39,14 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
 
     @Override
     public List<Place> getFreePlaces(Date executeDate) {
-        List<Place> places;
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_FREE_PLACES)) {
             statement.setString(1, DateUtil.getStringFromDate(executeDate, true));
             ResultSet resultSet = statement.executeQuery();
-            places = parseResultSet(resultSet);
+            return parseResultSet(resultSet);
         } catch (SQLException ex) {
             throw new BusinessException("Error request get free places");
         }
-        try (PreparedStatement statement = databaseConnection.getConnection()
-            .prepareStatement(SQL_REQUEST_TO_GET_FREE_PLACES_ZERO_ORDER)) {
-            ResultSet resultSet = statement.executeQuery();
-            List<Place> freePlaces = parseResultSet(resultSet);
-            places.addAll(freePlaces);
-        } catch (SQLException ex) {
-            throw new BusinessException("Error request get free places");
-        }
-        return places;
     }
 
     @Override
@@ -65,8 +54,10 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_NUMBER_RECORDS)) {
             ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt("number_places");
+            if (resultSet.next()) {
+                return resultSet.getInt("number_places");
+            }
+            return 0;
         } catch (SQLException ex) {
             throw new BusinessException("Error request get number places");
         }

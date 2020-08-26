@@ -18,8 +18,6 @@ import java.util.List;
 @Singleton
 public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO masters VALUES (NULL, ?, ?, ?)";
-    private static final String SQL_REQUEST_TO_GET_ORDER_MASTERS = "SELECT masters.id, masters.name , masters.is_deleted " +
-        "FROM masters JOIN orders_masters ON orders_masters.master_id = masters.id WHERE orders_masters.order_id=";
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE masters SET name=?, number_orders=?, is_deleted=? WHERE id=?";
     private static final String SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST = "INSERT INTO masters(id, name, number_orders, " +
         "is_deleted) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, name = ?, number_orders = ?, is_deleted = ?";
@@ -31,11 +29,10 @@ public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
         "is_deleted FROM masters ORDER BY masters.name";
     private static final String SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY = "SELECT DISTINCT id, name, number_orders, " +
         "is_deleted FROM masters ORDER BY number_orders";
-    private static final String SQL_REQUEST_TO_GET_FREE_MASTERS = "SELECT DISTINCT masters.id, masters.name, masters.number_orders, " +
-        "masters.is_deleted FROM masters JOIN orders_masters ON masters.id = orders_masters.master_id JOIN orders " +
-        "ON orders_masters.order_id = orders.id WHERE orders.lead_time > ?";
-    private static final String SQL_REQUEST_TO_GET_FREE_MASTERS_ZERO_ORDER = "SELECT DISTINCT id, name, number_orders, " +
-        "is_deleted FROM masters WHERE number_orders = 0";
+    private static final String SQL_REQUEST_TO_GET_FREE_MASTERS = "SELECT DISTINCT masters.id, masters.name, " +
+            "masters.number_orders, masters.is_deleted FROM masters JOIN orders_masters ON masters.id = " +
+            "orders_masters.master_id JOIN orders ON orders_masters.order_id = orders.id WHERE orders.lead_time > ? " +
+            "UNION SELECT DISTINCT id, name, number_orders, is_deleted FROM masters WHERE number_orders = 0";
 
     @ConstructorDependency
     public MasterDaoImpl(DatabaseConnection databaseConnection) {
@@ -47,24 +44,14 @@ public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
 
     @Override
     public List<Master> getFreeMasters(Date date) {
-        List<Master> masters;
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_FREE_MASTERS)) {
             statement.setString(1, DateUtil.getStringFromDate(date, true));
             ResultSet resultSet = statement.executeQuery();
-            masters = parseResultSet(resultSet);
+            return parseResultSet(resultSet);
         } catch (SQLException ex) {
             throw new BusinessException("Error request get free masters");
         }
-        try (PreparedStatement statement = databaseConnection.getConnection()
-            .prepareStatement(SQL_REQUEST_TO_GET_FREE_MASTERS_ZERO_ORDER)) {
-            ResultSet resultSet = statement.executeQuery();
-            List<Master> freeMasters = parseResultSet(resultSet);
-            masters.addAll(freeMasters);
-        } catch (SQLException ex) {
-            throw new BusinessException("Error request get free masters");
-        }
-        return masters;
     }
 
     @Override
@@ -82,9 +69,9 @@ public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_NUMBER_RECORDS);
             if (resultSet.next()) {
-                resultSet.next();
+                return resultSet.getInt("number_masters");
             }
-            return resultSet.getInt("number_masters");
+            return 0;
         } catch (SQLException ex) {
             throw new BusinessException("Error request get number masters");
         }

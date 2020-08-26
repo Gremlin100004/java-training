@@ -8,7 +8,6 @@ import com.senla.carservice.controller.OrderController;
 import com.senla.carservice.controller.PlaceController;
 import com.senla.carservice.ui.util.Printer;
 import com.senla.carservice.ui.util.ScannerUtil;
-import com.senla.carservice.ui.util.TestData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -414,40 +413,6 @@ public class Builder {
                          () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
     }
 
-    private void addMaster(String delimiter, MasterController masterController) {
-        Printer.printInfo("Add master:");
-        TestData.getArrayMasterNames()
-            .forEach(masterName -> Printer.printInfo(masterController.addMaster(masterName)));
-        Printer.printInfo(delimiter);
-    }
-
-    private void addPlace(String delimiter, PlaceController placeController) {
-        Printer.printInfo("Add place to service:");
-        TestData.getArrayPlaceNumber()
-            .forEach(placeNumber -> Printer.printInfo(placeController.addPlace(placeNumber)));
-        Printer.printInfo(delimiter);
-    }
-
-    private void addOrderDate(OrderController orderController) {
-        int indexMaster = 0;
-        for (int i = 0; i < TestData.getArrayAutomaker().size(); i++) {
-            Printer.printInfo(
-                orderController.addOrder(TestData.getArrayAutomaker().get(i), TestData.getArrayModel().get(i),
-                                         TestData.getArrayRegistrationNumber().get(i)));
-            for (int j = 0; j < 2; j++) {
-                Printer.printInfo(orderController.addOrderMasters(indexMaster));
-                indexMaster++;
-                if (indexMaster == TestData.getArrayMasterNames().size()) {
-                    indexMaster = 0;
-                }
-            }
-            Printer.printInfo(
-                orderController.addOrderDeadlines(
-                    TestData.getArrayExecutionStartTime().get(i), TestData.getArrayLeadTime().get(i)));
-            Printer.printInfo(orderController.addOrderPlace(0, TestData.getArrayExecutionStartTime().get(i)));
-            Printer.printInfo(orderController.addOrderPrice(TestData.getArrayPrice().get(i)));
-        }
-    }
 
     private void deleteOrder() {
         String message = "";
