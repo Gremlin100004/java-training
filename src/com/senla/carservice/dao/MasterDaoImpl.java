@@ -18,24 +18,24 @@ import java.util.List;
 @Singleton
 public class MasterDaoImpl extends AbstractDao implements MasterDao {
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO masters VALUES (NULL, ?, ?, ?)";
-    private static final String SQL_REQUEST_TO_GET_ORDER_MASTERS = "SELECT masters.id, masters.name , masters.delete_status " +
+    private static final String SQL_REQUEST_TO_GET_ORDER_MASTERS = "SELECT masters.id, masters.name , masters.is_deleted " +
         "FROM masters JOIN orders_masters ON orders_masters.master_id = masters.id WHERE orders_masters.order_id=";
-    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE masters SET name=?, number_orders=?, delete_status=? WHERE id=?";
+    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE masters SET name=?, number_orders=?, is_deleted=? WHERE id=?";
     private static final String SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST = "INSERT INTO masters(id, name, number_orders, " +
-        "delete_status) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, name = ?, number_orders = ?, delete_status = ?";
+        "is_deleted) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, name = ?, number_orders = ?, is_deleted = ?";
     private static final String SQL_REQUEST_TO_GET_NUMBER_RECORDS = "SELECT COUNT(masters.id) AS number_masters FROM masters";
-    private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE masters SET delete_status=true WHERE id=?";
-    private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT DISTINCT id, name, number_orders, delete_status " +
+    private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE masters SET is_deleted=true WHERE id=?";
+    private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT DISTINCT id, name, number_orders, is_deleted " +
         "FROM masters";
     private static final String SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET = "SELECT DISTINCT id, name, number_orders, " +
-        "delete_status FROM masters ORDER BY masters.name";
+        "is_deleted FROM masters ORDER BY masters.name";
     private static final String SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY = "SELECT DISTINCT id, name, number_orders, " +
-        "delete_status FROM masters ORDER BY number_orders";
+        "is_deleted FROM masters ORDER BY number_orders";
     private static final String SQL_REQUEST_TO_GET_FREE_MASTERS = "SELECT DISTINCT masters.id, masters.name, masters.number_orders, " +
-        "masters.delete_status FROM masters JOIN orders_masters ON masters.id = orders_masters.master_id JOIN orders " +
+        "masters.is_deleted FROM masters JOIN orders_masters ON masters.id = orders_masters.master_id JOIN orders " +
         "ON orders_masters.order_id = orders.id WHERE orders.lead_time > ?";
     private static final String SQL_REQUEST_TO_GET_FREE_MASTERS_ZERO_ORDER = "SELECT DISTINCT id, name, number_orders, " +
-        "delete_status FROM masters WHERE number_orders = 0";
+        "is_deleted FROM masters WHERE number_orders = 0";
 
     @ConstructorDependency
     public MasterDaoImpl(DatabaseConnection databaseConnection) {
@@ -174,7 +174,7 @@ public class MasterDaoImpl extends AbstractDao implements MasterDao {
                 Master master = new Master();
                 master.setId(resultSet.getLong("id"));
                 master.setName(resultSet.getString("name"));
-                master.setDelete(resultSet.getBoolean("delete_status"));
+                master.setDelete(resultSet.getBoolean("is_deleted"));
                 master.setNumberOrders(resultSet.getInt("number_orders"));
                 masters.add(master);
             }

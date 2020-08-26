@@ -1,4 +1,4 @@
-USE car_service;
+USE hrinkou_car_service;
 
 INSERT INTO masters VALUES
 (NULL, 'Petya', 2, false),

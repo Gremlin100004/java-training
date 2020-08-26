@@ -17,17 +17,17 @@ import java.util.List;
 @Singleton
 public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO places VALUES (NULL, ?, ?, ?)";
-    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE places SET number=?, busy_status=?, delete_status=? " +
+    private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE places SET number=?, is_busy=?, is_deleted=? " +
         "WHERE id=?";
-    private static final String SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST = "INSERT INTO places(id, number, busy_status, " +
-        "delete_status) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, number = ?, busy_status = ?, delete_status = ?";
-    private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE places SET delete_status=true WHERE id=?";
+    private static final String SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST = "INSERT INTO places(id, number, is_busy, " +
+        "is_deleted) VALUES(?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, number = ?, is_busy = ?, is_deleted = ?";
+    private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE places SET is_deleted=true WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT * FROM places";
     private static final String SQL_REQUEST_TO_GET_NUMBER_RECORDS = "SELECT COUNT(places.id) AS number_places FROM places";
-    private static final String SQL_REQUEST_TO_GET_FREE_PLACES = "SELECT DISTINCT places.id, places.number, places.busy_status, " +
-        "places.delete_status FROM places LEFT JOIN orders ON places.id = orders.place_id WHERE orders.lead_time > ?";
+    private static final String SQL_REQUEST_TO_GET_FREE_PLACES = "SELECT DISTINCT places.id, places.number, places.is_busy, " +
+        "places.is_deleted FROM places LEFT JOIN orders ON places.id = orders.place_id WHERE orders.lead_time > ?";
     private static final String SQL_REQUEST_TO_GET_FREE_PLACES_ZERO_ORDER = "SELECT DISTINCT places.id, places.number, " +
-        "places.busy_status, places.delete_status FROM places LEFT JOIN orders ON places.id = orders.place_id " +
+        "places.is_busy, places.is_deleted FROM places LEFT JOIN orders ON places.id = orders.place_id " +
         "WHERE orders.place_id IS NULL;";
 
     @ConstructorDependency
@@ -158,8 +158,8 @@ public class PlaceDaoImpl extends AbstractDao implements PlaceDao {
                 Place place = new Place();
                 place.setId(resultSet.getLong("id"));
                 place.setNumber(resultSet.getInt("number"));
-                place.setDelete(resultSet.getBoolean("delete_status"));
-                place.setBusyStatus(resultSet.getBoolean("busy_status"));
+                place.setDelete(resultSet.getBoolean("is_deleted"));
+                place.setBusyStatus(resultSet.getBoolean("is_busy"));
                 places.add(place);
             }
             return places;

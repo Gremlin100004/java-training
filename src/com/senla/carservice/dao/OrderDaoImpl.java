@@ -23,23 +23,23 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     private static final String SQL_NULL_DATE = "1111-01-01 00:00";
     private static final int SQL_DEFAULT_PLACE_ID = 1;
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE orders SET creation_time=?, execution_start_time=?, " +
-        "lead_time=?, automaker=?, model=?, registration_number=?, price=?, status=?, delete_status=?, place_id=? " +
+        "lead_time=?, automaker=?, model=?, registration_number=?, price=?, status=?, is_deleted=?, place_id=? " +
         "WHERE id=?";
     private static final String SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST = "INSERT INTO orders(id, creation_time, " +
-        "execution_start_time, lead_time, automaker, model, registration_number, price, status, delete_status, place_id) " +
+        "execution_start_time, lead_time, automaker, model, registration_number, price, status, is_deleted, place_id) " +
         "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, creation_time = ?, execution_start_time = ?, " +
-        "lead_time = ?, automaker = ?, model = ?, registration_number = ?, price = ?, status = ?, delete_status = ?, place_id = ?";
+        "lead_time = ?, automaker = ?, model = ?, registration_number = ?, price = ?, status = ?, is_deleted = ?, place_id = ?";
     private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT orders.id, orders.creation_time, " +
         "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
-        "orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, " +
-        "places.busy_status AS place_busy_status, places.delete_status AS place_delete_status FROM orders JOIN " +
+        "orders.price, orders.status, orders.is_deleted, places.id AS order_place_id, places.number AS place_number, " +
+        "places.is_busy AS place_is_busy, places.is_deleted AS place_is_deleted FROM orders JOIN " +
         "places ON orders.place_id = places.id";
     private static final String SQL_REQUEST_TO_GET_LAST_RECORD = "SELECT orders.id, orders.creation_time, " +
         "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
-        "orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, " +
-        "places.busy_status AS place_busy_status, places.delete_status AS place_delete_status FROM orders JOIN " +
+        "orders.price, orders.status, orders.is_deleted, places.id AS order_place_id, places.number AS place_number, " +
+        "places.is_busy AS place_is_busy, places.is_deleted AS places_is_deleted FROM orders JOIN " +
         "places ON orders.place_id = places.id ORDER BY orders.id DESC LIMIT 1";
-    private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE orders SET delete_status=true WHERE id=?";
+    private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE orders SET is_deleted=true WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_NUMBER_BUSY_MASTERS = "SELECT COUNT(masters.id) AS amount_of_elements " +
         "FROM orders JOIN orders_masters ON orders_masters.order_id = orders.id JOIN masters ON orders_masters.master_id = " +
         "masters.id WHERE orders.lead_time > '";
@@ -49,7 +49,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     private static final String SQL_CONDITION_START_TIME = " AND orders.lead_time > '";
     private static final String SQL_END_CONDITION = "'";
     private static final String SQL_REQUEST_TO_GET_ORDER_MASTERS = "SELECT masters.id, masters.name, masters.number_orders, " +
-        "masters.delete_status FROM masters JOIN orders_masters ON orders_masters.master_id = masters.id " +
+        "masters.is_deleted FROM masters JOIN orders_masters ON orders_masters.master_id = masters.id " +
         "WHERE orders_masters.order_id = ?";
     private static final String SQL_REQUEST_SORT_BY_PRICE = " ORDER BY price";
     private static final String SQL_REQUEST_SORT_FILING_DATE = " ORDER BY creation_time";
@@ -61,8 +61,8 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
     private static final String SQL_REQUEST_DELETED_ORDERS = " WHERE orders.status='DELETED'";
     private static final String SQL_REQUEST_GET_MASTER_ORDERS = "SELECT orders.id, orders.creation_time, " +
         "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
-        "orders.price, orders.status, orders.delete_status, places.id AS order_place_id, places.number AS place_number, " +
-        "places.busy_status AS place_busy_status, places.delete_status AS place_delete_status  FROM orders JOIN " +
+        "orders.price, orders.status, orders.is_deleted, places.id AS order_place_id, places.number AS place_number, " +
+        "places.is_busy AS place_is_busy, places.is_deleted AS places_is_deleted  FROM orders JOIN " +
         "orders_masters ON orders_masters.order_id = orders.id JOIN places ON orders.place_id=places.id " +
         "WHERE orders_masters.master_id=?";
 
@@ -225,12 +225,12 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
                 order.setLeadTime(DateUtil.getDatesFromString(resultSet.getString("lead_time"), true));
                 order.setPrice(resultSet.getBigDecimal("price"));
                 order.setStatus(Status.valueOf(resultSet.getString("status")));
-                order.setDeleteStatus(resultSet.getBoolean("delete_status"));
+                order.setDeleteStatus(resultSet.getBoolean("is_deleted"));
                 Place place = new Place();
                 place.setId(resultSet.getLong("order_place_id"));
                 place.setNumber(resultSet.getInt("place_number"));
-                place.setBusyStatus(resultSet.getBoolean("place_busy_status"));
-                place.setDelete(resultSet.getBoolean("place_delete_status"));
+                place.setBusyStatus(resultSet.getBoolean("place_is_busy"));
+                place.setDelete(resultSet.getBoolean("place_is_deleted"));
                 order.setPlace(place);
                 order.setId(resultSet.getLong("id"));
                 fillTheOrderWithMasters(order);
@@ -376,7 +376,7 @@ public class OrderDaoImpl extends AbstractDao implements OrderDao {
                 Master master = new Master();
                 master.setId(resultSet.getLong("id"));
                 master.setName(resultSet.getString("name"));
-                master.setDelete(resultSet.getBoolean("delete_status"));
+                master.setDelete(resultSet.getBoolean("is_deleted"));
                 master.setNumberOrders(resultSet.getInt("number_orders"));
                 masters.add(master);
             }
