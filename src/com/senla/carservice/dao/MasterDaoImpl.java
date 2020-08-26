@@ -81,7 +81,9 @@ public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
     public int getNumberMasters() {
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_NUMBER_RECORDS);
-            resultSet.next();
+            if (resultSet.next()) {
+                resultSet.next();
+            }
             return resultSet.getInt("number_masters");
         } catch (SQLException ex) {
             throw new BusinessException("Error request get number masters");
