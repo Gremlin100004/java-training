@@ -44,12 +44,12 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         checkMasters();
         checkPlaces();
         checkOrders();
-        Date leadTimeOrder = orderDao.getLastOrder().getLeadTime();
+        Date leadTimeOrder = orderDao.getLastOrder(databaseConnection).getLeadTime();
         Date dayDate = new Date();
         for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
              currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
-            if (masterDao.getFreeMasters(currentDay).isEmpty() ||
-                placeDao.getFreePlaces(currentDay).isEmpty()) {
+            if (masterDao.getFreeMasters(currentDay, databaseConnection).isEmpty() ||
+                placeDao.getFreePlaces(currentDay, databaseConnection).isEmpty()) {
                 dayDate = currentDay;
                 currentDay = DateUtil.bringStartOfDayDate(currentDay);
             } else {
@@ -60,15 +60,15 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void importEntities() {
         try {
             databaseConnection.disableAutoCommit();
-            masterDao.updateAllRecords(csvMaster.importMasters());
-            placeDao.updateAllRecords(csvPlace.importPlaces());
-            List<Order> orders = csvOrder.importOrder(masterDao.getAllRecords(), placeDao.getAllRecords());
-            orderDao.updateAllRecords(orders);
-            orders.forEach(orderDao::addRecordToTableManyToMany);
+            masterDao.updateAllRecords(csvMaster.importMasters(), databaseConnection);
+            placeDao.updateAllRecords(csvPlace.importPlaces(), databaseConnection);
+            List<Order> orders = csvOrder.importOrder(masterDao.getAllRecords(databaseConnection),
+                    placeDao.getAllRecords(databaseConnection));
+            orderDao.updateAllRecords(orders, databaseConnection);
+            orders.forEach(order -> orderDao.addRecordToTableManyToMany(order, databaseConnection));
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
@@ -90,44 +90,41 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     private void checkMasters() {
-        if (masterDao.getAllRecords().isEmpty()) {
+        if (masterDao.getAllRecords(databaseConnection).isEmpty()) {
             throw new BusinessException("There are no masters");
         }
     }
 
     private void checkPlaces() {
-        if (placeDao.getAllRecords().isEmpty()) {
+        if (placeDao.getAllRecords(databaseConnection).isEmpty()) {
             throw new BusinessException("There are no places");
         }
     }
 
     private void checkOrders() {
-        if (orderDao.getAllRecords().isEmpty()) {
+        if (orderDao.getAllRecords(databaseConnection).isEmpty()) {
             throw new BusinessException("There are no orders");
         }
     }
 
-    @SuppressWarnings("unchecked")
     private List<Order> getOrders() {
-        List<Order> orders = orderDao.getAllRecords();
+        List<Order> orders = orderDao.getAllRecords(databaseConnection);
         if (orders.isEmpty()) {
             throw new BusinessException("There are no orders");
         }
         return orders;
     }
 
-    @SuppressWarnings("unchecked")
     private List<Master> getMasters() {
-        List<Master> masters = masterDao.getAllRecords();
+        List<Master> masters = masterDao.getAllRecords(databaseConnection);
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }
         return masters;
     }
 
-    @SuppressWarnings("unchecked")
     private List<Place> getPlaces() {
-        List<Place> places = placeDao.getAllRecords();
+        List<Place> places = placeDao.getAllRecords(databaseConnection);
         if (places.isEmpty()) {
             throw new BusinessException("There are no places");
         }

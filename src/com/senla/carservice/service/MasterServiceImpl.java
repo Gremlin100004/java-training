@@ -22,7 +22,7 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getMasters() {
-        List<Master> masters = masterDao.getAllRecords();
+        List<Master> masters = masterDao.getAllRecords(databaseConnection);
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }
@@ -33,7 +33,7 @@ public class MasterServiceImpl implements MasterService {
     public void addMaster(String name) {
         try {
             databaseConnection.disableAutoCommit();
-            masterDao.createRecord(new Master(name));
+            masterDao.createRecord(new Master(name), databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
@@ -45,7 +45,7 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getFreeMastersByDate(Date executeDate) {
-        List<Master> freeMasters = masterDao.getFreeMasters(executeDate);
+        List<Master> freeMasters = masterDao.getFreeMasters(executeDate, databaseConnection);
         if (freeMasters.isEmpty()) {
             throw new BusinessException("There are no free masters");
         }
@@ -54,14 +54,14 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public int getNumberFreeMastersByDate(Date startDayDate) {
-        return masterDao.getFreeMasters(startDayDate).size();
+        return masterDao.getFreeMasters(startDayDate, databaseConnection).size();
     }
 
     @Override
     public void deleteMaster(Master master) {
         try {
             databaseConnection.disableAutoCommit();
-            masterDao.deleteRecord(master);
+            masterDao.deleteRecord(master, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
@@ -73,7 +73,7 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getMasterByAlphabet() {
-        List<Master> masters = masterDao.getMasterSortByAlphabet();
+        List<Master> masters = masterDao.getMasterSortByAlphabet(databaseConnection);
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }
@@ -82,7 +82,7 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getMasterByBusy() {
-        List<Master> masters = masterDao.getMasterSortByBusy();
+        List<Master> masters = masterDao.getMasterSortByBusy(databaseConnection);
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }

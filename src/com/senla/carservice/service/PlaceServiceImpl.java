@@ -26,9 +26,8 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Place> getPlaces() {
-        List<Place> places = placeDao.getAllRecords();
+        List<Place> places = placeDao.getAllRecords(databaseConnection);
         if (places.isEmpty()) {
             throw new BusinessException("There are no places");
         }
@@ -36,14 +35,13 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void addPlace(Integer number) {
         try {
             databaseConnection.disableAutoCommit();
             if (isBlockAddPlace) {
                 throw new BusinessException("Permission denied");
             }
-            placeDao.createRecord(new Place(number));
+            placeDao.createRecord(new Place(number),databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
@@ -54,7 +52,6 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void deletePlace(Place place) {
         try {
             databaseConnection.disableAutoCommit();
@@ -64,7 +61,7 @@ public class PlaceServiceImpl implements PlaceService {
             if (isBlockDeletePlace) {
                 throw new BusinessException("Permission denied");
             }
-            placeDao.deleteRecord(place);
+            placeDao.deleteRecord(place, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             databaseConnection.rollBackTransaction();
@@ -76,12 +73,12 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public int getNumberFreePlaceByDate(Date startDayDate) {
-        return placeDao.getAllRecords().size();
+        return placeDao.getAllRecords(databaseConnection).size();
     }
 
     @Override
     public List<Place> getFreePlaceByDate(Date executeDate) {
-        List<Place> freePlace = placeDao.getFreePlaces(executeDate);
+        List<Place> freePlace = placeDao.getFreePlaces(executeDate, databaseConnection);
         if (freePlace.isEmpty()) {
             throw new BusinessException("There are no free places");
         }

@@ -1,7 +1,6 @@
 package com.senla.carservice.dao;
 
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.ConstructorDependency;
 import com.senla.carservice.dao.connection.DatabaseConnection;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
@@ -29,16 +28,45 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
         "execution_start_time, lead_time, automaker, model, registration_number, price, status, is_deleted, place_id) " +
         "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = ?, creation_time = ?, execution_start_time = ?, " +
         "lead_time = ?, automaker = ?, model = ?, registration_number = ?, price = ?, status = ?, is_deleted = ?, place_id = ?";
-    private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT orders.id, orders.creation_time, " +
+    private static final String SQL_REQUEST_TO_GET_ALL_RECORDS = "SELECT * FROM (SELECT DISTINCT * FROM orders_masters  " +
+        "LEFT JOIN (SELECT orders.id AS orders_order_id, orders.creation_time, orders.execution_start_time, " +
+        "orders.lead_time, orders.automaker, orders.model, orders.registration_number, orders.price, orders.status, " +
+        "orders.is_deleted AS orders_is_deleted, orders.place_id, places.id AS places_place_id, places.number, " +
+        "places.is_busy AS place_is_busy, places.is_deleted AS place_is_deleted FROM orders JOIN places ON " +
+        "orders.place_id = places.id) AS orders_with_place ON orders_masters.order_id = orders_with_place.orders_order_id " +
+        "UNION SELECT DISTINCT * FROM orders_masters RIGHT JOIN (SELECT orders.id AS orders_order_id, " +
+        "orders.creation_time, orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, " +
+        "orders.registration_number, orders.price, orders.status, orders.is_deleted AS orders_is_deleted, orders.place_id, " +
+        "places.id AS places_place_id, places.number, places.is_busy AS place_is_busy, places.is_deleted AS " +
+        "place_is_deleted FROM orders JOIN places ON orders.place_id = places.id) AS orders_with_place ON " +
+        "orders_masters.order_id = orders_with_place.orders_order_id) AS full_orders_masters LEFT OUTER JOIN masters ON " +
+        "masters.id = full_orders_masters.master_id UNION SELECT * FROM (SELECT DISTINCT * FROM orders_masters LEFT JOIN " +
+        "(SELECT orders.id AS orders_order_id, orders.creation_time, orders.execution_start_time, orders.lead_time, " +
+        "orders.automaker, orders.model, orders.registration_number, orders.price, orders.status, orders.is_deleted AS " +
+        "orders_is_deleted, orders.place_id, places.id AS places_place_id, places.number, places.is_busy AS " +
+        "place_is_busy, places.is_deleted AS place_is_deleted FROM orders JOIN places ON orders.place_id = places.id) AS " +
+        "orders_with_place ON orders_masters.order_id = orders_with_place.orders_order_id UNION SELECT DISTINCT * FROM " +
+        "orders_masters RIGHT JOIN (SELECT orders.id AS orders_order_id, orders.creation_time, " +
         "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
-        "orders.price, orders.status, orders.is_deleted, places.id AS order_place_id, places.number AS place_number, " +
-        "places.is_busy AS place_is_busy, places.is_deleted AS place_is_deleted FROM orders JOIN " +
-        "places ON orders.place_id = places.id";
-    private static final String SQL_REQUEST_TO_GET_LAST_RECORD = "SELECT orders.id, orders.creation_time, " +
-        "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
-        "orders.price, orders.status, orders.is_deleted, places.id AS order_place_id, places.number AS place_number, " +
-        "places.is_busy AS place_is_busy, places.is_deleted AS place_is_deleted FROM orders JOIN " +
-        "places ON orders.place_id = places.id ORDER BY orders.id DESC LIMIT 1";
+        "orders.price, orders.status, orders.is_deleted AS orders_is_deleted, orders.place_id, places.id AS " +
+        "places_place_id, places.number, places.is_busy AS place_is_busy, places.is_deleted AS place_is_deleted FROM " +
+        "orders JOIN places ON orders.place_id = places.id) AS orders_with_place ON orders_masters.order_id = " +
+        "orders_with_place.orders_order_id) AS full_orders_masters RIGHT OUTER JOIN masters ON masters.id = " +
+        "full_orders_masters.master_id";
+    private static final String SQL_REQUEST_TO_GET_ALL_RECORDS_CONDITION = "SELECT * FROM (SELECT DISTINCT * FROM orders_masters " +
+        "LEFT JOIN (%s) AS orders_with_place ON orders_masters.order_id = orders_with_place.orders_order_id UNION SELECT " +
+        "DISTINCT * FROM orders_masters RIGHT JOIN (%s) AS orders_with_place ON orders_masters.order_id = " +
+        "orders_with_place.orders_order_id) AS full_orders_masters LEFT OUTER JOIN masters ON masters.id = " +
+        "full_orders_masters.master_id UNION SELECT * FROM (SELECT DISTINCT * FROM orders_masters LEFT JOIN (%s) AS " +
+        "orders_with_place ON orders_masters.order_id = orders_with_place.orders_order_id UNION SELECT DISTINCT * FROM " +
+        "orders_masters RIGHT JOIN (%s) AS orders_with_place ON orders_masters.order_id = " +
+        "orders_with_place.orders_order_id) AS full_orders_masters RIGHT OUTER JOIN masters ON masters.id = " +
+        "full_orders_masters.master_id %s";
+    private static final String SQL_REQUEST_TO_GET_ORDERS = "SELECT orders.id AS orders_order_id, orders.creation_time, " +
+            "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
+            "orders.price, orders.status, orders.is_deleted AS orders_is_deleted, orders.place_id, places.id AS " +
+            "places_place_id, places.number, places.is_busy AS place_is_busy, places.is_deleted AS place_is_deleted FROM " +
+            "orders JOIN places ON orders.place_id = places.id";
     private static final String SQL_REQUEST_TO_DELETE_RECORD = "UPDATE orders SET is_deleted=true WHERE id=?";
     private static final String SQL_REQUEST_TO_GET_NUMBER_BUSY_MASTERS = "SELECT COUNT(masters.id) AS amount_of_elements " +
         "FROM orders JOIN orders_masters ON orders_masters.order_id = orders.id JOIN masters ON orders_masters.master_id = " +
@@ -48,50 +76,64 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     private static final String SQL_CONDITION_END_TIME = " AND orders.lead_time < '";
     private static final String SQL_CONDITION_START_TIME = " AND orders.lead_time > '";
     private static final String SQL_END_CONDITION = "'";
-    private static final String SQL_REQUEST_TO_GET_ORDER_MASTERS = "SELECT masters.id, masters.name, masters.number_orders, " +
-        "masters.is_deleted FROM masters JOIN orders_masters ON orders_masters.master_id = masters.id " +
-        "WHERE orders_masters.order_id = ?";
-    private static final String SQL_REQUEST_SORT_BY_PRICE = " ORDER BY price";
-    private static final String SQL_REQUEST_SORT_FILING_DATE = " ORDER BY creation_time";
-    private static final String SQL_REQUEST_SORT_EXECUTION_DATE = " ORDER BY lead_time";
-    private static final String SQL_REQUEST_SORT_PLANNED_START_DATE = " ORDER BY execution_start_time";
-    private static final String SQL_REQUEST_EXECUTE_ORDERS = " WHERE orders.status='PERFORM'";
-    private static final String SQL_REQUEST_COMPLETED_ORDERS = " WHERE orders.status='COMPLETED'";
-    private static final String SQL_REQUEST_CANCELED_ORDERS = " WHERE orders.status='CANCELED'";
-    private static final String SQL_REQUEST_DELETED_ORDERS = " WHERE orders.status='DELETED'";
-    private static final String SQL_REQUEST_GET_MASTER_ORDERS = "SELECT orders.id, orders.creation_time, " +
-        "orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, orders.registration_number, " +
-        "orders.price, orders.status, orders.is_deleted, places.id AS order_place_id, places.number AS place_number, " +
-        "places.is_busy AS place_is_busy, places.is_deleted AS place_is_deleted  FROM orders JOIN " +
-        "orders_masters ON orders_masters.order_id = orders.id JOIN places ON orders.place_id=places.id " +
-        "WHERE orders_masters.master_id=?";
+    private static final String SQL_REQUEST_SORT_BY_PRICE = "ORDER BY price";
+    private static final String CONDITION_SORT_FILING_DATE = "ORDER BY creation_time";
+    private static final String CONDITION_SORT_EXECUTION_DATE = "ORDER BY lead_time";
+    private static final String CONDITION_SORT_PLANNED_START_DATE = "ORDER BY execution_start_time";
+    private static final String CONDITION_EXECUTE_ORDERS = " WHERE orders.status='PERFORM'";
+    private static final String CONDITION_COMPLETED_ORDERS = " WHERE orders.status='COMPLETED'";
+    private static final String CONDITION_CANCELED_ORDERS = " WHERE orders.status='CANCELED'";
+    private static final String CONDITION_DELETED_ORDERS = " WHERE orders.status='DELETED'";
+    private static final String SQL_REQUEST_GET_MASTER_ORDERS = "SELECT * FROM (SELECT DISTINCT * FROM orders_masters  " +
+        "LEFT JOIN (SELECT orders.id AS orders_order_id, orders.creation_time, orders.execution_start_time, " +
+        "orders.lead_time, orders.automaker, orders.model, orders.registration_number, orders.price, orders.status, " +
+        "orders.is_deleted AS orders_is_deleted, orders.place_id, places.id AS places_place_id, places.number, " +
+        "places.is_busy AS place_is_busy, places.is_deleted AS place_is_deleted FROM orders JOIN places ON " +
+        "orders.place_id = places.id) AS orders_with_place ON orders_masters.order_id = orders_with_place.orders_order_id " +
+        "WHERE master_id=? UNION SELECT DISTINCT * FROM orders_masters RIGHT JOIN (SELECT orders.id AS orders_order_id, " +
+        "orders.creation_time, orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, " +
+        "orders.registration_number, orders.price, orders.status, orders.is_deleted AS orders_is_deleted, orders.place_id, " +
+        "places.id AS places_place_id, places.number, places.is_busy AS place_is_busy, places.is_deleted AS " +
+        "place_is_deleted FROM orders JOIN places ON orders.place_id = places.id) AS orders_with_place ON " +
+        "orders_masters.order_id = orders_with_place.orders_order_id) AS full_orders_masters LEFT OUTER JOIN masters ON " +
+        "masters.id = full_orders_masters.master_id WHERE master_id=? UNION SELECT * FROM (SELECT DISTINCT * FROM " +
+        "orders_masters LEFT JOIN (SELECT orders.id AS orders_order_id, orders.creation_time, orders.execution_start_time, " +
+        "orders.lead_time, orders.automaker, orders.model, orders.registration_number, orders.price, orders.status, " +
+        "orders.is_deleted AS orders_is_deleted, orders.place_id, places.id AS places_place_id, places.number, " +
+        "places.is_busy AS place_is_busy, places.is_deleted AS place_is_deleted FROM orders JOIN places ON " +
+        "orders.place_id = places.id) AS orders_with_place ON orders_masters.order_id = orders_with_place.orders_order_id " +
+        "WHERE master_id=? UNION SELECT DISTINCT * FROM orders_masters RIGHT JOIN (SELECT orders.id AS orders_order_id, " +
+        "orders.creation_time, orders.execution_start_time, orders.lead_time, orders.automaker, orders.model, " +
+        "orders.registration_number, orders.price, orders.status, orders.is_deleted AS orders_is_deleted, " +
+        "orders.place_id, places.id AS places_place_id, places.number, places.is_busy AS place_is_busy, places.is_deleted " +
+        "AS place_is_deleted FROM orders JOIN places ON orders.place_id = places.id) AS orders_with_place ON " +
+        "orders_masters.order_id = orders_with_place.orders_order_id) AS full_orders_masters RIGHT OUTER JOIN masters " +
+        "ON masters.id = full_orders_masters.master_id WHERE master_id=?";
 
-    @ConstructorDependency
-    public OrderDaoImpl(DatabaseConnection databaseConnection) {
-        super(databaseConnection);
-    }
 
     public OrderDaoImpl() {
     }
 
     @Override
-    public Order getLastOrder() {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_LAST_RECORD).get(0);
+    public Order getLastOrder(DatabaseConnection databaseConnection) {
+        List<Order> orders = getOrdersFromDatabase(SQL_REQUEST_TO_GET_ORDERS , "", databaseConnection);
+        return orders.get(0);
     }
 
     @Override
-    public int getNumberBusyMasters(String startPeriod, String endPeriod) {
+    public int getNumberBusyMasters(String startPeriod, String endPeriod, DatabaseConnection databaseConnection) {
         return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_BUSY_MASTERS + startPeriod + SQL_END_CONDITION +
-           SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION);
+           SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION, databaseConnection);
     }
 
     @Override
-    public int getNumberBusyPlaces(String startPeriod, String endPeriod) {
+    public int getNumberBusyPlaces(String startPeriod, String endPeriod, DatabaseConnection databaseConnection) {
         return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_BUSY_PLACES + startPeriod + SQL_END_CONDITION +
-           SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION);
+           SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION, databaseConnection);
     }
 
-    public void addRecordToTableManyToMany(Order order) {
+    @Override
+    public void addRecordToTableManyToMany(Order order, DatabaseConnection databaseConnection) {
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(
             SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS)) {
             statement.setLong(1, order.getId());
@@ -105,105 +147,116 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     }
 
     @Override
-    public List<Order> getOrdersSortByFilingDate() {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_SORT_FILING_DATE);
+    public List<Order> getOrdersSortByFilingDate(DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase("", CONDITION_SORT_FILING_DATE,
+                databaseConnection);
     }
 
     @Override
-    public List<Order> getOrdersSortByExecutionDate() {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_SORT_EXECUTION_DATE);
+    public List<Order> getOrdersSortByExecutionDate(DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase("", CONDITION_SORT_EXECUTION_DATE,
+                databaseConnection);
     }
 
     @Override
-    public List<Order> getOrdersSortByPlannedStartDate() {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_SORT_PLANNED_START_DATE);
+    public List<Order> getOrdersSortByPlannedStartDate(DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase("", CONDITION_SORT_PLANNED_START_DATE,
+                databaseConnection);
     }
 
     @Override
-    public List<Order> getOrdersSortByPrice() {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_SORT_BY_PRICE);
+    public List<Order> getOrdersSortByPrice(DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase("", SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
     }
 
     @Override
-    public List<Order> getExecuteOrderSortByFilingDate() {
-        return getOrdersFromDatabase(
-            SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_EXECUTE_ORDERS + SQL_REQUEST_SORT_FILING_DATE);
+    public List<Order> getExecuteOrderSortByFilingDate(DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase(CONDITION_EXECUTE_ORDERS, CONDITION_SORT_FILING_DATE, databaseConnection);
     }
 
     @Override
-    public List<Order> getExecuteOrderSortExecutionDate() {
-        return getOrdersFromDatabase(
-            SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_EXECUTE_ORDERS + SQL_REQUEST_SORT_EXECUTION_DATE);
+    public List<Order> getExecuteOrderSortExecutionDate(DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase(CONDITION_EXECUTE_ORDERS, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
     }
 
     @Override
-    public List<Order> getCompletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_COMPLETED_ORDERS +
+    public List<Order> getCompletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
+                                                          DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION + SQL_REQUEST_SORT_FILING_DATE);
+           SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
     }
 
     @Override
-    public List<Order> getCompletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_COMPLETED_ORDERS +
+    public List<Order> getCompletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate,
+                                                             DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION + SQL_REQUEST_SORT_EXECUTION_DATE);
+           SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
     }
 
     @Override
-    public List<Order> getCompletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_COMPLETED_ORDERS +
+    public List<Order> getCompletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate,
+                                                     DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION + SQL_REQUEST_SORT_BY_PRICE);
+           SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
     }
 
     @Override
-    public List<Order> getCanceledOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_CANCELED_ORDERS +
+    public List<Order> getCanceledOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
+                                                         DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION + SQL_REQUEST_SORT_FILING_DATE);
+           SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
     }
 
     @Override
-    public List<Order> getCanceledOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_CANCELED_ORDERS +
+    public List<Order> getCanceledOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate,
+                                                            DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION + SQL_REQUEST_SORT_EXECUTION_DATE);
+           SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
     }
 
     @Override
-    public List<Order> getCanceledOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_CANCELED_ORDERS +
+    public List<Order> getCanceledOrdersSortByPrice(String startPeriodDate, String endPeriodDate,
+                                                    DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION + SQL_REQUEST_SORT_BY_PRICE);
+           SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
     }
 
     @Override
-    public List<Order> getDeletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate) {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_DELETED_ORDERS +
+    public List<Order> getDeletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
+                                                        DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION + SQL_REQUEST_SORT_FILING_DATE);
+           SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
     }
 
     @Override
-    public List<Order> getDeletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate) {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_DELETED_ORDERS +
+    public List<Order> getDeletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate, DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION + SQL_REQUEST_SORT_EXECUTION_DATE);
+           SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
     }
 
     @Override
-    public List<Order> getDeletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate) {
-        return getOrdersFromDatabase(SQL_REQUEST_TO_GET_ALL_RECORDS + SQL_REQUEST_DELETED_ORDERS +
+    public List<Order> getDeletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate, DatabaseConnection databaseConnection) {
+        return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION + SQL_REQUEST_SORT_BY_PRICE);
+           SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
     }
 
     @Override
-    public List<Order> getMasterOrders(Master master) {
+    public List<Order> getMasterOrders(Master master, DatabaseConnection databaseConnection) {
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_GET_MASTER_ORDERS)) {
             statement.setLong(1, master.getId());
+            statement.setLong(2, master.getId());
+            statement.setLong(3, master.getId());
+            statement.setLong(4, master.getId());
             ResultSet resultSet = statement.executeQuery();
             return parseResultSet(resultSet);
         } catch (SQLException ex) {
@@ -216,24 +269,23 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
         try {
             List<Order> orders = new ArrayList<>();
             while (resultSet.next()) {
-                Order order = new Order(resultSet.getString("automaker"),
-                                        resultSet.getString("model"), resultSet.getString("registration_number"));
-                order.setCreationTime(DateUtil.getDatesFromString(resultSet.getString("creation_time"), true));
-                order.setExecutionStartTime(DateUtil.getDatesFromString(resultSet.getString("execution_start_time"),
-                    true));
-                order.setLeadTime(DateUtil.getDatesFromString(resultSet.getString("lead_time"), true));
-                order.setPrice(resultSet.getBigDecimal("price"));
-                order.setStatus(Status.valueOf(resultSet.getString("status")));
-                order.setDeleteStatus(resultSet.getBoolean("is_deleted"));
-                Place place = new Place();
-                place.setId(resultSet.getLong("order_place_id"));
-                place.setNumber(resultSet.getInt("place_number"));
-                place.setBusyStatus(resultSet.getBoolean("place_is_busy"));
-                place.setDelete(resultSet.getBoolean("place_is_deleted"));
-                order.setPlace(place);
-                order.setId(resultSet.getLong("id"));
-                fillTheOrderWithMasters(order);
-                orders.add(order);
+                Long order_id = resultSet.getLong("orders_order_id");
+                if (order_id == 0){
+                    continue;
+                }
+                Order order;
+                boolean isNewOrder = false;
+                if (orders.isEmpty() || !order_id.equals(orders.get(orders.size() - 1).getId())){
+                    order = getOrderFromResultSet(resultSet);
+                    order.setId(order_id);
+                    isNewOrder = true;
+                } else {
+                    order = orders.get(orders.size() - 1);
+                }
+                order.getMasters().add(getMasterFromResultSet(resultSet));
+                if (isNewOrder){
+                    orders.add(order);
+                }
             }
             return orders;
         } catch (SQLException ex) {
@@ -342,8 +394,13 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
         return SQL_REQUEST_TO_DELETE_RECORD;
     }
 
-    private List<Order> getOrdersFromDatabase(String request) {
+    private List<Order> getOrdersFromDatabase(String conditionOrder, String conditionFullRequest,
+                                              DatabaseConnection databaseConnection) {
+        String request = String.format(SQL_REQUEST_TO_GET_ALL_RECORDS_CONDITION, SQL_REQUEST_TO_GET_ORDERS +
+                conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder,
+                SQL_REQUEST_TO_GET_ORDERS + conditionOrder, conditionFullRequest);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
+            System.out.println(statement.toString());
             ResultSet resultSet = statement.executeQuery();
             return parseResultSet(resultSet);
         } catch (SQLException ex) {
@@ -351,7 +408,7 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
         }
     }
 
-    private int getIntFromRequest(String request) {
+    private int getIntFromRequest(String request, DatabaseConnection databaseConnection) {
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
@@ -361,23 +418,39 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
         }
     }
 
-    private void fillTheOrderWithMasters(Order order) {
-        try (PreparedStatement statement = databaseConnection.getConnection()
-            .prepareStatement(SQL_REQUEST_TO_GET_ORDER_MASTERS)) {
-            statement.setLong(1, order.getId());
-            ResultSet resultSet = statement.executeQuery();
-            List<Master> masters = new ArrayList<>();
-            while (resultSet.next()) {
-                Master master = new Master();
-                master.setId(resultSet.getLong("id"));
-                master.setName(resultSet.getString("name"));
-                master.setDelete(resultSet.getBoolean("is_deleted"));
-                master.setNumberOrders(resultSet.getInt("number_orders"));
-                masters.add(master);
-            }
-            order.setMasters(masters);
+    private Master getMasterFromResultSet(ResultSet resultSet) {
+        try {
+            Master master = new Master();
+            master.setId(resultSet.getLong("id"));
+            master.setName(resultSet.getString("name"));
+            master.setDelete(resultSet.getBoolean("is_deleted"));
+            master.setNumberOrders(resultSet.getInt("number_orders"));
+            return master;
         } catch (SQLException ex) {
             throw new BusinessException("Error request get records order masters");
+        }
+    }
+
+    private Order getOrderFromResultSet(ResultSet resultSet) {
+        try {
+            Order order = new Order(resultSet.getString("automaker"), resultSet.getString("model"),
+                    resultSet.getString("registration_number"));
+            order.setCreationTime(DateUtil.getDatesFromString(resultSet.getString("creation_time"), true));
+            order.setExecutionStartTime(DateUtil.getDatesFromString(resultSet.getString("execution_start_time"),
+                    true));
+            order.setLeadTime(DateUtil.getDatesFromString(resultSet.getString("lead_time"), true));
+            order.setPrice(resultSet.getBigDecimal("price"));
+            order.setStatus(Status.valueOf(resultSet.getString("status")));
+            order.setDeleteStatus(resultSet.getBoolean("orders_is_deleted"));
+            Place place = new Place();
+            place.setId(resultSet.getLong("places_place_id"));
+            place.setNumber(resultSet.getInt("number"));
+            place.setBusyStatus(resultSet.getBoolean("place_is_busy"));
+            place.setDelete(resultSet.getBoolean("place_is_deleted"));
+            order.setPlace(place);
+            return order;
+        } catch (SQLException ex) {
+            throw new BusinessException("Error request get records order");
         }
     }
 }

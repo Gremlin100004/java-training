@@ -1,7 +1,6 @@
 package com.senla.carservice.dao;
 
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.ConstructorDependency;
 import com.senla.carservice.dao.connection.DatabaseConnection;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.exception.BusinessException;
@@ -34,16 +33,11 @@ public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
             "orders_masters.master_id JOIN orders ON orders_masters.order_id = orders.id WHERE orders.lead_time > ? " +
             "UNION SELECT DISTINCT id, name, number_orders, is_deleted FROM masters WHERE number_orders = 0";
 
-    @ConstructorDependency
-    public MasterDaoImpl(DatabaseConnection databaseConnection) {
-        super(databaseConnection);
-    }
-
     public MasterDaoImpl() {
     }
 
     @Override
-    public List<Master> getFreeMasters(Date date) {
+    public List<Master> getFreeMasters(Date date, DatabaseConnection databaseConnection) {
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_FREE_MASTERS)) {
             statement.setString(1, DateUtil.getStringFromDate(date, true));
@@ -55,17 +49,17 @@ public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
     }
 
     @Override
-    public List<Master> getMasterSortByAlphabet() {
-        return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET);
+    public List<Master> getMasterSortByAlphabet(DatabaseConnection databaseConnection) {
+        return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET, databaseConnection);
     }
 
     @Override
-    public List<Master> getMasterSortByBusy() {
-        return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY);
+    public List<Master> getMasterSortByBusy(DatabaseConnection databaseConnection) {
+        return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY, databaseConnection);
     }
 
     @Override
-    public int getNumberMasters() {
+    public int getNumberMasters(DatabaseConnection databaseConnection) {
         try (Statement statement = databaseConnection.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery(SQL_REQUEST_TO_GET_NUMBER_RECORDS);
             if (resultSet.next()) {
@@ -168,7 +162,7 @@ public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
         }
     }
 
-    private List<Master> getMastersFromDatabase(String request) {
+    private List<Master> getMastersFromDatabase(String request, DatabaseConnection databaseConnection) {
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             ResultSet resultSet = statement.executeQuery();
             return parseResultSet(resultSet);

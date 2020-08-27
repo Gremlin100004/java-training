@@ -1,7 +1,6 @@
 package com.senla.carservice.dao;
 
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.ConstructorDependency;
 import com.senla.carservice.dao.connection.DatabaseConnection;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.exception.BusinessException;
@@ -29,16 +28,11 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
         "SELECT DISTINCT places.id, places.number, places.is_busy, places.is_deleted FROM places LEFT JOIN orders ON " +
         "places.id = orders.place_id WHERE orders.place_id IS NULL";
 
-    @ConstructorDependency
-    public PlaceDaoImpl(DatabaseConnection databaseConnection) {
-        super(databaseConnection);
-    }
-
     public PlaceDaoImpl() {
     }
 
     @Override
-    public List<Place> getFreePlaces(Date executeDate) {
+    public List<Place> getFreePlaces(Date executeDate, DatabaseConnection databaseConnection) {
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_FREE_PLACES)) {
             statement.setString(1, DateUtil.getStringFromDate(executeDate, true));
@@ -50,7 +44,7 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     }
 
     @Override
-    public int getNumberPlace() {
+    public int getNumberPlace(DatabaseConnection databaseConnection) {
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_NUMBER_RECORDS)) {
             ResultSet resultSet = statement.executeQuery();
