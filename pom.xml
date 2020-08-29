@@ -23,10 +23,10 @@
         <module>dao</module>
         <module>domain</module>
         <module>service</module>
-        <module>ui</module>
         <module>csvutil</module>
         <module>stringutil</module>
         <module>dateutil</module>
+        <module>ui</module>
     </modules>
     <properties>
         <java.version>11</java.version>

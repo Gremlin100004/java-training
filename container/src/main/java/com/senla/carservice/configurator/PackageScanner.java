@@ -8,6 +8,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,16 +30,29 @@ public class PackageScanner {
         if (classLoader == null) {
             throw new InitializationException("ClassLoader error");
         }
-        URL url = classLoader.getResource(packageProject.replace(REPLACEMENT_CHARACTER, CHARACTER_TO_INSERT));
-        if (url == null) {
-            throw new InitializationException("Error project package");
-        }
+        Enumeration<URL> urls;
         try {
-            String fullPath = url.toURI().getPath();
-            return getClassByPath(getStringFilesPaths(fullPath));
-        } catch (URISyntaxException e) {
+            urls = classLoader.getResources(packageProject.replace(REPLACEMENT_CHARACTER, CHARACTER_TO_INSERT));
+        } catch (IOException e) {
+            throw new InitializationException("ClassLoader error");
+        }
+        if (urls == null) {
             throw new InitializationException("Error project package");
         }
+        List<Class<?>> classes = new ArrayList<>();
+        while (urls.hasMoreElements()) {
+            URL url = urls.nextElement();
+            if (url == null) {
+                throw new InitializationException("Error project package");
+            }
+            try {
+                String fullPath = url.toURI().getPath();
+                classes.addAll(getClassByPath(getStringFilesPaths(fullPath)));
+            } catch (URISyntaxException e) {
+                throw new InitializationException("Error project package");
+            }
+        }
+        return classes;
     }
 
     public String getPackageProject() {
@@ -45,29 +60,20 @@ public class PackageScanner {
     }
 
     private List<Class<?>> getClassByPath(List<String> filesStringPaths) {
-        return filesStringPaths
-                .stream()
-                .map(file -> file.replace(CHARACTER_TO_INSERT, REPLACEMENT_CHARACTER)
-                        .substring(file
-                                .replace(CHARACTER_TO_INSERT, REPLACEMENT_CHARACTER)
-                                .lastIndexOf(packageProject))
-                        .replace(CLASS_REPLACEMENT_CHARACTER, CLASS_CHARACTER_TO_INSERT))
-                .map(className -> {
-                    try {
-                        return Class.forName(className);
-                    } catch (ClassNotFoundException e) {
-                        throw new InitializationException("Error name class");
-                    }
-                })
-                .collect(Collectors.toList());
+        return filesStringPaths.stream().map(file -> file.replace(CHARACTER_TO_INSERT, REPLACEMENT_CHARACTER)
+            .substring(file.replace(CHARACTER_TO_INSERT, REPLACEMENT_CHARACTER).lastIndexOf(packageProject))
+            .replace(CLASS_REPLACEMENT_CHARACTER, CLASS_CHARACTER_TO_INSERT)).map(className -> {
+            try {
+                return Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                throw new InitializationException("Error name class");
+            }
+        }).collect(Collectors.toList());
     }
 
     private static List<String> getStringFilesPaths(String stringPath) {
         try (Stream<Path> filesPath = Files.walk(Paths.get(stringPath), Integer.MAX_VALUE)) {
-            return filesPath
-                .filter(Files::isRegularFile)
-                .map(String::valueOf)
-                .collect(Collectors.toList());
+            return filesPath.filter(Files::isRegularFile).map(String::valueOf).collect(Collectors.toList());
         } catch (IOException e) {
             throw new InitializationException("Error scanning package");
         }

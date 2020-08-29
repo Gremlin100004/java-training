@@ -3,9 +3,9 @@ package com.senla.carservice;
 import com.senla.carservice.annotation.Singleton;
 import com.senla.carservice.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.dao.PlaceDao;
-import com.senla.carservice.dao.connection.DatabaseConnection;
-import com.senla.carservice.domain.Place;
+import com.senla.carservice.PlaceDao;
+import com.senla.carservice.connection.DatabaseConnection;
+import com.senla.carservice.Place;
 import com.senla.carservice.exception.BusinessException;
 
 import java.util.Date;
@@ -36,11 +36,11 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public void addPlace(Integer number) {
+        if (isBlockAddPlace) {
+            throw new BusinessException("Permission denied");
+        }
         try {
             databaseConnection.disableAutoCommit();
-            if (isBlockAddPlace) {
-                throw new BusinessException("Permission denied");
-            }
             placeDao.createRecord(new Place(number),databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
@@ -53,13 +53,13 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public void deletePlace(Place place) {
+        if (isBlockDeletePlace) {
+            throw new BusinessException("Permission denied");
+        }
         try {
             databaseConnection.disableAutoCommit();
             if (place.getBusyStatus()) {
                 throw new BusinessException("Place is busy");
-            }
-            if (isBlockDeletePlace) {
-                throw new BusinessException("Permission denied");
             }
             placeDao.deleteRecord(place, databaseConnection);
             databaseConnection.commitTransaction();

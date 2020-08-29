@@ -2,11 +2,11 @@ package com.senla.carservice;
 
 import com.senla.carservice.annotation.Singleton;
 import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Order;
-import com.senla.carservice.domain.Place;
-import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.Master;
+import com.senla.carservice.Order;
+import com.senla.carservice.Place;
+import com.senla.carservice.exception.CsvException;
+import com.senla.carservice.DateUtil;
 import com.senla.carservice.util.FileUtil;
 import com.senla.carservice.util.ParameterUtil;
 
@@ -43,7 +43,7 @@ public class CsvOrder {
             .peek(
                 order -> {
                     if (order.getMasters().isEmpty()) {
-                        throw new BusinessException("masters not imported");
+                        throw new CsvException("masters not imported");
                     }
                 })
             .collect(Collectors.toList());
@@ -51,7 +51,7 @@ public class CsvOrder {
 
     private Order getOrderFromCsv(String line, List<Master> masters, List<Place> places) {
         if (line == null || masters == null || places == null) {
-            throw new BusinessException("argument is null");
+            throw new CsvException("argument is null");
         }
         List<String> values = Arrays.asList((line.split(idSeparator))[0].split(fieldSeparator));
         List<String> arrayIdMaster = Arrays.asList(line.split(idSeparator)[1].split(fieldSeparator));
@@ -72,7 +72,7 @@ public class CsvOrder {
 
     private List<Master> getMastersById(List<Master> masters, List<String> arrayIdMaster) {
         if (masters == null || arrayIdMaster == null) {
-            throw new BusinessException("argument is null");
+            throw new CsvException("argument is null");
         }
         List<Master> orderMasters = new ArrayList<>();
         masters
@@ -85,7 +85,7 @@ public class CsvOrder {
 
     private Place getPlaceById(List<Place> places, Long id) {
         if (places == null || id == null) {
-            throw new BusinessException("argument is null");
+            throw new CsvException("argument is null");
         }
         return places.stream()
             .filter(place -> place.getId().equals(id))
@@ -95,7 +95,7 @@ public class CsvOrder {
 
     private String convertOrderToCsv(Order order) {
         if (order == null) {
-            throw new BusinessException("argument is null");
+            throw new CsvException("argument is null");
         }
         StringBuilder stringValue = new StringBuilder();
         stringValue.append(order.getId());

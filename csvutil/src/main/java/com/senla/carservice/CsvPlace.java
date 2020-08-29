@@ -2,8 +2,8 @@ package com.senla.carservice;
 
 import com.senla.carservice.annotation.Singleton;
 import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.domain.Place;
-import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.Place;
+import com.senla.carservice.exception.CsvException;
 import com.senla.carservice.util.FileUtil;
 import com.senla.carservice.util.ParameterUtil;
 
@@ -23,7 +23,7 @@ public class CsvPlace {
 
     public void exportPlaces(List<Place> places) {
         if (places == null) {
-            throw new BusinessException("argument is null");
+            throw new CsvException("argument is null");
         }
         List<String> valueCsv = places.stream()
             .map(this::convertToCsv)
@@ -40,7 +40,7 @@ public class CsvPlace {
 
     private Place getPlaceFromCsv(String line) {
         if (line == null) {
-            throw new BusinessException("argument is null");
+            throw new CsvException("argument is null");
         }
         List<String> values = Arrays.asList(line.split(fieldSeparator));
         Place place = new Place();
@@ -53,7 +53,7 @@ public class CsvPlace {
 
     private String convertToCsv(Place place) {
         if (place == null) {
-            throw new BusinessException("argument is null");
+            throw new CsvException("argument is null");
         }
         return place.getId() +
                fieldSeparator +

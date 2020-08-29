@@ -1,9 +1,9 @@
 package com.senla.carservice;
 
-import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Order;
-import com.senla.carservice.domain.Place;
-import com.senla.carservice.service.enumaration.SortParameter;
+import com.senla.carservice.Master;
+import com.senla.carservice.Order;
+import com.senla.carservice.Place;
+import com.senla.carservice.enumaration.SortParameter;
 
 import java.math.BigDecimal;
 import java.util.Date;

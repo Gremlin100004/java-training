@@ -2,8 +2,8 @@ package com.senla.carservice;
 
 import com.senla.carservice.annotation.Singleton;
 import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.domain.Master;
-import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.Master;
+import com.senla.carservice.exception.CsvException;
 import com.senla.carservice.util.FileUtil;
 import com.senla.carservice.util.ParameterUtil;
 
@@ -23,7 +23,7 @@ public class CsvMaster {
 
     public void exportMasters(List<Master> masters) {
         if (masters == null) {
-            throw new BusinessException("argument is null");
+            throw new CsvException("argument is null");
         }
         FileUtil.saveCsv(masters.stream()
                              .map(this::convertToCsv)
@@ -40,7 +40,7 @@ public class CsvMaster {
 
     private Master getMasterFromCsv(String line) {
         if (line == null) {
-            throw new BusinessException("argument is null");
+            throw new CsvException("argument is null");
         }
         List<String> values = Arrays.asList((line.split(fieldSeparator)));
         Master master = new Master();
@@ -53,7 +53,7 @@ public class CsvMaster {
 
     private String convertToCsv(Master master) {
         if (master == null) {
-            throw new BusinessException("argument is null");
+            throw new CsvException("argument is null");
         }
         return master.getId() +
                fieldSeparator +

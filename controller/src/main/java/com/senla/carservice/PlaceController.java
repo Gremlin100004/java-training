@@ -3,9 +3,9 @@ package com.senla.carservice;
 import com.senla.carservice.annotation.Singleton;
 import com.senla.carservice.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.service.PlaceService;
-import com.senla.carservice.util.DateUtil;
-import com.senla.carservice.util.stringutil.StringPlaces;
+import com.senla.carservice.PlaceService;
+import com.senla.carservice.DateUtil;
+import com.senla.carservice.StringPlaces;
 
 import java.util.Date;
 
