@@ -1,19 +1,9 @@
 package com.senla.carservice;
 
 import com.senla.carservice.annotation.Singleton;
-import com.senla.carservice.objectadjuster.dependencyinjection.annotation.Dependency;
-import com.senla.carservice.MasterDao;
-import com.senla.carservice.OrderDao;
-import com.senla.carservice.PlaceDao;
 import com.senla.carservice.connection.DatabaseConnection;
-import com.senla.carservice.Master;
-import com.senla.carservice.Order;
-import com.senla.carservice.Place;
 import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.DateUtil;
-import com.senla.carservice.CsvMaster;
-import com.senla.carservice.CsvOrder;
-import com.senla.carservice.CsvPlace;
+import com.senla.carservice.objectadjuster.dependencyinjection.annotation.Dependency;
 
 import java.util.Date;
 import java.util.List;

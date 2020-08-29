@@ -2,12 +2,8 @@ package com.senla.carservice;
 
 import com.senla.carservice.annotation.Singleton;
 import com.senla.carservice.connection.DatabaseConnection;
-import com.senla.carservice.Master;
-import com.senla.carservice.Order;
-import com.senla.carservice.Place;
 import com.senla.carservice.enumaration.Status;
 import com.senla.carservice.exception.DaoException;
-import com.senla.carservice.DateUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -77,6 +73,7 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     private static final String SQL_CONDITION_START_TIME = " AND orders.lead_time > '";
     private static final String SQL_END_CONDITION = "'";
     private static final String SQL_REQUEST_SORT_BY_PRICE = "ORDER BY price";
+    private static final String CONDITION_SORT_BY_ID = "ORDER BY orders_order_id DESC";
     private static final String CONDITION_SORT_FILING_DATE = "ORDER BY creation_time";
     private static final String CONDITION_SORT_EXECUTION_DATE = "ORDER BY lead_time";
     private static final String CONDITION_SORT_PLANNED_START_DATE = "ORDER BY execution_start_time";
@@ -116,7 +113,7 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
 
     @Override
     public Order getLastOrder(DatabaseConnection databaseConnection) {
-        List<Order> orders = getOrdersFromDatabase(SQL_REQUEST_TO_GET_ORDERS , "", databaseConnection);
+        List<Order> orders = getOrdersFromDatabase("" , "", databaseConnection);
         return orders.get(0);
     }
 
@@ -400,7 +397,6 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
                 conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder,
                 SQL_REQUEST_TO_GET_ORDERS + conditionOrder, conditionFullRequest);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
-            System.out.println(statement.toString());
             ResultSet resultSet = statement.executeQuery();
             return parseResultSet(resultSet);
         } catch (SQLException ex) {

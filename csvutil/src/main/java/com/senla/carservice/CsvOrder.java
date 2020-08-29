@@ -1,12 +1,8 @@
 package com.senla.carservice;
 
 import com.senla.carservice.annotation.Singleton;
-import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.Master;
-import com.senla.carservice.Order;
-import com.senla.carservice.Place;
 import com.senla.carservice.exception.CsvException;
-import com.senla.carservice.DateUtil;
+import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.util.FileUtil;
 import com.senla.carservice.util.ParameterUtil;
 
@@ -18,11 +14,11 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class CsvOrder {
-    @ConfigProperty
+    @ConfigProperty(configName = "csv.properties")
     private String orderPath;
-    @ConfigProperty
+    @ConfigProperty(configName = "csv.properties")
     private String fieldSeparator;
-    @ConfigProperty
+    @ConfigProperty(configName = "csv.properties")
     private String idSeparator;
     private static final int SIZE_INDEX = 1;
 

@@ -35,7 +35,7 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
         if (annotation.configName().isEmpty()) {
             return DefaultValue.PROPERTY_FILE_NAME.getValue();
         } else {
-            return annotation.propertyName();
+            return annotation.configName();
         }
     }
 

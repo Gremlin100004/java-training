@@ -1,11 +1,9 @@
 package com.senla.carservice;
 
 import com.senla.carservice.annotation.Singleton;
-import com.senla.carservice.objectadjuster.dependencyinjection.annotation.Dependency;
-import com.senla.carservice.MasterDao;
 import com.senla.carservice.connection.DatabaseConnection;
-import com.senla.carservice.Master;
 import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.objectadjuster.dependencyinjection.annotation.Dependency;
 
 import java.util.Date;
 import java.util.List;

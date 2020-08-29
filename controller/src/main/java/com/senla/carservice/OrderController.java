@@ -1,15 +1,9 @@
 package com.senla.carservice;
 
 import com.senla.carservice.annotation.Singleton;
-import com.senla.carservice.objectadjuster.dependencyinjection.annotation.Dependency;
-import com.senla.carservice.exception.BusinessException;
-import com.senla.carservice.MasterService;
-import com.senla.carservice.OrderService;
-import com.senla.carservice.PlaceService;
 import com.senla.carservice.enumaration.SortParameter;
-import com.senla.carservice.DateUtil;
-import com.senla.carservice.StringMaster;
-import com.senla.carservice.StringOrder;
+import com.senla.carservice.exception.BusinessException;
+import com.senla.carservice.objectadjuster.dependencyinjection.annotation.Dependency;
 
 import java.math.BigDecimal;
 import java.util.Date;

@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class CsvMaster {
-    @ConfigProperty
+    @ConfigProperty(configName = "csv.properties")
     private String masterPath;
-    @ConfigProperty
+    @ConfigProperty(configName = "csv.properties")
     private String fieldSeparator;
 
     public CsvMaster() {

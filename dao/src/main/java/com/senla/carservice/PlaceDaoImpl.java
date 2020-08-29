@@ -2,9 +2,7 @@ package com.senla.carservice;
 
 import com.senla.carservice.annotation.Singleton;
 import com.senla.carservice.connection.DatabaseConnection;
-import com.senla.carservice.Place;
 import com.senla.carservice.exception.DaoException;
-import com.senla.carservice.DateUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

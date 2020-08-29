@@ -1,7 +1,5 @@
 package com.senla.carservice;
 
-import com.senla.carservice.Place;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;

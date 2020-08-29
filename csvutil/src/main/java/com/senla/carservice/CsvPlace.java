@@ -1,9 +1,8 @@
 package com.senla.carservice;
 
 import com.senla.carservice.annotation.Singleton;
-import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.Place;
 import com.senla.carservice.exception.CsvException;
+import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.util.FileUtil;
 import com.senla.carservice.util.ParameterUtil;
 
@@ -13,9 +12,9 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class CsvPlace {
-    @ConfigProperty
+    @ConfigProperty(configName = "csv.properties")
     private String placePath;
-    @ConfigProperty
+    @ConfigProperty(configName = "csv.properties")
     private String fieldSeparator;
 
     public CsvPlace() {

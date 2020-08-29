@@ -10,12 +10,14 @@ import java.sql.SQLException;
 
 @Singleton
 public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
-    @ConfigProperty
+    @ConfigProperty(configName = "db.properties")
     private String userName;
-    @ConfigProperty
+    @ConfigProperty(configName = "db.properties")
     private String password;
-    @ConfigProperty
+    @ConfigProperty(configName = "db.properties")
     private String connectionUrl;
+    @ConfigProperty(configName = "db.properties")
+    private String driverDatabase;
     private Connection connection;
 
     @Override
@@ -93,7 +95,7 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
 
     private void connectToDatabase() {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName(driverDatabase);
             this.connection = DriverManager.getConnection(connectionUrl, userName, password);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
