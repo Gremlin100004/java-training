@@ -3,6 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.senla.carservice</groupId>
     <artifactId>hrinkov-car-service</artifactId>
+    <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <build>
         <plugins>
@@ -16,6 +17,17 @@
             </plugin>
         </plugins>
     </build>
+    <modules>
+        <module>container</module>
+        <module>controller</module>
+        <module>dao</module>
+        <module>domain</module>
+        <module>service</module>
+        <module>ui</module>
+        <module>csvutil</module>
+        <module>stringutil</module>
+        <module>dateutil</module>
+    </modules>
     <properties>
         <java.version>11</java.version>
     </properties>
