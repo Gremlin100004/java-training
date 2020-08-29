@@ -23,6 +23,13 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
         if (connection == null) {
             connectToDatabase();
         }
+        try {
+            if (connection.isClosed()){
+                connectToDatabase();
+            }
+        } catch (SQLException e) {
+            throw new BusinessException("Error connect to database");
+        }
         return connection;
     }
 
@@ -86,8 +93,10 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
 
     private void connectToDatabase() {
         try {
+            Class.forName("com.mysql.jdbc.Driver");
             this.connection = DriverManager.getConnection(connectionUrl, userName, password);
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
             throw new BusinessException("Wrong connection to database");
         }
     }

@@ -1,8 +1,8 @@
-DROP DATABASE IF EXISTS hrinkou_car_service;
+DROP DATABASE IF EXISTS hrinkov_car_service;
 
-CREATE DATABASE IF NOT EXISTS hrinkou_car_service DEFAULT CHARACTER SET utf8;
+CREATE DATABASE IF NOT EXISTS hrinkov_car_service DEFAULT CHARACTER SET utf8;
 
-USE hrinkou_car_service;
+USE hrinkov_car_service;
 
 CREATE TABLE IF NOT EXISTS masters(
 id INT NOT NULL AUTO_INCREMENT,
