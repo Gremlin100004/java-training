@@ -1,8 +1,5 @@
 package com.senla.carservice;
 
-import com.senla.carservice.Master;
-import com.senla.carservice.Order;
-import com.senla.carservice.Place;
 import com.senla.carservice.enumaration.SortParameter;
 
 import java.math.BigDecimal;
@@ -39,4 +36,8 @@ public interface OrderService {
     List<Order> getMasterOrders(Master master);
 
     List<Master> getOrderMasters(Order order);
+
+    int getNumberOrders();
+
+    Order getOrderById(Long index);
 }

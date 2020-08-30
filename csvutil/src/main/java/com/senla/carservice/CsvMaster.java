@@ -1,11 +1,12 @@
 package com.senla.carservice;
 
 import com.senla.carservice.annotation.Singleton;
-import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.Master;
 import com.senla.carservice.exception.CsvException;
+import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.util.FileUtil;
 import com.senla.carservice.util.ParameterUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,11 +18,14 @@ public class CsvMaster {
     private String masterPath;
     @ConfigProperty(configName = "csv.properties")
     private String fieldSeparator;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CsvMaster.class);
 
     public CsvMaster() {
     }
 
     public void exportMasters(List<Master> masters) {
+        LOGGER.debug("Method exportMasters");
+        LOGGER.debug("Parameter masters: {}", masters);
         if (masters == null) {
             throw new CsvException("argument is null");
         }
@@ -32,6 +36,7 @@ public class CsvMaster {
     }
 
     public List<Master> importMasters() {
+        LOGGER.debug("Method importMasters");
         List<String> csvLinesMaster = FileUtil.getCsv(masterPath);
         return csvLinesMaster.stream()
             .map(this::getMasterFromCsv)
@@ -39,6 +44,8 @@ public class CsvMaster {
     }
 
     private Master getMasterFromCsv(String line) {
+        LOGGER.debug("Method getMasterFromCsv");
+        LOGGER.debug("Parameter line: {}", line);
         if (line == null) {
             throw new CsvException("argument is null");
         }
@@ -52,6 +59,8 @@ public class CsvMaster {
     }
 
     private String convertToCsv(Master master) {
+        LOGGER.debug("Method convertToCsv");
+        LOGGER.debug("Parameter master: {}", master);
         if (master == null) {
             throw new CsvException("argument is null");
         }

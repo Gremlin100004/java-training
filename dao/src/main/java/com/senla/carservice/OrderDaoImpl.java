@@ -106,31 +106,45 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
         "AS place_is_deleted FROM orders JOIN places ON orders.place_id = places.id) AS orders_with_place ON " +
         "orders_masters.order_id = orders_with_place.orders_order_id) AS full_orders_masters RIGHT OUTER JOIN masters " +
         "ON masters.id = full_orders_masters.master_id WHERE master_id=?";
-
+    private static final String SQL_REQUEST_TO_GET_NUMBER_RECORDS = "SELECT COUNT(orders.id) AS number_orders FROM orders;";
+    private static final String SQL_REQUEST_ORDER_BY_ID = "SELECT DISTINCT id FROM orders WHERE id=?";
 
     public OrderDaoImpl() {
     }
 
     @Override
     public Order getLastOrder(DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getLastOrder");
+        LOGGER.debug("Parameter propertyFileName: {}", databaseConnection.toString());
         List<Order> orders = getOrdersFromDatabase("" , "", databaseConnection);
         return orders.get(0);
     }
 
     @Override
     public int getNumberBusyMasters(String startPeriod, String endPeriod, DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getNumberBusyMasters");
+        LOGGER.debug("Parameter startPeriod: {}", startPeriod);
+        LOGGER.debug("Parameter endPeriod: {}", endPeriod);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_BUSY_MASTERS + startPeriod + SQL_END_CONDITION +
            SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION, databaseConnection);
     }
 
     @Override
     public int getNumberBusyPlaces(String startPeriod, String endPeriod, DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getNumberBusyPlaces");
+        LOGGER.debug("Parameter startPeriod: {}", startPeriod);
+        LOGGER.debug("Parameter endPeriod: {}", endPeriod);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_BUSY_PLACES + startPeriod + SQL_END_CONDITION +
            SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION, databaseConnection);
     }
 
     @Override
     public void addRecordToTableManyToMany(Order order, DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method addRecordToTableManyToMany");
+        LOGGER.debug("Parameter order: {}", order);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(
             SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS)) {
             statement.setLong(1, order.getId());
@@ -139,46 +153,63 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
                 statement.execute();
             }
         } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request update records table orders_masters");
         }
     }
 
     @Override
     public List<Order> getOrdersSortByFilingDate(DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getOrdersSortByFilingDate");
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase("", CONDITION_SORT_FILING_DATE,
                 databaseConnection);
     }
 
     @Override
     public List<Order> getOrdersSortByExecutionDate(DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getOrdersSortByExecutionDate");
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase("", CONDITION_SORT_EXECUTION_DATE,
                 databaseConnection);
     }
 
     @Override
     public List<Order> getOrdersSortByPlannedStartDate(DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getOrdersSortByPlannedStartDate");
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase("", CONDITION_SORT_PLANNED_START_DATE,
                 databaseConnection);
     }
 
     @Override
     public List<Order> getOrdersSortByPrice(DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getOrdersSortByPrice");
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase("", SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
     }
 
     @Override
     public List<Order> getExecuteOrderSortByFilingDate(DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getExecuteOrderSortByFilingDate");
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase(CONDITION_EXECUTE_ORDERS, CONDITION_SORT_FILING_DATE, databaseConnection);
     }
 
     @Override
     public List<Order> getExecuteOrderSortExecutionDate(DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getExecuteOrderSortExecutionDate");
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase(CONDITION_EXECUTE_ORDERS, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
     }
 
     @Override
     public List<Order> getCompletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
                                                           DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getCompletedOrdersSortByFilingDate");
+        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
+        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
@@ -187,6 +218,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     @Override
     public List<Order> getCompletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate,
                                                              DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getCompletedOrdersSortByExecutionDate");
+        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
+        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
@@ -195,6 +230,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     @Override
     public List<Order> getCompletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate,
                                                      DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getCompletedOrdersSortByPrice");
+        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
+        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
@@ -203,6 +242,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     @Override
     public List<Order> getCanceledOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
                                                          DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getCanceledOrdersSortByFilingDate");
+        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
+        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
@@ -211,6 +254,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     @Override
     public List<Order> getCanceledOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate,
                                                             DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getCanceledOrdersSortByExecutionDate");
+        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
+        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
@@ -219,6 +266,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     @Override
     public List<Order> getCanceledOrdersSortByPrice(String startPeriodDate, String endPeriodDate,
                                                     DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getCanceledOrdersSortByPrice");
+        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
+        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
@@ -227,6 +278,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     @Override
     public List<Order> getDeletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
                                                         DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getDeletedOrdersSortByFilingDate");
+        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
+        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
@@ -234,6 +289,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
 
     @Override
     public List<Order> getDeletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate, DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getDeletedOrdersSortByExecutionDate");
+        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
+        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
@@ -241,6 +300,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
 
     @Override
     public List<Order> getDeletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate, DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getDeletedOrdersSortByPrice");
+        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
+        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.debug("Parameter propertyFileName: {}", databaseConnection.toString());
         return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
@@ -248,6 +311,9 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
 
     @Override
     public List<Order> getMasterOrders(Master master, DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getMasterOrders");
+        LOGGER.debug("Parameter master: {}", master.toString());
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_GET_MASTER_ORDERS)) {
             statement.setLong(1, master.getId());
@@ -257,12 +323,49 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
             ResultSet resultSet = statement.executeQuery();
             return parseResultSet(resultSet);
         } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get master orders");
         }
     }
 
     @Override
+    public int getNumberOrders(DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getNumberOrders");
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_TO_GET_NUMBER_RECORDS)) {
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("number_orders");
+            }
+            return 0;
+        } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
+            throw new DaoException("Error request get number orders");
+        }
+    }
+
+    @Override
+    public Order getOrderById(Long index, DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getOrderById");
+        LOGGER.debug("Parameter index: {}", index);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_ORDER_BY_ID)) {
+            statement.setLong(1, index);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return parseResultSet(resultSet).get(0);
+            }
+            return null;
+        } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
+            throw new DaoException("Error request get order by id");
+        }
+    }
+
+    @Override
     protected List<Order> parseResultSet(ResultSet resultSet) {
+        LOGGER.debug("Method parseResultSet");
+        LOGGER.debug("Parameter resultSet: {}", resultSet.toString());
         try {
             List<Order> orders = new ArrayList<>();
             while (resultSet.next()) {
@@ -286,12 +389,16 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
             }
             return orders;
         } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get records orders");
         }
     }
 
     @Override
     protected void fillStatementCreate(PreparedStatement statement, Order order) {
+        LOGGER.debug("Method fillStatementCreate");
+        LOGGER.debug("Parameter statement: {}", statement.toString());
+        LOGGER.debug("Parameter order: {}", order.toString());
         try {
             statement.setString(1, DateUtil.getStringFromDate(order.getCreationTime(), true));
             statement.setString(2, SQL_NULL_DATE);
@@ -304,12 +411,16 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
             statement.setBoolean(9, order.isDeleteStatus());
             statement.setLong(10, SQL_DEFAULT_PLACE_ID);
         } catch (SQLException e) {
+            LOGGER.error(String.valueOf(e));
             throw new DaoException("Error fill statement for create request");
         }
     }
 
     @Override
     protected void fillStatementUpdate(PreparedStatement statement, Order order) {
+        LOGGER.debug("Method fillStatementUpdate");
+        LOGGER.debug("Parameter statement: {}", statement.toString());
+        LOGGER.debug("Parameter order: {}", order.toString());
         try {
             statement.setString(1, DateUtil.getStringFromDate(order.getCreationTime(), true));
             statement.setString(2, DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
@@ -323,12 +434,16 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
             statement.setLong(10, order.getPlace().getId());
             statement.setLong(11, order.getId());
         } catch (SQLException e) {
+            LOGGER.error(String.valueOf(e));
             throw new DaoException("Error fill statement for update request");
         }
     }
 
     @Override
     protected void fillStatementUpdateAll(PreparedStatement statement, Order order) {
+        LOGGER.debug("Method fillStatementUpdateAll");
+        LOGGER.debug("Parameter statement: {}", statement.toString());
+        LOGGER.debug("Parameter order: {}", order.toString());
         try {
             statement.setLong(1, order.getId());
             statement.setString(2, DateUtil.getStringFromDate(order.getCreationTime(), true));
@@ -353,15 +468,20 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
             statement.setBoolean(21, order.isDeleteStatus());
             statement.setLong(22, order.getPlace().getId());
         } catch (SQLException e) {
+            LOGGER.error(String.valueOf(e));
             throw new DaoException("Error fill statement for update request");
         }
     }
 
     @Override
     protected void fillStatementDelete(PreparedStatement statement, Order order) {
+        LOGGER.debug("Method fillStatementDelete");
+        LOGGER.debug("Parameter statement: {}", statement.toString());
+        LOGGER.debug("Parameter order: {}", order.toString());
         try {
             statement.setLong(1, order.getId());
         } catch (SQLException e) {
+            LOGGER.error(String.valueOf(e));
             throw new DaoException("Error fill statement for update request");
         }
     }
@@ -393,6 +513,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
 
     private List<Order> getOrdersFromDatabase(String conditionOrder, String conditionFullRequest,
                                               DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getOrdersFromDatabase");
+        LOGGER.debug("Parameter conditionOrder: {}", conditionOrder);
+        LOGGER.debug("Parameter conditionFullRequest: {}", conditionFullRequest);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         String request = String.format(SQL_REQUEST_TO_GET_ALL_RECORDS_CONDITION, SQL_REQUEST_TO_GET_ORDERS +
                 conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder,
                 SQL_REQUEST_TO_GET_ORDERS + conditionOrder, conditionFullRequest);
@@ -400,21 +524,28 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
             ResultSet resultSet = statement.executeQuery();
             return parseResultSet(resultSet);
         } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get records orders");
         }
     }
 
     private int getIntFromRequest(String request, DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getIntFromRequest");
+        LOGGER.debug("Parameter request: {}", request);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
             return resultSet.getInt("amount_of_elements");
         } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get records orders");
         }
     }
 
     private Master getMasterFromResultSet(ResultSet resultSet) {
+        LOGGER.debug("Method getMasterFromResultSet");
+        LOGGER.debug("Parameter resultSet: {}", resultSet.toString());
         try {
             Master master = new Master();
             master.setId(resultSet.getLong("id"));
@@ -423,11 +554,14 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
             master.setNumberOrders(resultSet.getInt("number_orders"));
             return master;
         } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get records order masters");
         }
     }
 
     private Order getOrderFromResultSet(ResultSet resultSet) {
+        LOGGER.debug("Method getOrderFromResultSet");
+        LOGGER.debug("Parameter resultSet: {}", resultSet.toString());
         try {
             Order order = new Order(resultSet.getString("automaker"), resultSet.getString("model"),
                     resultSet.getString("registration_number"));
@@ -446,6 +580,7 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
             order.setPlace(place);
             return order;
         } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get records order");
         }
     }

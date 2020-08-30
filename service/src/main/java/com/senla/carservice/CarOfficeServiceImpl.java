@@ -4,6 +4,8 @@ import com.senla.carservice.annotation.Singleton;
 import com.senla.carservice.connection.DatabaseConnection;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.objectadjuster.dependencyinjection.annotation.Dependency;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -25,12 +27,14 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Dependency
     private DatabaseConnection databaseConnection;
     private static final int NUMBER_DAY = 1;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeServiceImpl.class);
 
     public CarOfficeServiceImpl() {
     }
 
     @Override
     public Date getNearestFreeDate() {
+        LOGGER.debug("Method getNearestFreeDate");
         checkMasters();
         checkPlaces();
         checkOrders();
@@ -51,6 +55,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     @Override
     public void importEntities() {
+        LOGGER.debug("Method importEntities");
         try {
             databaseConnection.disableAutoCommit();
             masterDao.updateAllRecords(csvMaster.importMasters(), databaseConnection);
@@ -61,6 +66,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             orders.forEach(order -> orderDao.addRecordToTableManyToMany(order, databaseConnection));
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
+            LOGGER.error(e.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction import entities");
         } finally {
@@ -71,6 +77,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     @Override
     public void exportEntities() {
+        LOGGER.debug("Method exportEntities");
         List<Order> orders = getOrders();
         List<Master> masters = getMasters();
         List<Place> places = getPlaces();
@@ -80,24 +87,28 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     private void checkMasters() {
+        LOGGER.debug("Method checkMasters");
         if (masterDao.getAllRecords(databaseConnection).isEmpty()) {
             throw new BusinessException("There are no masters");
         }
     }
 
     private void checkPlaces() {
+        LOGGER.debug("Method checkPlaces");
         if (placeDao.getAllRecords(databaseConnection).isEmpty()) {
             throw new BusinessException("There are no places");
         }
     }
 
     private void checkOrders() {
+        LOGGER.debug("Method checkOrders");
         if (orderDao.getAllRecords(databaseConnection).isEmpty()) {
             throw new BusinessException("There are no orders");
         }
     }
 
     private List<Order> getOrders() {
+        LOGGER.debug("Method getOrders");
         List<Order> orders = orderDao.getAllRecords(databaseConnection);
         if (orders.isEmpty()) {
             throw new BusinessException("There are no orders");
@@ -106,6 +117,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     private List<Master> getMasters() {
+        LOGGER.debug("Method getMasters");
         List<Master> masters = masterDao.getAllRecords(databaseConnection);
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
@@ -114,6 +126,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     private List<Place> getPlaces() {
+        LOGGER.debug("Method getPlaces");
         List<Place> places = placeDao.getAllRecords(databaseConnection);
         if (places.isEmpty()) {
             throw new BusinessException("There are no places");

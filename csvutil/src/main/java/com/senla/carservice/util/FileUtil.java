@@ -1,6 +1,8 @@
 package com.senla.carservice.util;
 
 import com.senla.carservice.exception.CsvException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,11 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
 
     private FileUtil() {
     }
 
     public static void saveCsv(List<String> arrayValue, String path) {
+        LOGGER.debug("Method saveCsv");
+        LOGGER.debug("Parameter arrayValue: {}", arrayValue);
+        LOGGER.debug("Parameter path: {}", path);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             throw new CsvException("export problem");
@@ -29,11 +35,14 @@ public class FileUtil {
         try (PrintStream printStream = new PrintStream(new FileOutputStream(String.valueOf(Path.of(url.toURI()))))) {
             arrayValue.forEach(printStream::println);
         } catch (IOException | URISyntaxException e) {
+            LOGGER.error(e.getMessage());
             throw new CsvException("export problem");
         }
     }
 
     public static List<String> getCsv(String path) {
+        LOGGER.debug("Method getCsv");
+        LOGGER.debug("Parameter path: {}", path);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         List<String> csvLines = new ArrayList<>();
         if (classLoader == null) {
@@ -45,7 +54,8 @@ public class FileUtil {
         }
         try {
             return Files.readAllLines(Path.of(url.toURI()));
-        } catch (IOException | URISyntaxException ioException) {
+        } catch (IOException | URISyntaxException e) {
+            LOGGER.error(e.getMessage());
             throw new CsvException("import problem");
         }
     }

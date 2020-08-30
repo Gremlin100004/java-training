@@ -5,6 +5,8 @@ import com.senla.carservice.exception.CsvException;
 import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.util.FileUtil;
 import com.senla.carservice.util.ParameterUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,11 +18,14 @@ public class CsvPlace {
     private String placePath;
     @ConfigProperty(configName = "csv.properties")
     private String fieldSeparator;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CsvPlace.class);
 
     public CsvPlace() {
     }
 
     public void exportPlaces(List<Place> places) {
+        LOGGER.debug("Method exportPlaces");
+        LOGGER.debug("Parameter places: {}", places);
         if (places == null) {
             throw new CsvException("argument is null");
         }
@@ -31,6 +36,7 @@ public class CsvPlace {
     }
 
     public List<Place> importPlaces() {
+        LOGGER.debug("Method importPlaces");
         List<String> csvLinesPlace = FileUtil.getCsv(placePath);
         return csvLinesPlace.stream()
             .map(this::getPlaceFromCsv)
@@ -38,6 +44,8 @@ public class CsvPlace {
     }
 
     private Place getPlaceFromCsv(String line) {
+        LOGGER.debug("Method getPlaceFromCsv");
+        LOGGER.debug("Parameter line: {}", line);
         if (line == null) {
             throw new CsvException("argument is null");
         }
@@ -51,6 +59,8 @@ public class CsvPlace {
     }
 
     private String convertToCsv(Place place) {
+        LOGGER.debug("Method convertToCsv");
+        LOGGER.debug("Parameter place: {}", place);
         if (place == null) {
             throw new CsvException("argument is null");
         }

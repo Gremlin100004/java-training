@@ -25,24 +25,31 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
         "places.is_deleted FROM places LEFT JOIN orders ON places.id = orders.place_id WHERE orders.lead_time > ? UNION " +
         "SELECT DISTINCT places.id, places.number, places.is_busy, places.is_deleted FROM places LEFT JOIN orders ON " +
         "places.id = orders.place_id WHERE orders.place_id IS NULL";
+    private static final String SQL_REQUEST_GET_ORDER_BY_ID = "SELECT DISTINCT id FROM places WHERE id=?";
 
     public PlaceDaoImpl() {
     }
 
     @Override
     public List<Place> getFreePlaces(Date executeDate, DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getFreePlaces");
+        LOGGER.debug("Parameter executeDate: {}", executeDate);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_FREE_PLACES)) {
             statement.setString(1, DateUtil.getStringFromDate(executeDate, true));
             ResultSet resultSet = statement.executeQuery();
             return parseResultSet(resultSet);
         } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get free places");
         }
     }
 
     @Override
-    public int getNumberPlace(DatabaseConnection databaseConnection) {
+    public int getNumberPlaces(DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getNumberPlaces");
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_NUMBER_RECORDS)) {
             ResultSet resultSet = statement.executeQuery();
@@ -51,35 +58,65 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
             }
             return 0;
         } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get number places");
         }
     }
 
     @Override
+    public Place getPlaceById(Long index, DatabaseConnection databaseConnection) {
+        LOGGER.debug("Method getPlaceById");
+        LOGGER.debug("Parameter index: {}", index);
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_GET_ORDER_BY_ID)) {
+            statement.setLong(1, index);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return parseResultSet(resultSet).get(0);
+            }
+            return null;
+        } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
+            throw new DaoException("Error request get place by id");
+        }
+    }
+
+    @Override
     protected void fillStatementCreate(PreparedStatement statement, Place place) {
+        LOGGER.debug("Method fillStatementCreate");
+        LOGGER.debug("Parameter statement: {}", statement.toString());
+        LOGGER.debug("Parameter place: {}", place.toString());
         try {
             statement.setInt(1, place.getNumber());
             statement.setBoolean(2, place.getBusyStatus());
             statement.setBoolean(3, place.getDelete());
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error fill statement for create request");
         }
     }
 
     @Override
     protected void fillStatementUpdate(PreparedStatement statement, Place place) {
+        LOGGER.debug("Method fillStatementUpdate");
+        LOGGER.debug("Parameter statement: {}", statement.toString());
+        LOGGER.debug("Parameter place: {}", place.toString());
         try {
             statement.setInt(1, place.getNumber());
             statement.setBoolean(2, place.getBusyStatus());
             statement.setBoolean(3, place.getDelete());
             statement.setLong(4, place.getId());
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error fill statement for update request");
         }
     }
 
     @Override
     protected void fillStatementUpdateAll(PreparedStatement statement, Place place) {
+        LOGGER.debug("Method fillStatementUpdateAll");
+        LOGGER.debug("Parameter statement: {}", statement.toString());
+        LOGGER.debug("Parameter place: {}", place.toString());
         try {
             statement.setLong(1, place.getId());
             statement.setInt(2, place.getNumber());
@@ -89,16 +126,21 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
             statement.setInt(6, place.getNumber());
             statement.setBoolean(7, place.getBusyStatus());
             statement.setBoolean(8, place.getDelete());
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error fill statement for update request");
         }
     }
 
     @Override
     protected void fillStatementDelete(PreparedStatement statement, Place place) {
+        LOGGER.debug("Method fillStatementDelete");
+        LOGGER.debug("Parameter statement: {}", statement.toString());
+        LOGGER.debug("Parameter place: {}", place.toString());
         try {
             statement.setLong(1, place.getId());
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error fill statement for create request");
         }
     }
@@ -130,6 +172,8 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
 
     @Override
     protected List<Place> parseResultSet(ResultSet resultSet) {
+        LOGGER.debug("Method parseResultSet");
+        LOGGER.debug("Parameter resultSet: {}", resultSet.toString());
         try {
             List<Place> places = new ArrayList<>();
             while (resultSet.next()) {
@@ -142,6 +186,7 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
             }
             return places;
         } catch (SQLException ex) {
+            LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get records places");
         }
     }

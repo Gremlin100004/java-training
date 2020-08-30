@@ -1,7 +1,5 @@
 package com.senla.carservice;
 
-import com.senla.carservice.Master;
-
 import java.util.Date;
 import java.util.List;
 
@@ -19,4 +17,8 @@ public interface MasterService {
     List<Master> getMasterByAlphabet();
 
     List<Master> getMasterByBusy();
+
+    int getNumberMasters();
+
+    Master getMasterByIndex(Long index);
 }

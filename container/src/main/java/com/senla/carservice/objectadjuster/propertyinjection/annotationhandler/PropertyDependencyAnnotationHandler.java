@@ -1,20 +1,26 @@
 package com.senla.carservice.objectadjuster.propertyinjection.annotationhandler;
 
-import com.senla.carservice.contex.Context;
+import com.senla.carservice.context.Context;
 import com.senla.carservice.objectadjuster.AnnotationHandler;
 import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.objectadjuster.propertyinjection.enumeration.DefaultValue;
 import com.senla.carservice.objectadjuster.propertyinjection.enumeration.TypeField;
 import com.senla.carservice.property.PropertyLoader;
 import com.senla.carservice.exception.InitializationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 
 public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
     private static final String CLASS_NAME_SEPARATOR = ".";
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyDependencyAnnotationHandler.class);
 
     @Override
     public void configure(Object classInstance, Context context) {
+        LOGGER.debug("Method configure");
+        LOGGER.debug("Parameter classInstance: {}", classInstance.toString());
+        LOGGER.debug("Parameter context: {}", context);
         Class<?> implementClass = classInstance.getClass();
         for (Field field : implementClass.getDeclaredFields()) {
             if (!field.isAnnotationPresent(ConfigProperty.class)) {
@@ -32,6 +38,8 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
     }
 
     private String getPropertyFileName(ConfigProperty annotation) {
+        LOGGER.debug("Method getPropertyFileName");
+        LOGGER.debug("Parameter annotation: {}", annotation.toString());
         if (annotation.configName().isEmpty()) {
             return DefaultValue.PROPERTY_FILE_NAME.getValue();
         } else {
@@ -40,6 +48,9 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
     }
 
     private String getPropertyName(ConfigProperty annotation, String defaultPropertyName) {
+        LOGGER.debug("Method getPropertyName");
+        LOGGER.debug("Parameter annotation: {}", annotation.toString());
+        LOGGER.debug("Parameter defaultPropertyName: {}", defaultPropertyName);
         if (annotation.propertyName().isEmpty()) {
             return defaultPropertyName;
         } else {
@@ -48,6 +59,9 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
     }
 
     private Class<?> getFieldType(ConfigProperty annotation, Class<?> defaultType) {
+        LOGGER.debug("Method getFieldType");
+        LOGGER.debug("Parameter annotation: {}", annotation.toString());
+        LOGGER.debug("Parameter defaultType: {}", defaultType.toString());
         if (annotation.type() == TypeField.DEFAULT) {
             return defaultType;
         } else {
@@ -56,6 +70,10 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
     }
 
     private void injectValueInField(Field field, String value, Class<?> fieldType, Object inputObject) {
+        LOGGER.debug("Method injectValueInField");
+        LOGGER.debug("Parameter field: {}", field.toString());
+        LOGGER.debug("Parameter value: {}", value);
+        LOGGER.debug("Parameter inputObject: {}", inputObject.toString());
         field.setAccessible(true);
         try {
             if (fieldType.equals(Boolean.class)) {
@@ -72,8 +90,10 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
                 field.set(inputObject, value);
             }
         } catch (IllegalAccessException e) {
+            LOGGER.error("Error set value to a field", e);
             throw new InitializationException("Error set value to a field");
         } catch (NumberFormatException e) {
+            LOGGER.error("Error parse string value", e);
             throw new InitializationException("Error parse string value");
         }
     }

@@ -1,7 +1,5 @@
 package com.senla.carservice;
 
-import com.senla.carservice.Place;
-
 import java.util.Date;
 import java.util.List;
 
@@ -15,4 +13,8 @@ public interface PlaceService {
     int getNumberFreePlaceByDate(Date startDate);
 
     List<Place> getFreePlaceByDate(Date executeDate);
+
+    int getNumberPlace();
+
+    Place getPlaceByIndex(Long index);
 }

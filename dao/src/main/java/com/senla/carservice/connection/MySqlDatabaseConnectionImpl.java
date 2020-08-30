@@ -7,6 +7,8 @@ import com.senla.carservice.exception.DaoException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
@@ -19,6 +21,7 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
     @ConfigProperty(configName = "db.properties")
     private String driverDatabase;
     private Connection connection;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MySqlDatabaseConnectionImpl.class);
 
     @Override
     public Connection getConnection() {
@@ -94,11 +97,12 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
     }
 
     private void connectToDatabase() {
+        LOGGER.info("try connect to database");
         try {
             Class.forName(driverDatabase);
             this.connection = DriverManager.getConnection(connectionUrl, userName, password);
         } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(String.valueOf(e));
             throw new DaoException("Wrong connection to database");
         }
     }

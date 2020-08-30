@@ -7,6 +7,8 @@ import com.senla.carservice.enumaration.Status;
 import com.senla.carservice.exception.BusinessException;
 import com.senla.carservice.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,12 +29,14 @@ public class OrderServiceImpl implements OrderService {
     private boolean isBlockDeleteOrder;
     @Dependency
     private DatabaseConnection databaseConnection;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     public OrderServiceImpl() {
     }
 
     @Override
     public List<Order> getOrders() {
+        LOGGER.debug("Method getOrders");
         List<Order> orders = orderDao.getAllRecords(databaseConnection);
         if (orders.isEmpty()) {
             throw new BusinessException("There are no orders");
@@ -42,6 +46,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void addOrder(String automaker, String model, String registrationNumber) {
+        LOGGER.debug("Method addOrder");
+        LOGGER.debug("Parameter automaker: {}", automaker);
+        LOGGER.debug("Parameter model: {}", model);
+        LOGGER.debug("Parameter registrationNumber: {}", registrationNumber);
         try {
             databaseConnection.disableAutoCommit();
             checkMasters();
@@ -49,6 +57,7 @@ public class OrderServiceImpl implements OrderService {
             orderDao.createRecord(new Order(automaker, model, registrationNumber), databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
+            LOGGER.error(e.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction add order");
         } finally {
@@ -58,6 +67,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
+        LOGGER.debug("Method addOrderDeadlines");
+        LOGGER.debug("Parameter executionStartTime: {}", executionStartTime);
+        LOGGER.debug("Parameter leadTime: {}", leadTime);
         try {
             databaseConnection.disableAutoCommit();
             DateUtil.checkDateTime(executionStartTime, leadTime, false);
@@ -67,8 +79,10 @@ public class OrderServiceImpl implements OrderService {
             }
             String stringExecutionStartTime = DateUtil.getStringFromDate(executionStartTime, true);
             String stringLeadTime = DateUtil.getStringFromDate(leadTime, true);
-            int numberFreeMasters = masterDao.getNumberMasters(databaseConnection) - orderDao.getNumberBusyMasters(stringExecutionStartTime, stringLeadTime, databaseConnection);
-            int numberFreePlace = placeDao.getNumberPlace(databaseConnection) - orderDao.getNumberBusyPlaces(stringExecutionStartTime, stringLeadTime, databaseConnection);
+            int numberFreeMasters = masterDao.getNumberMasters(databaseConnection) - orderDao
+                .getNumberBusyMasters(stringExecutionStartTime, stringLeadTime, databaseConnection);
+            int numberFreePlace = placeDao.getNumberPlaces(databaseConnection) - orderDao
+                .getNumberBusyPlaces(stringExecutionStartTime, stringLeadTime, databaseConnection);
             if (numberFreeMasters == 0) {
                 throw new BusinessException("The number of masters is zero");
             }
@@ -80,6 +94,7 @@ public class OrderServiceImpl implements OrderService {
             orderDao.updateRecord(currentOrder, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
+            LOGGER.error(e.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction add dead line to order");
         } finally {
@@ -89,6 +104,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void addOrderMasters(int index) {
+        LOGGER.debug("Method addOrderMasters");
+        LOGGER.debug("Parameter index: {}", index);
         try {
             databaseConnection.disableAutoCommit();
             Order currentOrder = orderDao.getLastOrder(databaseConnection);
@@ -96,7 +113,7 @@ public class OrderServiceImpl implements OrderService {
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
             }
-            if (master.getDelete()){
+            if (master.getDelete()) {
                 throw new BusinessException("Master has been deleted");
             }
             for (Master orderMaster : currentOrder.getMasters()) {
@@ -107,6 +124,7 @@ public class OrderServiceImpl implements OrderService {
             orderDao.addRecordToTableManyToMany(currentOrder, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
+            LOGGER.error(e.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction add masters to order");
         } finally {
@@ -116,6 +134,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void addOrderPlace(Place place) {
+        LOGGER.debug("Method addOrderPlace");
+        LOGGER.debug("Parameter place: {}", place);
         try {
             databaseConnection.disableAutoCommit();
             Order currentOrder = orderDao.getLastOrder(databaseConnection);
@@ -126,6 +146,7 @@ public class OrderServiceImpl implements OrderService {
             orderDao.updateRecord(currentOrder, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
+            LOGGER.error(e.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction add place to order");
         } finally {
@@ -135,6 +156,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void addOrderPrice(BigDecimal price) {
+        LOGGER.debug("Method addOrderPrice");
+        LOGGER.debug("Parameter price: {}", price);
         try {
             databaseConnection.disableAutoCommit();
             Order currentOrder = orderDao.getLastOrder(databaseConnection);
@@ -145,6 +168,7 @@ public class OrderServiceImpl implements OrderService {
             orderDao.updateRecord(currentOrder, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
+            LOGGER.error(e.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction add price to order");
         } finally {
@@ -154,6 +178,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void completeOrder(Order order) {
+        LOGGER.debug("Method completeOrder");
+        LOGGER.debug("Parameter order: {}", order);
         try {
             databaseConnection.disableAutoCommit();
             checkStatusOrder(order);
@@ -163,6 +189,7 @@ public class OrderServiceImpl implements OrderService {
             orderDao.updateRecord(order, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
+            LOGGER.error(e.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction transfer order to execution status");
         } finally {
@@ -172,6 +199,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void cancelOrder(Order order) {
+        LOGGER.debug("Method cancelOrder");
+        LOGGER.debug("Parameter order: {}", order);
         try {
             databaseConnection.disableAutoCommit();
             checkStatusOrder(order);
@@ -183,6 +212,7 @@ public class OrderServiceImpl implements OrderService {
             placeDao.updateRecord(place, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
+            LOGGER.error(e.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction cancel order");
         } finally {
@@ -192,6 +222,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void closeOrder(Order order) {
+        LOGGER.debug("Method closeOrder");
+        LOGGER.debug("Parameter order: {}", order);
         try {
             databaseConnection.disableAutoCommit();
             checkStatusOrder(order);
@@ -203,6 +235,7 @@ public class OrderServiceImpl implements OrderService {
             placeDao.updateRecord(place, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
+            LOGGER.error(e.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction close order");
         } finally {
@@ -212,6 +245,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(Order order) {
+        LOGGER.debug("Method deleteOrder");
+        LOGGER.debug("Parameter order: {}", order);
         if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
@@ -220,6 +255,7 @@ public class OrderServiceImpl implements OrderService {
             orderDao.deleteRecord(order, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
+            LOGGER.error(e.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction get masters");
         } finally {
@@ -229,6 +265,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
+        LOGGER.debug("Method shiftLeadTime");
+        LOGGER.debug("Parameter order: {}", order.toString());
+        LOGGER.debug("Parameter executionStartTime: {}", executionStartTime);
+        LOGGER.debug("Parameter leadTime: {}", leadTime);
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
@@ -241,6 +281,7 @@ public class OrderServiceImpl implements OrderService {
             orderDao.updateRecord(order, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
+            LOGGER.error(e.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction shift lead time");
         } finally {
@@ -250,18 +291,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getSortOrders(SortParameter sortParameter) {
+        LOGGER.debug("Method getSortOrders");
+        LOGGER.debug("Parameter sortParameter: {}", sortParameter);
         List<Order> orders = new ArrayList<>();
-        if (sortParameter.equals(SortParameter.SORT_BY_FILING_DATE)){
+        if (sortParameter.equals(SortParameter.SORT_BY_FILING_DATE)) {
             orders = orderDao.getOrdersSortByFilingDate(databaseConnection);
-        } else if (sortParameter.equals(SortParameter.SORT_BY_EXECUTION_DATE)){
+        } else if (sortParameter.equals(SortParameter.SORT_BY_EXECUTION_DATE)) {
             orders = orderDao.getOrdersSortByExecutionDate(databaseConnection);
-        } else if (sortParameter.equals(SortParameter.BY_PLANNED_START_DATE)){
+        } else if (sortParameter.equals(SortParameter.BY_PLANNED_START_DATE)) {
             orders = orderDao.getOrdersSortByPlannedStartDate(databaseConnection);
-        } else if (sortParameter.equals(SortParameter.SORT_BY_PRICE)){
+        } else if (sortParameter.equals(SortParameter.SORT_BY_PRICE)) {
             orders = orderDao.getOrdersSortByPrice(databaseConnection);
-        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE)){
+        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE)) {
             orders = orderDao.getExecuteOrderSortByFilingDate(databaseConnection);
-        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE)){
+        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE)) {
             orders = orderDao.getExecuteOrderSortExecutionDate(databaseConnection);
         }
         if (orders.isEmpty()) {
@@ -272,28 +315,41 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter) {
+        LOGGER.debug("Method getSortOrdersByPeriod");
+        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
+        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.debug("Parameter sortParameter: {}", sortParameter);
         List<Order> orders = new ArrayList<>();
         DateUtil.checkDateTime(startPeriodDate, endPeriodDate, true);
         String stringStartPeriodDate = DateUtil.getStringFromDate(startPeriodDate, true);
         String stringEndPeriodDate = DateUtil.getStringFromDate(endPeriodDate, true);
-        if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE)){
-            orders = orderDao.getCompletedOrdersSortByFilingDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
-        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE)){
-            orders = orderDao.getCompletedOrdersSortByExecutionDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
-        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE)){
-            orders = orderDao.getCompletedOrdersSortByPrice(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE)){
-            orders = orderDao.getCanceledOrdersSortByFilingDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE)){
-            orders = orderDao.getCanceledOrdersSortByExecutionDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_PRICE)){
-            orders = orderDao.getCanceledOrdersSortByPrice(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE)){
-            orders = orderDao.getDeletedOrdersSortByFilingDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE)){
-            orders = orderDao.getDeletedOrdersSortByExecutionDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)){
-            orders = orderDao.getDeletedOrdersSortByPrice(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
+        if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE)) {
+            orders = orderDao
+                .getCompletedOrdersSortByFilingDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
+        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+            orders = orderDao
+                .getCompletedOrdersSortByExecutionDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
+        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE)) {
+            orders =
+                orderDao.getCompletedOrdersSortByPrice(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
+        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE)) {
+            orders = orderDao
+                .getCanceledOrdersSortByFilingDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
+        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+            orders = orderDao
+                .getCanceledOrdersSortByExecutionDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
+        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_PRICE)) {
+            orders =
+                orderDao.getCanceledOrdersSortByPrice(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
+        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE)) {
+            orders = orderDao
+                .getDeletedOrdersSortByFilingDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
+        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+            orders = orderDao
+                .getDeletedOrdersSortByExecutionDate(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
+        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)) {
+            orders =
+                orderDao.getDeletedOrdersSortByPrice(stringStartPeriodDate, stringEndPeriodDate, databaseConnection);
         }
         if (orders.isEmpty()) {
             throw new BusinessException("There are no orders");
@@ -303,6 +359,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getMasterOrders(Master master) {
+        LOGGER.debug("Method getMasterOrders");
+        LOGGER.debug("Parameter master: {}", master.toString());
         List<Order> orders = orderDao.getMasterOrders(master, databaseConnection);
         if (orders.isEmpty()) {
             throw new BusinessException("Master doesn't have any orders");
@@ -312,6 +370,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Master> getOrderMasters(Order order) {
+        LOGGER.debug("Method getOrderMasters");
+        LOGGER.debug("Parameter order: {}", order);
         List<Master> masters = order.getMasters();
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters in order");
@@ -319,19 +379,40 @@ public class OrderServiceImpl implements OrderService {
         return masters;
     }
 
+    @Override
+    public int getNumberOrders() {
+        LOGGER.debug("Method getNumberOrders");
+        return orderDao.getNumberOrders(databaseConnection);
+    }
+
+    @Override
+    public Order getOrderById(Long index) {
+        LOGGER.debug("Method getOrderById");
+        LOGGER.debug("Parameter index: {}", index);
+        Order order = orderDao.getOrderById(index, databaseConnection);
+        if (order == null) {
+            throw new BusinessException("There are no such order");
+        }
+        return order;
+    }
+
     private void checkMasters() {
+        LOGGER.debug("Method checkMasters");
         if (masterDao.getAllRecords(databaseConnection).isEmpty()) {
             throw new BusinessException("There are no masters");
         }
     }
 
     private void checkPlaces() {
+        LOGGER.debug("Method checkPlaces");
         if (masterDao.getAllRecords(databaseConnection).isEmpty()) {
             throw new BusinessException("There are no places");
         }
     }
 
     private void checkStatusOrder(Order order) {
+        LOGGER.debug("Method checkStatusOrder");
+        LOGGER.debug("Parameter order: {}", order.toString());
         if (order.isDeleteStatus()) {
             throw new BusinessException("The order has been deleted");
         }
@@ -347,6 +428,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void checkStatusOrderShiftTime(Order order) {
+        LOGGER.debug("Method checkStatusOrderShiftTime");
+        LOGGER.debug("Parameter order: {}", order.toString());
         if (order.isDeleteStatus()) {
             throw new BusinessException("The order has been deleted");
         }

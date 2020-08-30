@@ -1,5 +1,8 @@
 package com.senla.carservice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -29,8 +32,11 @@ public class StringOrder {
     private static final int LENGTH_SPACE_NINTH_COLUMN = 12;
     private static final int LENGTH_SPACE_TENTH_COLUMN = 7;
     private static final int INDEX_ADDITION = 1;
+    private static final Logger LOGGER = LoggerFactory.getLogger(StringOrder.class);
 
     public static String getStringFromOrder(List<Order> orders) {
+        LOGGER.debug("Method getStringFromOrder");
+        LOGGER.debug("Parameter orders: {}", orders);
         String line = START_OF_LINE_DELIMITER + String.join(SYMBOL_FOR_JOIN_METHOD, Collections.nCopies(LINE_LENGTH, LINE_SEPARATOR)) +
                       END_OF_LINE;
         StringBuilder stringBuilder = new StringBuilder(line);

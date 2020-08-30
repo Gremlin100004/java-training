@@ -1,8 +1,6 @@
 package com.senla.carservice;
 
 import com.senla.carservice.connection.DatabaseConnection;
-import com.senla.carservice.Master;
-import com.senla.carservice.Order;
 
 import java.util.List;
 
@@ -56,4 +54,8 @@ public interface OrderDao extends GenericDao<Order> {
                                             DatabaseConnection databaseConnection);
 
     List<Order> getMasterOrders(Master master, DatabaseConnection databaseConnection);
+
+    int getNumberOrders(DatabaseConnection databaseConnection);
+
+    Order getOrderById(Long index, DatabaseConnection databaseConnection);
 }
