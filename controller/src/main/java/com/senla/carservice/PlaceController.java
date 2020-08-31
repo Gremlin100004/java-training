@@ -12,6 +12,7 @@ import java.util.Date;
 
 @Singleton
 public class PlaceController {
+
     @Dependency
     private PlaceService placeService;
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaceController.class);
@@ -49,8 +50,9 @@ public class PlaceController {
             if (placeService.getNumberPlace() < index || index < 0) {
                 return "There are no such place";
             } else {
-                placeService.deletePlace(placeService.getPlaceByIndex((long) index));
-                return " -delete place in service number \"" + placeService.getPlaceByIndex((long) index).getNumber() + "\"";
+                Place deletedPlace = placeService.getPlaces().get(index);
+                placeService.deletePlace(deletedPlace);
+                return " -delete place in service number \"" + deletedPlace.getNumber() + "\"";
             }
         } catch (BusinessException | DaoException e) {
             LOGGER.warn(e.getMessage());

@@ -1,6 +1,7 @@
 package com.senla.carservice.menu;
 
 public enum MenuTittle {
+
     CAR_SERVICE_MENU("Car Service Menu"),
     MASTERS("Masters"),
     ORDERS("Orders"),

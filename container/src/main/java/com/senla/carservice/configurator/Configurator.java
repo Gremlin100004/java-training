@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Configurator {
+
     private final PackageScanner packageScanner;
     private final Map<String, Class<?>> prototypeClasses = new HashMap<>();
     private final Map<String, Class<?>> singletonClasses = new HashMap<>();

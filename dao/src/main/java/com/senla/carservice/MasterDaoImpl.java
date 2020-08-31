@@ -13,6 +13,7 @@ import java.util.List;
 
 @Singleton
 public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
+
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO masters VALUES (NULL, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE masters SET name=?, number_orders=?, is_deleted=? WHERE id=?";
     private static final String SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST = "INSERT INTO masters(id, name, number_orders, " +

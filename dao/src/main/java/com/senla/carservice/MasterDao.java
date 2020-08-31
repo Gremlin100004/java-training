@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface MasterDao extends GenericDao<Master> {
+
     List<Master> getFreeMasters(Date date, DatabaseConnection databaseConnection);
 
     List<Master> getMasterSortByAlphabet(DatabaseConnection databaseConnection);

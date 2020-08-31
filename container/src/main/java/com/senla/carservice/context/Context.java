@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Context {
+
     private final Map<String, Object> singletons = new HashMap<>();
     private final List<AnnotationHandler> annotationHandlers = new ArrayList<>();
     private final Configurator configurator;
@@ -66,7 +67,7 @@ public class Context {
         LOGGER.debug("Method setSingleton");
         LOGGER.debug("Parameter singleton: {}", singleton);
         for (Map.Entry<String, Class<?>> singletonEntry : configurator.getSingletonClasses().entrySet()) {
-            if (singletonEntry.getValue().equals(singleton.getClass())){
+            if (singletonEntry.getValue().equals(singleton.getClass())) {
                 singletons.put(singletonEntry.getKey(), singleton);
                 break;
             }

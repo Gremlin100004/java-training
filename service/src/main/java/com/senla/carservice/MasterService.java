@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface MasterService {
+
     List<Master> getMasters();
 
     void addMaster(String name);
@@ -19,6 +20,4 @@ public interface MasterService {
     List<Master> getMasterByBusy();
 
     int getNumberMasters();
-
-    Master getMasterByIndex(Long index);
 }

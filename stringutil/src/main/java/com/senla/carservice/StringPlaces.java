@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class StringPlaces {
+
     private static final int LINE_LENGTH = 24;
     private static final String SYMBOL_FOR_JOIN_METHOD = "";
     private static final String START_OF_LINE_DELIMITER = " ";

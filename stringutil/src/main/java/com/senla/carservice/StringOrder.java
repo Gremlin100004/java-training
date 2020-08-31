@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class StringOrder {
+
     private static final int LINE_LENGTH = 167;
     private static final String SYMBOL_FOR_JOIN_METHOD = "";
     private static final String START_OF_LINE_DELIMITER = " ";

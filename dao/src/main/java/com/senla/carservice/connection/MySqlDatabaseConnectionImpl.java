@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 @Singleton
 public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
+
     @ConfigProperty(configName = "db.properties")
     private String userName;
     @ConfigProperty(configName = "db.properties")
@@ -29,7 +30,7 @@ public class MySqlDatabaseConnectionImpl implements DatabaseConnection {
             connectToDatabase();
         }
         try {
-            if (connection.isClosed()){
+            if (connection.isClosed()) {
                 connectToDatabase();
             }
         } catch (SQLException e) {

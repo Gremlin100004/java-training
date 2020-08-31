@@ -13,6 +13,7 @@ import java.util.List;
 
 @Singleton
 public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
+
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO places VALUES (NULL, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE places SET number=?, is_busy=?, is_deleted=? " +
         "WHERE id=?";

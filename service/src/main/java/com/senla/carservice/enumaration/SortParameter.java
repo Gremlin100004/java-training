@@ -1,6 +1,7 @@
 package com.senla.carservice.enumaration;
 
 public enum SortParameter {
+
     SORT_BY_FILING_DATE,
     SORT_BY_EXECUTION_DATE,
     BY_PLANNED_START_DATE,

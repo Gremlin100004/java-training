@@ -1,6 +1,7 @@
 package com.senla.carservice.enumeration;
 
 public enum PropertyKey {
+
     PACKAGE_PROJECT("carservice.source.package"),
     PROPERTY_FILE_NAME("application.properties");
 

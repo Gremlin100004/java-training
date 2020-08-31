@@ -3,7 +3,7 @@ package com.senla.carservice.util;
 import java.math.BigDecimal;
 import java.util.Scanner;
 
-public class ScannerUtil {
+public final class ScannerUtil {
 
     private ScannerUtil() {
     }
@@ -17,10 +17,9 @@ public class ScannerUtil {
             textUser = scanner.nextLine();
             if (!Checker.isSymbolsString(textUser) && !isNumber) {
                 isText = true;
-            } else if (!Checker.isSymbolsStringNumber(textUser) && isNumber){
+            } else if (!Checker.isSymbolsStringNumber(textUser) && isNumber) {
                 isText = true;
-            }
-            else {
+            } else {
                 Printer.printInfo("You enter wrong value!!!");
             }
         }

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class CsvOrder {
+
     @ConfigProperty(configName = "csv.properties")
     private String orderPath;
     @ConfigProperty(configName = "csv.properties")

@@ -1,6 +1,6 @@
 package com.senla.carservice.util;
 
-public class Printer {
+public final class Printer {
 
     private Printer() {
     }

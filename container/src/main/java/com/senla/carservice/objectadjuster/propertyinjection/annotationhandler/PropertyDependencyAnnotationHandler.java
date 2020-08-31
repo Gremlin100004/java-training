@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 
 public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
+
     private static final String CLASS_NAME_SEPARATOR = ".";
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyDependencyAnnotationHandler.class);
 

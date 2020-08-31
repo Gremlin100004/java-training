@@ -13,6 +13,7 @@ import java.util.List;
 
 @Singleton
 public class PlaceServiceImpl implements PlaceService {
+
     @Dependency
     private PlaceDao placeDao;
     @ConfigProperty
@@ -45,7 +46,7 @@ public class PlaceServiceImpl implements PlaceService {
         }
         try {
             databaseConnection.disableAutoCommit();
-            placeDao.createRecord(new Place(number),databaseConnection);
+            placeDao.createRecord(new Place(number), databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {
             LOGGER.error(e.getMessage());
@@ -101,16 +102,5 @@ public class PlaceServiceImpl implements PlaceService {
     public int getNumberPlace() {
         LOGGER.debug("Method getNumberMasters");
         return placeDao.getNumberPlaces(databaseConnection);
-    }
-
-    @Override
-    public Place getPlaceByIndex(Long index) {
-        LOGGER.debug("Method getMasterByIndex");
-        LOGGER.debug("Parameter index: {}", index);
-        Place place = placeDao.getPlaceById(index, databaseConnection);
-        if (place == null) {
-            throw new BusinessException("There are no such place");
-        }
-        return place;
     }
 }

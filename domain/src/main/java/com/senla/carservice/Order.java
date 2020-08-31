@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Order extends AEntity {
+
     private Date creationTime;
     private Date executionStartTime;
     private Date leadTime;

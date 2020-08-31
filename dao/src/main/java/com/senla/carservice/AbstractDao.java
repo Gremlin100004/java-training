@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public abstract class AbstractDao<T> implements GenericDao<T> {
+
+
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     public AbstractDao() {

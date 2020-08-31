@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 
 public class DependencyInjectionAnnotationHandler implements AnnotationHandler {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DependencyInjectionAnnotationHandler.class);
 
     public DependencyInjectionAnnotationHandler() {

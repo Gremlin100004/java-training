@@ -1,6 +1,7 @@
 package com.senla.carservice.objectadjuster.propertyinjection.enumeration;
 
 public enum TypeField {
+
     SHORT(Short.class),
     LONG(Long.class),
     STRING(String.class),

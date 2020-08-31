@@ -12,6 +12,7 @@ import java.util.List;
 
 @Singleton
 public class CarOfficeServiceImpl implements CarOfficeService {
+
     @Dependency
     private MasterDao masterDao;
     @Dependency
@@ -72,7 +73,6 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         } finally {
             databaseConnection.enableAutoCommit();
         }
-
     }
 
     @Override

@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class CsvPlace {
+
     @ConfigProperty(configName = "csv.properties")
     private String placePath;
     @ConfigProperty(configName = "csv.properties")

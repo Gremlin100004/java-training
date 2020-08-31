@@ -7,6 +7,7 @@ import java.util.List;
 
 @Singleton
 public class Navigator {
+
     private Menu currentMenu;
     private static final int INDEX_OFFSET = 1;
 

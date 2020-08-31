@@ -14,6 +14,7 @@ import java.util.Date;
 
 @Singleton
 public class OrderController {
+
     @Dependency
     private OrderService orderService;
     @Dependency
@@ -79,7 +80,7 @@ public class OrderController {
             if (placeService.getNumberFreePlaceByDate(executeDate) < index || index < 0) {
                 return "There is no such place!";
             } else {
-                orderService.addOrderPlace(placeService.getPlaceByIndex((long) index));
+                orderService.addOrderPlace(placeService.getPlaces().get(index));
                 return "place add to order successfully";
             }
         } catch (BusinessException | DaoException | DateException e) {
@@ -117,7 +118,7 @@ public class OrderController {
             if (orderService.getNumberOrders() < index || index < 0) {
                 return "There are no such order";
             } else {
-                orderService.completeOrder(orderService.getOrderById((long) index));
+                orderService.completeOrder(orderService.getOrders().get(index));
             }
             return " - the order has been transferred to execution status";
         } catch (BusinessException | DaoException e) {
@@ -133,7 +134,7 @@ public class OrderController {
             if (orderService.getNumberOrders() < index || index < 0) {
                 return "There are no such order";
             } else {
-                orderService.closeOrder(orderService.getOrderById((long) index));
+                orderService.closeOrder(orderService.getOrders().get(index));
                 return " -the order has been completed.";
             }
         } catch (BusinessException | DaoException e) {
@@ -149,7 +150,7 @@ public class OrderController {
             if (orderService.getNumberOrders() < index || index < 0) {
                 return "There are no such order";
             } else {
-                orderService.cancelOrder(orderService.getOrderById((long) index));
+                orderService.cancelOrder(orderService.getOrders().get(index));
             }
             return " -the order has been canceled.";
         } catch (BusinessException | DaoException e) {
@@ -165,7 +166,7 @@ public class OrderController {
             if (orderService.getNumberOrders() < index || index < 0) {
                 return "There are no such order";
             } else {
-                orderService.deleteOrder(orderService.getOrderById((long) index));
+                orderService.deleteOrder(orderService.getOrders().get(index));
                 return " -the order has been deleted.";
             }
         } catch (BusinessException | DaoException e) {
@@ -185,7 +186,7 @@ public class OrderController {
             if (orderService.getNumberOrders() < index || index < 0) {
                 return "There are no such order";
             } else {
-                orderService.shiftLeadTime(orderService.getOrderById((long) index), executionStartTime, leadTime);
+                orderService.shiftLeadTime(orderService.getOrders().get(index), executionStartTime, leadTime);
                 return " -the order lead time has been changed.";
             }
         } catch (BusinessException | DaoException | DateException e) {
@@ -399,7 +400,7 @@ public class OrderController {
                 return "There are no such master";
             } else {
                 return StringOrder
-                    .getStringFromOrder(orderService.getMasterOrders(masterService.getMasterByIndex((long) index)));
+                    .getStringFromOrder(orderService.getMasterOrders(masterService.getMasters().get(index)));
             }
         } catch (BusinessException | DaoException e) {
             LOGGER.warn(e.getMessage());
@@ -415,7 +416,7 @@ public class OrderController {
                 return "There are no such order";
             } else {
                 return StringMaster
-                    .getStringFromMasters(orderService.getOrderMasters(orderService.getOrderById((long) index)));
+                    .getStringFromMasters(orderService.getOrderMasters(orderService.getOrders().get(index)));
             }
         } catch (BusinessException | DaoException e) {
             LOGGER.warn(e.getMessage());

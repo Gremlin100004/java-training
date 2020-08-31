@@ -1,6 +1,7 @@
 package com.senla.carservice.menu;
 
-public class MenuItem {
+public final class MenuItem {
+
     private final String title;
     private final Action action;
     private final Menu nextMenu;

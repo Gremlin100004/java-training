@@ -6,6 +6,7 @@ import com.senla.carservice.util.ScannerUtil;
 
 @Singleton
 public class MenuController {
+
     @Dependency
     private Navigator navigator;
     @Dependency

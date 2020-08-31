@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Menu {
+
     private String name;
     private List<MenuItem> menuItems = new ArrayList<>();
     private static final String EXIT_MENU = "0. Exit program\n---------------";

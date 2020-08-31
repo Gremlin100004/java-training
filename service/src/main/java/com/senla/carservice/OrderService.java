@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface OrderService {
+
     List<Order> getOrders();
 
     void addOrder(String automaker, String model, String registrationNumber);
@@ -38,6 +39,4 @@ public interface OrderService {
     List<Master> getOrderMasters(Order order);
 
     int getNumberOrders();
-
-    Order getOrderById(Long index);
 }

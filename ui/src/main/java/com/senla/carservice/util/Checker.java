@@ -2,7 +2,7 @@ package com.senla.carservice.util;
 
 import java.util.regex.Pattern;
 
-public class Checker {
+public final class Checker {
 
     private Checker() {
     }

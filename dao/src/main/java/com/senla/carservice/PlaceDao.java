@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface PlaceDao extends GenericDao <Place> {
+
     List<Place> getFreePlaces(Date startDayDate, DatabaseConnection databaseConnection);
 
     int getNumberPlaces(DatabaseConnection databaseConnection);

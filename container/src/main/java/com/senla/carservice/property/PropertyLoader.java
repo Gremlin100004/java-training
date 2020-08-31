@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class PropertyLoader {
+public final class PropertyLoader {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyLoader.class);
 
     private PropertyLoader() {

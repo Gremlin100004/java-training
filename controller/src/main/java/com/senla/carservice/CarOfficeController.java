@@ -12,6 +12,7 @@ import java.util.Date;
 
 @Singleton
 public class CarOfficeController {
+
     @Dependency
     private CarOfficeService carOfficeService;
     @Dependency

@@ -3,6 +3,7 @@ package com.senla.carservice;
 import java.util.Objects;
 
 public abstract class AEntity {
+
     private Long id;
 
     public AEntity() {

@@ -1,6 +1,7 @@
 package com.senla.carservice;
 
 public class Master extends AEntity {
+
     private String name;
     private Boolean deleteStatus;
     private Integer numberOrders;
@@ -9,6 +10,7 @@ public class Master extends AEntity {
     }
 
     public Master(String name) {
+
         this.name = name;
         deleteStatus = false;
         numberOrders = 0;

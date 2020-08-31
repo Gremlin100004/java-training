@@ -1,6 +1,7 @@
 package com.senla.carservice;
 
 public class Place extends AEntity {
+
     private Integer number;
     private Boolean busyStatus;
     private Boolean deleteStatus;

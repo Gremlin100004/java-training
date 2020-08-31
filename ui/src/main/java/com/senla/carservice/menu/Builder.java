@@ -15,6 +15,7 @@ import java.util.List;
 
 @Singleton
 public class Builder {
+
     private Menu rootMenu;
     @Dependency
     private CarOfficeController carOfficeController;
@@ -472,8 +473,8 @@ public class Builder {
             }
             String automaker = ScannerUtil.getStringUser("Enter the automaker of car", false);
             String model = ScannerUtil.getStringUser("Enter the model of car", false);
-            String registrationNumber = ScannerUtil.getStringUser
-                ("Enter the registration number of car, example: 1111 AB-7", true);
+            String registrationNumber = ScannerUtil.getStringUser(
+                    "Enter the registration number of car, example: 1111 AB-7", true);
             message = orderController.addOrder(automaker, model, registrationNumber);
             Printer.printInfo(message);
         }
@@ -517,7 +518,7 @@ public class Builder {
         }
     }
 
-    private List<Integer> addMasters(int quit, int number_masters) {
+    private List<Integer> addMasters(int quit, int numberMasters) {
         String message = "";
         int index = MAX_INDEX;
         boolean userAnswer = false;
@@ -528,8 +529,8 @@ public class Builder {
             }
             message = orderController.addOrderMasters(index - INDEX_OFFSET);
             Printer.printInfo(message);
-            if (message.equals("masters add successfully")){
-                number_masters++;
+            if (message.equals("masters add successfully")) {
+                numberMasters++;
                 userAnswer = ScannerUtil.isAnotherMaster();
             }
 
@@ -538,7 +539,7 @@ public class Builder {
                 break;
             }
         }
-        return new ArrayList<>(Arrays.asList(quit, index, number_masters));
+        return new ArrayList<>(Arrays.asList(quit, index, numberMasters));
     }
 
     private void addPlaceOrder(String executionStartTime) {
@@ -561,7 +562,7 @@ public class Builder {
 
     private boolean isCheckMaster(boolean isPrint) {
         String message = masterController.getMasters();
-        if (isPrint){
+        if (isPrint) {
             Printer.printInfo(message);
         }
         return message.equals("There are no masters");
@@ -569,7 +570,7 @@ public class Builder {
 
     private boolean isCheckPlace(boolean isPrint) {
         String message = placeController.getArrayPlace();
-        if (isPrint){
+        if (isPrint) {
             Printer.printInfo(message);
         }
         return message.equals("There are no places");

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Container {
+
     private static Context context;
     private static final Logger LOGGER = LoggerFactory.getLogger(Container.class);
 
@@ -16,7 +17,7 @@ public class Container {
         LOGGER.debug("initialize class Container");
         String projectPackage = PropertyLoader
             .getPropertyValue(PropertyKey.PROPERTY_FILE_NAME.getValue(), PropertyKey.PACKAGE_PROJECT.getValue());
-        if (projectPackage == null){
+        if (projectPackage == null) {
             LOGGER.error("Wrong value package name");
             throw new InitializationException("Wrong value package name");
         }

@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PackageScanner {
+
     private final String packageProject;
     private static final char REPLACEMENT_CHARACTER = '.';
     private static final char CHARACTER_TO_INSERT = '/';

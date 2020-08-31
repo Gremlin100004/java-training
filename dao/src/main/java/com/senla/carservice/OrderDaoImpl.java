@@ -13,6 +13,7 @@ import java.util.List;
 
 @Singleton
 public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
+
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO orders VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS = "INSERT INTO orders_masters VALUES (?, ?)";
     private static final String SQL_NULL_DATE = "1111-01-01 00:00";
@@ -116,7 +117,7 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     public Order getLastOrder(DatabaseConnection databaseConnection) {
         LOGGER.debug("Method getLastOrder");
         LOGGER.debug("Parameter propertyFileName: {}", databaseConnection.toString());
-        List<Order> orders = getOrdersFromDatabase("" , "", databaseConnection);
+        List<Order> orders = getOrdersFromDatabase("", "", databaseConnection);
         return orders.get(0);
     }
 
@@ -148,7 +149,7 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(
             SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS)) {
             statement.setLong(1, order.getId());
-            for (Master master: order.getMasters()){
+            for (Master master: order.getMasters()) {
                 statement.setLong(2, master.getId());
                 statement.execute();
             }
@@ -370,12 +371,12 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
             List<Order> orders = new ArrayList<>();
             while (resultSet.next()) {
                 Long order_id = resultSet.getLong("orders_order_id");
-                if (order_id == 0){
+                if (order_id == 0) {
                     continue;
                 }
                 Order order;
                 boolean isNewOrder = false;
-                if (orders.isEmpty() || !order_id.equals(orders.get(orders.size() - 1).getId())){
+                if (orders.isEmpty() || !order_id.equals(orders.get(orders.size() - 1).getId())) {
                     order = getOrderFromResultSet(resultSet);
                     order.setId(order_id);
                     isNewOrder = true;
@@ -383,7 +384,7 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
                     order = orders.get(orders.size() - 1);
                 }
                 order.getMasters().add(getMasterFromResultSet(resultSet));
-                if (isNewOrder){
+                if (isNewOrder) {
                     orders.add(order);
                 }
             }

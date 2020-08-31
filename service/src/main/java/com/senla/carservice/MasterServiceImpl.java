@@ -12,6 +12,7 @@ import java.util.List;
 
 @Singleton
 public class MasterServiceImpl implements MasterService {
+
     @Dependency
     private MasterDao masterDao;
     @Dependency
@@ -107,16 +108,5 @@ public class MasterServiceImpl implements MasterService {
     public int getNumberMasters() {
         LOGGER.debug("Method getNumberMasters");
         return masterDao.getNumberMasters(databaseConnection);
-    }
-
-    @Override
-    public Master getMasterByIndex(Long index) {
-        LOGGER.debug("Method getMasterByIndex");
-        LOGGER.debug("Parameter index: {}", index);
-        Master master = masterDao.getMasterById(index, databaseConnection);
-        if (master == null) {
-            throw new BusinessException("There are no such master");
-        }
-        return master;
     }
 }

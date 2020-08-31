@@ -5,7 +5,8 @@ import com.senla.carservice.exception.CsvException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ParameterUtil {
+public final class ParameterUtil {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ParameterUtil.class);
 
     private ParameterUtil() {

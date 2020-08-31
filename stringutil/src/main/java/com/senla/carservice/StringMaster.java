@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class StringMaster {
+
     private static final int LINE_LENGTH = 44;
     private static final String SYMBOL_FOR_JOIN_METHOD = "";
     private static final String LINE_SEPARATOR = "-";
@@ -59,6 +60,5 @@ public class StringMaster {
             });
         stringBuilder.append(line);
         return stringBuilder.toString();
-
     }
 }

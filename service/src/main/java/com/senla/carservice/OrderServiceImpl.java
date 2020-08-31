@@ -17,6 +17,7 @@ import java.util.List;
 
 @Singleton
 public class OrderServiceImpl implements OrderService {
+
     @Dependency
     private OrderDao orderDao;
     @Dependency
@@ -383,17 +384,6 @@ public class OrderServiceImpl implements OrderService {
     public int getNumberOrders() {
         LOGGER.debug("Method getNumberOrders");
         return orderDao.getNumberOrders(databaseConnection);
-    }
-
-    @Override
-    public Order getOrderById(Long index) {
-        LOGGER.debug("Method getOrderById");
-        LOGGER.debug("Parameter index: {}", index);
-        Order order = orderDao.getOrderById(index, databaseConnection);
-        if (order == null) {
-            throw new BusinessException("There are no such order");
-        }
-        return order;
     }
 
     private void checkMasters() {

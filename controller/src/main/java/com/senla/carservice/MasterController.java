@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 @Singleton
 public class MasterController {
+
     @Dependency
     private MasterService masterService;
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterController.class);
@@ -47,7 +48,7 @@ public class MasterController {
             if (masterService.getNumberMasters() < index || index < 0) {
                 return "There are no such master";
             } else {
-                masterService.deleteMaster(masterService.getMasterByIndex((long) index));
+                masterService.deleteMaster(masterService.getMasters().get(index));
                 return " -master has been deleted successfully!";
             }
         } catch (BusinessException | DaoException e) {
