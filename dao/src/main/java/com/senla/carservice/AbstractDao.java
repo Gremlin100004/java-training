@@ -35,7 +35,7 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
 
     @Override
     public List<T> getAllRecords(DatabaseConnection databaseConnection) {
-        LOGGER.debug("Method createRecord");
+        LOGGER.debug("Method getAllRecords");
         LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
         String request = getReadAllRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
@@ -49,7 +49,7 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
 
     @Override
     public void updateRecord(T object, DatabaseConnection databaseConnection) {
-        LOGGER.debug("Method createRecord");
+        LOGGER.debug("Method updateRecord");
         LOGGER.debug("Parameter object: {}", object.toString());
         LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
         String request = getUpdateRequest();
@@ -64,7 +64,7 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
 
     @Override
     public void updateAllRecords(List<T> objects, DatabaseConnection databaseConnection) {
-        LOGGER.debug("Method createRecord");
+        LOGGER.debug("Method updateAllRecords");
         LOGGER.debug("Parameter objects: {}", objects);
         LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
         for (T object : objects) {
@@ -81,7 +81,7 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
 
     @Override
     public void deleteRecord(T object, DatabaseConnection databaseConnection) {
-        LOGGER.debug("Method createRecord");
+        LOGGER.debug("Method deleteRecord");
         LOGGER.debug("Parameter object: {}", object.toString());
         LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
         String request = getDeleteRequest();

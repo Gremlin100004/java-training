@@ -122,6 +122,7 @@ public class OrderServiceImpl implements OrderService {
                     throw new BusinessException("This master already exists");
                 }
             }
+            currentOrder.getMasters().add(master);
             orderDao.addRecordToTableManyToMany(currentOrder, databaseConnection);
             databaseConnection.commitTransaction();
         } catch (BusinessException e) {

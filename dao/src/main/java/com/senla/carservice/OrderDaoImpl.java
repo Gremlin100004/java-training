@@ -117,7 +117,7 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     public Order getLastOrder(DatabaseConnection databaseConnection) {
         LOGGER.debug("Method getLastOrder");
         LOGGER.debug("Parameter propertyFileName: {}", databaseConnection.toString());
-        List<Order> orders = getOrdersFromDatabase("", "", databaseConnection);
+        List<Order> orders = getOrdersFromDatabase("", CONDITION_SORT_BY_ID, databaseConnection);
         return orders.get(0);
     }
 
@@ -383,7 +383,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
                 } else {
                     order = orders.get(orders.size() - 1);
                 }
-                order.getMasters().add(getMasterFromResultSet(resultSet));
+                Master master = getMasterFromResultSet(resultSet);
+                if (master.getName() != null) {
+                    order.getMasters().add(master);
+                }
                 if (isNewOrder) {
                     orders.add(order);
                 }

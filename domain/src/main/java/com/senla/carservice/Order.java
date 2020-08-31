@@ -121,17 +121,9 @@ public class Order extends AEntity {
 
     @Override
     public String toString() {
-        return "Order{" +
-                "creationTime=" + creationTime +
-                ", executionStartTime=" + executionStartTime +
-                ", leadTime=" + leadTime +
-                ", place=" + place +
-                ", automaker='" + automaker + '\'' +
-                ", model='" + model + '\'' +
-                ", registrationNumber='" + registrationNumber + '\'' +
-                ", price=" + price +
-                ", status=" + status +
-                ", deleteStatus=" + deleteStatus +
-                '}';
+        return "Order{" + "creationTime=" + creationTime + ", executionStartTime=" + executionStartTime +
+               ", leadTime=" + leadTime + ", place=" + place + ", automaker='" + automaker + '\'' + ", model='" +
+               model + '\'' + ", registrationNumber='" + registrationNumber + '\'' + ", price=" + price + ", status=" +
+               status + ", deleteStatus=" + deleteStatus + ", masters=" + masters + '}';
     }
 }
