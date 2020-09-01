@@ -4,3 +4,4 @@
 *.iws
 *.MF
 out/
+target/

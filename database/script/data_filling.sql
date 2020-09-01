@@ -1,4 +1,7 @@
-USE car_service;
+USE hrinkov_car_service;
+
+ALTER TABLE masters AUTO_INCREMENT = 1;
+
 INSERT INTO masters VALUES
 (NULL, 'Petya', 2, false),
 (NULL, 'Vasya', 2, false),
@@ -23,6 +26,8 @@ INSERT INTO masters VALUES
 (NULL, 'Semen', 1, false),
 (NULL, 'Uriy', 1, false);
 
+ALTER TABLE places AUTO_INCREMENT = 1;
+
 INSERT INTO places VALUES
 (NULL, 1, false, false),
 (NULL, 2, false, false),
@@ -36,6 +41,8 @@ INSERT INTO places VALUES
 (NULL, 10, false, false),
 (NULL, 11, false, false),
 (NULL, 12, false, false);
+
+ALTER TABLE orders AUTO_INCREMENT = 1;
 
 INSERT INTO orders VALUES
 (NULL, NOW(), '2020-09-11 10:00', '2020-09-11 18:00', 'Lexus', 'LS', '1234 AB-7', '360.99', 'WAIT', false, 1),
@@ -58,3 +65,5 @@ INSERT INTO orders_masters VALUES
 (7, 13), (7, 14), (8, 15), (8, 16),
 (9, 17), (9, 18), (10, 19), (10, 20),
 (11, 21), (11, 22), (12, 1), (12, 2);
+
+COMMIT;
