@@ -1,7 +1,7 @@
 package com.senla.carservice;
 
 import com.senla.carservice.connection.DatabaseConnection;
-import com.senla.carservice.exception.DaoException;
+import com.senla.carservice.dao.exception.DaoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,8 +21,8 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
     @Override
     public void createRecord(T object, DatabaseConnection databaseConnection) {
         LOGGER.debug("Method createRecord");
-        LOGGER.debug("Parameter object: {}", object.toString());
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter object: {}", object);
+        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
         String request = getCreateRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             fillStatementCreate(statement, object);
@@ -36,7 +36,7 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
     @Override
     public List<T> getAllRecords(DatabaseConnection databaseConnection) {
         LOGGER.debug("Method getAllRecords");
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
         String request = getReadAllRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             ResultSet resultSet = statement.executeQuery();
@@ -50,8 +50,8 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
     @Override
     public void updateRecord(T object, DatabaseConnection databaseConnection) {
         LOGGER.debug("Method updateRecord");
-        LOGGER.debug("Parameter object: {}", object.toString());
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter object: {}", object);
+        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
         String request = getUpdateRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             fillStatementUpdate(statement, object);
@@ -65,8 +65,8 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
     @Override
     public void updateAllRecords(List<T> objects, DatabaseConnection databaseConnection) {
         LOGGER.debug("Method updateAllRecords");
-        LOGGER.debug("Parameter objects: {}", objects);
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter objects: {}", objects);
+        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
         for (T object : objects) {
             String request = getUpdateAllRecordsRequest();
             try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
@@ -82,8 +82,8 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
     @Override
     public void deleteRecord(T object, DatabaseConnection databaseConnection) {
         LOGGER.debug("Method deleteRecord");
-        LOGGER.debug("Parameter object: {}", object.toString());
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter object: {}", object);
+        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
         String request = getDeleteRequest();
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             fillStatementDelete(statement, object);

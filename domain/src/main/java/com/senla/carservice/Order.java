@@ -1,6 +1,6 @@
 package com.senla.carservice;
 
-import com.senla.carservice.enumaration.Status;
+import com.senla.carservice.service.enumaration.Status;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

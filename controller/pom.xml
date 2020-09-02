@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>hrinkov-car-service</artifactId>
         <groupId>com.senla.carservice</groupId>
@@ -12,11 +14,6 @@
         <dependency>
             <groupId>com.senla.carservice</groupId>
             <artifactId>service</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.senla.carservice</groupId>
-            <artifactId>stringutil</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

@@ -1,14 +1,14 @@
 package com.senla.carservice.connection;
 
-import com.senla.carservice.annotation.Singleton;
-import com.senla.carservice.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.exception.DaoException;
+import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
+import com.senla.carservice.dao.exception.DaoException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 public class MySqlDatabaseConnectionImpl implements DatabaseConnection {

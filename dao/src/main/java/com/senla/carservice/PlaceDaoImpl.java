@@ -1,8 +1,9 @@
 package com.senla.carservice;
 
-import com.senla.carservice.annotation.Singleton;
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.connection.DatabaseConnection;
-import com.senla.carservice.exception.DaoException;
+import com.senla.carservice.dao.exception.DaoException;
+import com.senla.carservice.dateutil.DateUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,8 +35,8 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     @Override
     public List<Place> getFreePlaces(Date executeDate, DatabaseConnection databaseConnection) {
         LOGGER.debug("Method getFreePlaces");
-        LOGGER.debug("Parameter executeDate: {}", executeDate);
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
+        LOGGER.trace("Parameter executeDate: {}", executeDate);
+        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_FREE_PLACES)) {
             statement.setString(1, DateUtil.getStringFromDate(executeDate, true));
@@ -50,7 +51,7 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     @Override
     public int getNumberPlaces(DatabaseConnection databaseConnection) {
         LOGGER.debug("Method getNumberPlaces");
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection.toString());
+        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_NUMBER_RECORDS)) {
             ResultSet resultSet = statement.executeQuery();
@@ -85,8 +86,8 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     @Override
     protected void fillStatementCreate(PreparedStatement statement, Place place) {
         LOGGER.debug("Method fillStatementCreate");
-        LOGGER.debug("Parameter statement: {}", statement.toString());
-        LOGGER.debug("Parameter place: {}", place.toString());
+        LOGGER.debug("Parameter statement: {}", statement);
+        LOGGER.debug("Parameter place: {}", place);
         try {
             statement.setInt(1, place.getNumber());
             statement.setBoolean(2, place.getBusyStatus());
@@ -100,8 +101,8 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     @Override
     protected void fillStatementUpdate(PreparedStatement statement, Place place) {
         LOGGER.debug("Method fillStatementUpdate");
-        LOGGER.debug("Parameter statement: {}", statement.toString());
-        LOGGER.debug("Parameter place: {}", place.toString());
+        LOGGER.debug("Parameter statement: {}", statement);
+        LOGGER.debug("Parameter place: {}", place);
         try {
             statement.setInt(1, place.getNumber());
             statement.setBoolean(2, place.getBusyStatus());
@@ -116,8 +117,8 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     @Override
     protected void fillStatementUpdateAll(PreparedStatement statement, Place place) {
         LOGGER.debug("Method fillStatementUpdateAll");
-        LOGGER.debug("Parameter statement: {}", statement.toString());
-        LOGGER.debug("Parameter place: {}", place.toString());
+        LOGGER.debug("Parameter statement: {}", statement);
+        LOGGER.debug("Parameter place: {}", place);
         try {
             statement.setLong(1, place.getId());
             statement.setInt(2, place.getNumber());
@@ -136,8 +137,8 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     @Override
     protected void fillStatementDelete(PreparedStatement statement, Place place) {
         LOGGER.debug("Method fillStatementDelete");
-        LOGGER.debug("Parameter statement: {}", statement.toString());
-        LOGGER.debug("Parameter place: {}", place.toString());
+        LOGGER.debug("Parameter statement: {}", statement);
+        LOGGER.debug("Parameter place: {}", place);
         try {
             statement.setLong(1, place.getId());
         } catch (SQLException ex) {
@@ -174,7 +175,7 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     @Override
     protected List<Place> parseResultSet(ResultSet resultSet) {
         LOGGER.debug("Method parseResultSet");
-        LOGGER.debug("Parameter resultSet: {}", resultSet.toString());
+        LOGGER.trace("Parameter resultSet: {}", resultSet);
         try {
             List<Place> places = new ArrayList<>();
             while (resultSet.next()) {
