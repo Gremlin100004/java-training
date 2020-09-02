@@ -3,5 +3,6 @@
 *.iml
 *.iws
 *.MF
+*.log
 out/
 target/
