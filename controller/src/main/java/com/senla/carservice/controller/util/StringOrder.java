@@ -1,7 +1,7 @@
 package com.senla.carservice.controller.util;
 
 import com.senla.carservice.Order;
-import com.senla.carservice.dateutil.DateUtil;
+import com.senla.carservice.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

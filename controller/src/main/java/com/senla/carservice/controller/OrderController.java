@@ -5,8 +5,8 @@ import com.senla.carservice.container.objectadjuster.dependencyinjection.annotat
 import com.senla.carservice.controller.util.StringMaster;
 import com.senla.carservice.controller.util.StringOrder;
 import com.senla.carservice.dao.exception.DaoException;
-import com.senla.carservice.dateutil.DateUtil;
-import com.senla.carservice.dateutil.exception.DateException;
+import com.senla.carservice.DateUtil;
+import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.PlaceService;

@@ -48,7 +48,7 @@
         <module>domain</module>
         <module>service</module>
         <module>csv</module>
-        <module>dateutil</module>
+        <module>util</module>
         <module>ui</module>
     </modules>
     <properties>

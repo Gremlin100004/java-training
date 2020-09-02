@@ -58,7 +58,7 @@ public class PackageScanner {
             }
             try {
                 String fullPath = url.toURI().getPath();
-                if (fullPath == null){
+                if (fullPath == null) {
                     continue;
                 }
                 classes.addAll(getClassByPath(getStringFilesPaths(fullPath)));

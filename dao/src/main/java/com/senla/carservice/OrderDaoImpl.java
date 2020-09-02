@@ -1,10 +1,9 @@
 package com.senla.carservice;
 
-import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.connection.DatabaseConnection;
-import com.senla.carservice.dateutil.DateUtil;
-import com.senla.carservice.service.enumaration.Status;
+import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.dao.exception.DaoException;
+import com.senla.carservice.service.enumaration.Status;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

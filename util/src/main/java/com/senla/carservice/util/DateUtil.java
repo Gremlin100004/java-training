@@ -1,6 +1,6 @@
-package com.senla.carservice.dateutil;
+package com.senla.carservice.util;
 
-import com.senla.carservice.dateutil.exception.DateException;
+import com.senla.carservice.util.exception.DateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

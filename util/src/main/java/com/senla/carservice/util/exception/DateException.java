@@ -1,4 +1,4 @@
-package com.senla.carservice.dateutil.exception;
+package com.senla.carservice.util.exception;
 
 public class DateException extends RuntimeException {
 

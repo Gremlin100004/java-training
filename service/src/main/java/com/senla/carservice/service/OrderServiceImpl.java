@@ -8,7 +8,7 @@ import com.senla.carservice.Place;
 import com.senla.carservice.PlaceDao;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.connection.DatabaseConnection;
-import com.senla.carservice.dateutil.DateUtil;
+import com.senla.carservice.DateUtil;
 import com.senla.carservice.service.enumaration.SortParameter;
 import com.senla.carservice.service.enumaration.Status;
 import com.senla.carservice.service.exception.BusinessException;

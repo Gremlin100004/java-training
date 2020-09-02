@@ -12,7 +12,7 @@ import com.senla.carservice.PlaceDao;
 import com.senla.carservice.connection.DatabaseConnection;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
-import com.senla.carservice.dateutil.DateUtil;
+import com.senla.carservice.DateUtil;
 import com.senla.carservice.service.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

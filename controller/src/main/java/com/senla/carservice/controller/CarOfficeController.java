@@ -3,7 +3,7 @@ package com.senla.carservice.controller;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.dao.exception.DaoException;
-import com.senla.carservice.dateutil.DateUtil;
+import com.senla.carservice.DateUtil;
 import com.senla.carservice.csv.exception.CsvException;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.MasterService;
