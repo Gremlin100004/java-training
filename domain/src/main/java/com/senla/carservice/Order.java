@@ -2,23 +2,49 @@ package com.senla.carservice;
 
 import com.senla.carservice.service.enumaration.Status;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Entity
+@Table(name = "orders")
 public class Order extends AEntity {
 
+    @Column(name = "creation_time")
     private Date creationTime;
+    @Column(name = "execution_start_time")
     private Date executionStartTime;
+    @Column(name = "lead_time")
     private Date leadTime;
+    @OneToOne
+    @JoinColumn(name = "place_id")
     private Place place;
+    @Column(name = "automaker")
     private String automaker;
+    @Column(name = "model")
     private String model;
+    @Column(name = "registration_number")
     private String registrationNumber;
+    @Column(name = "price")
     private BigDecimal price;
+    @Column(name = "status")
     private Status status;
+    @Column(name = "is_deleted")
     private boolean deleteStatus;
+    @ManyToMany
+    @JoinTable(
+        name = "orders_masters",
+        joinColumns = @JoinColumn(name = "order_id"),
+        inverseJoinColumns = @JoinColumn(name = "master_id")
+    )
     private List<Master> masters;
 
     public Order(String automaker, String model, String registrationNumber) {

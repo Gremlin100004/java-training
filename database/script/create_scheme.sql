@@ -7,7 +7,6 @@ USE hrinkov_car_service;
 CREATE TABLE IF NOT EXISTS masters(
 id INT NOT NULL AUTO_INCREMENT,
 name VARCHAR(20),
-number_orders INT DEFAULT 0,
 is_deleted BOOLEAN DEFAULT false,
 PRIMARY KEY pk_masters (id)
 );

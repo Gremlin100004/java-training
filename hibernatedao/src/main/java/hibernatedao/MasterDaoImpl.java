@@ -1,8 +1,10 @@
-package com.senla.carservice;
+package hibernatedao;
 
-import com.senla.carservice.connection.DatabaseConnection;
+import com.senla.carservice.DateUtil;
+import com.senla.carservice.Master;
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.dao.exception.DaoException;
+import hibernatedao.exception.DaoException;
+import org.hibernate.Session;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @Singleton
-public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
+public class MasterDaoImpl extends AbstractDao<Master> implements MasterDao {
 
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO masters VALUES (NULL, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE masters SET name=?, number_orders=?, is_deleted=? WHERE id=?";
@@ -36,10 +38,10 @@ public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
     }
 
     @Override
-    public List<Master> getFreeMasters(Date date, DatabaseConnection databaseConnection) {
+    public List<Master> getFreeMasters(Date date, Session session) {
         LOGGER.debug("Method getFreeMasters");
         LOGGER.trace("Parameter date: {}", date);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_FREE_MASTERS)) {
             statement.setString(1, DateUtil.getStringFromDate(date, true));
@@ -52,23 +54,23 @@ public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
     }
 
     @Override
-    public List<Master> getMasterSortByAlphabet(DatabaseConnection databaseConnection) {
+    public List<Master> getMasterSortByAlphabet(Session session) {
         LOGGER.debug("Method getMasterSortByAlphabet");
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_ALPHABET, databaseConnection);
     }
 
     @Override
-    public List<Master> getMasterSortByBusy(DatabaseConnection databaseConnection) {
+    public List<Master> getMasterSortByBusy(Session session) {
         LOGGER.debug("Method getMasterSortByBusy");
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getMastersFromDatabase(SQL_REQUEST_TO_ALL_RECORDS_BY_BUSY, databaseConnection);
     }
 
     @Override
-    public int getNumberMasters(DatabaseConnection databaseConnection) {
+    public int getNumberMasters(Session session) {
         LOGGER.debug("Method getNumberMasters");
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_TO_GET_NUMBER_RECORDS)) {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -82,10 +84,10 @@ public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
     }
 
     @Override
-    public Master getMasterById(Long index, DatabaseConnection databaseConnection) {
+    public Master getMasterById(Long index, Session session) {
         LOGGER.debug("Method getMasterById");
         LOGGER.trace("Parameter index: {}", index);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(
             SQL_REQUEST_GET_MASTER_BY_ID)) {
             statement.setLong(1, index);
@@ -210,10 +212,10 @@ public class MasterDaoImpl extends AbstractDao <Master> implements MasterDao {
         }
     }
 
-    private List<Master> getMastersFromDatabase(String request, DatabaseConnection databaseConnection) {
+    private List<Master> getMastersFromDatabase(String request, Session session) {
         LOGGER.debug("Method getMastersFromDatabase");
         LOGGER.debug("Parameter request: {}", request);
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.debug("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             ResultSet resultSet = statement.executeQuery();
             return parseResultSet(resultSet);

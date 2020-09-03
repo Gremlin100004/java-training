@@ -1,8 +1,10 @@
-package com.senla.carservice;
+package hibernatedao;
 
-import com.senla.carservice.connection.DatabaseConnection;
+import com.senla.carservice.DateUtil;
+import com.senla.carservice.Place;
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.dao.exception.DaoException;
+import hibernatedao.exception.DaoException;
+import org.hibernate.Session;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @Singleton
-public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
+public class PlaceDaoImpl extends AbstractDao<Place> implements PlaceDao {
 
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO places VALUES (NULL, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_UPDATE_RECORD = "UPDATE places SET number=?, is_busy=?, is_deleted=? " +
@@ -32,10 +34,10 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     }
 
     @Override
-    public List<Place> getFreePlaces(Date executeDate, DatabaseConnection databaseConnection) {
+    public List<Place> getFreePlaces(Date executeDate, Session session) {
         LOGGER.debug("Method getFreePlaces");
         LOGGER.trace("Parameter executeDate: {}", executeDate);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_FREE_PLACES)) {
             statement.setString(1, DateUtil.getStringFromDate(executeDate, true));
@@ -48,9 +50,9 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     }
 
     @Override
-    public int getNumberPlaces(DatabaseConnection databaseConnection) {
+    public int getNumberPlaces(Session  session) {
         LOGGER.debug("Method getNumberPlaces");
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.debug("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_TO_GET_NUMBER_RECORDS)) {
             ResultSet resultSet = statement.executeQuery();
@@ -65,10 +67,10 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
     }
 
     @Override
-    public Place getPlaceById(Long index, DatabaseConnection databaseConnection) {
+    public Place getPlaceById(Long index, Session  session) {
         LOGGER.debug("Method getPlaceById");
         LOGGER.debug("Parameter index: {}", index);
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.debug("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_GET_ORDER_BY_ID)) {
             statement.setLong(1, index);
             ResultSet resultSet = statement.executeQuery();
@@ -89,7 +91,7 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
         LOGGER.debug("Parameter place: {}", place);
         try {
             statement.setInt(1, place.getNumber());
-            statement.setBoolean(2, place.getBusyStatus());
+            statement.setBoolean(2, place.getIsBusy());
             statement.setBoolean(3, place.getDelete());
         } catch (SQLException ex) {
             LOGGER.error(String.valueOf(ex));
@@ -104,7 +106,7 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
         LOGGER.debug("Parameter place: {}", place);
         try {
             statement.setInt(1, place.getNumber());
-            statement.setBoolean(2, place.getBusyStatus());
+            statement.setBoolean(2, place.getIsBusy());
             statement.setBoolean(3, place.getDelete());
             statement.setLong(4, place.getId());
         } catch (SQLException ex) {
@@ -121,11 +123,11 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
         try {
             statement.setLong(1, place.getId());
             statement.setInt(2, place.getNumber());
-            statement.setBoolean(3, place.getBusyStatus());
+            statement.setBoolean(3, place.getIsBusy());
             statement.setBoolean(4, place.getDelete());
             statement.setLong(5, place.getId());
             statement.setInt(6, place.getNumber());
-            statement.setBoolean(7, place.getBusyStatus());
+            statement.setBoolean(7, place.getIsBusy());
             statement.setBoolean(8, place.getDelete());
         } catch (SQLException ex) {
             LOGGER.error(String.valueOf(ex));
@@ -182,7 +184,7 @@ public class PlaceDaoImpl extends AbstractDao <Place> implements PlaceDao {
                 place.setId(resultSet.getLong("id"));
                 place.setNumber(resultSet.getInt("number"));
                 place.setDelete(resultSet.getBoolean("is_deleted"));
-                place.setBusyStatus(resultSet.getBoolean("is_busy"));
+                place.setIsBusy(resultSet.getBoolean("is_busy"));
                 places.add(place);
             }
             return places;

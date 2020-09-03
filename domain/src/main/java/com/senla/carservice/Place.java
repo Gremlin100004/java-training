@@ -1,49 +1,57 @@
 package com.senla.carservice;
 
-public class Place extends AEntity {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "places")
+public class Place extends AEntity {
+    @Column(name = "number")
     private Integer number;
-    private Boolean busyStatus;
-    private Boolean deleteStatus;
+    @Column(name = "is_busy")
+    private Boolean isBusy;
+    @Column(name = "is_deleted")
+    private Boolean isDelete;
 
     public Place() {
     }
 
     public Place(Integer number) {
         this.number = number;
-        this.busyStatus = false;
-        this.deleteStatus = false;
+        this.isBusy = false;
+        this.isDelete = false;
     }
 
     public Integer getNumber() {
         return number;
     }
 
-    public Boolean getBusyStatus() {
-        return busyStatus;
+    public Boolean getIsBusy() {
+        return isBusy;
     }
 
     public Boolean getDelete() {
-        return deleteStatus;
+        return isDelete;
     }
 
     public void setNumber(Integer number) {
         this.number = number;
     }
 
-    public void setBusyStatus(Boolean busyStatus) {
-        this.busyStatus = busyStatus;
+    public void setIsBusy(Boolean isBusy) {
+        this.isBusy = isBusy;
     }
 
     public void setDelete(Boolean delete) {
-        deleteStatus = delete;
+        isDelete = delete;
     }
 
     @Override
     public String toString() {
         return "Place{" +
                "number=" + number +
-               ", busyStatus=" + busyStatus +
+               ", busyStatus=" + isBusy +
                '}';
     }
 }

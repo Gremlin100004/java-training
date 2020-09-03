@@ -1,4 +1,4 @@
-package com.senla.carservice.dao.exception;
+package hibernatedao.exception;
 
 public class DaoException extends RuntimeException {
 

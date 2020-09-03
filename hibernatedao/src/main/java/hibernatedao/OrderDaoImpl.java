@@ -1,9 +1,13 @@
-package com.senla.carservice;
+package hibernatedao;
 
-import com.senla.carservice.connection.DatabaseConnection;
+import com.senla.carservice.DateUtil;
+import com.senla.carservice.Master;
+import com.senla.carservice.Order;
+import com.senla.carservice.Place;
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.service.enumaration.Status;
+import hibernatedao.exception.DaoException;
+import org.hibernate.Session;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
+public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
 
     private static final String SQL_REQUEST_TO_ADD_RECORD = "INSERT INTO orders VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS = "INSERT INTO orders_masters VALUES (?, ?)";
@@ -114,38 +118,38 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     }
 
     @Override
-    public Order getLastOrder(DatabaseConnection databaseConnection) {
+    public Order getLastOrder(Session session) {
         LOGGER.debug("Method getLastOrder");
-        LOGGER.trace("Parameter propertyFileName: {}", databaseConnection);
+        LOGGER.trace("Parameter propertyFileName: {}",  session);
         List<Order> orders = getOrdersFromDatabase("", CONDITION_SORT_BY_ID, databaseConnection);
         return orders.get(0);
     }
 
     @Override
-    public int getNumberBusyMasters(String startPeriod, String endPeriod, DatabaseConnection databaseConnection) {
+    public int getNumberBusyMasters(String startPeriod, String endPeriod, Session  session) {
         LOGGER.debug("Method getNumberBusyMasters");
         LOGGER.trace("Parameter startPeriod: {}", startPeriod);
         LOGGER.trace("Parameter endPeriod: {}", endPeriod);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_BUSY_MASTERS + startPeriod + SQL_END_CONDITION +
            SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION, databaseConnection);
     }
 
     @Override
-    public int getNumberBusyPlaces(String startPeriod, String endPeriod, DatabaseConnection databaseConnection) {
+    public int getNumberBusyPlaces(String startPeriod, String endPeriod, Session  session) {
         LOGGER.debug("Method getNumberBusyPlaces");
         LOGGER.trace("Parameter startPeriod: {}", startPeriod);
         LOGGER.trace("Parameter endPeriod: {}", endPeriod);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_BUSY_PLACES + startPeriod + SQL_END_CONDITION +
            SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION, databaseConnection);
     }
 
     @Override
-    public void addRecordToTableManyToMany(Order order, DatabaseConnection databaseConnection) {
+    public void addRecordToTableManyToMany(Order order, Session  session) {
         LOGGER.debug("Method addRecordToTableManyToMany");
         LOGGER.trace("Parameter order: {}", order);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(
             SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS)) {
             statement.setLong(1, order.getId());
@@ -160,57 +164,57 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     }
 
     @Override
-    public List<Order> getOrdersSortByFilingDate(DatabaseConnection databaseConnection) {
+    public List<Order> getOrdersSortByFilingDate(Session  session) {
         LOGGER.debug("Method getOrdersSortByFilingDate");
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase("", CONDITION_SORT_FILING_DATE,
                 databaseConnection);
     }
 
     @Override
-    public List<Order> getOrdersSortByExecutionDate(DatabaseConnection databaseConnection) {
+    public List<Order> getOrdersSortByExecutionDate(Session  session) {
         LOGGER.debug("Method getOrdersSortByExecutionDate");
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase("", CONDITION_SORT_EXECUTION_DATE,
                 databaseConnection);
     }
 
     @Override
-    public List<Order> getOrdersSortByPlannedStartDate(DatabaseConnection databaseConnection) {
+    public List<Order> getOrdersSortByPlannedStartDate(Session  session) {
         LOGGER.debug("Method getOrdersSortByPlannedStartDate");
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase("", CONDITION_SORT_PLANNED_START_DATE,
                 databaseConnection);
     }
 
     @Override
-    public List<Order> getOrdersSortByPrice(DatabaseConnection databaseConnection) {
+    public List<Order> getOrdersSortByPrice(Session  session) {
         LOGGER.debug("Method getOrdersSortByPrice");
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase("", SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
     }
 
     @Override
-    public List<Order> getExecuteOrderSortByFilingDate(DatabaseConnection databaseConnection) {
+    public List<Order> getExecuteOrderSortByFilingDate(Session  session) {
         LOGGER.debug("Method getExecuteOrderSortByFilingDate");
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase(CONDITION_EXECUTE_ORDERS, CONDITION_SORT_FILING_DATE, databaseConnection);
     }
 
     @Override
-    public List<Order> getExecuteOrderSortExecutionDate(DatabaseConnection databaseConnection) {
+    public List<Order> getExecuteOrderSortExecutionDate(Session  session) {
         LOGGER.debug("Method getExecuteOrderSortExecutionDate");
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase(CONDITION_EXECUTE_ORDERS, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
     }
 
     @Override
     public List<Order> getCompletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
-                                                          DatabaseConnection databaseConnection) {
+                                                          Session  session) {
         LOGGER.debug("Method getCompletedOrdersSortByFilingDate");
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
@@ -218,11 +222,11 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
 
     @Override
     public List<Order> getCompletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate,
-                                                             DatabaseConnection databaseConnection) {
+                                                             Session  session) {
         LOGGER.debug("Method getCompletedOrdersSortByExecutionDate");
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
@@ -230,11 +234,11 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
 
     @Override
     public List<Order> getCompletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate,
-                                                     DatabaseConnection databaseConnection) {
+                                                     Session  session) {
         LOGGER.debug("Method getCompletedOrdersSortByPrice");
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
@@ -242,11 +246,11 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
 
     @Override
     public List<Order> getCanceledOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
-                                                         DatabaseConnection databaseConnection) {
+                                                         Session  session) {
         LOGGER.debug("Method getCanceledOrdersSortByFilingDate");
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
@@ -254,11 +258,11 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
 
     @Override
     public List<Order> getCanceledOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate,
-                                                            DatabaseConnection databaseConnection) {
+                                                            Session  session) {
         LOGGER.debug("Method getCanceledOrdersSortByExecutionDate");
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
@@ -266,11 +270,11 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
 
     @Override
     public List<Order> getCanceledOrdersSortByPrice(String startPeriodDate, String endPeriodDate,
-                                                    DatabaseConnection databaseConnection) {
+                                                    Session  session) {
         LOGGER.debug("Method getCanceledOrdersSortByPrice");
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
@@ -278,43 +282,43 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
 
     @Override
     public List<Order> getDeletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
-                                                        DatabaseConnection databaseConnection) {
+                                                        Session  session) {
         LOGGER.debug("Method getDeletedOrdersSortByFilingDate");
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
     }
 
     @Override
-    public List<Order> getDeletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate, DatabaseConnection databaseConnection) {
+    public List<Order> getDeletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate, Session  session) {
         LOGGER.debug("Method getDeletedOrdersSortByExecutionDate");
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
     }
 
     @Override
-    public List<Order> getDeletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate, DatabaseConnection databaseConnection) {
+    public List<Order> getDeletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate, Session  session) {
         LOGGER.debug("Method getDeletedOrdersSortByPrice");
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
-        LOGGER.trace("Parameter propertyFileName: {}", databaseConnection);
+        LOGGER.trace("Parameter propertyFileName: {}",  session);
         return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
            SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
            SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
     }
 
     @Override
-    public List<Order> getMasterOrders(Master master, DatabaseConnection databaseConnection) {
+    public List<Order> getMasterOrders(Master master, Session  session) {
         LOGGER.debug("Method getMasterOrders");
         LOGGER.trace("Parameter master: {}", master);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection()
             .prepareStatement(SQL_REQUEST_GET_MASTER_ORDERS)) {
             statement.setLong(1, master.getId());
@@ -330,9 +334,9 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     }
 
     @Override
-    public int getNumberOrders(DatabaseConnection databaseConnection) {
+    public int getNumberOrders(Session  session) {
         LOGGER.debug("Method getNumberOrders");
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_TO_GET_NUMBER_RECORDS)) {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -346,10 +350,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     }
 
     @Override
-    public Order getOrderById(Long index, DatabaseConnection databaseConnection) {
+    public Order getOrderById(Long index, Session  session) {
         LOGGER.debug("Method getOrderById");
         LOGGER.trace("Parameter index: {}", index);
-        LOGGER.trace("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.trace("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_ORDER_BY_ID)) {
             statement.setLong(1, index);
             ResultSet resultSet = statement.executeQuery();
@@ -516,11 +520,11 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
     }
 
     private List<Order> getOrdersFromDatabase(String conditionOrder, String conditionFullRequest,
-                                              DatabaseConnection databaseConnection) {
+                                              Session  session) {
         LOGGER.debug("Method getOrdersFromDatabase");
         LOGGER.debug("Parameter conditionOrder: {}", conditionOrder);
         LOGGER.debug("Parameter conditionFullRequest: {}", conditionFullRequest);
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.debug("Parameter databaseConnection: {}",  session);
         String request = String.format(SQL_REQUEST_TO_GET_ALL_RECORDS_CONDITION, SQL_REQUEST_TO_GET_ORDERS +
                 conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder,
                 SQL_REQUEST_TO_GET_ORDERS + conditionOrder, conditionFullRequest);
@@ -533,10 +537,10 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
         }
     }
 
-    private int getIntFromRequest(String request, DatabaseConnection databaseConnection) {
+    private int getIntFromRequest(String request, Session  session) {
         LOGGER.debug("Method getIntFromRequest");
         LOGGER.debug("Parameter request: {}", request);
-        LOGGER.debug("Parameter databaseConnection: {}", databaseConnection);
+        LOGGER.debug("Parameter databaseConnection: {}",  session);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
@@ -579,7 +583,7 @@ public class OrderDaoImpl extends AbstractDao <Order> implements OrderDao {
             Place place = new Place();
             place.setId(resultSet.getLong("places_place_id"));
             place.setNumber(resultSet.getInt("number"));
-            place.setBusyStatus(resultSet.getBoolean("place_is_busy"));
+            place.setIsBusy(resultSet.getBoolean("place_is_busy"));
             place.setDelete(resultSet.getBoolean("place_is_deleted"));
             order.setPlace(place);
             return order;

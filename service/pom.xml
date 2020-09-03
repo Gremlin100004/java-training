@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>com.senla.carservice</groupId>
-            <artifactId>dao</artifactId>
+            <artifactId>hibernatedao</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>

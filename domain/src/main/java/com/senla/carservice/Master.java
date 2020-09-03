@@ -1,31 +1,41 @@
 package com.senla.carservice;
 
-public class Master extends AEntity {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
+@Entity
+@Table(name = "masters")
+public class Master extends AEntity {
+    @Column(name = "name")
     private String name;
+    @ManyToMany(mappedBy = "orders")
+    private List<Order> orders;
+    @Column(name = "is_deleted")
     private Boolean deleteStatus;
-    private Integer numberOrders;
 
     public Master() {
     }
 
     public Master(String name) {
-
         this.name = name;
+        orders = new ArrayList<>();
         deleteStatus = false;
-        numberOrders = 0;
     }
 
     public String getName() {
         return name;
     }
 
-    public Boolean getDelete() {
-        return deleteStatus;
+    private List<Order> getOrders() {
+        return orders;
     }
 
-    public Integer getNumberOrders() {
-        return numberOrders;
+    public Boolean getDelete() {
+        return deleteStatus;
     }
 
     public void setName(String name) {
@@ -36,16 +46,12 @@ public class Master extends AEntity {
         deleteStatus = delete;
     }
 
-    public void setNumberOrders(final Integer numberOrders) {
-        this.numberOrders = numberOrders;
+    private void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 
     @Override
     public String toString() {
-        return "Master{" +
-               "name='" + name + '\'' +
-               ", isDelete=" + deleteStatus +
-               ", numberOrders=" + numberOrders +
-               '}';
+        return "Master{" + "name='" + name + '\'' + ", orders=" + orders + ", deleteStatus=" + deleteStatus + '}';
     }
 }

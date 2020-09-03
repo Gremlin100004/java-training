@@ -1,9 +1,11 @@
 package com.senla.carservice;
 
+import javax.persistence.Id;
 import java.util.Objects;
 
 public abstract class AEntity {
 
+    @Id
     private Long id;
 
     public AEntity() {

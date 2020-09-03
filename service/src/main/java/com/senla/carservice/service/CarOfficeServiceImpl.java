@@ -1,19 +1,19 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.DateUtil;
+import com.senla.carservice.Master;
+import com.senla.carservice.Order;
+import com.senla.carservice.Place;
+import com.senla.carservice.container.annotation.Singleton;
+import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.csv.CsvMaster;
 import com.senla.carservice.csv.CsvOrder;
 import com.senla.carservice.csv.CsvPlace;
-import com.senla.carservice.Master;
-import com.senla.carservice.MasterDao;
-import com.senla.carservice.Order;
-import com.senla.carservice.OrderDao;
-import com.senla.carservice.Place;
-import com.senla.carservice.PlaceDao;
-import com.senla.carservice.connection.DatabaseConnection;
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
-import com.senla.carservice.DateUtil;
 import com.senla.carservice.service.exception.BusinessException;
+import hibernatedao.MasterDao;
+import hibernatedao.OrderDao;
+import hibernatedao.PlaceDao;
+import hibernatedao.session.HibernateSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Dependency
     private CsvMaster csvMaster;
     @Dependency
-    private DatabaseConnection databaseConnection;
+    private HibernateSessionFactory hibernateSessionFactory;
     private static final int NUMBER_DAY = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeServiceImpl.class);
 
@@ -49,12 +49,12 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         checkMasters();
         checkPlaces();
         checkOrders();
-        Date leadTimeOrder = orderDao.getLastOrder(databaseConnection).getLeadTime();
+        Date leadTimeOrder = orderDao.getLastOrder(hibernateSessionFactory.getSession()).getLeadTime();
         Date dayDate = new Date();
         for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
              currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
-            if (masterDao.getFreeMasters(currentDay, databaseConnection).isEmpty() ||
-                placeDao.getFreePlaces(currentDay, databaseConnection).isEmpty()) {
+            if (masterDao.getFreeMasters(currentDay, hibernateSessionFactory.getSession()).isEmpty() ||
+                placeDao.getFreePlaces(currentDay, hibernateSessionFactory.getSession()).isEmpty()) {
                 dayDate = currentDay;
                 currentDay = DateUtil.bringStartOfDayDate(currentDay);
             } else {
@@ -68,20 +68,20 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     public void importEntities() {
         LOGGER.debug("Method importEntities");
         try {
-            databaseConnection.disableAutoCommit();
-            masterDao.updateAllRecords(csvMaster.importMasters(), databaseConnection);
-            placeDao.updateAllRecords(csvPlace.importPlaces(), databaseConnection);
-            List<Order> orders = csvOrder.importOrder(masterDao.getAllRecords(databaseConnection),
-                                                      placeDao.getAllRecords(databaseConnection));
-            orderDao.updateAllRecords(orders, databaseConnection);
-            orders.forEach(order -> orderDao.addRecordToTableManyToMany(order, databaseConnection));
-            databaseConnection.commitTransaction();
+            hibernateSessionFactory.openTransaction();
+            masterDao.updateAllRecords(csvMaster.importMasters(), hibernateSessionFactory.getSession());
+            placeDao.updateAllRecords(csvPlace.importPlaces(), hibernateSessionFactory.getSession());
+            List<Order> orders = csvOrder.importOrder(masterDao.getAllRecords(hibernateSessionFactory.getSession()),
+                                                      placeDao.getAllRecords(hibernateSessionFactory.getSession()));
+            orderDao.updateAllRecords(orders, hibernateSessionFactory.getSession());
+            orders.forEach(order -> orderDao.addRecordToTableManyToMany(order, hibernateSessionFactory.getSession()));
+            hibernateSessionFactory.commitTransaction();
         } catch (BusinessException e) {
             LOGGER.error(e.getMessage());
-            databaseConnection.rollBackTransaction();
+            hibernateSessionFactory.rollBackTransaction();
             throw new BusinessException("Error transaction import entities");
         } finally {
-            databaseConnection.enableAutoCommit();
+            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -98,28 +98,28 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     private void checkMasters() {
         LOGGER.debug("Method checkMasters");
-        if (masterDao.getAllRecords(databaseConnection).isEmpty()) {
+        if (masterDao.getAllRecords(hibernateSessionFactory.getSession()).isEmpty()) {
             throw new BusinessException("There are no masters");
         }
     }
 
     private void checkPlaces() {
         LOGGER.debug("Method checkPlaces");
-        if (placeDao.getAllRecords(databaseConnection).isEmpty()) {
+        if (placeDao.getAllRecords(hibernateSessionFactory.getSession()).isEmpty()) {
             throw new BusinessException("There are no places");
         }
     }
 
     private void checkOrders() {
         LOGGER.debug("Method checkOrders");
-        if (orderDao.getAllRecords(databaseConnection).isEmpty()) {
+        if (orderDao.getAllRecords(hibernateSessionFactory.getSession()).isEmpty()) {
             throw new BusinessException("There are no orders");
         }
     }
 
     private List<Order> getOrders() {
         LOGGER.debug("Method getOrders");
-        List<Order> orders = orderDao.getAllRecords(databaseConnection);
+        List<Order> orders = orderDao.getAllRecords(hibernateSessionFactory.getSession());
         if (orders.isEmpty()) {
             throw new BusinessException("There are no orders");
         }
@@ -128,7 +128,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     private List<Master> getMasters() {
         LOGGER.debug("Method getMasters");
-        List<Master> masters = masterDao.getAllRecords(databaseConnection);
+        List<Master> masters = masterDao.getAllRecords(hibernateSessionFactory.getSession());
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }
@@ -137,7 +137,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     private List<Place> getPlaces() {
         LOGGER.debug("Method getPlaces");
-        List<Place> places = placeDao.getAllRecords(databaseConnection);
+        List<Place> places = placeDao.getAllRecords(hibernateSessionFactory.getSession());
         if (places.isEmpty()) {
             throw new BusinessException("There are no places");
         }
