@@ -1,4 +1,4 @@
-package hibernatedao;
+package com.senla.carservice.hibernatedao;
 
 import org.hibernate.Session;
 

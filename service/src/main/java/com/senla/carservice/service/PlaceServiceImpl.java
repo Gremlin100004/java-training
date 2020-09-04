@@ -1,12 +1,12 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.Place;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.service.exception.BusinessException;
-import hibernatedao.PlaceDao;
-import hibernatedao.session.HibernateSessionFactory;
+import com.senla.carservice.hibernatedao.PlaceDao;
+import com.senla.carservice.hibernatedao.session.HibernateSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

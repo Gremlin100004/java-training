@@ -1,6 +1,6 @@
 package com.senla.carservice.controller.util;
 
-import com.senla.carservice.Place;
+import com.senla.carservice.domain.Place;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

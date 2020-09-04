@@ -44,7 +44,6 @@
     <modules>
         <module>container</module>
         <module>controller</module>
-        <module>dao</module>
         <module>domain</module>
         <module>service</module>
         <module>csv</module>

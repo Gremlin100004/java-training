@@ -1,18 +1,11 @@
-package hibernatedao;
+package com.senla.carservice.hibernatedao;
 
-import com.senla.carservice.DateUtil;
-import com.senla.carservice.Master;
-import com.senla.carservice.Order;
-import com.senla.carservice.Place;
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
 import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.service.enumaration.Status;
-import hibernatedao.exception.DaoException;
+import com.senla.carservice.hibernatedao.exception.DaoException;
 import org.hibernate.Session;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
@@ -121,8 +114,9 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
     public Order getLastOrder(Session session) {
         LOGGER.debug("Method getLastOrder");
         LOGGER.trace("Parameter propertyFileName: {}",  session);
-        List<Order> orders = getOrdersFromDatabase("", CONDITION_SORT_BY_ID, databaseConnection);
-        return orders.get(0);
+//        List<Order> orders = getOrdersFromDatabase("", CONDITION_SORT_BY_ID, databaseConnection);
+//        return orders.get(0);
+        return null;
     }
 
     @Override
@@ -131,8 +125,9 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.trace("Parameter startPeriod: {}", startPeriod);
         LOGGER.trace("Parameter endPeriod: {}", endPeriod);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_BUSY_MASTERS + startPeriod + SQL_END_CONDITION +
-           SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION, databaseConnection);
+//        return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_BUSY_MASTERS + startPeriod + SQL_END_CONDITION +
+//           SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION, databaseConnection);
+        return 0;
     }
 
     @Override
@@ -141,8 +136,9 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.trace("Parameter startPeriod: {}", startPeriod);
         LOGGER.trace("Parameter endPeriod: {}", endPeriod);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_BUSY_PLACES + startPeriod + SQL_END_CONDITION +
-           SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION, databaseConnection);
+//        return getIntFromRequest(SQL_REQUEST_TO_GET_NUMBER_BUSY_PLACES + startPeriod + SQL_END_CONDITION +
+//           SQL_CONDITION_END_TIME + endPeriod + SQL_END_CONDITION, databaseConnection);
+        return 0;
     }
 
     @Override
@@ -150,14 +146,14 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.debug("Method addRecordToTableManyToMany");
         LOGGER.trace("Parameter order: {}", order);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(
-            SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS)) {
-            statement.setLong(1, order.getId());
-            for (Master master: order.getMasters()) {
-                statement.setLong(2, master.getId());
-                statement.execute();
-            }
-        } catch (SQLException ex) {
+        try {
+//            SQL_REQUEST_TO_ADD_RECORD_TABLE_ORDERS_MASTERS
+//            statement.setLong(1, order.getId());
+//            for (Master master: order.getMasters()) {
+//                statement.setLong(2, master.getId());
+//                statement.execute();
+//            }
+        } catch (Exception ex) {
             LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request update records table orders_masters");
         }
@@ -167,45 +163,51 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
     public List<Order> getOrdersSortByFilingDate(Session  session) {
         LOGGER.debug("Method getOrdersSortByFilingDate");
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase("", CONDITION_SORT_FILING_DATE,
-                databaseConnection);
+//        return getOrdersFromDatabase("", CONDITION_SORT_FILING_DATE,
+//                databaseConnection);
+        return null;
     }
 
     @Override
     public List<Order> getOrdersSortByExecutionDate(Session  session) {
         LOGGER.debug("Method getOrdersSortByExecutionDate");
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase("", CONDITION_SORT_EXECUTION_DATE,
-                databaseConnection);
+//        return getOrdersFromDatabase("", CONDITION_SORT_EXECUTION_DATE,
+//                databaseConnection);
+        return null;
     }
 
     @Override
     public List<Order> getOrdersSortByPlannedStartDate(Session  session) {
         LOGGER.debug("Method getOrdersSortByPlannedStartDate");
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase("", CONDITION_SORT_PLANNED_START_DATE,
-                databaseConnection);
+//        return getOrdersFromDatabase("", CONDITION_SORT_PLANNED_START_DATE,
+//                databaseConnection);
+        return null;
     }
 
     @Override
     public List<Order> getOrdersSortByPrice(Session  session) {
         LOGGER.debug("Method getOrdersSortByPrice");
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase("", SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
+//        return getOrdersFromDatabase("", SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
+        return null;
     }
 
     @Override
     public List<Order> getExecuteOrderSortByFilingDate(Session  session) {
         LOGGER.debug("Method getExecuteOrderSortByFilingDate");
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase(CONDITION_EXECUTE_ORDERS, CONDITION_SORT_FILING_DATE, databaseConnection);
+//        return getOrdersFromDatabase(CONDITION_EXECUTE_ORDERS, CONDITION_SORT_FILING_DATE, databaseConnection);
+        return null;
     }
 
     @Override
     public List<Order> getExecuteOrderSortExecutionDate(Session  session) {
         LOGGER.debug("Method getExecuteOrderSortExecutionDate");
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase(CONDITION_EXECUTE_ORDERS, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
+//        return getOrdersFromDatabase(CONDITION_EXECUTE_ORDERS, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
+        return null;
     }
 
     @Override
@@ -215,9 +217,10 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
-           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
+//        return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
+//           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+//           SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
+        return null;
     }
 
     @Override
@@ -227,9 +230,10 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
-           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
+//        return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
+//           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+//           SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
+        return null;
     }
 
     @Override
@@ -239,9 +243,10 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
-           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
+//        return getOrdersFromDatabase(CONDITION_COMPLETED_ORDERS +
+//           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+//           SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
+        return null;
     }
 
     @Override
@@ -251,9 +256,10 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
-           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
+//        return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
+//           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+//           SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
+        return null;
     }
 
     @Override
@@ -263,9 +269,10 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
-           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
+//        return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
+//           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+//           SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
+        return null;
     }
 
     @Override
@@ -275,9 +282,10 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
-           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
+//        return getOrdersFromDatabase(CONDITION_CANCELED_ORDERS +
+//           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+//           SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
+        return null;
     }
 
     @Override
@@ -287,9 +295,10 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
-           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
+//        return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
+//           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+//           SQL_END_CONDITION, CONDITION_SORT_FILING_DATE, databaseConnection);
+        return null;
     }
 
     @Override
@@ -298,9 +307,10 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
-           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
+//        return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
+//           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+//           SQL_END_CONDITION, CONDITION_SORT_EXECUTION_DATE, databaseConnection);
+        return null;
     }
 
     @Override
@@ -309,9 +319,10 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
         LOGGER.trace("Parameter propertyFileName: {}",  session);
-        return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
-           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
-           SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
+//        return getOrdersFromDatabase(CONDITION_DELETED_ORDERS +
+//           SQL_CONDITION_START_TIME + startPeriodDate + SQL_END_CONDITION + SQL_CONDITION_END_TIME + endPeriodDate +
+//           SQL_END_CONDITION, SQL_REQUEST_SORT_BY_PRICE, databaseConnection);
+        return null;
     }
 
     @Override
@@ -319,15 +330,16 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.debug("Method getMasterOrders");
         LOGGER.trace("Parameter master: {}", master);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        try (PreparedStatement statement = databaseConnection.getConnection()
-            .prepareStatement(SQL_REQUEST_GET_MASTER_ORDERS)) {
-            statement.setLong(1, master.getId());
-            statement.setLong(2, master.getId());
-            statement.setLong(3, master.getId());
-            statement.setLong(4, master.getId());
-            ResultSet resultSet = statement.executeQuery();
-            return parseResultSet(resultSet);
-        } catch (SQLException ex) {
+        try {
+//            SQL_REQUEST_GET_MASTER_ORDERS
+//            statement.setLong(1, master.getId());
+//            statement.setLong(2, master.getId());
+//            statement.setLong(3, master.getId());
+//            statement.setLong(4, master.getId());
+//            ResultSet resultSet = statement.executeQuery();
+//            return parseResultSet(resultSet);
+            return null;
+        } catch (Exception ex) {
             LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get master orders");
         }
@@ -337,13 +349,14 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
     public int getNumberOrders(Session  session) {
         LOGGER.debug("Method getNumberOrders");
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_TO_GET_NUMBER_RECORDS)) {
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt("number_orders");
-            }
+        try {
+//            SQL_REQUEST_TO_GET_NUMBER_RECORDS
+//            ResultSet resultSet = statement.executeQuery();
+//            if (resultSet.next()) {
+//                return resultSet.getInt("number_orders");
+//            }
             return 0;
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get number orders");
         }
@@ -354,242 +367,243 @@ public class OrderDaoImpl extends AbstractDao<Order> implements OrderDao {
         LOGGER.debug("Method getOrderById");
         LOGGER.trace("Parameter index: {}", index);
         LOGGER.trace("Parameter databaseConnection: {}",  session);
-        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(SQL_REQUEST_ORDER_BY_ID)) {
-            statement.setLong(1, index);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return parseResultSet(resultSet).get(0);
-            }
+        try {
+//            SQL_REQUEST_ORDER_BY_ID
+//            statement.setLong(1, index);
+//            ResultSet resultSet = statement.executeQuery();
+//            if (resultSet.next()) {
+//                return parseResultSet(resultSet).get(0);
+//            }
             return null;
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get order by id");
         }
     }
 
-    @Override
-    protected List<Order> parseResultSet(ResultSet resultSet) {
-        LOGGER.debug("Method parseResultSet");
-        LOGGER.trace("Parameter resultSet: {}", resultSet);
-        try {
-            List<Order> orders = new ArrayList<>();
-            while (resultSet.next()) {
-                Long order_id = resultSet.getLong("orders_order_id");
-                if (order_id == 0) {
-                    continue;
-                }
-                Order order;
-                boolean isNewOrder = false;
-                if (orders.isEmpty() || !order_id.equals(orders.get(orders.size() - 1).getId())) {
-                    order = getOrderFromResultSet(resultSet);
-                    order.setId(order_id);
-                    isNewOrder = true;
-                } else {
-                    order = orders.get(orders.size() - 1);
-                }
-                Master master = getMasterFromResultSet(resultSet);
-                if (master.getName() != null) {
-                    order.getMasters().add(master);
-                }
-                if (isNewOrder) {
-                    orders.add(order);
-                }
-            }
-            return orders;
-        } catch (SQLException ex) {
-            LOGGER.error(String.valueOf(ex));
-            throw new DaoException("Error request get records orders");
-        }
-    }
+//    @Override
+//    protected List<Order> parseResultSet(ResultSet resultSet) {
+//        LOGGER.debug("Method parseResultSet");
+//        LOGGER.trace("Parameter resultSet: {}", resultSet);
+//        try {
+//            List<Order> orders = new ArrayList<>();
+//            while (resultSet.next()) {
+//                Long order_id = resultSet.getLong("orders_order_id");
+//                if (order_id == 0) {
+//                    continue;
+//                }
+//                Order order;
+//                boolean isNewOrder = false;
+//                if (orders.isEmpty() || !order_id.equals(orders.get(orders.size() - 1).getId())) {
+//                    order = getOrderFromResultSet(resultSet);
+//                    order.setId(order_id);
+//                    isNewOrder = true;
+//                } else {
+//                    order = orders.get(orders.size() - 1);
+//                }
+//                Master master = getMasterFromResultSet(resultSet);
+//                if (master.getName() != null) {
+//                    order.getMasters().add(master);
+//                }
+//                if (isNewOrder) {
+//                    orders.add(order);
+//                }
+//            }
+//            return orders;
+//        } catch (SQLException ex) {
+//            LOGGER.error(String.valueOf(ex));
+//            throw new DaoException("Error request get records orders");
+//        }
+//    }
 
-    @Override
-    protected void fillStatementCreate(PreparedStatement statement, Order order) {
-        LOGGER.debug("Method fillStatementCreate");
-        LOGGER.trace("Parameter statement: {}", statement);
-        LOGGER.trace("Parameter order: {}", order);
-        try {
-            statement.setString(1, DateUtil.getStringFromDate(order.getCreationTime(), true));
-            statement.setString(2, SQL_NULL_DATE);
-            statement.setString(3, SQL_NULL_DATE);
-            statement.setString(4, order.getAutomaker());
-            statement.setString(5, order.getModel());
-            statement.setString(6, order.getRegistrationNumber());
-            statement.setBigDecimal(7, order.getPrice());
-            statement.setString(8, String.valueOf(order.getStatus()));
-            statement.setBoolean(9, order.isDeleteStatus());
-            statement.setLong(10, SQL_DEFAULT_PLACE_ID);
-        } catch (SQLException e) {
-            LOGGER.error(String.valueOf(e));
-            throw new DaoException("Error fill statement for create request");
-        }
-    }
+//    @Override
+//    protected void fillStatementCreate(PreparedStatement statement, Order order) {
+//        LOGGER.debug("Method fillStatementCreate");
+//        LOGGER.trace("Parameter statement: {}", statement);
+//        LOGGER.trace("Parameter order: {}", order);
+//        try {
+//            statement.setString(1, DateUtil.getStringFromDate(order.getCreationTime(), true));
+//            statement.setString(2, SQL_NULL_DATE);
+//            statement.setString(3, SQL_NULL_DATE);
+//            statement.setString(4, order.getAutomaker());
+//            statement.setString(5, order.getModel());
+//            statement.setString(6, order.getRegistrationNumber());
+//            statement.setBigDecimal(7, order.getPrice());
+//            statement.setString(8, String.valueOf(order.getStatus()));
+//            statement.setBoolean(9, order.isDeleteStatus());
+//            statement.setLong(10, SQL_DEFAULT_PLACE_ID);
+//        } catch (SQLException e) {
+//            LOGGER.error(String.valueOf(e));
+//            throw new DaoException("Error fill statement for create request");
+//        }
+//    }
 
-    @Override
-    protected void fillStatementUpdate(PreparedStatement statement, Order order) {
-        LOGGER.debug("Method fillStatementUpdate");
-        LOGGER.trace("Parameter statement: {}", statement);
-        LOGGER.trace("Parameter order: {}", order);
-        try {
-            statement.setString(1, DateUtil.getStringFromDate(order.getCreationTime(), true));
-            statement.setString(2, DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
-            statement.setString(3, DateUtil.getStringFromDate(order.getLeadTime(), true));
-            statement.setString(4, order.getAutomaker());
-            statement.setString(5, order.getModel());
-            statement.setString(6, order.getRegistrationNumber());
-            statement.setBigDecimal(7, order.getPrice());
-            statement.setString(8, String.valueOf(order.getStatus()));
-            statement.setBoolean(9, order.isDeleteStatus());
-            statement.setLong(10, order.getPlace().getId());
-            statement.setLong(11, order.getId());
-        } catch (SQLException e) {
-            LOGGER.error(String.valueOf(e));
-            throw new DaoException("Error fill statement for update request");
-        }
-    }
+//    @Override
+//    protected void fillStatementUpdate(PreparedStatement statement, Order order) {
+//        LOGGER.debug("Method fillStatementUpdate");
+//        LOGGER.trace("Parameter statement: {}", statement);
+//        LOGGER.trace("Parameter order: {}", order);
+//        try {
+//            statement.setString(1, DateUtil.getStringFromDate(order.getCreationTime(), true));
+//            statement.setString(2, DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
+//            statement.setString(3, DateUtil.getStringFromDate(order.getLeadTime(), true));
+//            statement.setString(4, order.getAutomaker());
+//            statement.setString(5, order.getModel());
+//            statement.setString(6, order.getRegistrationNumber());
+//            statement.setBigDecimal(7, order.getPrice());
+//            statement.setString(8, String.valueOf(order.getStatus()));
+//            statement.setBoolean(9, order.isDeleteStatus());
+//            statement.setLong(10, order.getPlace().getId());
+//            statement.setLong(11, order.getId());
+//        } catch (SQLException e) {
+//            LOGGER.error(String.valueOf(e));
+//            throw new DaoException("Error fill statement for update request");
+//        }
+//    }
 
-    @Override
-    protected void fillStatementUpdateAll(PreparedStatement statement, Order order) {
-        LOGGER.debug("Method fillStatementUpdateAll");
-        LOGGER.trace("Parameter statement: {}", statement);
-        LOGGER.trace("Parameter order: {}", order);
-        try {
-            statement.setLong(1, order.getId());
-            statement.setString(2, DateUtil.getStringFromDate(order.getCreationTime(), true));
-            statement.setString(3, DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
-            statement.setString(4, DateUtil.getStringFromDate(order.getLeadTime(), true));
-            statement.setString(5, order.getAutomaker());
-            statement.setString(6, order.getModel());
-            statement.setString(7, order.getRegistrationNumber());
-            statement.setBigDecimal(8, order.getPrice());
-            statement.setString(9, String.valueOf(order.getStatus()));
-            statement.setBoolean(10, order.isDeleteStatus());
-            statement.setLong(11, order.getPlace().getId());
-            statement.setLong(12, order.getId());
-            statement.setString(13, DateUtil.getStringFromDate(order.getCreationTime(), true));
-            statement.setString(14, DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
-            statement.setString(15, DateUtil.getStringFromDate(order.getLeadTime(), true));
-            statement.setString(16, order.getAutomaker());
-            statement.setString(17, order.getModel());
-            statement.setString(18, order.getRegistrationNumber());
-            statement.setBigDecimal(19, order.getPrice());
-            statement.setString(20, String.valueOf(order.getStatus()));
-            statement.setBoolean(21, order.isDeleteStatus());
-            statement.setLong(22, order.getPlace().getId());
-        } catch (SQLException e) {
-            LOGGER.error(String.valueOf(e));
-            throw new DaoException("Error fill statement for update request");
-        }
-    }
+//    @Override
+//    protected void fillStatementUpdateAll(PreparedStatement statement, Order order) {
+//        LOGGER.debug("Method fillStatementUpdateAll");
+//        LOGGER.trace("Parameter statement: {}", statement);
+//        LOGGER.trace("Parameter order: {}", order);
+//        try {
+//            statement.setLong(1, order.getId());
+//            statement.setString(2, DateUtil.getStringFromDate(order.getCreationTime(), true));
+//            statement.setString(3, DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
+//            statement.setString(4, DateUtil.getStringFromDate(order.getLeadTime(), true));
+//            statement.setString(5, order.getAutomaker());
+//            statement.setString(6, order.getModel());
+//            statement.setString(7, order.getRegistrationNumber());
+//            statement.setBigDecimal(8, order.getPrice());
+//            statement.setString(9, String.valueOf(order.getStatus()));
+//            statement.setBoolean(10, order.isDeleteStatus());
+//            statement.setLong(11, order.getPlace().getId());
+//            statement.setLong(12, order.getId());
+//            statement.setString(13, DateUtil.getStringFromDate(order.getCreationTime(), true));
+//            statement.setString(14, DateUtil.getStringFromDate(order.getExecutionStartTime(), true));
+//            statement.setString(15, DateUtil.getStringFromDate(order.getLeadTime(), true));
+//            statement.setString(16, order.getAutomaker());
+//            statement.setString(17, order.getModel());
+//            statement.setString(18, order.getRegistrationNumber());
+//            statement.setBigDecimal(19, order.getPrice());
+//            statement.setString(20, String.valueOf(order.getStatus()));
+//            statement.setBoolean(21, order.isDeleteStatus());
+//            statement.setLong(22, order.getPlace().getId());
+//        } catch (SQLException e) {
+//            LOGGER.error(String.valueOf(e));
+//            throw new DaoException("Error fill statement for update request");
+//        }
+//    }
 
-    @Override
-    protected void fillStatementDelete(PreparedStatement statement, Order order) {
-        LOGGER.debug("Method fillStatementDelete");
-        LOGGER.trace("Parameter statement: {}", statement);
-        LOGGER.trace("Parameter order: {}", order);
-        try {
-            statement.setLong(1, order.getId());
-        } catch (SQLException e) {
-            LOGGER.error(String.valueOf(e));
-            throw new DaoException("Error fill statement for update request");
-        }
-    }
+//    @Override
+//    protected void fillStatementDelete(PreparedStatement statement, Order order) {
+//        LOGGER.debug("Method fillStatementDelete");
+//        LOGGER.trace("Parameter statement: {}", statement);
+//        LOGGER.trace("Parameter order: {}", order);
+//        try {
+//            statement.setLong(1, order.getId());
+//        } catch (SQLException e) {
+//            LOGGER.error(String.valueOf(e));
+//            throw new DaoException("Error fill statement for update request");
+//        }
+//    }
 
-    @Override
-    protected String getCreateRequest() {
-        return SQL_REQUEST_TO_ADD_RECORD;
-    }
+//    @Override
+//    protected String getCreateRequest() {
+//        return SQL_REQUEST_TO_ADD_RECORD;
+//    }
 
-    @Override
-    protected String getReadAllRequest() {
-        return SQL_REQUEST_TO_GET_ALL_RECORDS;
-    }
+//    @Override
+//    protected String getReadAllRequest() {
+//        return SQL_REQUEST_TO_GET_ALL_RECORDS;
+//    }
 
-    @Override
-    protected String getUpdateRequest() {
-        return SQL_REQUEST_TO_UPDATE_RECORD;
-    }
+//    @Override
+//    protected String getUpdateRequest() {
+//        return SQL_REQUEST_TO_UPDATE_RECORD;
+//    }
 
-    @Override
-    protected String getUpdateAllRecordsRequest() {
-        return SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST;
-    }
+//    @Override
+//    protected String getUpdateAllRecordsRequest() {
+//        return SQL_REQUEST_TO_UPDATE_RECORDS_IF_EXIST;
+//    }
 
-    @Override
-    protected String getDeleteRequest() {
-        return SQL_REQUEST_TO_DELETE_RECORD;
-    }
+//    @Override
+//    protected String getDeleteRequest() {
+//        return SQL_REQUEST_TO_DELETE_RECORD;
+//    }
 
-    private List<Order> getOrdersFromDatabase(String conditionOrder, String conditionFullRequest,
-                                              Session  session) {
-        LOGGER.debug("Method getOrdersFromDatabase");
-        LOGGER.debug("Parameter conditionOrder: {}", conditionOrder);
-        LOGGER.debug("Parameter conditionFullRequest: {}", conditionFullRequest);
-        LOGGER.debug("Parameter databaseConnection: {}",  session);
-        String request = String.format(SQL_REQUEST_TO_GET_ALL_RECORDS_CONDITION, SQL_REQUEST_TO_GET_ORDERS +
-                conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder,
-                SQL_REQUEST_TO_GET_ORDERS + conditionOrder, conditionFullRequest);
-        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
-            ResultSet resultSet = statement.executeQuery();
-            return parseResultSet(resultSet);
-        } catch (SQLException ex) {
-            LOGGER.error(String.valueOf(ex));
-            throw new DaoException("Error request get records orders");
-        }
-    }
+//    private List<Order> getOrdersFromDatabase(String conditionOrder, String conditionFullRequest,
+//                                              Session  session) {
+//        LOGGER.debug("Method getOrdersFromDatabase");
+//        LOGGER.debug("Parameter conditionOrder: {}", conditionOrder);
+//        LOGGER.debug("Parameter conditionFullRequest: {}", conditionFullRequest);
+//        LOGGER.debug("Parameter databaseConnection: {}",  session);
+//        String request = String.format(SQL_REQUEST_TO_GET_ALL_RECORDS_CONDITION, SQL_REQUEST_TO_GET_ORDERS +
+//                conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder, SQL_REQUEST_TO_GET_ORDERS + conditionOrder,
+//                SQL_REQUEST_TO_GET_ORDERS + conditionOrder, conditionFullRequest);
+//        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
+//            ResultSet resultSet = statement.executeQuery();
+//            return parseResultSet(resultSet);
+//        } catch (SQLException ex) {
+//            LOGGER.error(String.valueOf(ex));
+//            throw new DaoException("Error request get records orders");
+//        }
+//    }
 
-    private int getIntFromRequest(String request, Session  session) {
-        LOGGER.debug("Method getIntFromRequest");
-        LOGGER.debug("Parameter request: {}", request);
-        LOGGER.debug("Parameter databaseConnection: {}",  session);
-        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt("amount_of_elements");
-        } catch (SQLException ex) {
-            LOGGER.error(String.valueOf(ex));
-            throw new DaoException("Error request get records orders");
-        }
-    }
+//    private int getIntFromRequest(String request, Session  session) {
+//        LOGGER.debug("Method getIntFromRequest");
+//        LOGGER.debug("Parameter request: {}", request);
+//        LOGGER.debug("Parameter databaseConnection: {}",  session);
+//        try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(request)) {
+//            ResultSet resultSet = statement.executeQuery();
+//            resultSet.next();
+//            return resultSet.getInt("amount_of_elements");
+//        } catch (SQLException ex) {
+//            LOGGER.error(String.valueOf(ex));
+//            throw new DaoException("Error request get records orders");
+//        }
+//    }
 
-    private Master getMasterFromResultSet(ResultSet resultSet) {
-        LOGGER.debug("Method getMasterFromResultSet");
-        LOGGER.trace("Parameter resultSet: {}", resultSet);
-        try {
-            Master master = new Master();
-            master.setId(resultSet.getLong("id"));
-            master.setName(resultSet.getString("name"));
-            master.setDelete(resultSet.getBoolean("is_deleted"));
-            master.setNumberOrders(resultSet.getInt("number_orders"));
-            return master;
-        } catch (SQLException ex) {
-            LOGGER.error(String.valueOf(ex));
-            throw new DaoException("Error request get records order masters");
-        }
-    }
+//    private Master getMasterFromResultSet(ResultSet resultSet) {
+//        LOGGER.debug("Method getMasterFromResultSet");
+//        LOGGER.trace("Parameter resultSet: {}", resultSet);
+//        try {
+//            Master master = new Master();
+//            master.setId(resultSet.getLong("id"));
+//            master.setName(resultSet.getString("name"));
+//            master.setDelete(resultSet.getBoolean("is_deleted"));
+//            master.setNumberOrders(resultSet.getInt("number_orders"));
+//            return master;
+//        } catch (SQLException ex) {
+//            LOGGER.error(String.valueOf(ex));
+//            throw new DaoException("Error request get records order masters");
+//        }
+//    }
 
-    private Order getOrderFromResultSet(ResultSet resultSet) {
-        LOGGER.debug("Method getOrderFromResultSet");
-        LOGGER.trace("Parameter resultSet: {}", resultSet);
-        try {
-            Order order = new Order(resultSet.getString("automaker"), resultSet.getString("model"),
-                    resultSet.getString("registration_number"));
-            order.setCreationTime(DateUtil.getDatesFromString(resultSet.getString("creation_time"), true));
-            order.setExecutionStartTime(DateUtil.getDatesFromString(resultSet.getString("execution_start_time"),
-                    true));
-            order.setLeadTime(DateUtil.getDatesFromString(resultSet.getString("lead_time"), true));
-            order.setPrice(resultSet.getBigDecimal("price"));
-            order.setStatus(Status.valueOf(resultSet.getString("status")));
-            order.setDeleteStatus(resultSet.getBoolean("orders_is_deleted"));
-            Place place = new Place();
-            place.setId(resultSet.getLong("places_place_id"));
-            place.setNumber(resultSet.getInt("number"));
-            place.setIsBusy(resultSet.getBoolean("place_is_busy"));
-            place.setDelete(resultSet.getBoolean("place_is_deleted"));
-            order.setPlace(place);
-            return order;
-        } catch (SQLException ex) {
-            LOGGER.error(String.valueOf(ex));
-            throw new DaoException("Error request get records order");
-        }
-    }
+//    private Order getOrderFromResultSet(ResultSet resultSet) {
+//        LOGGER.debug("Method getOrderFromResultSet");
+//        LOGGER.trace("Parameter resultSet: {}", resultSet);
+//        try {
+//            Order order = new Order(resultSet.getString("automaker"), resultSet.getString("model"),
+//                    resultSet.getString("registration_number"));
+//            order.setCreationTime(DateUtil.getDatesFromString(resultSet.getString("creation_time"), true));
+//            order.setExecutionStartTime(DateUtil.getDatesFromString(resultSet.getString("execution_start_time"),
+//                    true));
+//            order.setLeadTime(DateUtil.getDatesFromString(resultSet.getString("lead_time"), true));
+//            order.setPrice(resultSet.getBigDecimal("price"));
+//            order.setStatus(Status.valueOf(resultSet.getString("status")));
+//            order.setDeleteStatus(resultSet.getBoolean("orders_is_deleted"));
+//            Place place = new Place();
+//            place.setId(resultSet.getLong("places_place_id"));
+//            place.setNumber(resultSet.getInt("number"));
+//            place.setIsBusy(resultSet.getBoolean("place_is_busy"));
+//            place.setDelete(resultSet.getBoolean("place_is_deleted"));
+//            order.setPlace(place);
+//            return order;
+//        } catch (SQLException ex) {
+//            LOGGER.error(String.valueOf(ex));
+//            throw new DaoException("Error request get records order");
+//        }
+//    }
 }

@@ -1,16 +1,14 @@
-package hibernatedao;
+package com.senla.carservice.hibernatedao;
 
-import hibernatedao.exception.DaoException;
+import com.senla.carservice.hibernatedao.exception.DaoException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Exception;
 import java.util.List;
 
 public abstract class AbstractDao<T> implements GenericDao<T> {
+
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     public AbstractDao() {
@@ -34,8 +32,9 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
         LOGGER.debug("Method getAllRecords");
         LOGGER.trace("Parameter databaseConnection: {}", session);
         try {
-            ResultSet resultSet = statement.executeQuery();
-            return parseResultSet(resultSet);
+//            ResultSet resultSet = statement.executeQuery();
+//            return parseResultSet(resultSet);
+            return null;
         } catch (Exception ex) {
             LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request get all records");
@@ -48,8 +47,8 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
         LOGGER.trace("Parameter object: {}", object);
         LOGGER.trace("Parameter databaseConnection: {}", session);
         try {
-            fillStatementUpdate(statement, object);
-            statement.execute();
+//            fillStatementUpdate(statement, object);
+//            statement.execute();
         } catch (Exception ex) {
             LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request update record");
@@ -63,8 +62,8 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
         LOGGER.trace("Parameter databaseConnection: {}", session);
         for (T object : objects) {
             try {
-                fillStatementUpdateAll(statement, object);
-                statement.execute();
+//                fillStatementUpdateAll(statement, object);
+//                statement.execute();
             } catch (Exception ex) {
                 LOGGER.error(String.valueOf(ex));
                 throw new DaoException("Error request update all records");
@@ -78,8 +77,8 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
         LOGGER.trace("Parameter object: {}", object);
         LOGGER.trace("Parameter databaseConnection: {}", session);
         try  {
-            fillStatementDelete(statement, object);
-            statement.execute();
+//            fillStatementDelete(statement, object);
+//            statement.execute();
         } catch (Exception ex) {
             LOGGER.error(String.valueOf(ex));
             throw new DaoException("Error request delete record");

@@ -1,19 +1,19 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.DateUtil;
-import com.senla.carservice.Master;
-import com.senla.carservice.Order;
-import com.senla.carservice.Place;
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.service.enumaration.SortParameter;
-import com.senla.carservice.service.enumaration.Status;
+import com.senla.carservice.domain.enumaration.SortParameter;
+import com.senla.carservice.domain.enumaration.Status;
 import com.senla.carservice.service.exception.BusinessException;
-import hibernatedao.MasterDao;
-import hibernatedao.OrderDao;
-import hibernatedao.PlaceDao;
-import hibernatedao.session.HibernateSessionFactory;
+import com.senla.carservice.hibernatedao.MasterDao;
+import com.senla.carservice.hibernatedao.OrderDao;
+import com.senla.carservice.hibernatedao.PlaceDao;
+import com.senla.carservice.hibernatedao.session.HibernateSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

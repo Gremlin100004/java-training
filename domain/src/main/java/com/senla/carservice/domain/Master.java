@@ -1,7 +1,10 @@
-package com.senla.carservice;
+package com.senla.carservice.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
@@ -10,9 +13,13 @@ import java.util.List;
 @Entity
 @Table(name = "masters")
 public class Master extends AEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(name = "name")
     private String name;
-    @ManyToMany(mappedBy = "orders")
+    @ManyToMany(mappedBy = "masters")
     private List<Order> orders;
     @Column(name = "is_deleted")
     private Boolean deleteStatus;
@@ -30,7 +37,7 @@ public class Master extends AEntity {
         return name;
     }
 
-    private List<Order> getOrders() {
+    public List<Order> getOrders() {
         return orders;
     }
 
@@ -46,7 +53,7 @@ public class Master extends AEntity {
         deleteStatus = delete;
     }
 
-    private void setOrders(List<Order> orders) {
+    public void setOrders(List<Order> orders) {
         this.orders = orders;
     }
 

@@ -1,9 +1,12 @@
-package com.senla.carservice;
+package com.senla.carservice.domain;
 
-import com.senla.carservice.service.enumaration.Status;
+import com.senla.carservice.domain.enumaration.Status;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -18,6 +21,9 @@ import java.util.List;
 @Table(name = "orders")
 public class Order extends AEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(name = "creation_time")
     private Date creationTime;
     @Column(name = "execution_start_time")
@@ -56,6 +62,7 @@ public class Order extends AEntity {
         this.deleteStatus = false;
         this.masters = new ArrayList<>();
     }
+
 
     public String getAutomaker() {
         return automaker;

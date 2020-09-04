@@ -1,11 +1,9 @@
-package com.senla.carservice;
+package com.senla.carservice.domain;
 
-import javax.persistence.Id;
 import java.util.Objects;
 
 public abstract class AEntity {
 
-    @Id
     private Long id;
 
     public AEntity() {

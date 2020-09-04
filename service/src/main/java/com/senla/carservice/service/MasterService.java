@@ -1,6 +1,6 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.Master;
+import com.senla.carservice.domain.Master;
 
 import java.util.Date;
 import java.util.List;

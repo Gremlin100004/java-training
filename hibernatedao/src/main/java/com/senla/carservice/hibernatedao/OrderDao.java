@@ -1,7 +1,7 @@
-package hibernatedao;
+package com.senla.carservice.hibernatedao;
 
-import com.senla.carservice.Master;
-import com.senla.carservice.Order;
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
 import org.hibernate.Session;
 
 import java.util.List;

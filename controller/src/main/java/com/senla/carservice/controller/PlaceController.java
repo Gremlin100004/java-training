@@ -1,14 +1,14 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.DateUtil;
-import com.senla.carservice.Place;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.controller.util.StringPlaces;
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.exception.BusinessException;
+import com.senla.carservice.hibernatedao.exception.DaoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

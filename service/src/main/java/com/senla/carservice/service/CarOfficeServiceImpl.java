@@ -1,19 +1,19 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.DateUtil;
-import com.senla.carservice.Master;
-import com.senla.carservice.Order;
-import com.senla.carservice.Place;
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.csv.CsvMaster;
 import com.senla.carservice.csv.CsvOrder;
 import com.senla.carservice.csv.CsvPlace;
 import com.senla.carservice.service.exception.BusinessException;
-import hibernatedao.MasterDao;
-import hibernatedao.OrderDao;
-import hibernatedao.PlaceDao;
-import hibernatedao.session.HibernateSessionFactory;
+import com.senla.carservice.hibernatedao.MasterDao;
+import com.senla.carservice.hibernatedao.OrderDao;
+import com.senla.carservice.hibernatedao.PlaceDao;
+import com.senla.carservice.hibernatedao.session.HibernateSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +69,8 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         LOGGER.debug("Method importEntities");
         try {
             hibernateSessionFactory.openTransaction();
-            masterDao.updateAllRecords(csvMaster.importMasters(), hibernateSessionFactory.getSession());
+            masterDao.updateAllRecords(csvMaster.importMasters(
+                    orderDao.getAllRecords(hibernateSessionFactory.getSession())), hibernateSessionFactory.getSession());
             placeDao.updateAllRecords(csvPlace.importPlaces(), hibernateSessionFactory.getSession());
             List<Order> orders = csvOrder.importOrder(masterDao.getAllRecords(hibernateSessionFactory.getSession()),
                                                       placeDao.getAllRecords(hibernateSessionFactory.getSession()));

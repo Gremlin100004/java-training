@@ -1,4 +1,4 @@
-package com.senla.carservice.service.enumaration;
+package com.senla.carservice.domain.enumaration;
 
 public enum SortParameter {
 

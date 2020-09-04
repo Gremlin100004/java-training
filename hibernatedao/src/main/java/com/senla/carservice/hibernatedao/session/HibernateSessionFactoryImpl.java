@@ -1,7 +1,10 @@
-package hibernatedao.session;
+package com.senla.carservice.hibernatedao.session;
 
 import com.senla.carservice.container.annotation.Singleton;
-import hibernatedao.exception.DaoException;
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
+import com.senla.carservice.domain.Place;
+import com.senla.carservice.hibernatedao.exception.DaoException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -9,6 +12,7 @@ import org.hibernate.cfg.Configuration;
 
 @Singleton
 public class HibernateSessionFactoryImpl implements HibernateSessionFactory {
+
     private SessionFactory sessionFactory;
     private Session session;
     private Transaction transaction;
@@ -50,7 +54,11 @@ public class HibernateSessionFactoryImpl implements HibernateSessionFactory {
 
     private void initialize() {
         try {
-            sessionFactory = new Configuration().configure().buildSessionFactory();
+            sessionFactory = new Configuration()
+                    .addAnnotatedClass(Master.class)
+                    .addAnnotatedClass(Order.class)
+                    .addAnnotatedClass(Place.class)
+                    .buildSessionFactory();
         } catch (Throwable e) {
             throw new DaoException("Error initialize SessionFactory");
         }

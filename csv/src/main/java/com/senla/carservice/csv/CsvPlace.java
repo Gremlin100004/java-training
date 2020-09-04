@@ -1,6 +1,6 @@
 package com.senla.carservice.csv;
 
-import com.senla.carservice.Place;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.csv.exception.CsvException;

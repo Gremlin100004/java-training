@@ -1,6 +1,6 @@
 package com.senla.carservice.controller.util;
 
-import com.senla.carservice.Master;
+import com.senla.carservice.domain.Master;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public class StringMaster {
                 stringBuilder.append(SPLIT_COLUMNS)
                     .append(StringUtil.fillStringSpace(masters.get(i).getName(), LENGTH_SPACE_SECOND_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS)
-                    .append(StringUtil.fillStringSpace(String.valueOf(masters.get(i).getNumberOrders()),
+                    .append(StringUtil.fillStringSpace(String.valueOf(masters.get(i).getOrders().size()),
                                                        LENGTH_SPACE_THIRD_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS)
                     .append(StringUtil.fillStringSpace(String.valueOf(masters.get(i).getDelete()),

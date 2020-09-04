@@ -1,12 +1,19 @@
-package com.senla.carservice;
+package com.senla.carservice.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "places")
 public class Place extends AEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(name = "number")
     private Integer number;
     @Column(name = "is_busy")

@@ -1,7 +1,7 @@
 package com.senla.carservice.csv.util;
 
 import com.senla.carservice.csv.exception.CsvException;
-import com.senla.carservice.service.enumaration.Status;
+import com.senla.carservice.domain.enumaration.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

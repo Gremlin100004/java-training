@@ -1,4 +1,4 @@
-DROP DATABASE IF EXISTS hrinkov_car_service;
+
 
 CREATE DATABASE IF NOT EXISTS hrinkov_car_service DEFAULT CHARACTER SET utf8;
 
