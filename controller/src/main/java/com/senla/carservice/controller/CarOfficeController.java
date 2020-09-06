@@ -37,8 +37,8 @@ public class CarOfficeController {
         }
         try {
             Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
-            int numberFreeMasters = masterService.getNumberFreeMastersByDate(startDayDate);
-            int numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate);
+            Long numberFreeMasters = masterService.getNumberFreeMastersByDate(startDayDate);
+            Long numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate);
             return "- number free places in service: " + numberFreePlace + "\n- number free masters in service: " +
                    numberFreeMasters;
         } catch (BusinessException | DaoException e) {

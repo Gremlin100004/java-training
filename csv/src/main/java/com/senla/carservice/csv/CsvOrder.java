@@ -127,7 +127,7 @@ public class CsvOrder {
         stringValue.append(fieldSeparator);
         stringValue.append(DateUtil.getStringFromDate(order.getLeadTime(), true));
         stringValue.append(fieldSeparator);
-        stringValue.append(order.getPlace().getId());
+//        stringValue.append(order.getPlace().getId());
         stringValue.append(fieldSeparator);
         stringValue.append(order.getAutomaker());
         stringValue.append(fieldSeparator);

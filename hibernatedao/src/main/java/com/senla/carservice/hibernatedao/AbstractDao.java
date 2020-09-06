@@ -2,12 +2,17 @@ package com.senla.carservice.hibernatedao;
 
 import com.senla.carservice.hibernatedao.exception.DaoException;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.io.Serializable;
 import java.util.List;
 
-public abstract class AbstractDao<T> implements GenericDao<T> {
+public abstract class AbstractDao<T, PK extends Serializable> implements GenericDao<T, PK> {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -16,92 +21,51 @@ public abstract class AbstractDao<T> implements GenericDao<T> {
 
     @Override
     public void saveRecord(T object, Session session) {
-        LOGGER.debug("Method createRecord");
+        LOGGER.debug("Method saveRecord");
         LOGGER.trace("Parameter object: {}", object);
-        LOGGER.trace("Parameter databaseConnection: {}", session);
-        try {
-            session.save(object);
-        } catch (Exception ex) {
-            LOGGER.error(String.valueOf(ex));
-            throw new DaoException("Error request add record");
-        }
+        LOGGER.trace("Parameter session: {}", session);
+        session.save(object);
     }
 
     @Override
-    public List<T> getAllRecords(Session session) {
+    public List<T> getAllRecords(Session session, Class<T> type) {
         LOGGER.debug("Method getAllRecords");
-        LOGGER.trace("Parameter databaseConnection: {}", session);
-        try {
-//            ResultSet resultSet = statement.executeQuery();
-//            return parseResultSet(resultSet);
-            return null;
-        } catch (Exception ex) {
-            LOGGER.error(String.valueOf(ex));
-            throw new DaoException("Error request get all records");
+        LOGGER.trace("Parameter session: {}", session);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(type);
+        Root<T> root = criteriaQuery.from(type);
+        criteriaQuery.select(root);
+        Query<T> query = session.createQuery(criteriaQuery);
+        List<T> objects = query.getResultList();
+        if (objects == null) {
+            throw new DaoException("Error getting objects");
         }
+        return objects;
     }
 
     @Override
     public void updateRecord(T object, Session session) {
         LOGGER.debug("Method updateRecord");
         LOGGER.trace("Parameter object: {}", object);
-        LOGGER.trace("Parameter databaseConnection: {}", session);
-        try {
-//            fillStatementUpdate(statement, object);
-//            statement.execute();
-        } catch (Exception ex) {
-            LOGGER.error(String.valueOf(ex));
-            throw new DaoException("Error request update record");
-        }
+        LOGGER.trace("Parameter session: {}", session);
+        session.update(object);
     }
 
     @Override
     public void updateAllRecords(List<T> objects, Session session) {
         LOGGER.debug("Method updateAllRecords");
         LOGGER.trace("Parameter objects: {}", objects);
-        LOGGER.trace("Parameter databaseConnection: {}", session);
+        LOGGER.trace("Parameter session: {}", session);
         for (T object : objects) {
-            try {
-//                fillStatementUpdateAll(statement, object);
-//                statement.execute();
-            } catch (Exception ex) {
-                LOGGER.error(String.valueOf(ex));
-                throw new DaoException("Error request update all records");
-            }
+            session.update(object);
         }
     }
 
     @Override
-    public void deleteRecord(T object, Session session) {
+    public void deleteRecord(PK id, Session session) {
         LOGGER.debug("Method deleteRecord");
-        LOGGER.trace("Parameter object: {}", object);
-        LOGGER.trace("Parameter databaseConnection: {}", session);
-        try  {
-//            fillStatementDelete(statement, object);
-//            statement.execute();
-        } catch (Exception ex) {
-            LOGGER.error(String.valueOf(ex));
-            throw new DaoException("Error request delete record");
-        }
+        LOGGER.trace("Parameter id: {}", id);
+        LOGGER.trace("Parameter session: {}", session);
+        session.delete(id);
     }
-
-//    protected abstract void fillStatementCreate(PreparedStatement statement, T object);
-//
-//    protected abstract void fillStatementUpdate(PreparedStatement statement, T object);
-//
-//    protected abstract void fillStatementUpdateAll(PreparedStatement statement, T object);
-//
-//    protected abstract void fillStatementDelete(PreparedStatement statement, T object);
-//
-//    protected abstract List<T> parseResultSet(ResultSet resultSet);
-//
-//    protected abstract String getCreateRequest();
-//
-//    protected abstract String getUpdateRequest();
-//
-//    protected abstract String getUpdateAllRecordsRequest();
-//
-//    protected abstract String getReadAllRequest();
-//
-//    protected abstract String getDeleteRequest();
 }

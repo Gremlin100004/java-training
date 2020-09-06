@@ -13,7 +13,7 @@ public interface MasterService {
 
     List<Master> getFreeMastersByDate(Date executeDate);
 
-    int getNumberFreeMastersByDate(Date startDate);
+    Long getNumberFreeMastersByDate(Date startDate);
 
     void deleteMaster(Master master);
 
@@ -21,5 +21,5 @@ public interface MasterService {
 
     List<Master> getMasterByBusy();
 
-    int getNumberMasters();
+    Long getNumberMasters();
 }

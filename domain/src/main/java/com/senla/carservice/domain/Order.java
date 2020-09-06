@@ -1,9 +1,12 @@
 package com.senla.carservice.domain;
 
-import com.senla.carservice.domain.enumaration.Status;
+import com.senla.carservice.domain.enumaration.StatusOrder;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,6 +26,7 @@ public class Order extends AEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
     @Column(name = "creation_time")
     private Date creationTime;
@@ -41,122 +45,128 @@ public class Order extends AEntity {
     private String registrationNumber;
     @Column(name = "price")
     private BigDecimal price;
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Status status;
+    private StatusOrder status;
     @Column(name = "is_deleted")
     private boolean deleteStatus;
-    @ManyToMany
+
+    @ManyToMany(cascade = {CascadeType.PERSIST})
     @JoinTable(
         name = "orders_masters",
         joinColumns = @JoinColumn(name = "order_id"),
         inverseJoinColumns = @JoinColumn(name = "master_id")
     )
-    private List<Master> masters;
+    private List<Master> masters = new ArrayList<>();
+
+    public Order() {
+    }
 
     public Order(String automaker, String model, String registrationNumber) {
         this.creationTime = new Date();
+        this.executionStartTime = new Date();
+        this.leadTime = new Date();
         this.automaker = automaker;
         this.model = model;
         this.registrationNumber = registrationNumber;
-        this.status = Status.WAIT;
+        this.status = StatusOrder.WAIT;
         this.deleteStatus = false;
-        this.masters = new ArrayList<>();
-    }
-
-
-    public String getAutomaker() {
-        return automaker;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public String getRegistrationNumber() {
-        return registrationNumber;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public Place getPlace() {
-        return place;
+        this.place = new Place();
     }
 
     public Date getCreationTime() {
         return creationTime;
     }
 
+    public void setCreationTime(final Date creationTime) {
+        this.creationTime = creationTime;
+    }
+
     public Date getExecutionStartTime() {
         return executionStartTime;
+    }
+
+    public void setExecutionStartTime(final Date executionStartTime) {
+        this.executionStartTime = executionStartTime;
     }
 
     public Date getLeadTime() {
         return leadTime;
     }
 
+    public void setLeadTime(final Date leadTime) {
+        this.leadTime = leadTime;
+    }
+
+    public Place getPlace() {
+        return place;
+    }
+
+    public void setPlace(final Place place) {
+        this.place = place;
+    }
+
+    public String getAutomaker() {
+        return automaker;
+    }
+
+    public void setAutomaker(final String automaker) {
+        this.automaker = automaker;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(final String model) {
+        this.model = model;
+    }
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public void setRegistrationNumber(final String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public void setPrice(final BigDecimal price) {
+        this.price = price;
+    }
+
+    public StatusOrder getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusOrder status) {
+        this.status = status;
     }
 
     public boolean isDeleteStatus() {
         return deleteStatus;
     }
 
-    public List<Master> getMasters() {
-        return masters;
-    }
-
-    public void setCreationTime(Date creationTime) {
-        this.creationTime = creationTime;
-    }
-
-    public void setLeadTime(Date leadTime) {
-        this.leadTime = leadTime;
-    }
-
-    public void setPlace(Place place) {
-        this.place = place;
-    }
-
-    public void setAutomaker(String automaker) {
-        this.automaker = automaker;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public void setRegistrationNumber(String registrationNumber) {
-        this.registrationNumber = registrationNumber;
-    }
-
     public void setDeleteStatus(boolean deleteStatus) {
         this.deleteStatus = deleteStatus;
     }
 
-    public void setExecutionStartTime(Date executionStartTime) {
-        this.executionStartTime = executionStartTime;
+    public List<Master> getMasters() {
+        return masters;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public void setMasters(List<Master> masters) {
+    public void setMasters(final List<Master> masters) {
         this.masters = masters;
     }
 
     @Override
     public String toString() {
-        return "Order{" + "creationTime=" + creationTime + ", executionStartTime=" + executionStartTime +
-               ", leadTime=" + leadTime + ", place=" + place + ", automaker='" + automaker + '\'' + ", model='" +
-               model + '\'' + ", registrationNumber='" + registrationNumber + '\'' + ", price=" + price + ", status=" +
-               status + ", deleteStatus=" + deleteStatus + ", masters=" + masters + '}';
+        return "Order{" + "id=" + id + ", creationTime=" + creationTime + ", executionStartTime=" + executionStartTime +
+               ", leadTime=" + leadTime + ", automaker='" + automaker + '\'' + ", model='" + model + '\'' +
+               ", registrationNumber='" + registrationNumber + '\'' + ", price=" + price + ", status=" + status +
+               ", deleteStatus=" + deleteStatus + '}';
     }
 }

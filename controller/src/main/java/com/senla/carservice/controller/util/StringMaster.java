@@ -55,7 +55,7 @@ public class StringMaster {
                     .append(StringUtil.fillStringSpace(String.valueOf(masters.get(i).getOrders().size()),
                                                        LENGTH_SPACE_THIRD_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS)
-                    .append(StringUtil.fillStringSpace(String.valueOf(masters.get(i).getDelete()),
+                    .append(StringUtil.fillStringSpace(String.valueOf(masters.get(i).getDeleteStatus()),
                                                        LENGTH_SPACE_FOURTH_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS + END_OF_LINE);
             });

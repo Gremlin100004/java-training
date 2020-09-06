@@ -1,6 +1,5 @@
 package com.senla.carservice.domain.enumaration;
 
-public enum Status {
-
+public enum StatusOrder {
     WAIT, PERFORM, CANCELED, COMPLETED
 }

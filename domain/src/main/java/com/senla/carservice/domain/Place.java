@@ -2,24 +2,19 @@ package com.senla.carservice.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "places")
 public class Place extends AEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Column(name = "number")
     private Integer number;
     @Column(name = "is_busy")
     private Boolean isBusy;
     @Column(name = "is_deleted")
     private Boolean isDelete;
+
 
     public Place() {
     }
@@ -34,7 +29,7 @@ public class Place extends AEntity {
         return number;
     }
 
-    public Boolean getIsBusy() {
+    public Boolean getBusy() {
         return isBusy;
     }
 
@@ -46,7 +41,7 @@ public class Place extends AEntity {
         this.number = number;
     }
 
-    public void setIsBusy(Boolean isBusy) {
+    public void setBusy(Boolean isBusy) {
         this.isBusy = isBusy;
     }
 
@@ -56,9 +51,6 @@ public class Place extends AEntity {
 
     @Override
     public String toString() {
-        return "Place{" +
-               "number=" + number +
-               ", busyStatus=" + isBusy +
-               '}';
+        return "Place{" + "number=" + number + ", isBusy=" + isBusy + ", isDelete=" + isDelete + '}';
     }
 }

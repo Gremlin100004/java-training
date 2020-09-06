@@ -41,5 +41,5 @@ public interface OrderService {
 
     List<Master> getOrderMasters(Order order);
 
-    int getNumberOrders();
+    Long getNumberOrders();
 }

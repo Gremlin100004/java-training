@@ -4,17 +4,15 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import org.hibernate.Session;
 
+import java.util.Date;
 import java.util.List;
 
-public interface OrderDao extends GenericDao<Order> {
-
+public interface OrderDao extends GenericDao<Order, Long> {
     Order getLastOrder(Session session);
 
-    int getNumberBusyMasters(String startPeriod, String endPeriod, Session session);
+    Long getNumberBusyMasters(Date startPeriod, Date endPeriod, Session session);
 
-    int getNumberBusyPlaces(String startPeriod, String endPeriod, Session session);
-
-    void addRecordToTableManyToMany(Order order, Session session);
+    Long getNumberBusyPlaces(Date startPeriod, Date endPeriod, Session session);
 
     List<Order> getOrdersSortByFilingDate(Session session);
 
@@ -28,36 +26,27 @@ public interface OrderDao extends GenericDao<Order> {
 
     List<Order> getExecuteOrderSortExecutionDate(Session session);
 
-    List<Order> getCompletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
-                                                   Session session);
+    List<Order> getCompletedOrdersSortByFilingDate(Date startPeriodDate, Date endPeriodDate, Session session);
 
-    List<Order> getCompletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate,
-                                                      Session session);
+    List<Order> getCompletedOrdersSortByExecutionDate(Date startPeriodDate, Date endPeriodDate, Session session);
 
-    List<Order> getCompletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate,
-                                              Session session);
+    List<Order> getCompletedOrdersSortByPrice(Date startPeriodDate, Date endPeriodDate, Session session);
 
-    List<Order> getCanceledOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
-                                                  Session session);
+    List<Order> getCanceledOrdersSortByFilingDate(Date startPeriodDate, Date endPeriodDate, Session session);
 
-    List<Order> getCanceledOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate,
-                                                     Session session);
+    List<Order> getCanceledOrdersSortByExecutionDate(Date startPeriodDate, Date endPeriodDate, Session session);
 
-    List<Order> getCanceledOrdersSortByPrice(String startPeriodDate, String endPeriodDate,
-                                             Session session);
+    List<Order> getCanceledOrdersSortByPrice(Date startPeriodDate, Date endPeriodDate, Session session);
 
-    List<Order> getDeletedOrdersSortByFilingDate(String startPeriodDate, String endPeriodDate,
-                                                 Session session);
+    List<Order> getDeletedOrdersSortByFilingDate(Date startPeriodDate, Date endPeriodDate, Session session);
 
-    List<Order> getDeletedOrdersSortByExecutionDate(String startPeriodDate, String endPeriodDate,
-                                                    Session session);
+    List<Order> getDeletedOrdersSortByExecutionDate(Date startPeriodDate, Date endPeriodDate, Session session);
 
-    List<Order> getDeletedOrdersSortByPrice(String startPeriodDate, String endPeriodDate,
-                                            Session session);
+    List<Order> getDeletedOrdersSortByPrice(Date startPeriodDate, Date endPeriodDate, Session session);
 
     List<Order> getMasterOrders(Master master, Session session);
 
-    int getNumberOrders(Session session);
+    Long getNumberOrders(Session session);
 
     Order getOrderById(Long index, Session session);
 }

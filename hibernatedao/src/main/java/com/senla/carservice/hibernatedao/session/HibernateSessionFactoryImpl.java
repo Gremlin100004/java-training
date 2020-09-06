@@ -52,6 +52,13 @@ public class HibernateSessionFactoryImpl implements HibernateSessionFactory {
         }
     }
 
+    @Override
+    public void closeSessionFactory() {
+        if (sessionFactory != null && sessionFactory.isOpen()) {
+            sessionFactory.close();
+        }
+    }
+
     private void initialize() {
         try {
             sessionFactory = new Configuration()

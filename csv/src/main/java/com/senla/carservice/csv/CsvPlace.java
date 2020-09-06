@@ -55,7 +55,7 @@ public class CsvPlace {
         Place place = new Place();
         place.setId(ParameterUtil.getValueLong(values.get(0)));
         place.setNumber(ParameterUtil.getValueInteger(values.get(1)));
-        place.setIsBusy(ParameterUtil.getValueBoolean(values.get(2)));
+        place.setBusy(ParameterUtil.getValueBoolean(values.get(2)));
         place.setDelete(ParameterUtil.getValueBoolean(values.get(3)));
         return place;
     }
@@ -70,7 +70,7 @@ public class CsvPlace {
                fieldSeparator +
                place.getNumber() +
                fieldSeparator +
-               place.getIsBusy() +
+               place.getBusy() +
                fieldSeparator +
                place.getDelete();
     }

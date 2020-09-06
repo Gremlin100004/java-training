@@ -32,7 +32,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public List<Place> getPlaces() {
         LOGGER.debug("Method getPlaces");
-        List<Place> places = placeDao.getAllRecords(hibernateSessionFactory.getSession());
+        List<Place> places = placeDao.getAllRecords(hibernateSessionFactory.getSession(), Place.class);
         if (places.isEmpty()) {
             throw new BusinessException("There are no places");
         }
@@ -68,10 +68,10 @@ public class PlaceServiceImpl implements PlaceService {
         }
         try {
             hibernateSessionFactory.openTransaction();
-            if (place.getIsBusy()) {
+            if (place.getBusy()) {
                 throw new BusinessException("Place is busy");
             }
-            placeDao.deleteRecord(place, hibernateSessionFactory.getSession());
+            placeDao.updateRecord(place, hibernateSessionFactory.getSession());
             hibernateSessionFactory.commitTransaction();
         } catch (BusinessException e) {
             LOGGER.error(e.getMessage());
@@ -83,17 +83,21 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public int getNumberFreePlaceByDate(Date startDayDate) {
+    public Long getNumberFreePlaceByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreePlaceByDate");
         LOGGER.debug("Parameter startDayDate: {}", startDayDate);
-        return placeDao.getAllRecords(hibernateSessionFactory.getSession()).size();
+        Long numberGeneralPlaces = placeDao.getNumberPlaces(hibernateSessionFactory.getSession());
+        Long numberBusyPlaces = placeDao.getNumberBusyPlaces(startDayDate, hibernateSessionFactory.getSession());
+        return numberGeneralPlaces-numberBusyPlaces;
     }
 
     @Override
     public List<Place> getFreePlaceByDate(Date executeDate) {
         LOGGER.debug("Method getFreePlaceByDate");
         LOGGER.debug("Parameter executeDate: {}", executeDate);
-        List<Place> freePlace = placeDao.getFreePlaces(executeDate, hibernateSessionFactory.getSession());
+        List<Place> busyPlaces = placeDao.getBusyPlaces(executeDate, hibernateSessionFactory.getSession());
+        List<Place> freePlace = placeDao.getAllRecords(hibernateSessionFactory.getSession(), Place.class);
+        freePlace.removeAll(busyPlaces);
         if (freePlace.isEmpty()) {
             throw new BusinessException("There are no free places");
         }
@@ -101,7 +105,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public int getNumberPlace() {
+    public Long getNumberPlace() {
         LOGGER.debug("Method getNumberMasters");
         return placeDao.getNumberPlaces(hibernateSessionFactory.getSession());
     }

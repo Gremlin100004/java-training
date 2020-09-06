@@ -26,8 +26,9 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getMasters() {
+        //TODO refactor method
         LOGGER.debug("Method getMasters");
-        List<Master> masters = masterDao.getAllRecords(hibernateSessionFactory.getSession());
+        List<Master> masters = masterDao.getAllRecords(hibernateSessionFactory.getSession(), Master.class);
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }
@@ -53,9 +54,12 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getFreeMastersByDate(Date executeDate) {
+        //TODO refactor method
         LOGGER.debug("Method getFreeMastersByDate");
         LOGGER.trace("Parameter executeDate: {}", executeDate);
-        List<Master> freeMasters = masterDao.getFreeMasters(executeDate, hibernateSessionFactory.getSession());
+        List<Master> freeMasters = masterDao.getAllRecords(hibernateSessionFactory.getSession(), Master.class);
+        List<Master> busyMastersMasters = masterDao.getBusyMasters(executeDate, hibernateSessionFactory.getSession());
+        freeMasters.removeAll(busyMastersMasters);
         if (freeMasters.isEmpty()) {
             throw new BusinessException("There are no free masters");
         }
@@ -63,10 +67,13 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public int getNumberFreeMastersByDate(Date startDayDate) {
+    public Long getNumberFreeMastersByDate(Date startDayDate) {
+        //TODO refactor method
         LOGGER.debug("Method getNumberFreeMastersByDate");
         LOGGER.trace("Parameter startDayDate: {}", startDayDate);
-        return masterDao.getFreeMasters(startDayDate, hibernateSessionFactory.getSession()).size();
+        Long numberGeneralMasters = masterDao.getNumberMasters(hibernateSessionFactory.getSession());
+        Long numberBusyMasters = masterDao.getNumberBusyMasters(startDayDate, hibernateSessionFactory.getSession());
+        return numberGeneralMasters-numberBusyMasters;
     }
 
     @Override
@@ -75,7 +82,7 @@ public class MasterServiceImpl implements MasterService {
         LOGGER.trace("Parameter master: {}", master);
         try {
             hibernateSessionFactory.openTransaction();
-            masterDao.deleteRecord(master, hibernateSessionFactory.getSession());
+            masterDao.updateRecord(master, hibernateSessionFactory.getSession());
             hibernateSessionFactory.commitTransaction();
         } catch (BusinessException e) {
             LOGGER.error(e.getMessage());
@@ -107,7 +114,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public int getNumberMasters() {
+    public Long getNumberMasters() {
         LOGGER.debug("Method getNumberMasters");
         return masterDao.getNumberMasters(hibernateSessionFactory.getSession());
     }

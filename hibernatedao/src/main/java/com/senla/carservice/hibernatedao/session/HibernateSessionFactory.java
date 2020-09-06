@@ -13,4 +13,6 @@ public interface HibernateSessionFactory {
     void rollBackTransaction();
 
     void closeSession();
+
+    void closeSessionFactory();
 }

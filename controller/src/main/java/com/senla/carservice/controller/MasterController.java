@@ -4,6 +4,7 @@ import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.controller.util.StringMaster;
 import com.senla.carservice.DateUtil;
+import com.senla.carservice.domain.Master;
 import com.senla.carservice.exception.DateException;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.exception.BusinessException;
@@ -50,7 +51,7 @@ public class MasterController {
             if (masterService.getNumberMasters() < index || index < 0) {
                 return "There are no such master";
             } else {
-                masterService.deleteMaster(masterService.getMasters().get(index));
+                masterService.deleteMaster((Master) masterService.getMasters().get(index));
                 return " -master has been deleted successfully!";
             }
         } catch (BusinessException | DaoException e) {
