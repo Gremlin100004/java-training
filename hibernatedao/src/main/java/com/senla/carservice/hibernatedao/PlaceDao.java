@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface PlaceDao extends GenericDao<Place, Long> {
 
-    List<Place> getBusyPlaces(Date startDayDate);
+    List<Place> getBusyPlaces(Date startDayDate, Session session);
 
-    Long getNumberPlaces();
+    Long getNumberPlaces(Session session);
 
-    Long getNumberBusyPlaces(Date executeDate);
+    Long getNumberBusyPlaces(Date executeDate, Session session);
 
-    Place getPlaceById(Long index);
+    Place getPlaceById(Long index, Session session);
 }

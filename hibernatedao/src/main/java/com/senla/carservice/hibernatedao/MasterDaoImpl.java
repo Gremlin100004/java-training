@@ -10,10 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.Date;
 import java.util.List;
 
@@ -24,10 +21,10 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     }
 
     @Override
-    public List<Master> getBusyMasters(Date executeDate) {
+    public List<Master> getBusyMasters(Date executeDate, Session session) {
         LOGGER.debug("Method getFreeMasters");
         LOGGER.trace("Parameter date: {}", executeDate);
-        Session session = sessionFactory.getCurrentSession();
+        LOGGER.trace("Parameter session: {}", session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -43,10 +40,10 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     }
 
     @Override
-    public Long getNumberBusyMasters(Date executeDate) {
+    public Long getNumberBusyMasters(Date executeDate, Session session) {
         LOGGER.debug("Method getNumberBusyMasters");
         LOGGER.trace("Parameter executeDate: {}", executeDate);
-        Session session = sessionFactory.getCurrentSession();
+        LOGGER.trace("Parameter session: {}",  session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Master> orderRoot = criteriaQuery.from(Master.class);
@@ -57,10 +54,9 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     }
 
     @Override
-    public List<Master> getMasterSortByAlphabet() {
+    public List<Master> getMasterSortByAlphabet(Session session) {
         LOGGER.debug("Method getMasterSortByAlphabet");
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
+        LOGGER.trace("Parameter session: {}", session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -75,9 +71,9 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     }
 
     @Override
-    public List<Master> getMasterSortByBusy() {
+    public List<Master> getMasterSortByBusy(Session session) {
         LOGGER.debug("Method getMasterSortByBusy");
-        Session session = sessionFactory.getCurrentSession();
+        LOGGER.trace("Parameter session: {}", session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -92,9 +88,9 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     }
 
     @Override
-    public Long getNumberMasters() {
+    public Long getNumberMasters(Session session) {
         LOGGER.debug("Method getNumberMasters");
-        Session session = sessionFactory.getCurrentSession();
+        LOGGER.trace("Parameter session: {}", session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -103,10 +99,10 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     }
 
     @Override
-    public Master getMasterById(Long id) {
+    public Master getMasterById(Long id, Session session) {
         LOGGER.debug("Method getMasterById");
         LOGGER.trace("Parameter index: {}", id);
-        Session session = sessionFactory.getCurrentSession();
+        LOGGER.trace("Parameter session: {}", session);
         return session.get(Master.class, id);
     }
 }

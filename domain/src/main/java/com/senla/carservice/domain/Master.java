@@ -1,9 +1,6 @@
 package com.senla.carservice.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +10,7 @@ public class Master extends AEntity {
 
     @Column(name = "name")
     private String name;
-    @ManyToMany(mappedBy = "masters")
+    @ManyToMany(mappedBy = "masters", fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
     @Column(name = "is_deleted")
     private Boolean deleteStatus;
