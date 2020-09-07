@@ -13,7 +13,7 @@ public class Master extends AEntity {
     @ManyToMany(mappedBy = "masters", fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
     @Column(name = "number_orders")
-    private Boolean numberOrders;
+    private Integer numberOrders;
     @Column(name = "is_deleted")
     private Boolean deleteStatus;
 
@@ -23,6 +23,7 @@ public class Master extends AEntity {
     public Master(String name) {
         this.name = name;
         deleteStatus = false;
+        numberOrders = 0;
     }
 
     public String getName() {
@@ -49,16 +50,17 @@ public class Master extends AEntity {
         this.orders = orders;
     }
 
-    public Boolean getNumberOrders() {
+    public Integer getNumberOrders() {
         return numberOrders;
     }
 
-    public void setNumberOrders(final Boolean numberOrders) {
+    public void setNumberOrders(final Integer numberOrders) {
         this.numberOrders = numberOrders;
     }
 
     @Override
     public String toString() {
-        return "Master{" + "name='" + name + '\'' + ", deleteStatus=" + deleteStatus + '}';
+        return "Master{" + "name='" + name + '\'' + ", numberOrders=" + numberOrders + ", deleteStatus=" +
+               deleteStatus + '}';
     }
 }

@@ -120,6 +120,7 @@ public class OrderServiceImpl implements OrderService {
             hibernateSessionFactory.openTransaction();
             Order currentOrder = orderDao.getLastOrder(hibernateSessionFactory.getSession());
             Master master = masterDao.getAllRecords(hibernateSessionFactory.getSession(), Master.class).get(index);
+            master.setNumberOrders(master.getNumberOrders() + 1);
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
             }
@@ -216,6 +217,9 @@ public class OrderServiceImpl implements OrderService {
             checkStatusOrder(order);
             order.setLeadTime(new Date());
             order.setStatus(StatusOrder.CANCELED);
+            List<Master> masters = orderDao.getOrderMasters(order, hibernateSessionFactory.getSession());
+            masters.forEach(master -> master.setNumberOrders(master.getNumberOrders() - 1));
+            masterDao.updateAllRecords(masters, hibernateSessionFactory.getSession());
             orderDao.updateRecord(order, hibernateSessionFactory.getSession());
             Place place = order.getPlace();
             place.setBusy(false);
@@ -243,6 +247,10 @@ public class OrderServiceImpl implements OrderService {
             Place place = order.getPlace();
             place.setBusy(false);
             placeDao.updateRecord(place, hibernateSessionFactory.getSession());
+            List<Master> masters = orderDao.getOrderMasters(order, hibernateSessionFactory.getSession());
+            masters.forEach(master -> master.setNumberOrders(master.getNumberOrders() - 1));
+            masterDao.updateAllRecords(masters, hibernateSessionFactory.getSession());
+            orderDao.updateRecord(order, hibernateSessionFactory.getSession());
             hibernateSessionFactory.commitTransaction();
         } catch (BusinessException e) {
             LOGGER.error(e.getMessage());
@@ -402,19 +410,15 @@ public class OrderServiceImpl implements OrderService {
     private void checkMasters() {
         LOGGER.debug("Method checkMasters");
         if (masterDao.getNumberMasters(hibernateSessionFactory.getSession()) == 0) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("There are no masters");
         }
-        hibernateSessionFactory.closeSession();
     }
 
     private void checkPlaces() {
         LOGGER.debug("Method checkPlaces");
         if (placeDao.getNumberPlaces(hibernateSessionFactory.getSession()) == 0) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("There are no places");
         }
-        hibernateSessionFactory.closeSession();
     }
 
     private void checkStatusOrder(Order order) {
