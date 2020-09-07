@@ -1,7 +1,9 @@
 package com.senla.carservice.hibernatedao;
 
 import com.senla.carservice.hibernatedao.exception.DaoException;
+import com.senla.carservice.hibernatedao.util.HibernateUtil;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,22 +17,24 @@ import java.util.List;
 public abstract class AbstractDao<T, PK extends Serializable> implements GenericDao<T, PK> {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
     public AbstractDao() {
     }
 
     @Override
-    public void saveRecord(T object, Session session) {
+    public void saveRecord(T object) {
         LOGGER.debug("Method saveRecord");
         LOGGER.trace("Parameter object: {}", object);
-        LOGGER.trace("Parameter session: {}", session);
+        Session session = sessionFactory.getCurrentSession();
         session.save(object);
     }
 
     @Override
-    public List<T> getAllRecords(Session session, Class<T> type) {
+    public List<T> getAllRecords(Class<T> type) {
         LOGGER.debug("Method getAllRecords");
-        LOGGER.trace("Parameter session: {}", session);
+        LOGGER.trace("Parameter type: {}", type);
+        Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(type);
         Root<T> root = criteriaQuery.from(type);
@@ -44,28 +48,33 @@ public abstract class AbstractDao<T, PK extends Serializable> implements Generic
     }
 
     @Override
-    public void updateRecord(T object, Session session) {
+    public void updateRecord(T object) {
         LOGGER.debug("Method updateRecord");
         LOGGER.trace("Parameter object: {}", object);
-        LOGGER.trace("Parameter session: {}", session);
+        Session session = sessionFactory.getCurrentSession();
         session.update(object);
     }
 
     @Override
-    public void updateAllRecords(List<T> objects, Session session) {
+    public void updateAllRecords(List<T> objects) {
         LOGGER.debug("Method updateAllRecords");
         LOGGER.trace("Parameter objects: {}", objects);
-        LOGGER.trace("Parameter session: {}", session);
+        Session session = sessionFactory.getCurrentSession();
         for (T object : objects) {
             session.update(object);
         }
     }
 
     @Override
-    public void deleteRecord(PK id, Session session) {
+    public void deleteRecord(PK id) {
         LOGGER.debug("Method deleteRecord");
         LOGGER.trace("Parameter id: {}", id);
-        LOGGER.trace("Parameter session: {}", session);
+        Session session = sessionFactory.getCurrentSession();
         session.delete(id);
+    }
+
+    @Override
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
     }
 }

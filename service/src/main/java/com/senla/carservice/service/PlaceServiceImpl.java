@@ -1,12 +1,13 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.domain.Place;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.service.exception.BusinessException;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.hibernatedao.PlaceDao;
-import com.senla.carservice.hibernatedao.session.HibernateSessionFactory;
+import com.senla.carservice.service.exception.BusinessException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +23,6 @@ public class PlaceServiceImpl implements PlaceService {
     private Boolean isBlockAddPlace;
     @ConfigProperty
     private Boolean isBlockDeletePlace;
-    @Dependency
-    private HibernateSessionFactory hibernateSessionFactory;
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaceServiceImpl.class);
 
     public PlaceServiceImpl() {
@@ -32,10 +31,13 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public List<Place> getPlaces() {
         LOGGER.debug("Method getPlaces");
-        List<Place> places = placeDao.getAllRecords(hibernateSessionFactory.getSession(), Place.class);
+        Session session = placeDao.getSessionFactory().openSession();
+        List<Place> places = placeDao.getAllRecords(Place.class);
         if (places.isEmpty()) {
+            session.close();
             throw new BusinessException("There are no places");
         }
+        session.close();
         return places;
     }
 
@@ -46,16 +48,15 @@ public class PlaceServiceImpl implements PlaceService {
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
-        try {
-            hibernateSessionFactory.openTransaction();
-            placeDao.saveRecord(new Place(number), hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
+        Session session = placeDao.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        try (session) {
+            placeDao.saveRecord(new Place(number));
+            transaction.commit();
         } catch (BusinessException e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            transaction.rollback();
             throw new BusinessException("Error transaction add places");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -66,19 +67,18 @@ public class PlaceServiceImpl implements PlaceService {
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
-        try {
-            hibernateSessionFactory.openTransaction();
+        Session session = placeDao.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        try (session) {
             if (place.getBusy()) {
                 throw new BusinessException("Place is busy");
             }
-            placeDao.updateRecord(place, hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
+            placeDao.updateRecord(place);
+            transaction.commit();
         } catch (BusinessException e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            transaction.rollback();
             throw new BusinessException("Error transaction delete place");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -86,8 +86,10 @@ public class PlaceServiceImpl implements PlaceService {
     public Long getNumberFreePlaceByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreePlaceByDate");
         LOGGER.debug("Parameter startDayDate: {}", startDayDate);
-        Long numberGeneralPlaces = placeDao.getNumberPlaces(hibernateSessionFactory.getSession());
-        Long numberBusyPlaces = placeDao.getNumberBusyPlaces(startDayDate, hibernateSessionFactory.getSession());
+        Session session = placeDao.getSessionFactory().openSession();
+        Long numberGeneralPlaces = placeDao.getNumberPlaces();
+        Long numberBusyPlaces = placeDao.getNumberBusyPlaces(startDayDate);
+        session.close();
         return numberGeneralPlaces-numberBusyPlaces;
     }
 
@@ -95,18 +97,24 @@ public class PlaceServiceImpl implements PlaceService {
     public List<Place> getFreePlaceByDate(Date executeDate) {
         LOGGER.debug("Method getFreePlaceByDate");
         LOGGER.debug("Parameter executeDate: {}", executeDate);
-        List<Place> busyPlaces = placeDao.getBusyPlaces(executeDate, hibernateSessionFactory.getSession());
-        List<Place> freePlace = placeDao.getAllRecords(hibernateSessionFactory.getSession(), Place.class);
+        Session session = placeDao.getSessionFactory().openSession();
+        List<Place> busyPlaces = placeDao.getBusyPlaces(executeDate);
+        List<Place> freePlace = placeDao.getAllRecords(Place.class);
         freePlace.removeAll(busyPlaces);
         if (freePlace.isEmpty()) {
+            session.close();
             throw new BusinessException("There are no free places");
         }
+        session.close();
         return freePlace;
     }
 
     @Override
     public Long getNumberPlace() {
         LOGGER.debug("Method getNumberMasters");
-        return placeDao.getNumberPlaces(hibernateSessionFactory.getSession());
+        Session session = placeDao.getSessionFactory().openSession();
+        Long numberPlaces = placeDao.getNumberPlaces();
+        session.close();
+        return numberPlaces;
     }
 }
