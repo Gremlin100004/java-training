@@ -7,8 +7,8 @@ import com.senla.carservice.container.objectadjuster.propertyinjection.annotatio
 import com.senla.carservice.csv.exception.CsvException;
 import com.senla.carservice.csv.util.FileUtil;
 import com.senla.carservice.csv.util.ParameterUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,14 +26,14 @@ public class CsvMaster {
     @ConfigProperty
     private String idSeparator;
     private static final int SIZE_INDEX = 1;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CsvMaster.class);
+    private static final Logger LOGGER = LogManager.getLogger(CsvMaster.class);
 
     public CsvMaster() {
     }
 
     public void exportMasters(List<Master> masters) {
         LOGGER.debug("Method exportMasters");
-        LOGGER.trace("Parameter masters: {}", masters);
+        LOGGER.trace("Parameter masters: " + masters);
         FileUtil.saveCsv(masters.stream()
                         .map(this::convertToCsv)
                         .collect(Collectors.toList()),
@@ -50,8 +50,8 @@ public class CsvMaster {
 
     private Master getMasterFromCsv(String line, List<Order> orders) {
         LOGGER.debug("Method getMasterFromCsv");
-        LOGGER.trace("Parameter line: {}", line);
-        LOGGER.trace("Parameter orders: {}", orders);
+        LOGGER.trace("Parameter line: " + line);
+        LOGGER.trace("Parameter orders: " + orders);
         if (line == null) {
             throw new CsvException("argument is null");
         }
@@ -66,7 +66,7 @@ public class CsvMaster {
 
     private String convertToCsv(Master master) {
         LOGGER.debug("Method convertToCsv");
-        LOGGER.trace("Parameter master: {}", master);
+        LOGGER.trace("Parameter master: " + master);
         if (master == null) {
             throw new CsvException("argument is null");
         }
@@ -91,8 +91,8 @@ public class CsvMaster {
 
     public List<Order> getOrdersById(List<Order> orders, List<String> arrayIdOrder) {
         LOGGER.debug("Method getOrdersById");
-        LOGGER.trace("Parameter orders: {}", orders);
-        LOGGER.trace("Parameter arrayIdOrder: {}", arrayIdOrder);
+        LOGGER.trace("Parameter orders: " + orders);
+        LOGGER.trace("Parameter arrayIdOrder: " + arrayIdOrder);
         if (orders == null || arrayIdOrder == null) {
             throw new CsvException("argument is null");
         }

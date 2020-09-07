@@ -3,8 +3,8 @@ package com.senla.carservice.container.context;
 import com.senla.carservice.container.configurator.Configurator;
 import com.senla.carservice.container.exception.InitializationException;
 import com.senla.carservice.container.objectadjuster.AnnotationHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class Context {
     private final Map<String, Object> singletons = new HashMap<>();
     private final List<AnnotationHandler> annotationHandlers = new ArrayList<>();
     private final Configurator configurator;
-    private static final Logger LOGGER = LoggerFactory.getLogger(Context.class);
+    private static final Logger LOGGER = LogManager.getLogger(Context.class);
 
 
     public Context(Configurator configurator) {
@@ -49,7 +49,7 @@ public class Context {
     @SuppressWarnings("unchecked")
     public <T> T getObject(Class<? extends T> objectClass) {
         LOGGER.debug("Method getObject");
-        LOGGER.trace("Parameter objectClass: {}", objectClass);
+        LOGGER.trace("Parameter objectClass: " + objectClass);
         T classInstance = (T) singletons.get(objectClass.getName());
         if (classInstance != null) {
             return classInstance;
@@ -65,7 +65,7 @@ public class Context {
 
     public <T> void setSingleton(T singleton) {
         LOGGER.debug("Method setSingleton");
-        LOGGER.trace("Parameter singleton: {}", singleton);
+        LOGGER.trace("Parameter singleton: " + singleton);
         for (Map.Entry<String, Class<?>> singletonEntry : configurator.getSingletonClasses().entrySet()) {
             if (singletonEntry.getValue().equals(singleton.getClass())) {
                 singletons.put(singletonEntry.getKey(), singleton);
@@ -76,7 +76,7 @@ public class Context {
 
     private <T> T createRawObject(Class<? extends T> classImplementation) {
         LOGGER.debug("Method createRawObject");
-        LOGGER.trace("Parameter singleton: {}", classImplementation);
+        LOGGER.trace("Parameter singleton: " + classImplementation);
         try {
             return classImplementation.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
@@ -86,7 +86,7 @@ public class Context {
 
     private void configureObject(Object classInstance) {
         LOGGER.debug("Method configureObject");
-        LOGGER.trace("Parameter classInstance: {}", classInstance);
+        LOGGER.trace("Parameter classInstance: " + classInstance);
         for (AnnotationHandler annotationHandler : annotationHandlers) {
             annotationHandler.configure(classInstance, this);
         }

@@ -9,8 +9,8 @@ import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.hibernatedao.exception.DaoException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.util.Date;
 
@@ -23,14 +23,14 @@ public class CarOfficeController {
     private MasterService masterService;
     @Dependency
     private PlaceService placeService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeController.class);
+    private static final Logger LOGGER = LogManager.getLogger(CarOfficeController.class);
 
     public CarOfficeController() {
     }
 
     public String getFreePlacesMastersByDate(String date) {
         LOGGER.info("Method getFreePlacesMastersByDate");
-        LOGGER.trace("Parameter date: {}", date);
+        LOGGER.trace("Parameter date: " + date);
         Date dateFree = DateUtil.getDatesFromString(date, false);
         if (dateFree == null) {
             return "error date";
@@ -62,7 +62,7 @@ public class CarOfficeController {
         try {
             carOfficeService.exportEntities();
             return "Export completed successfully!";
-        } catch (BusinessException | CsvException e) {
+        } catch (BusinessException | CsvException | DaoException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -73,7 +73,18 @@ public class CarOfficeController {
         try {
             carOfficeService.importEntities();
             return "Imported completed successfully!";
-        } catch (BusinessException | CsvException e) {
+        } catch (BusinessException | CsvException | DaoException e) {
+            LOGGER.warn(e.getMessage());
+            return e.getMessage();
+        }
+    }
+
+    public String closeSessionFactory() {
+        LOGGER.info("Method closeSessionFactory");
+        try {
+            carOfficeService.closeSessionFactory();
+            return "Bye bye!";
+        } catch (BusinessException | CsvException | DaoException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }

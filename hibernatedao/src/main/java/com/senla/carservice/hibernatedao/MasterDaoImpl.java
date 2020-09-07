@@ -23,8 +23,8 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     @Override
     public List<Master> getBusyMasters(Date executeDate, Session session) {
         LOGGER.debug("Method getFreeMasters");
-        LOGGER.trace("Parameter date: {}", executeDate);
-        LOGGER.trace("Parameter session: {}", session);
+        LOGGER.trace("Parameter date: " + executeDate);
+        LOGGER.trace("Parameter session: " + session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -42,8 +42,8 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     @Override
     public Long getNumberBusyMasters(Date executeDate, Session session) {
         LOGGER.debug("Method getNumberBusyMasters");
-        LOGGER.trace("Parameter executeDate: {}", executeDate);
-        LOGGER.trace("Parameter session: {}",  session);
+        LOGGER.trace("Parameter executeDate: " + executeDate);
+        LOGGER.trace("Parameter session: " +  session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Master> orderRoot = criteriaQuery.from(Master.class);
@@ -56,7 +56,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     @Override
     public List<Master> getMasterSortByAlphabet(Session session) {
         LOGGER.debug("Method getMasterSortByAlphabet");
-        LOGGER.trace("Parameter session: {}", session);
+        LOGGER.trace("Parameter session: " + session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -73,7 +73,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     @Override
     public List<Master> getMasterSortByBusy(Session session) {
         LOGGER.debug("Method getMasterSortByBusy");
-        LOGGER.trace("Parameter session: {}", session);
+        LOGGER.trace("Parameter session: " + session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -90,7 +90,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     @Override
     public Long getNumberMasters(Session session) {
         LOGGER.debug("Method getNumberMasters");
-        LOGGER.trace("Parameter session: {}", session);
+        LOGGER.trace("Parameter session: " + session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -101,8 +101,8 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     @Override
     public Master getMasterById(Long id, Session session) {
         LOGGER.debug("Method getMasterById");
-        LOGGER.trace("Parameter index: {}", id);
-        LOGGER.trace("Parameter session: {}", session);
+        LOGGER.trace("Parameter index: " + id);
+        LOGGER.trace("Parameter session: " + session);
         return session.get(Master.class, id);
     }
 }

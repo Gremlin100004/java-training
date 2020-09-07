@@ -49,4 +49,6 @@ public interface OrderDao extends GenericDao<Order, Long> {
     Long getNumberOrders(Session session);
 
     Order getOrderById(Long index, Session session);
+
+    List<Master> getOrderMasters(Order order, Session session);
 }

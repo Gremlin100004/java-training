@@ -1,8 +1,8 @@
 package com.senla.carservice.controller.util;
 
 import com.senla.carservice.domain.Place;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,11 +27,11 @@ public class StringPlaces {
     private static final int LENGTH_SPACE_THIRD_COLUMN = 6;
     private static final int LENGTH_SPACE_FOURTH_COLUMN = 6;
     private static final int INDEX_ADDITION = 1;
-    private static final Logger LOGGER = LoggerFactory.getLogger(StringPlaces.class);
+    private static final Logger LOGGER = LogManager.getLogger(StringPlaces.class);
 
     public static String getStringFromPlaces(List<Place> places) {
         LOGGER.debug("Method getStringFromPlaces");
-        LOGGER.trace("Parameter places: {}", places);
+        LOGGER.trace("Parameter places: " + places);
         String line = START_OF_LINE_DELIMITER + String.join(SYMBOL_FOR_JOIN_METHOD, Collections.nCopies(LINE_LENGTH, LINE_SEPARATOR)) +
                       END_OF_LINE;
         StringBuilder stringBuilder = new StringBuilder(line);

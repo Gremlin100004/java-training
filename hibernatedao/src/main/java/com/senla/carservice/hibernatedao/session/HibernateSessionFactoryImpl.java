@@ -27,7 +27,9 @@ public class HibernateSessionFactoryImpl implements HibernateSessionFactory {
 
     @Override
     public void openTransaction() {
-        openSession();
+        if (session == null || !session.isOpen()) {
+            openSession();
+        }
         transaction = session.beginTransaction();
     }
 

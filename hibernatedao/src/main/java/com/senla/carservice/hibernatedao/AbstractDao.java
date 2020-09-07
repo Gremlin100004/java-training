@@ -22,15 +22,15 @@ public abstract class AbstractDao<T, PK extends Serializable> implements Generic
     @Override
     public void saveRecord(T object, Session session) {
         LOGGER.debug("Method saveRecord");
-        LOGGER.trace("Parameter object: {}", object);
-        LOGGER.trace("Parameter session: {}", session);
+        LOGGER.trace("Parameter object: " + object);
+        LOGGER.trace("Parameter session: " + session);
         session.save(object);
     }
 
     @Override
     public List<T> getAllRecords(Session session, Class<T> type) {
         LOGGER.debug("Method getAllRecords");
-        LOGGER.trace("Parameter session: {}", session);
+        LOGGER.trace("Parameter session: " + session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(type);
         Root<T> root = criteriaQuery.from(type);
@@ -46,16 +46,16 @@ public abstract class AbstractDao<T, PK extends Serializable> implements Generic
     @Override
     public void updateRecord(T object, Session session) {
         LOGGER.debug("Method updateRecord");
-        LOGGER.trace("Parameter object: {}", object);
-        LOGGER.trace("Parameter session: {}", session);
+        LOGGER.trace("Parameter object: " + object);
+        LOGGER.trace("Parameter session: " + session);
         session.update(object);
     }
 
     @Override
     public void updateAllRecords(List<T> objects, Session session) {
         LOGGER.debug("Method updateAllRecords");
-        LOGGER.trace("Parameter objects: {}", objects);
-        LOGGER.trace("Parameter session: {}", session);
+        LOGGER.trace("Parameter objects: " + objects);
+        LOGGER.trace("Parameter session: " + session);
         for (T object : objects) {
             session.update(object);
         }
@@ -64,8 +64,8 @@ public abstract class AbstractDao<T, PK extends Serializable> implements Generic
     @Override
     public void deleteRecord(PK id, Session session) {
         LOGGER.debug("Method deleteRecord");
-        LOGGER.trace("Parameter id: {}", id);
-        LOGGER.trace("Parameter session: {}", session);
+        LOGGER.trace("Parameter id: " + id);
+        LOGGER.trace("Parameter session: " + session);
         session.delete(id);
     }
 }

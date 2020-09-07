@@ -1,6 +1,5 @@
 package com.senla.carservice.ui;
 
-import com.senla.carservice.DateUtil;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.hibernatedao.MasterDao;
@@ -10,7 +9,6 @@ import com.senla.carservice.hibernatedao.OrderDaoImpl;
 import com.senla.carservice.hibernatedao.session.HibernateSessionFactory;
 import com.senla.carservice.hibernatedao.session.HibernateSessionFactoryImpl;
 
-import java.util.Date;
 import java.util.List;
 
 public class Test {
@@ -18,9 +16,11 @@ public class Test {
         HibernateSessionFactory hibernateSessionFactory = new HibernateSessionFactoryImpl();
         MasterDao masterDao = new MasterDaoImpl();
         OrderDao orderDao = new OrderDaoImpl();
-        Date startDate = DateUtil.getDatesFromString("2020-09-15 10:00", true);
+        Order order = new Order();
+        order.setId((long) 4);
+//        Date startDate = DateUtil.getDatesFromString("2020-09-15 10:00", true);
 //        Date endDate = DateUtil.getDatesFromString("2020-09-20 10:00", true);
-        List<Master> masters = masterDao.getBusyMasters(startDate, hibernateSessionFactory.getSession());
+        List<Master> masters = orderDao.getOrderMasters(order, hibernateSessionFactory.getSession());
         masters.forEach(System.out::println);
 //        Long numberMasters = orderDao.getNumberBusyPlaces(startDate, endDate, hibernateSessionFactory.getSession());
 //        System.out.println(numberMasters);

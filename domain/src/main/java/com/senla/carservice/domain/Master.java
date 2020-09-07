@@ -12,6 +12,8 @@ public class Master extends AEntity {
     private String name;
     @ManyToMany(mappedBy = "masters", fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
+    @Column(name = "number_orders")
+    private Boolean numberOrders;
     @Column(name = "is_deleted")
     private Boolean deleteStatus;
 
@@ -47,8 +49,16 @@ public class Master extends AEntity {
         this.orders = orders;
     }
 
+    public Boolean getNumberOrders() {
+        return numberOrders;
+    }
+
+    public void setNumberOrders(final Boolean numberOrders) {
+        this.numberOrders = numberOrders;
+    }
+
     @Override
     public String toString() {
-        return "Master{" + "name='" + name + '\'' + ", orders=" + orders + ", deleteStatus=" + deleteStatus + '}';
+        return "Master{" + "name='" + name + '\'' + ", deleteStatus=" + deleteStatus + '}';
     }
 }

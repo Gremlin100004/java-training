@@ -14,8 +14,8 @@ import com.senla.carservice.hibernatedao.MasterDao;
 import com.senla.carservice.hibernatedao.OrderDao;
 import com.senla.carservice.hibernatedao.PlaceDao;
 import com.senla.carservice.hibernatedao.session.HibernateSessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.util.Date;
 import java.util.List;
@@ -38,7 +38,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Dependency
     private HibernateSessionFactory hibernateSessionFactory;
     private static final int NUMBER_DAY = 1;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(CarOfficeServiceImpl.class);
 
     public CarOfficeServiceImpl() {
     }
@@ -61,6 +61,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
                 break;
             }
         }
+        hibernateSessionFactory.closeSession();
         return dayDate;
     }
 
@@ -96,34 +97,46 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         csvMaster.exportMasters(masters);
         csvPlace.exportPlaces(places);
     }
+    @Override
+    public void closeSessionFactory() {
+        hibernateSessionFactory.closeSessionFactory();
+    }
 
     private void checkMasters() {
         LOGGER.debug("Method checkMasters");
-        if (masterDao.getAllRecords(hibernateSessionFactory.getSession(), Master.class).isEmpty()) {
+        if (masterDao.getNumberMasters(hibernateSessionFactory.getSession()) == 0) {
+            hibernateSessionFactory.closeSession();
             throw new BusinessException("There are no masters");
         }
+        hibernateSessionFactory.closeSession();
     }
 
     private void checkPlaces() {
         LOGGER.debug("Method checkPlaces");
-        if (placeDao.getAllRecords(hibernateSessionFactory.getSession(), Place.class).isEmpty()) {
+        if (placeDao.getNumberPlaces(hibernateSessionFactory.getSession()) == 0) {
+            hibernateSessionFactory.closeSession();
             throw new BusinessException("There are no places");
         }
+        hibernateSessionFactory.closeSession();
     }
 
     private void checkOrders() {
         LOGGER.debug("Method checkOrders");
-        if (orderDao.getAllRecords(hibernateSessionFactory.getSession(), Order.class).isEmpty()) {
+        if (orderDao.getNumberOrders(hibernateSessionFactory.getSession()) == 0) {
+            hibernateSessionFactory.closeSession();
             throw new BusinessException("There are no orders");
         }
+        hibernateSessionFactory.closeSession();
     }
 
     private List<Order> getOrders() {
         LOGGER.debug("Method getOrders");
         List<Order> orders = orderDao.getAllRecords(hibernateSessionFactory.getSession(), Order.class);
         if (orders.isEmpty()) {
+            hibernateSessionFactory.closeSession();
             throw new BusinessException("There are no orders");
         }
+        hibernateSessionFactory.closeSession();
         return orders;
     }
 
@@ -131,8 +144,10 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         LOGGER.debug("Method getMasters");
         List<Master> masters = masterDao.getAllRecords(hibernateSessionFactory.getSession(), Master.class);
         if (masters.isEmpty()) {
+            hibernateSessionFactory.closeSession();
             throw new BusinessException("There are no masters");
         }
+        hibernateSessionFactory.closeSession();
         return masters;
     }
 
@@ -140,8 +155,10 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         LOGGER.debug("Method getPlaces");
         List<Place> places = placeDao.getAllRecords(hibernateSessionFactory.getSession(), Place.class);
         if (places.isEmpty()) {
+            hibernateSessionFactory.closeSession();
             throw new BusinessException("There are no places");
         }
+        hibernateSessionFactory.closeSession();
         return places;
     }
 }

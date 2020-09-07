@@ -23,8 +23,8 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
     @Override
     public List<Place> getBusyPlaces(Date executeDate, Session session) {
         LOGGER.debug("Method getFreePlaces");
-        LOGGER.trace("Parameter executeDate: {}", executeDate);
-        LOGGER.trace("Parameter session: {}",  session);
+        LOGGER.trace("Parameter executeDate: " + executeDate);
+        LOGGER.trace("Parameter session: " +  session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Place> criteriaQuery = criteriaBuilder.createQuery(Place.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
@@ -42,8 +42,8 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
     @Override
     public Long getNumberBusyPlaces(Date executeDate, Session session) {
         LOGGER.debug("Method getFreePlaces");
-        LOGGER.trace("Parameter executeDate: {}", executeDate);
-        LOGGER.trace("Parameter session: {}",  session);
+        LOGGER.trace("Parameter executeDate: " + executeDate);
+        LOGGER.trace("Parameter session: " +  session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
@@ -57,7 +57,7 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
     @Override
     public Long getNumberPlaces(Session  session) {
         LOGGER.debug("Method getNumberPlaces");
-        LOGGER.debug("Parameter session: {}",  session);
+        LOGGER.debug("Parameter session: " +  session);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Place> placeRoot = criteriaQuery.from(Place.class);
@@ -68,8 +68,8 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
     @Override
     public Place getPlaceById(Long id, Session  session) {
         LOGGER.debug("Method getPlaceById");
-        LOGGER.debug("Parameter id: {}", id);
-        LOGGER.debug("Parameter session: {}",  session);
+        LOGGER.debug("Parameter id: " + id);
+        LOGGER.debug("Parameter session: " +  session);
         return session.get(Place.class, id);
     }
 }

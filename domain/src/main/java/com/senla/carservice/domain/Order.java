@@ -12,10 +12,6 @@ import java.util.List;
 @Table(name = "orders")
 public class Order extends AEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
     @Column(name = "creation_time")
     private Date creationTime;
     @Column(name = "execution_start_time")

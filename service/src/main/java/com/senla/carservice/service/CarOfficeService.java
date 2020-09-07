@@ -9,4 +9,6 @@ public interface CarOfficeService {
     void importEntities();
 
     void exportEntities();
+
+    void closeSessionFactory();
 }

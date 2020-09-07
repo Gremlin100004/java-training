@@ -7,21 +7,21 @@ import com.senla.carservice.container.objectadjuster.propertyinjection.enumerati
 import com.senla.carservice.container.objectadjuster.propertyinjection.enumeration.TypeField;
 import com.senla.carservice.container.property.PropertyLoader;
 import com.senla.carservice.container.exception.InitializationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.lang.reflect.Field;
 
 public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
 
     private static final String CLASS_NAME_SEPARATOR = ".";
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyDependencyAnnotationHandler.class);
+    private static final Logger LOGGER = LogManager.getLogger(PropertyDependencyAnnotationHandler.class);
 
     @Override
     public void configure(Object classInstance, Context context) {
         LOGGER.debug("Method configure");
-        LOGGER.trace("Parameter classInstance: {}", classInstance);
-        LOGGER.trace("Parameter context: {}", context);
+        LOGGER.trace("Parameter classInstance: " + classInstance);
+        LOGGER.trace("Parameter context: " + context);
         Class<?> implementClass = classInstance.getClass();
         for (Field field : implementClass.getDeclaredFields()) {
             if (!field.isAnnotationPresent(ConfigProperty.class)) {
@@ -40,7 +40,7 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
 
     private String getPropertyFileName(ConfigProperty annotation) {
         LOGGER.debug("Method getPropertyFileName");
-        LOGGER.trace("Parameter annotation: {}", annotation);
+        LOGGER.trace("Parameter annotation: " + annotation);
         if (annotation.configName().isEmpty()) {
             return DefaultValue.PROPERTY_FILE_NAME.getValue();
         } else {
@@ -50,8 +50,8 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
 
     private String getPropertyName(ConfigProperty annotation, String defaultPropertyName) {
         LOGGER.debug("Method getPropertyName");
-        LOGGER.trace("Parameter annotation: {}", annotation);
-        LOGGER.trace("Parameter defaultPropertyName: {}", defaultPropertyName);
+        LOGGER.trace("Parameter annotation: " + annotation);
+        LOGGER.trace("Parameter defaultPropertyName: " + defaultPropertyName);
         if (annotation.propertyName().isEmpty()) {
             return defaultPropertyName;
         } else {
@@ -61,8 +61,8 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
 
     private Class<?> getFieldType(ConfigProperty annotation, Class<?> defaultType) {
         LOGGER.debug("Method getFieldType");
-        LOGGER.trace("Parameter annotation: {}", annotation);
-        LOGGER.trace("Parameter defaultType: {}", defaultType);
+        LOGGER.trace("Parameter annotation: " + annotation);
+        LOGGER.trace("Parameter defaultType: " + defaultType);
         if (annotation.type() == TypeField.DEFAULT) {
             return defaultType;
         } else {
@@ -72,8 +72,8 @@ public class PropertyDependencyAnnotationHandler implements AnnotationHandler {
 
     private void injectValueInField(Field field, String value, Class<?> fieldType, Object inputObject) {
         LOGGER.debug("Method injectValueInField");
-        LOGGER.trace("Parameter field: {}", field);
-        LOGGER.trace("Parameter inputObject: {}", inputObject);
+        LOGGER.trace("Parameter field: " + field);
+        LOGGER.trace("Parameter inputObject: " + inputObject);
         field.setAccessible(true);
         try {
             if (fieldType.equals(Boolean.class)) {
