@@ -78,7 +78,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
         criteriaQuery.select(masterRoot).distinct(true);
-        criteriaQuery.orderBy(criteriaBuilder.desc(criteriaBuilder.size(masterRoot.get(Master_.orders))));
+        criteriaQuery.orderBy(criteriaBuilder.desc(masterRoot.get(Master_.numberOrders)));
         TypedQuery<Master> typedQuery = session.createQuery(criteriaQuery);
         List<Master> masters = typedQuery.getResultList();
         if (masters == null) {
