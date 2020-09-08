@@ -1,13 +1,11 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.controller.util.StringMaster;
-import com.senla.carservice.util.exception.DateException;
-import com.senla.carservice.hibernatedao.exception.DaoException;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.exception.BusinessException;
+import com.senla.carservice.util.DateUtil;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -25,7 +23,7 @@ public class MasterController {
         LOGGER.info("Method getMasters");
         try {
             return StringMaster.getStringFromMasters(masterService.getMasters());
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -37,7 +35,7 @@ public class MasterController {
         try {
             masterService.addMaster(name);
             return " -master \"" + name + "\" has been added to service.";
-        } catch (DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -53,7 +51,7 @@ public class MasterController {
                 masterService.deleteMaster(masterService.getMasters().get(index));
                 return " -master has been deleted successfully!";
             }
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -63,7 +61,7 @@ public class MasterController {
         LOGGER.info("Method getMasterByAlphabet");
         try {
             return StringMaster.getStringFromMasters(masterService.getMasterByAlphabet());
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -73,7 +71,7 @@ public class MasterController {
         LOGGER.info("Method getMasterByBusy");
         try {
             return StringMaster.getStringFromMasters(masterService.getMasterByBusy());
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -85,7 +83,7 @@ public class MasterController {
         try {
             return StringMaster.getStringFromMasters(
                 masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate, true)));
-        } catch (BusinessException | DaoException | DateException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }

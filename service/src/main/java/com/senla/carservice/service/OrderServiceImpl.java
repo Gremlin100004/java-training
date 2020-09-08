@@ -7,15 +7,16 @@ import com.senla.carservice.domain.Place;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
-import com.senla.carservice.domain.enumaration.SortParameter;
+import com.senla.carservice.service.enumaration.SortParameter;
 import com.senla.carservice.domain.enumaration.StatusOrder;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.hibernatedao.MasterDao;
 import com.senla.carservice.hibernatedao.OrderDao;
 import com.senla.carservice.hibernatedao.PlaceDao;
-import com.senla.carservice.hibernatedao.session.HibernateSessionFactory;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -34,8 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private boolean isBlockShiftTime;
     @ConfigProperty
     private boolean isBlockDeleteOrder;
-    @Dependency
-    private HibernateSessionFactory hibernateSessionFactory;
+
     private static final Logger LOGGER = LogManager.getLogger(OrderServiceImpl.class);
 
     public OrderServiceImpl() {
@@ -44,13 +44,23 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getOrders() {
         LOGGER.debug("Method getOrders");
-        List<Order> orders = orderDao.getAllRecords(hibernateSessionFactory.getSession(), Order.class);
-        if (orders.isEmpty()) {
-            hibernateSessionFactory.closeSession();
-            throw new BusinessException("There are no orders");
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            List<Order> orders = orderDao.getAllRecords(Order.class);
+            if (orders.isEmpty()) {
+                throw new BusinessException("There are no orders");
+            }
+            transaction.commit();
+            return orders;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            if(transaction != null){
+                transaction.rollback();
+            }
+            throw new BusinessException("Error transaction get orders");
         }
-        hibernateSessionFactory.closeSession();
-        return orders;
     }
 
     @Override
@@ -59,21 +69,23 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Parameter automaker: " + automaker);
         LOGGER.debug("Parameter model: " + model);
         LOGGER.debug("Parameter registrationNumber: " + registrationNumber);
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
         try {
-            hibernateSessionFactory.openTransaction();
+            transaction = session.beginTransaction();
             checkMasters();
             checkPlaces();
             Order order = new Order(automaker, model, registrationNumber);
-            Place place = placeDao.getPlaceById((long) 1, hibernateSessionFactory.getSession());
+            Place place = placeDao.getPlaceById((long) 1);
             order.setPlace(place);
-            orderDao.saveRecord(order, hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
-        } catch (BusinessException e) {
+            orderDao.saveRecord(order);
+            transaction.commit();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            if(transaction != null){
+                transaction.rollback();
+            }
             throw new BusinessException("Error transaction add order");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -82,17 +94,19 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method addOrderDeadlines");
         LOGGER.debug("Parameter executionStartTime: " + executionStartTime);
         LOGGER.debug("Parameter leadTime: " + leadTime);
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
         try {
-            hibernateSessionFactory.openTransaction();
+            transaction = session.beginTransaction();
             DateUtil.checkDateTime(executionStartTime, leadTime, false);
-            Order currentOrder = orderDao.getLastOrder(hibernateSessionFactory.getSession());
+            Order currentOrder = orderDao.getLastOrder();
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
             }
-            long numberFreeMasters = masterDao.getNumberMasters(hibernateSessionFactory.getSession()) - orderDao
-                .getNumberBusyMasters(executionStartTime, leadTime, hibernateSessionFactory.getSession());
-            long numberFreePlace = placeDao.getNumberPlaces(hibernateSessionFactory.getSession()) - orderDao
-                .getNumberBusyPlaces(executionStartTime, leadTime, hibernateSessionFactory.getSession());
+            long numberFreeMasters = masterDao.getNumberMasters() - orderDao
+                .getNumberBusyMasters(executionStartTime, leadTime);
+            long numberFreePlace = placeDao.getNumberPlaces() - orderDao
+                .getNumberBusyPlaces(executionStartTime, leadTime);
             if (numberFreeMasters == 0) {
                 throw new BusinessException("The number of masters is zero");
             }
@@ -101,14 +115,14 @@ public class OrderServiceImpl implements OrderService {
             }
             currentOrder.setExecutionStartTime(executionStartTime);
             currentOrder.setLeadTime(leadTime);
-            orderDao.updateRecord(currentOrder, hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
-        } catch (BusinessException e) {
+            orderDao.updateRecord(currentOrder);
+            transaction.commit();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            if(transaction != null){
+                transaction.rollback();
+            }
             throw new BusinessException("Error transaction add dead line to order");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -116,10 +130,12 @@ public class OrderServiceImpl implements OrderService {
     public void addOrderMasters(int index) {
         LOGGER.debug("Method addOrderMasters");
         LOGGER.debug("Parameter index: " + index);
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
         try {
-            hibernateSessionFactory.openTransaction();
-            Order currentOrder = orderDao.getLastOrder(hibernateSessionFactory.getSession());
-            Master master = masterDao.getAllRecords(hibernateSessionFactory.getSession(), Master.class).get(index);
+            transaction = session.beginTransaction();
+            Order currentOrder = orderDao.getLastOrder();
+            Master master = masterDao.getAllRecords(Master.class).get(index);
             master.setNumberOrders(master.getNumberOrders() + 1);
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
@@ -133,13 +149,13 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
             currentOrder.getMasters().add(master);
-            hibernateSessionFactory.commitTransaction();
-        } catch (BusinessException e) {
+            transaction.commit();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            if(transaction != null){
+                transaction.rollback();
+            }
             throw new BusinessException("Error transaction add masters to order");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -147,21 +163,23 @@ public class OrderServiceImpl implements OrderService {
     public void addOrderPlace(Place place) {
         LOGGER.debug("Method addOrderPlace");
         LOGGER.debug("Parameter place: " + place);
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
         try {
-            hibernateSessionFactory.openTransaction();
-            Order currentOrder = orderDao.getLastOrder(hibernateSessionFactory.getSession());
+            transaction = session.beginTransaction();
+            Order currentOrder = orderDao.getLastOrder();
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
             }
             currentOrder.setPlace(place);
-            orderDao.updateRecord(currentOrder, hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
-        } catch (BusinessException e) {
+            orderDao.updateRecord(currentOrder);
+            transaction.commit();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            if(transaction != null){
+                transaction.rollback();
+            }
             throw new BusinessException("Error transaction add place to order");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -169,21 +187,23 @@ public class OrderServiceImpl implements OrderService {
     public void addOrderPrice(BigDecimal price) {
         LOGGER.debug("Method addOrderPrice");
         LOGGER.debug("Parameter price: " + price);
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
         try {
-            hibernateSessionFactory.openTransaction();
-            Order currentOrder = orderDao.getLastOrder(hibernateSessionFactory.getSession());
+            transaction = session.beginTransaction();
+            Order currentOrder = orderDao.getLastOrder();
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
             }
             currentOrder.setPrice(price);
-            orderDao.updateRecord(currentOrder, hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
-        } catch (BusinessException e) {
+            orderDao.updateRecord(currentOrder);
+            transaction.commit();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            if(transaction != null){
+                transaction.rollback();
+            }
             throw new BusinessException("Error transaction add price to order");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -191,20 +211,22 @@ public class OrderServiceImpl implements OrderService {
     public void completeOrder(Order order) {
         LOGGER.debug("Method completeOrder");
         LOGGER.debug("Parameter order: " + order);
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
         try {
-            hibernateSessionFactory.openTransaction();
+            transaction = session.beginTransaction();
             checkStatusOrder(order);
             order.setStatus(StatusOrder.PERFORM);
             order.setExecutionStartTime(new Date());
             order.getPlace().setBusy(true);
-            orderDao.updateRecord(order, hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
-        } catch (BusinessException e) {
+            orderDao.updateRecord(order);
+            transaction.commit();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            if(transaction != null){
+                transaction.rollback();
+            }
             throw new BusinessException("Error transaction transfer order to execution status");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -212,25 +234,27 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrder(Order order) {
         LOGGER.debug("Method cancelOrder");
         LOGGER.debug("Parameter order: " + order);
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
         try {
-            hibernateSessionFactory.openTransaction();
+            transaction = session.beginTransaction();
             checkStatusOrder(order);
             order.setLeadTime(new Date());
             order.setStatus(StatusOrder.CANCELED);
-            List<Master> masters = orderDao.getOrderMasters(order, hibernateSessionFactory.getSession());
+            List<Master> masters = orderDao.getOrderMasters(order);
             masters.forEach(master -> master.setNumberOrders(master.getNumberOrders() - 1));
-            masterDao.updateAllRecords(masters, hibernateSessionFactory.getSession());
-            orderDao.updateRecord(order, hibernateSessionFactory.getSession());
+            masterDao.updateAllRecords(masters);
+            orderDao.updateRecord(order);
             Place place = order.getPlace();
             place.setBusy(false);
-            placeDao.updateRecord(place, hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
-        } catch (BusinessException e) {
+            placeDao.updateRecord(place);
+            transaction.commit();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            if(transaction != null){
+                transaction.rollback();
+            }
             throw new BusinessException("Error transaction cancel order");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -238,26 +262,28 @@ public class OrderServiceImpl implements OrderService {
     public void closeOrder(Order order) {
         LOGGER.debug("Method closeOrder");
         LOGGER.debug("Parameter order: " + order);
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
         try {
-            hibernateSessionFactory.openTransaction();
+            transaction = session.beginTransaction();
             checkStatusOrder(order);
             order.setLeadTime(new Date());
             order.setStatus(StatusOrder.COMPLETED);
-            orderDao.updateRecord(order, hibernateSessionFactory.getSession());
+            orderDao.updateRecord(order);
             Place place = order.getPlace();
             place.setBusy(false);
-            placeDao.updateRecord(place, hibernateSessionFactory.getSession());
-            List<Master> masters = orderDao.getOrderMasters(order, hibernateSessionFactory.getSession());
+            placeDao.updateRecord(place);
+            List<Master> masters = orderDao.getOrderMasters(order);
             masters.forEach(master -> master.setNumberOrders(master.getNumberOrders() - 1));
-            masterDao.updateAllRecords(masters, hibernateSessionFactory.getSession());
-            orderDao.updateRecord(order, hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
-        } catch (BusinessException e) {
+            masterDao.updateAllRecords(masters);
+            orderDao.updateRecord(order);
+            transaction.commit();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            if(transaction != null){
+                transaction.rollback();
+            }
             throw new BusinessException("Error transaction close order");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -268,16 +294,18 @@ public class OrderServiceImpl implements OrderService {
         if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
         try {
-            hibernateSessionFactory.openTransaction();
-            orderDao.updateRecord(order, hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
-        } catch (BusinessException e) {
+            transaction = session.beginTransaction();
+            orderDao.updateRecord(order);
+            transaction.commit();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            if(transaction != null){
+                transaction.rollback();
+            }
             throw new BusinessException("Error transaction get masters");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -290,20 +318,22 @@ public class OrderServiceImpl implements OrderService {
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
         try {
-            hibernateSessionFactory.openTransaction();
+            transaction = session.beginTransaction();
             DateUtil.checkDateTime(executionStartTime, leadTime, false);
             checkStatusOrderShiftTime(order);
             order.setLeadTime(leadTime);
             order.setExecutionStartTime(executionStartTime);
-            orderDao.updateRecord(order, hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
-        } catch (BusinessException e) {
+            orderDao.updateRecord(order);
+            transaction.commit();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            if(transaction != null){
+                transaction.rollback();
+            }
             throw new BusinessException("Error transaction shift lead time");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
@@ -311,24 +341,36 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getSortOrders(SortParameter sortParameter) {
         LOGGER.debug("Method getSortOrders");
         LOGGER.debug("Parameter sortParameter: " + sortParameter);
-        List<Order> orders = new ArrayList<>();
-        if (sortParameter.equals(SortParameter.SORT_BY_FILING_DATE)) {
-            orders = orderDao.getOrdersSortByFilingDate(hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.SORT_BY_EXECUTION_DATE)) {
-            orders = orderDao.getOrdersSortByExecutionDate(hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.BY_PLANNED_START_DATE)) {
-            orders = orderDao.getOrdersSortByPlannedStartDate(hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.SORT_BY_PRICE)) {
-            orders = orderDao.getOrdersSortByPrice(hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE)) {
-            orders = orderDao.getExecuteOrderSortByFilingDate(hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE)) {
-            orders = orderDao.getExecuteOrderSortExecutionDate(hibernateSessionFactory.getSession());
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            List<Order> orders = new ArrayList<>();
+            if (sortParameter.equals(SortParameter.SORT_BY_FILING_DATE)) {
+                orders = orderDao.getOrdersSortByFilingDate();
+            } else if (sortParameter.equals(SortParameter.SORT_BY_EXECUTION_DATE)) {
+                orders = orderDao.getOrdersSortByExecutionDate();
+            } else if (sortParameter.equals(SortParameter.BY_PLANNED_START_DATE)) {
+                orders = orderDao.getOrdersSortByPlannedStartDate();
+            } else if (sortParameter.equals(SortParameter.SORT_BY_PRICE)) {
+                orders = orderDao.getOrdersSortByPrice();
+            } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE)) {
+                orders = orderDao.getExecuteOrderSortByFilingDate();
+            } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE)) {
+                orders = orderDao.getExecuteOrderSortExecutionDate();
+            }
+            if (orders.isEmpty()) {
+                throw new BusinessException("There are no orders");
+            }
+            transaction.commit();
+            return orders;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            if(transaction != null){
+                transaction.rollback();
+            }
+            throw new BusinessException("Error transaction get sort orders");
         }
-        if (orders.isEmpty()) {
-            throw new BusinessException("There are no orders");
-        }
-        return orders;
     }
 
     @Override
@@ -337,86 +379,124 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Parameter startPeriodDate: " + startPeriodDate);
         LOGGER.debug("Parameter endPeriodDate: " + endPeriodDate);
         LOGGER.debug("Parameter sortParameter: " + sortParameter);
-        List<Order> orders = new ArrayList<>();
-        DateUtil.checkDateTime(startPeriodDate, endPeriodDate, true);
-        if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE)) {
-            orders = orderDao.getCompletedOrdersSortByFilingDate(startPeriodDate, endPeriodDate,
-                                                                 hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
-            orders = orderDao.getCompletedOrdersSortByExecutionDate(startPeriodDate, endPeriodDate,
-                                                                    hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE)) {
-            orders = orderDao
-                .getCompletedOrdersSortByPrice(startPeriodDate, endPeriodDate, hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE)) {
-            orders = orderDao.getCanceledOrdersSortByFilingDate(startPeriodDate, endPeriodDate,
-                                                                hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE)) {
-            orders = orderDao.getCanceledOrdersSortByExecutionDate(startPeriodDate, endPeriodDate,
-                                                                   hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_PRICE)) {
-            orders = orderDao
-                .getCanceledOrdersSortByPrice(startPeriodDate, endPeriodDate, hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE)) {
-            orders = orderDao
-                .getDeletedOrdersSortByFilingDate(startPeriodDate, endPeriodDate, hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
-            orders = orderDao.getDeletedOrdersSortByExecutionDate(startPeriodDate, endPeriodDate,
-                                                                  hibernateSessionFactory.getSession());
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)) {
-            orders = orderDao
-                .getDeletedOrdersSortByPrice(startPeriodDate, endPeriodDate, hibernateSessionFactory.getSession());
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            List<Order> orders = new ArrayList<>();
+            DateUtil.checkDateTime(startPeriodDate, endPeriodDate, true);
+            if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE)) {
+                orders = orderDao.getCompletedOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
+            } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+                orders = orderDao.getCompletedOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
+            } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE)) {
+                orders = orderDao
+                    .getCompletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
+            } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE)) {
+                orders = orderDao.getCanceledOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
+            } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+                orders = orderDao.getCanceledOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
+            } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_PRICE)) {
+                orders = orderDao
+                    .getCanceledOrdersSortByPrice(startPeriodDate, endPeriodDate);
+            } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE)) {
+                orders = orderDao
+                    .getDeletedOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
+            } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+                orders = orderDao.getDeletedOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
+            } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)) {
+                orders = orderDao
+                    .getDeletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
+            }
+            if (orders.isEmpty()) {
+                throw new BusinessException("There are no orders");
+            }
+            transaction.commit();
+            return orders;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            if(transaction != null){
+                transaction.rollback();
+            }
+            throw new BusinessException("Error transaction get sort orders by date");
         }
-        if (orders.isEmpty()) {
-            throw new BusinessException("There are no orders");
-        }
-        return orders;
     }
 
     @Override
     public List<Order> getMasterOrders(Master master) {
         LOGGER.debug("Method getMasterOrders");
         LOGGER.debug("Parameter master: " + master);
-        List<Order> orders = orderDao.getMasterOrders(master, hibernateSessionFactory.getSession());
-        if (orders.isEmpty()) {
-            hibernateSessionFactory.closeSession();
-            throw new BusinessException("Master doesn't have any orders");
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            List<Order> orders = orderDao.getMasterOrders(master);
+            if (orders.isEmpty()) {
+                throw new BusinessException("Master doesn't have any orders");
+            }
+            transaction.commit();
+            return orders;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            if(transaction != null){
+                transaction.rollback();
+            }
+            throw new BusinessException("Error transaction get master orders");
         }
-        hibernateSessionFactory.closeSession();
-        return orders;
     }
 
     @Override
     public List<Master> getOrderMasters(Order order) {
         LOGGER.debug("Method getOrderMasters");
         LOGGER.debug("Parameter order: " + order);
-        List<Master> masters = orderDao.getOrderMasters(order, hibernateSessionFactory.getSession());
-        if (masters.isEmpty()) {
-            hibernateSessionFactory.closeSession();
-            throw new BusinessException("There are no masters in order");
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            List<Master> masters = orderDao.getOrderMasters(order);
+            if (masters.isEmpty()) {
+                throw new BusinessException("There are no masters in order");
+            }
+            transaction.commit();
+            return masters;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            if(transaction != null){
+                transaction.rollback();
+            }
+            throw new BusinessException("Error transaction order masters");
         }
-        hibernateSessionFactory.closeSession();
-        return masters;
     }
 
     @Override
     public Long getNumberOrders() {
         LOGGER.debug("Method getNumberOrders");
-        Long numberOrders = orderDao.getNumberOrders(hibernateSessionFactory.getSession());
-        hibernateSessionFactory.closeSession();
-        return numberOrders;
+        Session session = orderDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            Long numberOrders = orderDao.getNumberOrders();
+            transaction.commit();
+            return numberOrders;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            if(transaction != null){
+                transaction.rollback();
+            }
+            throw new BusinessException("Error transaction get number orders");
+        }
     }
 
     private void checkMasters() {
         LOGGER.debug("Method checkMasters");
-        if (masterDao.getNumberMasters(hibernateSessionFactory.getSession()) == 0) {
+        if (masterDao.getNumberMasters() == 0) {
             throw new BusinessException("There are no masters");
         }
     }
 
     private void checkPlaces() {
         LOGGER.debug("Method checkPlaces");
-        if (placeDao.getNumberPlaces(hibernateSessionFactory.getSession()) == 0) {
+        if (placeDao.getNumberPlaces() == 0) {
             throw new BusinessException("There are no places");
         }
     }
@@ -425,19 +505,15 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method checkStatusOrder");
         LOGGER.debug("Parameter order: " + order);
         if (order.isDeleteStatus()) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("The order has been deleted");
         }
         if (order.getStatus() == StatusOrder.COMPLETED) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("The order has been completed");
         }
         if (order.getStatus() == StatusOrder.PERFORM) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("Order is being executed");
         }
         if (order.getStatus() == StatusOrder.CANCELED) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("The order has been canceled");
         }
     }
@@ -446,15 +522,12 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method checkStatusOrderShiftTime");
         LOGGER.debug("Parameter order: " + order);
         if (order.isDeleteStatus()) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("The order has been deleted");
         }
         if (order.getStatus() == StatusOrder.COMPLETED) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("The order has been completed");
         }
         if (order.getStatus() == StatusOrder.CANCELED) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("The order has been canceled");
         }
     }

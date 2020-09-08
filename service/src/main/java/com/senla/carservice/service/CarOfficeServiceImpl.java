@@ -13,9 +13,10 @@ import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.hibernatedao.MasterDao;
 import com.senla.carservice.hibernatedao.OrderDao;
 import com.senla.carservice.hibernatedao.PlaceDao;
-import com.senla.carservice.hibernatedao.session.HibernateSessionFactory;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.util.Date;
 import java.util.List;
@@ -35,8 +36,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     private CsvOrder csvOrder;
     @Dependency
     private CsvMaster csvMaster;
-    @Dependency
-    private HibernateSessionFactory hibernateSessionFactory;
+
     private static final int NUMBER_DAY = 1;
     private static final Logger LOGGER = LogManager.getLogger(CarOfficeServiceImpl.class);
 
@@ -46,119 +46,132 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     public Date getNearestFreeDate() {
         LOGGER.debug("Method getNearestFreeDate");
-        checkMasters();
-        checkPlaces();
-        checkOrders();
-        Date leadTimeOrder = orderDao.getLastOrder(hibernateSessionFactory.getSession()).getLeadTime();
-        Date dayDate = new Date();
-        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
-             currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
-            if (masterDao.getBusyMasters(currentDay, hibernateSessionFactory.getSession()).isEmpty() ||
-                    placeDao.getBusyPlaces(currentDay, hibernateSessionFactory.getSession()).isEmpty()) {
-                dayDate = currentDay;
-                currentDay = DateUtil.bringStartOfDayDate(currentDay);
-            } else {
-                break;
+        Session session = masterDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            checkMasters();
+            checkPlaces();
+            checkOrders();
+            Date leadTimeOrder = orderDao.getLastOrder().getLeadTime();
+            Date dayDate = new Date();
+            for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
+                 currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
+                if (masterDao.getBusyMasters(currentDay).isEmpty() ||
+                    placeDao.getBusyPlaces(currentDay).isEmpty()) {
+                    dayDate = currentDay;
+                    currentDay = DateUtil.bringStartOfDayDate(currentDay);
+                } else {
+                    break;
+                }
             }
+            transaction.commit();
+            return dayDate;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            if(transaction != null){
+                transaction.rollback();
+            }
+            throw new BusinessException("Error transaction get date");
         }
-        hibernateSessionFactory.closeSession();
-        return dayDate;
     }
 
     @Override
     public void importEntities() {
         LOGGER.debug("Method importEntities");
+        Session session = masterDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
         try {
-            hibernateSessionFactory.openTransaction();
-            masterDao.updateAllRecords(csvMaster.importMasters(
-                    orderDao.getAllRecords(hibernateSessionFactory.getSession(), Order.class)),
-                    hibernateSessionFactory.getSession());
-            placeDao.updateAllRecords(csvPlace.importPlaces(), hibernateSessionFactory.getSession());
-            List<Order> orders = csvOrder.importOrder(masterDao.getAllRecords(hibernateSessionFactory.getSession(), Master.class),
-                    placeDao.getAllRecords(hibernateSessionFactory.getSession(), Place.class));
-            orderDao.updateAllRecords(orders, hibernateSessionFactory.getSession());
-            hibernateSessionFactory.commitTransaction();
-        } catch (BusinessException e) {
+            transaction = session.beginTransaction();
+            masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords(Order.class)));
+            placeDao.updateAllRecords(csvPlace.importPlaces());
+            List<Order> orders = csvOrder.importOrder(masterDao.getAllRecords(Master.class),
+                    placeDao.getAllRecords(Place.class));
+            orderDao.updateAllRecords(orders);
+            transaction.commit();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            hibernateSessionFactory.rollBackTransaction();
+            if(transaction != null){
+                transaction.rollback();
+            }
             throw new BusinessException("Error transaction import entities");
-        } finally {
-            hibernateSessionFactory.closeSession();
         }
     }
 
     @Override
     public void exportEntities() {
         LOGGER.debug("Method exportEntities");
-        List<Order> orders = getOrders();
-        List<Master> masters = getMasters();
-        List<Place> places = getPlaces();
-        csvOrder.exportOrder(orders);
-        csvMaster.exportMasters(masters);
-        csvPlace.exportPlaces(places);
+        Session session = masterDao.getSessionFactory().getCurrentSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            List<Order> orders = getOrders();
+            List<Master> masters = getMasters();
+            List<Place> places = getPlaces();
+            csvOrder.exportOrder(orders);
+            csvMaster.exportMasters(masters);
+            csvPlace.exportPlaces(places);
+            transaction.commit();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            if(transaction != null){
+                transaction.rollback();
+            }
+            throw new BusinessException("Error transaction export entities");
+        }
     }
     @Override
     public void closeSessionFactory() {
-        hibernateSessionFactory.closeSessionFactory();
+        if (orderDao.getSessionFactory().isOpen()){
+            orderDao.getSessionFactory().close();
+        }
     }
 
     private void checkMasters() {
         LOGGER.debug("Method checkMasters");
-        if (masterDao.getNumberMasters(hibernateSessionFactory.getSession()) == 0) {
-            hibernateSessionFactory.closeSession();
+        if (masterDao.getNumberMasters() == 0) {
             throw new BusinessException("There are no masters");
         }
-        hibernateSessionFactory.closeSession();
     }
 
     private void checkPlaces() {
         LOGGER.debug("Method checkPlaces");
-        if (placeDao.getNumberPlaces(hibernateSessionFactory.getSession()) == 0) {
-            hibernateSessionFactory.closeSession();
+        if (placeDao.getNumberPlaces() == 0) {
             throw new BusinessException("There are no places");
         }
-        hibernateSessionFactory.closeSession();
     }
 
     private void checkOrders() {
         LOGGER.debug("Method checkOrders");
-        if (orderDao.getNumberOrders(hibernateSessionFactory.getSession()) == 0) {
-            hibernateSessionFactory.closeSession();
+        if (orderDao.getNumberOrders() == 0) {
             throw new BusinessException("There are no orders");
         }
-        hibernateSessionFactory.closeSession();
     }
 
     private List<Order> getOrders() {
         LOGGER.debug("Method getOrders");
-        List<Order> orders = orderDao.getAllRecords(hibernateSessionFactory.getSession(), Order.class);
+        List<Order> orders = orderDao.getAllRecords(Order.class);
         if (orders.isEmpty()) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("There are no orders");
         }
-        hibernateSessionFactory.closeSession();
         return orders;
     }
 
     private List<Master> getMasters() {
         LOGGER.debug("Method getMasters");
-        List<Master> masters = masterDao.getAllRecords(hibernateSessionFactory.getSession(), Master.class);
+        List<Master> masters = masterDao.getAllRecords(Master.class);
         if (masters.isEmpty()) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("There are no masters");
         }
-        hibernateSessionFactory.closeSession();
         return masters;
     }
 
     private List<Place> getPlaces() {
         LOGGER.debug("Method getPlaces");
-        List<Place> places = placeDao.getAllRecords(hibernateSessionFactory.getSession(), Place.class);
+        List<Place> places = placeDao.getAllRecords(Place.class);
         if (places.isEmpty()) {
-            hibernateSessionFactory.closeSession();
             throw new BusinessException("There are no places");
         }
-        hibernateSessionFactory.closeSession();
         return places;
     }
 }

@@ -3,7 +3,7 @@ package com.senla.carservice.service;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.domain.enumaration.SortParameter;
+import com.senla.carservice.service.enumaration.SortParameter;
 
 import java.math.BigDecimal;
 import java.util.Date;

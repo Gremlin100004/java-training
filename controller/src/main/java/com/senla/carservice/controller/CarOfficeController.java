@@ -41,7 +41,7 @@ public class CarOfficeController {
             Long numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate);
             return "- number free places in service: " + numberFreePlace + "\n- number free masters in service: " +
                    numberFreeMasters;
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -51,7 +51,7 @@ public class CarOfficeController {
         LOGGER.info("Method getNearestFreeDate");
         try {
             return "Nearest free date: " + DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false);
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -62,7 +62,7 @@ public class CarOfficeController {
         try {
             carOfficeService.exportEntities();
             return "Export completed successfully!";
-        } catch (BusinessException | CsvException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -73,7 +73,7 @@ public class CarOfficeController {
         try {
             carOfficeService.importEntities();
             return "Imported completed successfully!";
-        } catch (BusinessException | CsvException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -84,7 +84,7 @@ public class CarOfficeController {
         try {
             carOfficeService.closeSessionFactory();
             return "Bye bye!";
-        } catch (BusinessException | CsvException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }

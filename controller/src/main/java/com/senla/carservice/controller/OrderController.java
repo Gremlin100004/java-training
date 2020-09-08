@@ -9,7 +9,7 @@ import com.senla.carservice.util.exception.DateException;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.PlaceService;
-import com.senla.carservice.domain.enumaration.SortParameter;
+import com.senla.carservice.service.enumaration.SortParameter;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.hibernatedao.exception.DaoException;
 import org.apache.log4j.LogManager;
@@ -40,7 +40,7 @@ public class OrderController {
         try {
             orderService.addOrder(automaker, model, registrationNumber);
             return "order add successfully!";
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -55,7 +55,7 @@ public class OrderController {
             Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
             orderService.addOrderDeadlines(executionStartTime, leadTime);
             return "deadline add to order successfully";
-        } catch (BusinessException | DaoException | DateException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -71,7 +71,7 @@ public class OrderController {
                 orderService.addOrderMasters(index);
                 return "masters add successfully";
             }
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -89,7 +89,7 @@ public class OrderController {
                 orderService.addOrderPlace(placeService.getPlaces().get(index));
                 return "place add to order successfully";
             }
-        } catch (BusinessException | DaoException | DateException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -101,7 +101,7 @@ public class OrderController {
         try {
             orderService.addOrderPrice(price);
             return "price add to order successfully";
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -111,7 +111,7 @@ public class OrderController {
         LOGGER.info("Method getOrders");
         try {
             return StringOrder.getStringFromOrder(orderService.getOrders());
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -127,7 +127,7 @@ public class OrderController {
                 orderService.completeOrder(orderService.getOrders().get(index));
             }
             return " - the order has been transferred to execution status";
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -143,7 +143,7 @@ public class OrderController {
                 orderService.closeOrder(orderService.getOrders().get(index));
                 return " -the order has been completed.";
             }
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -159,7 +159,7 @@ public class OrderController {
                 orderService.cancelOrder(orderService.getOrders().get(index));
             }
             return " -the order has been canceled.";
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -175,7 +175,7 @@ public class OrderController {
                 orderService.deleteOrder(orderService.getOrders().get(index));
                 return " -the order has been deleted.";
             }
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -195,7 +195,7 @@ public class OrderController {
                 orderService.shiftLeadTime(orderService.getOrders().get(index), executionStartTime, leadTime);
                 return " -the order lead time has been changed.";
             }
-        } catch (BusinessException | DaoException | DateException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -205,7 +205,7 @@ public class OrderController {
         LOGGER.info("Method getOrdersSortByFilingDate");
         try {
             return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.SORT_BY_FILING_DATE));
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -215,7 +215,7 @@ public class OrderController {
         LOGGER.info("Method getOrdersSortByExecutionDate");
         try {
             return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.SORT_BY_EXECUTION_DATE));
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -225,7 +225,7 @@ public class OrderController {
         LOGGER.info("Method getOrdersSortByPlannedStartDate");
         try {
             return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.BY_PLANNED_START_DATE));
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -235,7 +235,7 @@ public class OrderController {
         LOGGER.info("Method getOrdersSortByPrice");
         try {
             return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.SORT_BY_PRICE));
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -246,7 +246,7 @@ public class OrderController {
         try {
             return StringOrder
                 .getStringFromOrder(orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE));
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -257,7 +257,7 @@ public class OrderController {
         try {
             return StringOrder
                 .getStringFromOrder(orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE));
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -271,8 +271,8 @@ public class OrderController {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-                                                                                     SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE));
-        } catch (BusinessException | DaoException | DateException e) {
+                SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE));
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -286,8 +286,8 @@ public class OrderController {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-                                                                                     SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE));
-        } catch (BusinessException | DaoException | DateException e) {
+                SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE));
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -301,8 +301,8 @@ public class OrderController {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-                                                                                     SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE));
-        } catch (BusinessException | DaoException | DateException e) {
+                SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE));
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -316,8 +316,8 @@ public class OrderController {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-                                                                                     SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE));
-        } catch (BusinessException | DaoException | DateException e) {
+                SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE));
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -331,8 +331,8 @@ public class OrderController {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-                                                                                     SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE));
-        } catch (BusinessException | DaoException | DateException e) {
+                SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE));
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -346,8 +346,8 @@ public class OrderController {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-                                                                                     SortParameter.CANCELED_ORDERS_SORT_BY_PRICE));
-        } catch (BusinessException | DaoException | DateException e) {
+                SortParameter.CANCELED_ORDERS_SORT_BY_PRICE));
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -361,8 +361,8 @@ public class OrderController {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-                                                                                     SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE));
-        } catch (BusinessException | DaoException | DateException e) {
+                SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE));
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -376,8 +376,8 @@ public class OrderController {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-                                                                                     SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE));
-        } catch (BusinessException | DaoException | DateException e) {
+                SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE));
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -391,8 +391,8 @@ public class OrderController {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
             return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-                                                                                     SortParameter.DELETED_ORDERS_SORT_BY_PRICE));
-        } catch (BusinessException | DaoException | DateException e) {
+                SortParameter.DELETED_ORDERS_SORT_BY_PRICE));
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -408,7 +408,7 @@ public class OrderController {
                 return StringOrder
                     .getStringFromOrder(orderService.getMasterOrders(masterService.getMasters().get(index)));
             }
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -424,7 +424,7 @@ public class OrderController {
                 return StringMaster
                     .getStringFromMasters(orderService.getOrderMasters(orderService.getOrders().get(index)));
             }
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }

@@ -41,7 +41,7 @@ public class PlaceController {
         LOGGER.info("Method getArrayPlace");
         try {
             return StringPlaces.getStringFromPlaces(placeService.getPlaces());
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -58,7 +58,7 @@ public class PlaceController {
                 placeService.deletePlace(deletedPlace);
                 return " -delete place in service number \"" + deletedPlace.getNumber() + "\"";
             }
-        } catch (BusinessException | DaoException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -70,7 +70,7 @@ public class PlaceController {
         try {
             Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
             return StringPlaces.getStringFromPlaces(placeService.getFreePlaceByDate(executeDate));
-        } catch (BusinessException | DaoException | DateException e) {
+        } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
