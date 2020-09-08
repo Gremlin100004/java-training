@@ -8,7 +8,7 @@ import com.senla.carservice.container.objectadjuster.propertyinjection.annotatio
 import com.senla.carservice.csv.exception.CsvException;
 import com.senla.carservice.csv.util.FileUtil;
 import com.senla.carservice.csv.util.ParameterUtil;
-import com.senla.carservice.DateUtil;
+import com.senla.carservice.util.DateUtil;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 

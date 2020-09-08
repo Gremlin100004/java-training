@@ -1,6 +1,6 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.DateUtil;
+import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;

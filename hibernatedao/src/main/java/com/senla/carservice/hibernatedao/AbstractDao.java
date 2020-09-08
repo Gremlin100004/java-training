@@ -3,8 +3,8 @@ package com.senla.carservice.hibernatedao;
 import com.senla.carservice.hibernatedao.exception.DaoException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public abstract class AbstractDao<T, PK extends Serializable> implements GenericDao<T, PK> {
 
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected final Logger LOGGER = LogManager.getLogger(this.getClass());
 
     public AbstractDao() {
     }
