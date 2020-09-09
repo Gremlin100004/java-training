@@ -2,7 +2,17 @@ package com.senla.carservice.domain;
 
 import com.senla.carservice.domain.enumaration.StatusOrder;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,13 +44,9 @@ public class Order extends AEntity {
     private StatusOrder status;
     @Column(name = "is_deleted")
     private boolean deleteStatus;
-
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "orders_masters",
-        joinColumns = @JoinColumn(name = "order_id"),
-        inverseJoinColumns = @JoinColumn(name = "master_id")
-    )
+    @JoinTable(name = "orders_masters", joinColumns = @JoinColumn(name = "order_id"),
+        inverseJoinColumns = @JoinColumn(name = "master_id"))
     private List<Master> masters = new ArrayList<>();
 
     public Order() {

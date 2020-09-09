@@ -54,7 +54,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         Join<Master, Order> orderJoin = orderRoot.join(Master_.orders);
         criteriaQuery.distinct(true);
         criteriaQuery.select(criteriaBuilder.count(orderRoot.get(Master_.id)))
-                .where(criteriaBuilder.between(orderJoin.get(Order_.leadTime), startPeriod, endPeriod));
+            .where(criteriaBuilder.between(orderJoin.get(Order_.leadTime), startPeriod, endPeriod));
         return session.createQuery(criteriaQuery).getSingleResult();
     }
 
@@ -69,7 +69,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
         criteriaQuery.distinct(true);
         criteriaQuery.select(criteriaBuilder.count(orderRoot.get(Order_.place)))
-                .where(criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriod, endPeriod));
+            .where(criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriod, endPeriod));
         return session.createQuery(criteriaQuery).getSingleResult();
     }
 
@@ -187,7 +187,8 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
         criteriaQuery.select(orderRoot);
-        Predicate predicateTime = criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
+        Predicate predicateTime =
+            criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
         Predicate predicateStatus = criteriaBuilder.equal(orderRoot.get(Order_.status), StatusOrder.COMPLETED);
         criteriaQuery.where(criteriaBuilder.and(predicateStatus, predicateTime));
         criteriaQuery.orderBy(criteriaBuilder.asc(orderRoot.get(Order_.creationTime)));
@@ -209,7 +210,8 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
         criteriaQuery.select(orderRoot);
-        Predicate predicateTime = criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
+        Predicate predicateTime =
+            criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
         Predicate predicateStatus = criteriaBuilder.equal(orderRoot.get(Order_.status), StatusOrder.COMPLETED);
         criteriaQuery.where(criteriaBuilder.and(predicateStatus, predicateTime));
         criteriaQuery.orderBy(criteriaBuilder.asc(orderRoot.get(Order_.leadTime)));
@@ -231,7 +233,8 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
         criteriaQuery.select(orderRoot);
-        Predicate predicateTime = criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
+        Predicate predicateTime =
+            criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
         Predicate predicateStatus = criteriaBuilder.equal(orderRoot.get(Order_.status), StatusOrder.COMPLETED);
         criteriaQuery.where(criteriaBuilder.and(predicateStatus, predicateTime));
         criteriaQuery.orderBy(criteriaBuilder.asc(orderRoot.get(Order_.price)));
@@ -253,7 +256,8 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
         criteriaQuery.select(orderRoot);
-        Predicate predicateTime = criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
+        Predicate predicateTime =
+            criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
         Predicate predicateStatus = criteriaBuilder.equal(orderRoot.get(Order_.status), StatusOrder.CANCELED);
         criteriaQuery.where(criteriaBuilder.and(predicateStatus, predicateTime));
         criteriaQuery.orderBy(criteriaBuilder.asc(orderRoot.get(Order_.creationTime)));
@@ -275,7 +279,8 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
         criteriaQuery.select(orderRoot);
-        Predicate predicateTime = criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
+        Predicate predicateTime =
+            criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
         Predicate predicateStatus = criteriaBuilder.equal(orderRoot.get(Order_.status), StatusOrder.CANCELED);
         criteriaQuery.where(criteriaBuilder.and(predicateStatus, predicateTime));
         criteriaQuery.orderBy(criteriaBuilder.asc(orderRoot.get(Order_.leadTime)));
@@ -297,7 +302,8 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
         criteriaQuery.select(orderRoot);
-        Predicate predicateTime = criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
+        Predicate predicateTime =
+            criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
         Predicate predicateStatus = criteriaBuilder.equal(orderRoot.get(Order_.status), StatusOrder.CANCELED);
         criteriaQuery.where(criteriaBuilder.and(predicateStatus, predicateTime));
         criteriaQuery.orderBy(criteriaBuilder.asc(orderRoot.get(Order_.price)));
@@ -319,7 +325,8 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
         criteriaQuery.select(orderRoot);
-        Predicate predicateTime = criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
+        Predicate predicateTime =
+            criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
         Predicate predicateStatus = criteriaBuilder.equal(orderRoot.get(Order_.deleteStatus), true);
         criteriaQuery.where(criteriaBuilder.and(predicateStatus, predicateTime));
         criteriaQuery.orderBy(criteriaBuilder.asc(orderRoot.get(Order_.creationTime)));
@@ -341,7 +348,8 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
         criteriaQuery.select(orderRoot);
-        Predicate predicateTime = criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
+        Predicate predicateTime =
+            criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
         Predicate predicateStatus = criteriaBuilder.equal(orderRoot.get(Order_.deleteStatus), true);
         criteriaQuery.where(criteriaBuilder.and(predicateStatus, predicateTime));
         criteriaQuery.orderBy(criteriaBuilder.asc(orderRoot.get(Order_.leadTime)));
@@ -363,7 +371,8 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
         criteriaQuery.select(orderRoot);
-        Predicate predicateTime = criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
+        Predicate predicateTime =
+            criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriodDate, endPeriodDate);
         Predicate predicateStatus = criteriaBuilder.equal(orderRoot.get(Order_.deleteStatus), true);
         criteriaQuery.where(criteriaBuilder.and(predicateStatus, predicateTime));
         criteriaQuery.orderBy(criteriaBuilder.asc(orderRoot.get(Order_.price)));
@@ -383,7 +392,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
-        Join<Order, Master> masterOrderJoin = orderRoot.join(Order_.masters); 
+        Join<Order, Master> masterOrderJoin = orderRoot.join(Order_.masters);
         criteriaQuery.select(orderRoot).distinct(true);
         criteriaQuery.where(criteriaBuilder.equal(masterOrderJoin.get(Master_.id), master.getId()));
         TypedQuery<Order> typedQuery = session.createQuery(criteriaQuery);

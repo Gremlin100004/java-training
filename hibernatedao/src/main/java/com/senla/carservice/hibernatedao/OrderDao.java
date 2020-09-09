@@ -2,12 +2,12 @@ package com.senla.carservice.hibernatedao;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import org.hibernate.Session;
 
 import java.util.Date;
 import java.util.List;
 
 public interface OrderDao extends GenericDao<Order, Long> {
+
     Order getLastOrder();
 
     Long getNumberBusyMasters(Date startPeriod, Date endPeriod);

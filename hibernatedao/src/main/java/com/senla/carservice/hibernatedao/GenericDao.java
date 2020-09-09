@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface GenericDao <T, PK extends Serializable> {
 
-    void saveRecord(T object);
+    Serializable saveRecord(T object);
 
     List<T> getAllRecords(Class<T> type);
 

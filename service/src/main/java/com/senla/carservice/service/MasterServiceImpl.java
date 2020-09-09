@@ -18,7 +18,6 @@ public class MasterServiceImpl implements MasterService {
 
     @Dependency
     private MasterDao masterDao;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterServiceImpl.class);
 
     public MasterServiceImpl() {
@@ -39,7 +38,7 @@ public class MasterServiceImpl implements MasterService {
             return masters;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get masters");
@@ -58,8 +57,8 @@ public class MasterServiceImpl implements MasterService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
-                transaction.rollback();    
+            if (transaction != null) {
+                transaction.rollback();
             }
             throw new BusinessException("Error transaction add masters");
         }
@@ -81,7 +80,7 @@ public class MasterServiceImpl implements MasterService {
             return freeMasters;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get free masters");
@@ -101,7 +100,7 @@ public class MasterServiceImpl implements MasterService {
             return numberBusyMasters;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction number free masters");
@@ -120,8 +119,8 @@ public class MasterServiceImpl implements MasterService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
-                transaction.rollback();    
+            if (transaction != null) {
+                transaction.rollback();
             }
             throw new BusinessException("Error transaction delete master");
         }
@@ -142,7 +141,7 @@ public class MasterServiceImpl implements MasterService {
             return masters;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get sort masters by alphabet");
@@ -164,7 +163,7 @@ public class MasterServiceImpl implements MasterService {
             return masters;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction sort masters by busy");
@@ -183,7 +182,7 @@ public class MasterServiceImpl implements MasterService {
             return numberMasters;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction number masters");

@@ -20,6 +20,7 @@ import java.util.List;
 
 @Singleton
 public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDao {
+
     public MasterDaoImpl() {
     }
 

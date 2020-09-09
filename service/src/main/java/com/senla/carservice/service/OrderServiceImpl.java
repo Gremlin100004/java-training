@@ -25,6 +25,7 @@ import java.util.List;
 
 @Singleton
 public class OrderServiceImpl implements OrderService {
+
     @Dependency
     private OrderDao orderDao;
     @Dependency
@@ -35,7 +36,6 @@ public class OrderServiceImpl implements OrderService {
     private boolean isBlockShiftTime;
     @ConfigProperty
     private boolean isBlockDeleteOrder;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     public OrderServiceImpl() {
@@ -56,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
             return orders;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get orders");
@@ -82,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction add order");
@@ -103,10 +103,10 @@ public class OrderServiceImpl implements OrderService {
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
             }
-            long numberFreeMasters = masterDao.getNumberMasters() - orderDao
-                .getNumberBusyMasters(executionStartTime, leadTime);
-            long numberFreePlace = placeDao.getNumberPlaces() - orderDao
-                .getNumberBusyPlaces(executionStartTime, leadTime);
+            long numberFreeMasters =
+                masterDao.getNumberMasters() - orderDao.getNumberBusyMasters(executionStartTime, leadTime);
+            long numberFreePlace =
+                placeDao.getNumberPlaces() - orderDao.getNumberBusyPlaces(executionStartTime, leadTime);
             if (numberFreeMasters == 0) {
                 throw new BusinessException("The number of masters is zero");
             }
@@ -119,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction add dead line to order");
@@ -152,7 +152,7 @@ public class OrderServiceImpl implements OrderService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction add masters to order");
@@ -176,7 +176,7 @@ public class OrderServiceImpl implements OrderService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction add place to order");
@@ -200,7 +200,7 @@ public class OrderServiceImpl implements OrderService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction add price to order");
@@ -223,7 +223,7 @@ public class OrderServiceImpl implements OrderService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction transfer order to execution status");
@@ -251,7 +251,7 @@ public class OrderServiceImpl implements OrderService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction cancel order");
@@ -280,7 +280,7 @@ public class OrderServiceImpl implements OrderService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction close order");
@@ -302,7 +302,7 @@ public class OrderServiceImpl implements OrderService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get masters");
@@ -330,7 +330,7 @@ public class OrderServiceImpl implements OrderService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction shift lead time");
@@ -366,7 +366,7 @@ public class OrderServiceImpl implements OrderService {
             return orders;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get sort orders");
@@ -390,23 +390,19 @@ public class OrderServiceImpl implements OrderService {
             } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
                 orders = orderDao.getCompletedOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
             } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE)) {
-                orders = orderDao
-                    .getCompletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
+                orders = orderDao.getCompletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
             } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE)) {
                 orders = orderDao.getCanceledOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
             } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE)) {
                 orders = orderDao.getCanceledOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
             } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_PRICE)) {
-                orders = orderDao
-                    .getCanceledOrdersSortByPrice(startPeriodDate, endPeriodDate);
+                orders = orderDao.getCanceledOrdersSortByPrice(startPeriodDate, endPeriodDate);
             } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE)) {
-                orders = orderDao
-                    .getDeletedOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
+                orders = orderDao.getDeletedOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
             } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
                 orders = orderDao.getDeletedOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
             } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)) {
-                orders = orderDao
-                    .getDeletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
+                orders = orderDao.getDeletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
             }
             if (orders.isEmpty()) {
                 throw new BusinessException("There are no orders");
@@ -415,7 +411,7 @@ public class OrderServiceImpl implements OrderService {
             return orders;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get sort orders by date");
@@ -438,7 +434,7 @@ public class OrderServiceImpl implements OrderService {
             return orders;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get master orders");
@@ -461,7 +457,7 @@ public class OrderServiceImpl implements OrderService {
             return masters;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction order masters");
@@ -480,7 +476,7 @@ public class OrderServiceImpl implements OrderService {
             return numberOrders;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get number orders");

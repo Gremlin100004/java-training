@@ -23,7 +23,6 @@ public class PlaceServiceImpl implements PlaceService {
     private Boolean isBlockAddPlace;
     @ConfigProperty
     private Boolean isBlockDeletePlace;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaceServiceImpl.class);
 
     public PlaceServiceImpl() {
@@ -44,7 +43,7 @@ public class PlaceServiceImpl implements PlaceService {
             return places;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get places");
@@ -66,8 +65,8 @@ public class PlaceServiceImpl implements PlaceService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
-                transaction.rollback();    
+            if (transaction != null) {
+                transaction.rollback();
             }
             throw new BusinessException("Error transaction add places");
         }
@@ -91,8 +90,8 @@ public class PlaceServiceImpl implements PlaceService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
-                transaction.rollback();    
+            if (transaction != null) {
+                transaction.rollback();
             }
             throw new BusinessException("Error transaction delete place");
         }
@@ -111,7 +110,7 @@ public class PlaceServiceImpl implements PlaceService {
             return numberFreePlaces;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get number free places");
@@ -131,7 +130,7 @@ public class PlaceServiceImpl implements PlaceService {
             return freePlace;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction free places");
@@ -150,7 +149,7 @@ public class PlaceServiceImpl implements PlaceService {
             return numberPlace;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction number places");

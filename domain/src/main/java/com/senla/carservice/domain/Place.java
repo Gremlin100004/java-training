@@ -6,6 +6,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "places")
+
 public class Place extends AEntity {
 
     @Column(name = "number")

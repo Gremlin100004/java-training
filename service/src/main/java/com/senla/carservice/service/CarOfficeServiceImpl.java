@@ -36,7 +36,6 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     private CsvOrder csvOrder;
     @Dependency
     private CsvMaster csvMaster;
-
     private static final int NUMBER_DAY = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeServiceImpl.class);
 
@@ -57,8 +56,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             Date dayDate = new Date();
             for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
                  currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
-                if (masterDao.getFreeMasters(currentDay).isEmpty() ||
-                    placeDao.getFreePlaces(currentDay).isEmpty()) {
+                if (masterDao.getFreeMasters(currentDay).isEmpty() || placeDao.getFreePlaces(currentDay).isEmpty()) {
                     dayDate = currentDay;
                     currentDay = DateUtil.bringStartOfDayDate(currentDay);
                 } else {
@@ -69,7 +67,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             return dayDate;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction get date");
@@ -85,13 +83,13 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             transaction = session.beginTransaction();
             masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords(Order.class)));
             placeDao.updateAllRecords(csvPlace.importPlaces());
-            List<Order> orders = csvOrder.importOrder(masterDao.getAllRecords(Master.class),
-                    placeDao.getAllRecords(Place.class));
+            List<Order> orders =
+                csvOrder.importOrder(masterDao.getAllRecords(Master.class), placeDao.getAllRecords(Place.class));
             orderDao.updateAllRecords(orders);
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction import entities");
@@ -114,15 +112,16 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             transaction.commit();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if(transaction != null){
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new BusinessException("Error transaction export entities");
         }
     }
+
     @Override
     public void closeSessionFactory() {
-        if (orderDao.getSessionFactory().isOpen()){
+        if (orderDao.getSessionFactory().isOpen()) {
             orderDao.getSessionFactory().close();
         }
     }

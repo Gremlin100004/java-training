@@ -2,11 +2,11 @@ package com.senla.carservice.hibernatedao;
 
 import com.senla.carservice.hibernatedao.exception.DaoException;
 import com.senla.carservice.hibernatedao.util.HibernateUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -23,11 +23,11 @@ public abstract class AbstractDao<T, PK extends Serializable> implements Generic
     }
 
     @Override
-    public void saveRecord(T object) {
+    public Serializable saveRecord(T object) {
         LOGGER.debug("Method saveRecord");
         LOGGER.trace("Parameter object: {}", object);
         Session session = sessionFactory.getCurrentSession();
-        session.save(object);
+        return session.save(object);
     }
 
     @Override
@@ -61,7 +61,7 @@ public abstract class AbstractDao<T, PK extends Serializable> implements Generic
         LOGGER.trace("Parameter objects: {}", objects);
         Session session = sessionFactory.getCurrentSession();
         for (T object : objects) {
-            session.update(object);
+            session.merge(object);
         }
     }
 
