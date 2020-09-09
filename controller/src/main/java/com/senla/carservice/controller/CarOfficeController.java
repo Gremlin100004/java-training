@@ -9,8 +9,8 @@ import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.hibernatedao.exception.DaoException;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
@@ -23,14 +23,14 @@ public class CarOfficeController {
     private MasterService masterService;
     @Dependency
     private PlaceService placeService;
-    private static final Logger LOGGER = LogManager.getLogger(CarOfficeController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeController.class);
 
     public CarOfficeController() {
     }
 
     public String getFreePlacesMastersByDate(String date) {
         LOGGER.info("Method getFreePlacesMastersByDate");
-        LOGGER.trace("Parameter date: " + date);
+        LOGGER.trace("Parameter date: {}", date);
         Date dateFree = DateUtil.getDatesFromString(date, false);
         if (dateFree == null) {
             return "error date";

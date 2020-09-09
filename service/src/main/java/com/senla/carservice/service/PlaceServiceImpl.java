@@ -6,8 +6,8 @@ import com.senla.carservice.container.objectadjuster.dependencyinjection.annotat
 import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.hibernatedao.PlaceDao;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -24,7 +24,7 @@ public class PlaceServiceImpl implements PlaceService {
     @ConfigProperty
     private Boolean isBlockDeletePlace;
 
-    private static final Logger LOGGER = LogManager.getLogger(PlaceServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlaceServiceImpl.class);
 
     public PlaceServiceImpl() {
     }
@@ -54,7 +54,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public void addPlace(Integer number) {
         LOGGER.debug("Method addPlace");
-        LOGGER.debug("Parameter number: " + number);
+        LOGGER.debug("Parameter number: {}", number);
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
@@ -76,7 +76,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public void deletePlace(Place place) {
         LOGGER.debug("Method deletePlace");
-        LOGGER.debug("Parameter place: " + place);
+        LOGGER.debug("Parameter place: {}", place);
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
@@ -101,7 +101,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public Long getNumberFreePlaceByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreePlaceByDate");
-        LOGGER.debug("Parameter startDayDate: " + startDayDate);
+        LOGGER.debug("Parameter startDayDate: {}", startDayDate);
         Session session = placeDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -122,7 +122,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public List<Place> getFreePlaceByDate(Date executeDate) {
         LOGGER.debug("Method getFreePlaceByDate");
-        LOGGER.debug("Parameter executeDate: " + executeDate);
+        LOGGER.debug("Parameter executeDate: {}", executeDate);
         Session session = placeDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {

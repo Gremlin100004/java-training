@@ -9,8 +9,8 @@ import com.senla.carservice.csv.exception.CsvException;
 import com.senla.carservice.csv.util.FileUtil;
 import com.senla.carservice.csv.util.ParameterUtil;
 import com.senla.carservice.util.DateUtil;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,14 +28,14 @@ public class CsvOrder {
     @ConfigProperty
     private String idSeparator;
     private static final int SIZE_INDEX = 1;
-    private static final Logger LOGGER = LogManager.getLogger(CsvOrder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CsvOrder.class);
 
     public CsvOrder() {
     }
 
     public void exportOrder(List<Order> orders) {
         LOGGER.debug("Method exportOrder");
-        LOGGER.trace("Parameter orders: " + orders);
+        LOGGER.trace("Parameter orders: {}", orders);
         List<String> valueOrderCsv = orders.stream()
             .map(this::convertOrderToCsv)
             .collect(Collectors.toList());
@@ -44,8 +44,8 @@ public class CsvOrder {
 
     public List<Order> importOrder(List<Master> masters, List<Place> places) {
         LOGGER.debug("Method importOrder");
-        LOGGER.trace("Parameter masters: " + masters);
-        LOGGER.trace("Parameter places: " + places);
+        LOGGER.trace("Parameter masters: {}", masters);
+        LOGGER.trace("Parameter places: {}", places);
         List<String> csvLinesOrder = FileUtil.getCsv(orderPath);
         return csvLinesOrder.stream()
             .map(line -> getOrderFromCsv(line, masters, places))
@@ -60,9 +60,9 @@ public class CsvOrder {
 
     private Order getOrderFromCsv(String line, List<Master> masters, List<Place> places) {
         LOGGER.debug("Method getOrderFromCsv");
-        LOGGER.trace("Parameter line: " + line);
-        LOGGER.trace("Parameter masters: " + masters);
-        LOGGER.trace("Parameter places: " + places);
+        LOGGER.trace("Parameter line: {}", line);
+        LOGGER.trace("Parameter masters: {}", masters);
+        LOGGER.trace("Parameter places: {}", places);
         if (line == null || masters == null || places == null) {
             throw new CsvException("argument is null");
         }
@@ -85,8 +85,8 @@ public class CsvOrder {
 
     private List<Master> getMastersById(List<Master> masters, List<String> arrayIdMaster) {
         LOGGER.debug("Method getMastersById");
-        LOGGER.trace("Parameter masters: " + masters);
-        LOGGER.trace("Parameter arrayIdMaster: " + arrayIdMaster);
+        LOGGER.trace("Parameter masters: {}", masters);
+        LOGGER.trace("Parameter arrayIdMaster: {}", arrayIdMaster);
         if (masters == null || arrayIdMaster == null) {
             throw new CsvException("argument is null");
         }
@@ -101,8 +101,8 @@ public class CsvOrder {
 
     private Place getPlaceById(List<Place> places, Long id) {
         LOGGER.debug("Method getPlaceById");
-        LOGGER.trace("Parameter places: " + places);
-        LOGGER.trace("Parameter id: " + id);
+        LOGGER.trace("Parameter places: {}", places);
+        LOGGER.trace("Parameter id: {}", id);
         if (places == null || id == null) {
             throw new CsvException("argument is null");
         }
@@ -114,7 +114,7 @@ public class CsvOrder {
 
     private String convertOrderToCsv(Order order) {
         LOGGER.debug("Method convertOrderToCsv");
-        LOGGER.trace("Parameter order: " + order);
+        LOGGER.trace("Parameter order: {}", order);
         if (order == null) {
             throw new CsvException("argument is null");
         }

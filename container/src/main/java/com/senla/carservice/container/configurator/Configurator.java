@@ -4,8 +4,8 @@ import com.senla.carservice.container.annotation.Prototype;
 import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.exception.InitializationException;
 import com.senla.carservice.container.objectadjuster.AnnotationHandler;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,10 +18,10 @@ public class Configurator {
     private final Map<String, Class<?>> prototypeClasses = new HashMap<>();
     private final Map<String, Class<?>> singletonClasses = new HashMap<>();
     private final List<Class<?>> annotationHandlerClasses = new ArrayList<>();
-    private static final Logger LOGGER = LogManager.getLogger(Configurator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Configurator.class);
 
     public Configurator(String packageName) {
-        LOGGER.trace("Class get parameter packageName: " + packageName);
+        LOGGER.trace("Class get parameter packageName: {}", packageName);
         packageScanner = new PackageScanner(packageName);
         initialize();
     }
@@ -33,7 +33,7 @@ public class Configurator {
 
     public Class<?> getPrototypeClass(String className) {
         LOGGER.debug("Method getPrototypeClass");
-        LOGGER.trace("Parameter className: " + className);
+        LOGGER.trace("Parameter className: {}", className);
         return prototypeClasses.get(className);
     }
 
@@ -66,7 +66,7 @@ public class Configurator {
 
     private String getKeyName(Class<?> classPackage) {
         LOGGER.debug("Method getKeyName");
-        LOGGER.trace("Parameter classPackage: " + classPackage);
+        LOGGER.trace("Parameter classPackage: {}", classPackage);
         if (classPackage.getInterfaces().length == 0) {
             return classPackage.getName();
         } else {

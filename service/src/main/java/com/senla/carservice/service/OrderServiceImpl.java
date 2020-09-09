@@ -13,8 +13,8 @@ import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.hibernatedao.MasterDao;
 import com.senla.carservice.hibernatedao.OrderDao;
 import com.senla.carservice.hibernatedao.PlaceDao;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -36,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
     @ConfigProperty
     private boolean isBlockDeleteOrder;
 
-    private static final Logger LOGGER = LogManager.getLogger(OrderServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     public OrderServiceImpl() {
     }
@@ -66,9 +66,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void addOrder(String automaker, String model, String registrationNumber) {
         LOGGER.debug("Method addOrder");
-        LOGGER.debug("Parameter automaker: " + automaker);
-        LOGGER.debug("Parameter model: " + model);
-        LOGGER.debug("Parameter registrationNumber: " + registrationNumber);
+        LOGGER.debug("Parameter automaker: {}", automaker);
+        LOGGER.debug("Parameter model: {}", model);
+        LOGGER.debug("Parameter registrationNumber: {}", registrationNumber);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -92,8 +92,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
         LOGGER.debug("Method addOrderDeadlines");
-        LOGGER.debug("Parameter executionStartTime: " + executionStartTime);
-        LOGGER.debug("Parameter leadTime: " + leadTime);
+        LOGGER.debug("Parameter executionStartTime: {}", executionStartTime);
+        LOGGER.debug("Parameter leadTime: {}", leadTime);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -129,7 +129,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void addOrderMasters(int index) {
         LOGGER.debug("Method addOrderMasters");
-        LOGGER.debug("Parameter index: " + index);
+        LOGGER.debug("Parameter index: {}", index);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -162,7 +162,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void addOrderPlace(Place place) {
         LOGGER.debug("Method addOrderPlace");
-        LOGGER.debug("Parameter place: " + place);
+        LOGGER.debug("Parameter place: {}", place);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -186,7 +186,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void addOrderPrice(BigDecimal price) {
         LOGGER.debug("Method addOrderPrice");
-        LOGGER.debug("Parameter price: " + price);
+        LOGGER.debug("Parameter price: {}", price);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -210,7 +210,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void completeOrder(Order order) {
         LOGGER.debug("Method completeOrder");
-        LOGGER.debug("Parameter order: " + order);
+        LOGGER.debug("Parameter order: {}", order);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -233,7 +233,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(Order order) {
         LOGGER.debug("Method cancelOrder");
-        LOGGER.debug("Parameter order: " + order);
+        LOGGER.debug("Parameter order: {}", order);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -261,7 +261,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void closeOrder(Order order) {
         LOGGER.debug("Method closeOrder");
-        LOGGER.debug("Parameter order: " + order);
+        LOGGER.debug("Parameter order: {}", order);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -290,7 +290,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteOrder(Order order) {
         LOGGER.debug("Method deleteOrder");
-        LOGGER.debug("Parameter order: " + order);
+        LOGGER.debug("Parameter order: {}", order);
         if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
@@ -312,9 +312,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void shiftLeadTime(Order order, Date executionStartTime, Date leadTime) {
         LOGGER.debug("Method shiftLeadTime");
-        LOGGER.debug("Parameter order: " + order);
-        LOGGER.debug("Parameter executionStartTime: " + executionStartTime);
-        LOGGER.debug("Parameter leadTime: " + leadTime);
+        LOGGER.debug("Parameter order: {}", order);
+        LOGGER.debug("Parameter executionStartTime: {}", executionStartTime);
+        LOGGER.debug("Parameter leadTime: {}", leadTime);
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
@@ -340,7 +340,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getSortOrders(SortParameter sortParameter) {
         LOGGER.debug("Method getSortOrders");
-        LOGGER.debug("Parameter sortParameter: " + sortParameter);
+        LOGGER.debug("Parameter sortParameter: {}", sortParameter);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -376,9 +376,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter) {
         LOGGER.debug("Method getSortOrdersByPeriod");
-        LOGGER.debug("Parameter startPeriodDate: " + startPeriodDate);
-        LOGGER.debug("Parameter endPeriodDate: " + endPeriodDate);
-        LOGGER.debug("Parameter sortParameter: " + sortParameter);
+        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
+        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.debug("Parameter sortParameter: {}", sortParameter);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -425,7 +425,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getMasterOrders(Master master) {
         LOGGER.debug("Method getMasterOrders");
-        LOGGER.debug("Parameter master: " + master);
+        LOGGER.debug("Parameter master: {}", master);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -448,7 +448,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Master> getOrderMasters(Order order) {
         LOGGER.debug("Method getOrderMasters");
-        LOGGER.debug("Parameter order: " + order);
+        LOGGER.debug("Parameter order: {}", order);
         Session session = orderDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -503,7 +503,7 @@ public class OrderServiceImpl implements OrderService {
 
     private void checkStatusOrder(Order order) {
         LOGGER.debug("Method checkStatusOrder");
-        LOGGER.debug("Parameter order: " + order);
+        LOGGER.debug("Parameter order: {}", order);
         if (order.isDeleteStatus()) {
             throw new BusinessException("The order has been deleted");
         }
@@ -520,7 +520,7 @@ public class OrderServiceImpl implements OrderService {
 
     private void checkStatusOrderShiftTime(Order order) {
         LOGGER.debug("Method checkStatusOrderShiftTime");
-        LOGGER.debug("Parameter order: " + order);
+        LOGGER.debug("Parameter order: {}", order);
         if (order.isDeleteStatus()) {
             throw new BusinessException("The order has been deleted");
         }

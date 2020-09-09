@@ -23,7 +23,7 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
     @Override
     public List<Place> getBusyPlaces(Date executeDate) {
         LOGGER.debug("Method getFreePlaces");
-        LOGGER.trace("Parameter executeDate: " + executeDate);
+        LOGGER.trace("Parameter executeDate: {}", executeDate);
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Place> criteriaQuery = criteriaBuilder.createQuery(Place.class);
@@ -42,7 +42,7 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
     @Override
     public Long getNumberBusyPlaces(Date executeDate) {
         LOGGER.debug("Method getFreePlaces");
-        LOGGER.trace("Parameter executeDate: " + executeDate);
+        LOGGER.trace("Parameter executeDate: {}", executeDate);
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -68,7 +68,7 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
     @Override
     public Place getPlaceById(Long id) {
         LOGGER.debug("Method getPlaceById");
-        LOGGER.debug("Parameter id: " + id);
+        LOGGER.debug("Parameter id: {}", id);
         Session session = sessionFactory.getCurrentSession();
         return session.get(Place.class, id);
     }

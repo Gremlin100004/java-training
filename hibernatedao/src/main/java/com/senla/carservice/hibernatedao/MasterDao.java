@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface MasterDao extends GenericDao<Master, Long> {
 
-    List<Master> getBusyMasters(Date date);
+    List<Master> getFreeMasters(Date date);
 
     List<Master> getMasterSortByAlphabet();
 

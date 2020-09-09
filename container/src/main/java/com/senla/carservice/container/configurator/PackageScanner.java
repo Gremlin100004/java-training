@@ -1,8 +1,8 @@
 package com.senla.carservice.container.configurator;
 
 import com.senla.carservice.container.exception.InitializationException;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -23,11 +23,11 @@ public class PackageScanner {
     private static final char CHARACTER_TO_INSERT = '/';
     private static final String CLASS_REPLACEMENT_CHARACTER = ".class";
     private static final String CLASS_CHARACTER_TO_INSERT = "";
-    private static final Logger LOGGER = LogManager.getLogger(PackageScanner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PackageScanner.class);
 
 
     public PackageScanner(String packageProject) {
-        LOGGER.trace("Class get parameter packageProject: " + packageProject);
+        LOGGER.trace("Class get parameter packageProject: {}", packageProject);
         this.packageProject = packageProject;
     }
 
@@ -76,7 +76,7 @@ public class PackageScanner {
 
     private List<Class<?>> getClassByPath(List<String> filesStringPaths) {
         LOGGER.debug("Method getClassByPath");
-        LOGGER.trace("Parameter filesStringPaths: " + filesStringPaths);
+        LOGGER.trace("Parameter filesStringPaths: {}", filesStringPaths);
         return filesStringPaths.stream().map(file -> file.replace(CHARACTER_TO_INSERT, REPLACEMENT_CHARACTER)
             .substring(file.replace(CHARACTER_TO_INSERT, REPLACEMENT_CHARACTER).lastIndexOf(packageProject))
             .replace(CLASS_REPLACEMENT_CHARACTER, CLASS_CHARACTER_TO_INSERT)).map(className -> {
@@ -91,7 +91,7 @@ public class PackageScanner {
 
     private static List<String> getStringFilesPaths(String stringPath) {
         LOGGER.debug("Method getStringFilesPaths");
-        LOGGER.trace("Parameter stringPath: " + stringPath);
+        LOGGER.trace("Parameter stringPath: {}", stringPath);
         try (Stream<Path> filesPath = Files.walk(Paths.get(stringPath), Integer.MAX_VALUE)) {
             return filesPath.filter(Files::isRegularFile).map(String::valueOf).collect(Collectors.toList());
         } catch (IOException e) {

@@ -1,8 +1,8 @@
 package com.senla.carservice.csv.util;
 
 import com.senla.carservice.csv.exception.CsvException;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,15 +16,15 @@ import java.util.List;
 
 public final class FileUtil {
 
-    private static final Logger LOGGER = LogManager.getLogger(FileUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
 
     private FileUtil() {
     }
 
     public static void saveCsv(List<String> arrayValue, String path) {
         LOGGER.debug("Method saveCsv");
-        LOGGER.trace("Parameter arrayValue: " + arrayValue);
-        LOGGER.trace("Parameter path: " + path);
+        LOGGER.trace("Parameter arrayValue: {}", arrayValue);
+        LOGGER.trace("Parameter path: {}", path);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             throw new CsvException("export problem");
@@ -43,7 +43,7 @@ public final class FileUtil {
 
     public static List<String> getCsv(String path) {
         LOGGER.debug("Method getCsv");
-        LOGGER.trace("Parameter path: " + path);
+        LOGGER.trace("Parameter path: {}", path);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         List<String> csvLines = new ArrayList<>();
         if (classLoader == null) {

@@ -1,18 +1,10 @@
 <configuration>
     <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>log/hibernate.log</file>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
-            </Pattern>
+        <file>log/app.log</file>
+        <encoder>
+            <pattern>%d{HH:mm} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <logger name="org.hibernate.SQL" level="debug" additivity="false">
-        <appender-ref ref="file"/>
-    </logger>
-    <logger name="org.hibernate.type.descriptor.sql" level="trace" additivity="false">
-        <appender-ref ref="file"/>
-    </logger>
     <root level="trace">
         <appender-ref ref="file" />
     </root>

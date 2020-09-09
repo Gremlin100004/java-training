@@ -5,13 +5,13 @@ import com.senla.carservice.container.context.Context;
 import com.senla.carservice.container.enumeration.PropertyKey;
 import com.senla.carservice.container.exception.InitializationException;
 import com.senla.carservice.container.property.PropertyLoader;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Container {
 
     private static Context context;
-    private static final Logger LOGGER = LogManager.getLogger(Container.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Container.class);
 
     static {
         LOGGER.debug("initialize class Container");

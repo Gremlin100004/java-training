@@ -5,8 +5,8 @@ import com.senla.carservice.container.annotation.Singleton;
 import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.hibernatedao.MasterDao;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -19,7 +19,7 @@ public class MasterServiceImpl implements MasterService {
     @Dependency
     private MasterDao masterDao;
 
-    private static final Logger LOGGER = LogManager.getLogger(MasterServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MasterServiceImpl.class);
 
     public MasterServiceImpl() {
     }
@@ -49,7 +49,7 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public void addMaster(String name) {
         LOGGER.debug("Method addMaster");
-        LOGGER.trace("Parameter name: " + name);
+        LOGGER.trace("Parameter name: {}", name);
         Session session = masterDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -67,16 +67,13 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public List<Master> getFreeMastersByDate(Date executeDate) {
-        //TODO refactor method
         LOGGER.debug("Method getFreeMastersByDate");
-        LOGGER.trace("Parameter executeDate: " + executeDate);
+        LOGGER.trace("Parameter executeDate: {}", executeDate);
         Session session = masterDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            List<Master> freeMasters = masterDao.getAllRecords(Master.class);
-            List<Master> busyMastersMasters = masterDao.getBusyMasters(executeDate);
-            freeMasters.removeAll(busyMastersMasters);
+            List<Master> freeMasters = masterDao.getFreeMasters(executeDate);
             if (freeMasters.isEmpty()) {
                 throw new BusinessException("There are no free masters");
             }
@@ -95,7 +92,7 @@ public class MasterServiceImpl implements MasterService {
     public Long getNumberFreeMastersByDate(Date startDayDate) {
         //TODO refactor method
         LOGGER.debug("Method getNumberFreeMastersByDate");
-        LOGGER.trace("Parameter startDayDate: " + startDayDate);
+        LOGGER.trace("Parameter startDayDate: {}", startDayDate);
         Session session = masterDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
@@ -116,7 +113,7 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public void deleteMaster(Master master) {
         LOGGER.debug("Method deleteMaster");
-        LOGGER.trace("Parameter master: " + master);
+        LOGGER.trace("Parameter master: {}", master);
         Session session = masterDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {

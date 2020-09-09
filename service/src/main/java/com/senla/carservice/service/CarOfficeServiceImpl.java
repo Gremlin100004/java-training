@@ -13,8 +13,8 @@ import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.hibernatedao.MasterDao;
 import com.senla.carservice.hibernatedao.OrderDao;
 import com.senla.carservice.hibernatedao.PlaceDao;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -38,7 +38,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     private CsvMaster csvMaster;
 
     private static final int NUMBER_DAY = 1;
-    private static final Logger LOGGER = LogManager.getLogger(CarOfficeServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeServiceImpl.class);
 
     public CarOfficeServiceImpl() {
     }
@@ -57,7 +57,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             Date dayDate = new Date();
             for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
                  currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
-                if (masterDao.getBusyMasters(currentDay).isEmpty() ||
+                if (masterDao.getFreeMasters(currentDay).isEmpty() ||
                     placeDao.getBusyPlaces(currentDay).isEmpty()) {
                     dayDate = currentDay;
                     currentDay = DateUtil.bringStartOfDayDate(currentDay);
