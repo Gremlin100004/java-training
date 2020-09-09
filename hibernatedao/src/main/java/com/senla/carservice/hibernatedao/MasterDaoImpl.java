@@ -10,13 +10,16 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import java.util.Date;
 import java.util.List;
 
 @Singleton
 public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDao {
-
     public MasterDaoImpl() {
     }
 
@@ -29,7 +32,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
         criteriaQuery.select(masterRoot);
-        Subquery subquery = criteriaQuery.subquery(Long.class);
+        Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
         Root<Master> subMasterRoot = subquery.from(Master.class);
         Join<Master, Order> masterOrderJoin = subMasterRoot.join(Master_.orders);
         subquery.select(subMasterRoot.get(Master_.id)).distinct(true);
@@ -38,23 +41,28 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         Query<Master> query = session.createQuery(criteriaQuery);
         List<Master> masters = query.getResultList();
         if (masters == null) {
-            throw new DaoException("Error getting busy masters");
+            throw new DaoException("Error getting free masters");
         }
         return masters;
     }
 
     @Override
-    public Long getNumberBusyMasters(Date executeDate) {
+    public Long getNumberFreeMasters(Date executeDate) {
         LOGGER.debug("Method getNumberBusyMasters");
         LOGGER.trace("Parameter executeDate: {}", executeDate);
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<Master> orderRoot = criteriaQuery.from(Master.class);
-        Join<Master, Order> masterOrderJoin = orderRoot.join(Master_.orders);
-        criteriaQuery.select(criteriaBuilder.count(orderRoot.get(Master_.id))).distinct(true);
-        criteriaQuery.where(criteriaBuilder.greaterThanOrEqualTo(masterOrderJoin.get(Order_.leadTime), executeDate));
-        return session.createQuery(criteriaQuery).getSingleResult();
+        Root<Master> masterRoot = criteriaQuery.from(Master.class);
+        criteriaQuery.select(criteriaBuilder.count(masterRoot.get(Master_.id)));
+        Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
+        Root<Master> subMasterRoot = subquery.from(Master.class);
+        Join<Master, Order> masterOrderJoin = subMasterRoot.join(Master_.orders);
+        subquery.select(subMasterRoot.get(Master_.id)).distinct(true);
+        subquery.where(criteriaBuilder.greaterThanOrEqualTo(masterOrderJoin.get(Order_.leadTime), executeDate));
+        criteriaQuery.where(masterRoot.get(Master_.id).in(subquery).not());
+        Query<Long> query = session.createQuery(criteriaQuery);
+        return query.getSingleResult();
     }
 
     @Override

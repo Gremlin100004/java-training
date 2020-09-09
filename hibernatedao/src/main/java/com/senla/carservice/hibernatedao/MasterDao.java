@@ -18,5 +18,5 @@ public interface MasterDao extends GenericDao<Master, Long> {
 
     Master getMasterById(Long index);
 
-    Long getNumberBusyMasters(Date executeDate);
+    Long getNumberFreeMasters(Date executeDate);
 }

@@ -106,10 +106,9 @@ public class PlaceServiceImpl implements PlaceService {
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            Long numberGeneralPlaces = placeDao.getNumberPlaces();
-            Long numberBusyPlaces = placeDao.getNumberBusyPlaces(startDayDate);
+            Long numberFreePlaces = placeDao.getNumberFreePlaces(startDayDate);
             transaction.commit();
-            return numberGeneralPlaces-numberBusyPlaces;
+            return numberFreePlaces;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if(transaction != null){
@@ -127,12 +126,7 @@ public class PlaceServiceImpl implements PlaceService {
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            List<Place> busyPlaces = placeDao.getBusyPlaces(executeDate);
-            List<Place> freePlace = placeDao.getAllRecords(Place.class);
-            freePlace.removeAll(busyPlaces);
-            if (freePlace.isEmpty()) {
-                throw new BusinessException("There are no free places");
-            }
+            List<Place> freePlace = placeDao.getFreePlaces(executeDate);
             transaction.commit();
             return freePlace;
         } catch (Exception e) {

@@ -58,7 +58,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
             for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
                  currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
                 if (masterDao.getFreeMasters(currentDay).isEmpty() ||
-                    placeDao.getBusyPlaces(currentDay).isEmpty()) {
+                    placeDao.getFreePlaces(currentDay).isEmpty()) {
                     dayDate = currentDay;
                     currentDay = DateUtil.bringStartOfDayDate(currentDay);
                 } else {

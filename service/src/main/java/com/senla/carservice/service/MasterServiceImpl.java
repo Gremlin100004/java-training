@@ -90,17 +90,15 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     public Long getNumberFreeMastersByDate(Date startDayDate) {
-        //TODO refactor method
         LOGGER.debug("Method getNumberFreeMastersByDate");
         LOGGER.trace("Parameter startDayDate: {}", startDayDate);
         Session session = masterDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            Long numberGeneralMasters = masterDao.getNumberMasters();
-            Long numberBusyMasters = masterDao.getNumberBusyMasters(startDayDate);
+            Long numberBusyMasters = masterDao.getNumberFreeMasters(startDayDate);
             transaction.commit();
-            return numberGeneralMasters-numberBusyMasters;
+            return numberBusyMasters;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if(transaction != null){
