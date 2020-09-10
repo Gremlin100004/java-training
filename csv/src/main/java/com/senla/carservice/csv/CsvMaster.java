@@ -34,18 +34,14 @@ public class CsvMaster {
     public void exportMasters(List<Master> masters) {
         LOGGER.debug("Method exportMasters");
         LOGGER.trace("Parameter masters: {}", masters);
-        FileUtil.saveCsv(masters.stream()
-                        .map(this::convertToCsv)
-                        .collect(Collectors.toList()),
-                masterPath);
+        FileUtil.saveCsv(masters.stream().map(this::convertToCsv).collect(Collectors.toList()), masterPath);
     }
 
     public List<Master> importMasters(List<Order> orders) {
         LOGGER.debug("Method importMasters");
         List<String> csvLinesMaster = FileUtil.getCsv(masterPath);
-        return csvLinesMaster.stream()
-                .map((String line) -> getMasterFromCsv(line, orders))
-                .collect(Collectors.toList());
+        return csvLinesMaster.stream().map((String line) -> getMasterFromCsv(line, orders))
+            .collect(Collectors.toList());
     }
 
     private Master getMasterFromCsv(String line, List<Order> orders) {
@@ -60,6 +56,7 @@ public class CsvMaster {
         Master master = new Master();
         master.setId(ParameterUtil.getValueLong(values.get(0)));
         master.setName(values.get(1));
+        master.setNumberOrders(ParameterUtil.getValueInteger(values.get(2)));
         master.setOrders(getOrdersById(orders, arrayIdOrder));
         return master;
     }
@@ -75,16 +72,21 @@ public class CsvMaster {
         stringValue.append(fieldSeparator);
         stringValue.append(master.getName());
         stringValue.append(fieldSeparator);
+        stringValue.append(master.getNumberOrders());
+        stringValue.append(fieldSeparator);
         stringValue.append(idSeparator);
         List<Order> orders = master.getOrders();
-        IntStream.range(0, orders.size())
-                .forEachOrdered(i -> {
-                    if (i == orders.size() - SIZE_INDEX) {
-                        stringValue.append(orders.get(i).getId());
-                    } else {
-                        stringValue.append(orders.get(i).getId()).append(fieldSeparator);
-                    }
-                });
+        if (orders.isEmpty()) {
+            stringValue.append(fieldSeparator);
+        } else {
+            IntStream.range(0, orders.size()).forEachOrdered(i -> {
+                if (i == orders.size() - SIZE_INDEX) {
+                    stringValue.append(orders.get(i).getId());
+                } else {
+                    stringValue.append(orders.get(i).getId()).append(fieldSeparator);
+                }
+            });
+        }
         stringValue.append(idSeparator);
         return stringValue.toString();
     }
