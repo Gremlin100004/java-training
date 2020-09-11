@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.senla.carservice</groupId>
     <artifactId>hrinkov-car-service</artifactId>
@@ -42,13 +44,12 @@
     <modules>
         <module>container</module>
         <module>controller</module>
-        <module>dao</module>
         <module>domain</module>
         <module>service</module>
-        <module>csvutil</module>
-        <module>stringutil</module>
-        <module>dateutil</module>
+        <module>csv</module>
+        <module>util</module>
         <module>ui</module>
+        <module>hibernatedao</module>
     </modules>
     <properties>
         <java.version>11</java.version>
