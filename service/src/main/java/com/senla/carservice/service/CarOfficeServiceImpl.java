@@ -1,5 +1,6 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
@@ -45,10 +46,8 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     public Date getNearestFreeDate() {
         LOGGER.debug("Method getNearestFreeDate");
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
+        try (Session session = masterDao.getSession()) {
+            session.beginTransaction();
             checkMasters();
             checkPlaces();
             checkOrders();
@@ -63,13 +62,12 @@ public class CarOfficeServiceImpl implements CarOfficeService {
                     break;
                 }
             }
-            transaction.commit();
             return dayDate;
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction get date");
         }
     }
@@ -77,16 +75,21 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     public void importEntities() {
         LOGGER.debug("Method importEntities");
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
+        Session session = masterDao.getSession();
+        Transaction transaction = session.beginTransaction();
         try {
-            transaction = session.beginTransaction();
             masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords(Order.class)));
             placeDao.updateAllRecords(csvPlace.importPlaces());
             List<Order> orders =
                 csvOrder.importOrder(masterDao.getAllRecords(Master.class), placeDao.getAllRecords(Place.class));
             orderDao.updateAllRecords(orders);
             transaction.commit();
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -99,30 +102,27 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     public void exportEntities() {
         LOGGER.debug("Method exportEntities");
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
+        try (Session session = masterDao.getSession()) {
+            session.beginTransaction();
             List<Order> orders = getOrders();
             List<Master> masters = getMasters();
             List<Place> places = getPlaces();
             csvOrder.exportOrder(orders);
             csvMaster.exportMasters(masters);
             csvPlace.exportPlaces(places);
-            transaction.commit();
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction export entities");
         }
     }
 
     @Override
     public void closeSessionFactory() {
-        if (orderDao.getSessionFactory().isOpen()) {
-            orderDao.getSessionFactory().close();
+        if (orderDao.getSession().isOpen()) {
+            orderDao.getSession().close();
         }
     }
 

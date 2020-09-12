@@ -1,6 +1,6 @@
 package com.senla.carservice.dao;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,5 +19,5 @@ public interface GenericDao <T, PK extends Serializable> {
 
     void deleteRecord(PK id);
 
-    SessionFactory getSessionFactory();
+    Session getSession();
 }
