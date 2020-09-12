@@ -32,27 +32,18 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public List<Place> getPlaces() {
         LOGGER.debug("Method getPlaces");
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
+        try (Session session = placeDao.getSession()) {
+            session.beginTransaction();
             List<Place> places = placeDao.getAllRecords(Place.class);
             if (places.isEmpty()) {
                 throw new BusinessException("There are no places");
             }
-            transaction.commit();
             return places;
         } catch (BusinessException | DaoException e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction get places");
         }
     }
@@ -64,10 +55,9 @@ public class PlaceServiceImpl implements PlaceService {
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
+        Session session = placeDao.getSession();
+        Transaction transaction =session.beginTransaction();
         try {
-            transaction = session.beginTransaction();
             placeDao.saveRecord(new Place(number));
             transaction.commit();
         } catch (BusinessException | DaoException e) {
@@ -92,11 +82,10 @@ public class PlaceServiceImpl implements PlaceService {
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
+        Session session = placeDao.getSession();
+        Transaction transaction = session.beginTransaction();
         try {
             Place place = placeDao.getRecordById(Place.class, idPlace);
-            transaction = session.beginTransaction();
             if (place.getBusy()) {
                 throw new BusinessException("Place is busy");
             }
@@ -121,24 +110,14 @@ public class PlaceServiceImpl implements PlaceService {
     public Long getNumberFreePlaceByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreePlaceByDate");
         LOGGER.debug("Parameter startDayDate: {}", startDayDate);
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            Long numberFreePlaces = placeDao.getNumberFreePlaces(startDayDate);
-            transaction.commit();
-            return numberFreePlaces;
+        try (Session session = placeDao.getSession()) {
+            session.beginTransaction();
+            return placeDao.getNumberFreePlaces(startDayDate);
         } catch (BusinessException | DaoException e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction get number free places");
         }
     }
@@ -147,24 +126,14 @@ public class PlaceServiceImpl implements PlaceService {
     public List<Place> getFreePlaceByDate(Date executeDate) {
         LOGGER.debug("Method getFreePlaceByDate");
         LOGGER.debug("Parameter executeDate: {}", executeDate);
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            List<Place> freePlace = placeDao.getFreePlaces(executeDate);
-            transaction.commit();
-            return freePlace;
+        try (Session session = placeDao.getSession()) {
+            session.beginTransaction();
+            return placeDao.getFreePlaces(executeDate);
         } catch (BusinessException | DaoException e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction free places");
         }
     }
@@ -172,24 +141,14 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public Long getNumberPlace() {
         LOGGER.debug("Method getNumberMasters");
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            Long numberPlace = placeDao.getNumberPlaces();
-            transaction.commit();
-            return numberPlace;
+        try (Session session = placeDao.getSession()) {
+            session.beginTransaction();
+            return placeDao.getNumberPlaces();
         } catch (BusinessException | DaoException e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction number places");
         }
     }

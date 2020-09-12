@@ -27,27 +27,18 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public List<Master> getMasters() {
         LOGGER.debug("Method getMasters");
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
+        try (Session session = masterDao.getSession()) {
+            session.beginTransaction();
             List<Master> masters = masterDao.getAllRecords(Master.class);
             if (masters.isEmpty()) {
                 throw new BusinessException("There are no masters");
             }
-            transaction.commit();
             return masters;
         } catch (BusinessException | DaoException e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction get masters");
         }
     }
@@ -56,10 +47,9 @@ public class MasterServiceImpl implements MasterService {
     public void addMaster(String name) {
         LOGGER.debug("Method addMaster");
         LOGGER.trace("Parameter name: {}", name);
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
+        Session session = masterDao.getSession();
+        Transaction transaction = session.beginTransaction();
         try {
-            transaction = session.beginTransaction();
             masterDao.saveRecord(new Master(name));
             transaction.commit();
         } catch (BusinessException | DaoException e) {
@@ -81,27 +71,18 @@ public class MasterServiceImpl implements MasterService {
     public List<Master> getFreeMastersByDate(Date executeDate) {
         LOGGER.debug("Method getFreeMastersByDate");
         LOGGER.trace("Parameter executeDate: {}", executeDate);
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
+        try (Session session = masterDao.getSession()) {
+            session.beginTransaction();
             List<Master> freeMasters = masterDao.getFreeMasters(executeDate);
             if (freeMasters.isEmpty()) {
                 throw new BusinessException("There are no free masters");
             }
-            transaction.commit();
             return freeMasters;
         } catch (BusinessException | DaoException e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction get free masters");
         }
     }
@@ -110,24 +91,14 @@ public class MasterServiceImpl implements MasterService {
     public Long getNumberFreeMastersByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreeMastersByDate");
         LOGGER.trace("Parameter startDayDate: {}", startDayDate);
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            Long numberBusyMasters = masterDao.getNumberFreeMasters(startDayDate);
-            transaction.commit();
-            return numberBusyMasters;
+        try (Session session = masterDao.getSession()) {
+            session.beginTransaction();
+            return masterDao.getNumberFreeMasters(startDayDate);
         } catch (BusinessException | DaoException e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction number free masters");
         }
     }
@@ -136,10 +107,9 @@ public class MasterServiceImpl implements MasterService {
     public void deleteMaster(Long idMaster) {
         LOGGER.debug("Method deleteMaster");
         LOGGER.trace("Parameter idMaster: {}", idMaster);
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
+        Session session = masterDao.getSession();
+        Transaction transaction =session.beginTransaction();
         try {
-            transaction = session.beginTransaction();
             masterDao.updateRecord(masterDao.getRecordById(Master.class, idMaster));
             transaction.commit();
         } catch (BusinessException | DaoException e) {
@@ -160,27 +130,18 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public List<Master> getMasterByAlphabet() {
         LOGGER.debug("Method getMasterByAlphabet");
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
+        try (Session session = masterDao.getSession()) {
+            session.beginTransaction();
             List<Master> masters = masterDao.getMasterSortByAlphabet();
             if (masters.isEmpty()) {
                 throw new BusinessException("There are no masters");
             }
-            transaction.commit();
             return masters;
         } catch (BusinessException | DaoException e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction get sort masters by alphabet");
         }
     }
@@ -188,27 +149,18 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public List<Master> getMasterByBusy() {
         LOGGER.debug("Method getMasterByBusy");
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
+        try (Session session = masterDao.getSession()) {
+            session.beginTransaction();
             List<Master> masters = masterDao.getMasterSortByBusy();
             if (masters.isEmpty()) {
                 throw new BusinessException("There are no masters");
             }
-            transaction.commit();
             return masters;
         } catch (BusinessException | DaoException e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction sort masters by busy");
         }
     }
@@ -216,24 +168,14 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public Long getNumberMasters() {
         LOGGER.debug("Method getNumberMasters");
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            Long numberMasters = masterDao.getNumberMasters();
-            transaction.commit();
-            return numberMasters;
+        try (Session session = masterDao.getSession()) {
+            session.beginTransaction();
+            return masterDao.getNumberMasters();
         } catch (BusinessException | DaoException e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new BusinessException("Error transaction number masters");
         }
     }

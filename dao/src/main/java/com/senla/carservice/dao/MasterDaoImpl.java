@@ -28,7 +28,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     public List<Master> getFreeMasters(Date executeDate) {
         LOGGER.debug("Method getFreeMasters");
         LOGGER.trace("Parameter date: {}", executeDate);
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionUtil.getSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -51,7 +51,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     public Long getNumberFreeMasters(Date executeDate) {
         LOGGER.debug("Method getNumberBusyMasters");
         LOGGER.trace("Parameter executeDate: {}", executeDate);
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionUtil.getSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -69,7 +69,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     @Override
     public List<Master> getMasterSortByAlphabet() {
         LOGGER.debug("Method SQL SORT BY ALPHABET:");
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionUtil.getSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -77,7 +77,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         criteriaQuery.orderBy(criteriaBuilder.asc(masterRoot.get(Master_.name)));
         TypedQuery<Master> typedQuery = session.createQuery(criteriaQuery);
         List<Master> masters = typedQuery.getResultList();
-        if (masters == null) {
+        if (masters.isEmpty()) {
             throw new DaoException("Error getting objects");
         }
         return masters;
@@ -86,7 +86,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     @Override
     public List<Master> getMasterSortByBusy() {
         LOGGER.debug("Method getMasterSortByBusy");
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionUtil.getSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -94,7 +94,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         criteriaQuery.orderBy(criteriaBuilder.desc(masterRoot.get(Master_.numberOrders)));
         TypedQuery<Master> typedQuery = session.createQuery(criteriaQuery);
         List<Master> masters = typedQuery.getResultList();
-        if (masters == null) {
+        if (masters.isEmpty()) {
             throw new DaoException("Error getting objects");
         }
         return masters;
@@ -103,7 +103,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
     @Override
     public Long getNumberMasters() {
         LOGGER.debug("Method getNumberMasters");
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionUtil.getSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
