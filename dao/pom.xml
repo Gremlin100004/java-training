@@ -9,17 +9,27 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>service</artifactId>
+    <artifactId>dao</artifactId>
     <dependencies>
         <dependency>
             <groupId>com.senla.carservice</groupId>
-            <artifactId>csv</artifactId>
+            <artifactId>domain</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.senla.carservice</groupId>
-            <artifactId>dao</artifactId>
+            <artifactId>util</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.16</version>
         </dependency>
     </dependencies>
 </project>

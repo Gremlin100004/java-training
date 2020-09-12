@@ -1,10 +1,11 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Master;
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.service.exception.BusinessException;
-import com.senla.carservice.hibernatedao.MasterDao;
+import com.senla.carservice.dao.MasterDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
@@ -13,10 +14,10 @@ import org.hibernate.Transaction;
 import java.util.Date;
 import java.util.List;
 
-@Singleton
+@Component
 public class MasterServiceImpl implements MasterService {
 
-    @Dependency
+    @Autowired
     private MasterDao masterDao;
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterServiceImpl.class);
 
@@ -36,6 +37,12 @@ public class MasterServiceImpl implements MasterService {
             }
             transaction.commit();
             return masters;
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -55,6 +62,12 @@ public class MasterServiceImpl implements MasterService {
             transaction = session.beginTransaction();
             masterDao.saveRecord(new Master(name));
             transaction.commit();
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -78,6 +91,12 @@ public class MasterServiceImpl implements MasterService {
             }
             transaction.commit();
             return freeMasters;
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -98,6 +117,12 @@ public class MasterServiceImpl implements MasterService {
             Long numberBusyMasters = masterDao.getNumberFreeMasters(startDayDate);
             transaction.commit();
             return numberBusyMasters;
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -108,15 +133,21 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public void deleteMaster(Master master) {
+    public void deleteMaster(Long idMaster) {
         LOGGER.debug("Method deleteMaster");
-        LOGGER.trace("Parameter master: {}", master);
+        LOGGER.trace("Parameter idMaster: {}", idMaster);
         Session session = masterDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            masterDao.updateRecord(master);
+            masterDao.updateRecord(masterDao.getRecordById(Master.class, idMaster));
             transaction.commit();
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -139,6 +170,12 @@ public class MasterServiceImpl implements MasterService {
             }
             transaction.commit();
             return masters;
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -161,6 +198,12 @@ public class MasterServiceImpl implements MasterService {
             }
             transaction.commit();
             return masters;
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -180,6 +223,12 @@ public class MasterServiceImpl implements MasterService {
             Long numberMasters = masterDao.getNumberMasters();
             transaction.commit();
             return numberMasters;
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {

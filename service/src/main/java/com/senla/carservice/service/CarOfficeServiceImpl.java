@@ -4,15 +4,15 @@ import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.senla.carservice.csv.CsvMaster;
 import com.senla.carservice.csv.CsvOrder;
 import com.senla.carservice.csv.CsvPlace;
 import com.senla.carservice.service.exception.BusinessException;
-import com.senla.carservice.hibernatedao.MasterDao;
-import com.senla.carservice.hibernatedao.OrderDao;
-import com.senla.carservice.hibernatedao.PlaceDao;
+import com.senla.carservice.dao.MasterDao;
+import com.senla.carservice.dao.OrderDao;
+import com.senla.carservice.dao.PlaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
@@ -21,20 +21,20 @@ import org.hibernate.Transaction;
 import java.util.Date;
 import java.util.List;
 
-@Singleton
+@Component
 public class CarOfficeServiceImpl implements CarOfficeService {
 
-    @Dependency
+    @Autowired
     private MasterDao masterDao;
-    @Dependency
+    @Autowired
     private PlaceDao placeDao;
-    @Dependency
+    @Autowired
     private OrderDao orderDao;
-    @Dependency
+    @Autowired
     private CsvPlace csvPlace;
-    @Dependency
+    @Autowired
     private CsvOrder csvOrder;
-    @Dependency
+    @Autowired
     private CsvMaster csvMaster;
     private static final int NUMBER_DAY = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeServiceImpl.class);

@@ -1,31 +1,40 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.senla.carservice.controller.util.StringMaster;
+import com.senla.carservice.domain.Master;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Singleton
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
 public class MasterController {
 
-    @Dependency
+    @Autowired
     private MasterService masterService;
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterController.class);
 
     public MasterController() {
     }
 
-    public String getMasters() {
+    public List<String> getMasters() {
         LOGGER.info("Method getMasters");
+        List<String> stringList = new ArrayList<>();
         try {
-            return StringMaster.getStringFromMasters(masterService.getMasters());
+            List<Master> masters = masterService.getMasters();
+            stringList.add(StringMaster.getStringFromMasters(masters));
+            stringList.addAll(StringMaster.getListId(masters));
+            return stringList;
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
-            return e.getMessage();
+            stringList.add(e.getMessage());
+            return stringList;
         }
     }
 
@@ -41,16 +50,25 @@ public class MasterController {
         }
     }
 
-    public String deleteMaster(int index) {
-        LOGGER.info("Method deleteMaster");
-        LOGGER.trace("Parameter index: {}", index);
+    public String checkMasters() {
+        LOGGER.info("Method checkMasters");
         try {
-            if (masterService.getNumberMasters() < index || index < 0) {
-                return "There are no such master";
-            } else {
-                masterService.deleteMaster(masterService.getMasters().get(index));
-                return " -master has been deleted successfully!";
+            if (masterService.getNumberMasters() == 0) {
+                throw new  BusinessException("There are no masters");
             }
+            return "verification was successfully";
+        } catch (BusinessException e) {
+            LOGGER.warn(e.getMessage());
+            return e.getMessage();
+        }
+    }
+
+    public String deleteMaster(Long idMaster) {
+        LOGGER.info("Method deleteMaster");
+        LOGGER.trace("Parameter index: {}", idMaster);
+        try {
+            masterService.deleteMaster(idMaster);
+            return " -master has been deleted successfully!";
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
@@ -77,15 +95,20 @@ public class MasterController {
         }
     }
 
-    public String getFreeMasters(String stringExecuteDate) {
+    public List<String> getFreeMasters(String stringExecuteDate) {
         LOGGER.info("Method getFreeMasters");
         LOGGER.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
+        List<String> stringList = new ArrayList<>();
         try {
-            return StringMaster.getStringFromMasters(
-                masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate, true)));
+            List<Master> masters = masterService.getFreeMastersByDate(
+                DateUtil.getDatesFromString(stringExecuteDate, true));
+            stringList.add(StringMaster.getStringFromMasters(masters));
+            stringList.addAll(StringMaster.getListId(masters));
+            return stringList;
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
-            return e.getMessage();
+            stringList.add(e.getMessage());
+            return stringList;
         }
     }
 }

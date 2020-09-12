@@ -11,7 +11,7 @@ public interface PlaceService {
 
     void addPlace(Integer number);
 
-    void deletePlace(Place place);
+    void deletePlace(Long idPlace);
 
     Long getNumberFreePlaceByDate(Date startDate);
 

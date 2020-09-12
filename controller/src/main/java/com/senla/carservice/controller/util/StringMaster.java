@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class StringMaster {
@@ -61,5 +62,11 @@ public class StringMaster {
             });
         stringBuilder.append(line);
         return stringBuilder.toString();
+    }
+
+    public static List<String> getListId(List<Master> masters) {
+        return masters.stream()
+            .map(master -> String.valueOf(master.getId()))
+            .collect(Collectors.toList());
     }
 }

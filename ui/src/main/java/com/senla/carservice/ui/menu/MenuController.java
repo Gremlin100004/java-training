@@ -1,19 +1,19 @@
 package com.senla.carservice.ui.menu;
 
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.senla.carservice.controller.CarOfficeController;
 import com.senla.carservice.ui.util.Printer;
 import com.senla.carservice.ui.util.ScannerUtil;
 
-@Singleton
+@Component
 public class MenuController {
 
-    @Dependency
+    @Autowired
     private Navigator navigator;
-    @Dependency
+    @Autowired
     private Builder builder;
-    @Dependency
+    @Autowired
     private CarOfficeController carOfficeController;
 
     public MenuController() {

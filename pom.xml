@@ -42,14 +42,13 @@
         </plugins>
     </build>
     <modules>
-        <module>container</module>
         <module>controller</module>
         <module>domain</module>
         <module>service</module>
         <module>csv</module>
         <module>util</module>
         <module>ui</module>
-        <module>hibernatedao</module>
+        <module>dao</module>
     </modules>
     <properties>
         <java.version>11</java.version>
@@ -66,6 +65,21 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.0.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>5.2.8.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>5.2.8.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>5.2.8.RELEASE</version>
         </dependency>
     </dependencies>
     <reporting>

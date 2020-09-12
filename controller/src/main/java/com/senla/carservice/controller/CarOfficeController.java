@@ -1,9 +1,10 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.MasterService;
+import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
@@ -12,15 +13,17 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
-@Singleton
+@Component
 public class CarOfficeController {
 
-    @Dependency
+    @Autowired
     private CarOfficeService carOfficeService;
-    @Dependency
+    @Autowired
     private MasterService masterService;
-    @Dependency
+    @Autowired
     private PlaceService placeService;
+    @Autowired
+    private OrderService orderService;
     private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeController.class);
 
     public CarOfficeController() {

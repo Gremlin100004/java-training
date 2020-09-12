@@ -15,7 +15,7 @@ public interface MasterService {
 
     Long getNumberFreeMastersByDate(Date startDate);
 
-    void deleteMaster(Master master);
+    void deleteMaster(Long idMaster);
 
     List<Master> getMasterByAlphabet();
 

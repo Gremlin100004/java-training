@@ -1,11 +1,12 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
-import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.service.exception.BusinessException;
-import com.senla.carservice.hibernatedao.PlaceDao;
+import com.senla.carservice.dao.PlaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.hibernate.Session;
@@ -14,14 +15,14 @@ import org.hibernate.Transaction;
 import java.util.Date;
 import java.util.List;
 
-@Singleton
+@Component
 public class PlaceServiceImpl implements PlaceService {
 
-    @Dependency
+    @Autowired
     private PlaceDao placeDao;
-    @ConfigProperty
+    @Value("${com.senla.carservice.service.PlaceServiceImpl.isBlockAddPlace}")
     private Boolean isBlockAddPlace;
-    @ConfigProperty
+    @Value("${com.senla.carservice.service.PlaceServiceImpl.isBlockDeletePlace}")
     private Boolean isBlockDeletePlace;
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaceServiceImpl.class);
 
@@ -41,6 +42,12 @@ public class PlaceServiceImpl implements PlaceService {
             }
             transaction.commit();
             return places;
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -63,6 +70,12 @@ public class PlaceServiceImpl implements PlaceService {
             transaction = session.beginTransaction();
             placeDao.saveRecord(new Place(number));
             transaction.commit();
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -73,21 +86,28 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public void deletePlace(Place place) {
+    public void deletePlace(Long idPlace) {
         LOGGER.debug("Method deletePlace");
-        LOGGER.debug("Parameter place: {}", place);
+        LOGGER.debug("Parameter idPlace: {}", idPlace);
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
         Session session = placeDao.getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
+            Place place = placeDao.getRecordById(Place.class, idPlace);
             transaction = session.beginTransaction();
             if (place.getBusy()) {
                 throw new BusinessException("Place is busy");
             }
             placeDao.updateRecord(place);
             transaction.commit();
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -108,6 +128,12 @@ public class PlaceServiceImpl implements PlaceService {
             Long numberFreePlaces = placeDao.getNumberFreePlaces(startDayDate);
             transaction.commit();
             return numberFreePlaces;
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -128,6 +154,12 @@ public class PlaceServiceImpl implements PlaceService {
             List<Place> freePlace = placeDao.getFreePlaces(executeDate);
             transaction.commit();
             return freePlace;
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
@@ -147,6 +179,12 @@ public class PlaceServiceImpl implements PlaceService {
             Long numberPlace = placeDao.getNumberPlaces();
             transaction.commit();
             return numberPlace;
+        } catch (BusinessException | DaoException e) {
+            LOGGER.error(e.getMessage());
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new BusinessException(e.getMessage());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             if (transaction != null) {
