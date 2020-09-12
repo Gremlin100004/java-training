@@ -7,3 +7,4 @@
 out/
 target/
 log/
+ui/src/main/resources/hibernate.properties
