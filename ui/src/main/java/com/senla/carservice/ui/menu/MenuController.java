@@ -30,6 +30,5 @@ public class MenuController {
                 navigator.navigate(answer);
             }
         }
-        Printer.printInfo(carOfficeController.closeSessionFactory());
     }
 }

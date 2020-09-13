@@ -1,7 +1,5 @@
 package com.senla.carservice.controller;
 
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.OrderService;
@@ -10,10 +8,12 @@ import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import java.util.Date;
 
-@Component
+@Controller
 public class CarOfficeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeController.class);
@@ -74,17 +74,6 @@ public class CarOfficeController {
         try {
             carOfficeService.importEntities();
             return "Imported completed successfully!";
-        } catch (BusinessException e) {
-            LOGGER.warn(e.getMessage());
-            return e.getMessage();
-        }
-    }
-
-    public String closeSessionFactory() {
-        LOGGER.info("Method closeSessionFactory");
-        try {
-            carOfficeService.closeSessionFactory();
-            return "Bye bye!";
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();

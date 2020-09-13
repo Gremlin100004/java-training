@@ -1,7 +1,5 @@
 package com.senla.carservice.controller;
 
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.senla.carservice.controller.util.StringMaster;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.service.MasterService;
@@ -9,11 +7,13 @@ import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Controller
 public class MasterController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterController.class);

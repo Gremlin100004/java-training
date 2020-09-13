@@ -21,11 +21,11 @@ public class CsvMaster {
 
     private static final int SIZE_INDEX = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvMaster.class);
-    @Value("${com.senla.carservice.csv.CsvMaster.masterPath}")
+    @Value("${com.senla.carservice.csv.CsvMaster.masterPath:masters.csv}")
     private String masterPath;
-    @Value("${com.senla.carservice.csv.CsvMaster.fieldSeparator}")
+    @Value("${com.senla.carservice.csv.CsvMaster.fieldSeparator:|}")
     private String fieldSeparator;
-    @Value("${com.senla.carservice.csv.CsvMaster.idSeparator}")
+    @Value("${com.senla.carservice.csv.CsvMaster.idSeparator:,}")
     private String idSeparator;
 
     public CsvMaster() {

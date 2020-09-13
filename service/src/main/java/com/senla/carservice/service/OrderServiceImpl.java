@@ -1,30 +1,31 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.dao.exception.DaoException;
-import com.senla.carservice.util.DateUtil;
-import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Order;
-import com.senla.carservice.domain.Place;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.senla.carservice.service.enumaration.SortParameter;
-import com.senla.carservice.domain.enumaration.StatusOrder;
-import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.dao.OrderDao;
 import com.senla.carservice.dao.PlaceDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.senla.carservice.dao.exception.DaoException;
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
+import com.senla.carservice.domain.Place;
+import com.senla.carservice.domain.enumaration.StatusOrder;
+import com.senla.carservice.service.enumaration.SortParameter;
+import com.senla.carservice.service.exception.BusinessException;
+import com.senla.carservice.util.DateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Component
+@Service
 public class OrderServiceImpl implements OrderService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
@@ -34,9 +35,9 @@ public class OrderServiceImpl implements OrderService {
     private PlaceDao placeDao;
     @Autowired
     private MasterDao masterDao;
-    @Value("${com.senla.carservice.service.OrderServiceImpl.isBlockShiftTime}")
+    @Value("${com.senla.carservice.service.OrderServiceImpl.isBlockShiftTime:false}")
     private boolean isBlockShiftTime;
-    @Value("${com.senla.carservice.service.OrderServiceImpl.isBlockDeleteOrder}")
+    @Value("${com.senla.carservice.service.OrderServiceImpl.isBlockDeleteOrder:false}")
     private boolean isBlockDeleteOrder;
 
     public OrderServiceImpl() {
@@ -45,61 +46,34 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getOrders() {
         LOGGER.debug("Method getOrders");
-        try (Session session = orderDao.getSession()) {
-            session.beginTransaction();
             List<Order> orders = orderDao.getAllRecords(Order.class);
             if (orders.isEmpty()) {
                 throw new BusinessException("There are no orders");
             }
             return orders;
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException("Error transaction get orders");
-        }
     }
 
+    @Transactional
     @Override
     public void addOrder(String automaker, String model, String registrationNumber) {
         LOGGER.debug("Method addOrder");
         LOGGER.debug("Parameter automaker: {}", automaker);
         LOGGER.debug("Parameter model: {}", model);
         LOGGER.debug("Parameter registrationNumber: {}", registrationNumber);
-        Session session = orderDao.getSession();
-        Transaction transaction = session.beginTransaction();
-        try {
             checkMasters();
             checkPlaces();
             Order order = new Order(automaker, model, registrationNumber);
-            Place place = placeDao.getRecordById(Place.class, (long) 1);
+            Place place = placeDao.findById(Place.class, (long) 1);
             order.setPlace(place);
             orderDao.saveRecord(order);
-            transaction.commit();
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction add order");
-        }
     }
 
+    @Transactional
     @Override
     public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
         LOGGER.debug("Method addOrderDeadlines");
         LOGGER.debug("Parameter executionStartTime: {}", executionStartTime);
         LOGGER.debug("Parameter leadTime: {}", leadTime);
-        Session session = orderDao.getSession();
-        Transaction transaction = session.beginTransaction();
-        try {
             DateUtil.checkDateTime(executionStartTime, leadTime, false);
             Order currentOrder = orderDao.getLastOrder();
             if (currentOrder == null) {
@@ -118,31 +92,15 @@ public class OrderServiceImpl implements OrderService {
             currentOrder.setExecutionStartTime(executionStartTime);
             currentOrder.setLeadTime(leadTime);
             orderDao.updateRecord(currentOrder);
-            transaction.commit();
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction add dead line to order");
-        }
     }
 
+    @Transactional
     @Override
     public void addOrderMasters(Long idMaster) {
         LOGGER.debug("Method addOrderMasters");
         LOGGER.debug("Parameter idMaster: {}", idMaster);
-        Session session = orderDao.getSession();
-        Transaction transaction = session.beginTransaction();
-        try {
             Order currentOrder = orderDao.getLastOrder();
-            Master master = masterDao.getRecordById(Master.class, idMaster);
+            Master master = masterDao.findById(Master.class, idMaster);
             master.setNumberOrders(master.getNumberOrders() + 1);
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
@@ -156,117 +114,53 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
             currentOrder.getMasters().add(master);
-            transaction.commit();
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction add masters to order");
-        }
     }
 
+    @Transactional
     @Override
     public void addOrderPlace(Long idPlace) {
         LOGGER.debug("Method addOrderPlace");
         LOGGER.debug("Parameter idPlace: {}", idPlace);
-        Session session = orderDao.getSession();
-        Transaction transaction = session.beginTransaction();
-        try {
             Order currentOrder = orderDao.getLastOrder();
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
             }
-            currentOrder.setPlace(placeDao.getRecordById(Place.class, idPlace));
+            currentOrder.setPlace(placeDao.findById(Place.class, idPlace));
             orderDao.updateRecord(currentOrder);
-            transaction.commit();
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction add place to order");
-        }
     }
 
+    @Transactional
     @Override
     public void addOrderPrice(BigDecimal price) {
         LOGGER.debug("Method addOrderPrice");
         LOGGER.debug("Parameter price: {}", price);
-        Session session = orderDao.getSession();
-        Transaction transaction = session.beginTransaction();
-        try {
             Order currentOrder = orderDao.getLastOrder();
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
             }
             currentOrder.setPrice(price);
             orderDao.updateRecord(currentOrder);
-            transaction.commit();
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction add price to order");
-        }
     }
 
+    @Transactional
     @Override
     public void completeOrder(Long idOrder) {
         LOGGER.debug("Method completeOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
-        Session session = orderDao.getSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            Order order = orderDao.getRecordById(Order.class, idOrder);
+            Order order = orderDao.findById(Order.class, idOrder);
             checkStatusOrder(order);
             order.setStatus(StatusOrder.PERFORM);
             order.setExecutionStartTime(new Date());
             order.getPlace().setBusy(true);
             orderDao.updateRecord(order);
-            transaction.commit();
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction transfer order to execution status");
-        }
     }
 
+    @Transactional
     @Override
     public void cancelOrder(Long idOrder) {
         LOGGER.debug("Method cancelOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
-        Session session = orderDao.getSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            Order order = orderDao.getRecordById(Order.class, idOrder);
+            Order order = orderDao.findById(Order.class, idOrder);
             checkStatusOrder(order);
             order.setLeadTime(new Date());
             order.setStatus(StatusOrder.CANCELED);
@@ -277,30 +171,14 @@ public class OrderServiceImpl implements OrderService {
             Place place = order.getPlace();
             place.setBusy(false);
             placeDao.updateRecord(place);
-            transaction.commit();
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction cancel order");
-        }
     }
 
+    @Transactional
     @Override
     public void closeOrder(Long idOrder) {
         LOGGER.debug("Method closeOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
-        Session session = orderDao.getSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            Order order = orderDao.getRecordById(Order.class, idOrder);
+            Order order = orderDao.findById(Order.class, idOrder);
             checkStatusOrder(order);
             order.setLeadTime(new Date());
             order.setStatus(StatusOrder.COMPLETED);
@@ -312,22 +190,9 @@ public class OrderServiceImpl implements OrderService {
             masters.forEach(master -> master.setNumberOrders(master.getNumberOrders() - 1));
             masterDao.updateAllRecords(masters);
             orderDao.updateRecord(order);
-            transaction.commit();
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction close order");
-        }
     }
 
+    @Transactional
     @Override
     public void deleteOrder(Long idOrder) {
         LOGGER.debug("Method deleteOrder");
@@ -335,26 +200,10 @@ public class OrderServiceImpl implements OrderService {
         if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
-        Session session = orderDao.getSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            orderDao.updateRecord(orderDao.getRecordById(Order.class, idOrder));
-            transaction.commit();
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction get masters");
-        }
+            orderDao.updateRecord(orderDao.findById(Order.class, idOrder));
     }
 
+    @Transactional
     @Override
     public void shiftLeadTime(Long idOrder, Date executionStartTime, Date leadTime) {
         LOGGER.debug("Method shiftLeadTime");
@@ -364,37 +213,18 @@ public class OrderServiceImpl implements OrderService {
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
-        Session session = orderDao.getSession();
-        Transaction transaction = session.beginTransaction();
-        try {
             DateUtil.checkDateTime(executionStartTime, leadTime, false);
-            Order order = orderDao.getRecordById(Order.class, idOrder);
+            Order order = orderDao.findById(Order.class, idOrder);
             checkStatusOrderShiftTime(order);
             order.setLeadTime(leadTime);
             order.setExecutionStartTime(executionStartTime);
             orderDao.updateRecord(order);
-            transaction.commit();
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction shift lead time");
-        }
     }
 
     @Override
     public List<Order> getSortOrders(SortParameter sortParameter) {
         LOGGER.debug("Method getSortOrders");
         LOGGER.debug("Parameter sortParameter: {}", sortParameter);
-        try (Session session = orderDao.getSession()) {
-            session.beginTransaction();
             List<Order> orders = new ArrayList<>();
             if (sortParameter.equals(SortParameter.SORT_BY_FILING_DATE)) {
                 orders = orderDao.getOrdersSortByFilingDate();
@@ -413,13 +243,6 @@ public class OrderServiceImpl implements OrderService {
                 throw new BusinessException("There are no orders");
             }
             return orders;
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException("Error transaction get sort orders");
-        }
     }
 
     @Override
@@ -428,8 +251,6 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
         LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
         LOGGER.debug("Parameter sortParameter: {}", sortParameter);
-        try (Session session = orderDao.getSession()) {
-            session.beginTransaction();
             List<Order> orders = new ArrayList<>();
             DateUtil.checkDateTime(startPeriodDate, endPeriodDate, true);
             if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE)) {
@@ -455,69 +276,35 @@ public class OrderServiceImpl implements OrderService {
                 throw new BusinessException("There are no orders");
             }
             return orders;
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException("Error transaction get sort orders by date");
-        }
     }
 
     @Override
     public List<Order> getMasterOrders(Long idMaster) {
         LOGGER.debug("Method getMasterOrders");
         LOGGER.debug("Parameter idMaster: {}", idMaster);
-        try (Session session = orderDao.getSession()) {
-            session.beginTransaction();
-            List<Order> orders = orderDao.getMasterOrders(masterDao.getRecordById(Master.class, idMaster));
+            List<Order> orders = orderDao.getMasterOrders(masterDao.findById(Master.class, idMaster));
             if (orders.isEmpty()) {
                 throw new BusinessException("Master doesn't have any orders");
             }
             return orders;
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException("Error transaction get master orders");
-        }
     }
 
     @Override
     public List<Master> getOrderMasters(Long idOrder) {
         LOGGER.debug("Method getOrderMasters");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
-        try (Session session = orderDao.getSession()) {
-            session.beginTransaction();
-            Order order = orderDao.getRecordById(Order.class, idOrder);
+            Order order = orderDao.findById(Order.class, idOrder);
             List<Master> masters = orderDao.getOrderMasters(order);
             if (masters.isEmpty()) {
                 throw new BusinessException("There are no masters in order");
             }
             return masters;
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException("Error transaction order masters");
-        }
     }
 
     @Override
     public Long getNumberOrders() {
         LOGGER.debug("Method getNumberOrders");
-        try (Session session = orderDao.getSession()) {
-            session.beginTransaction();
             return orderDao.getNumberOrders();
-        } catch (BusinessException | DaoException e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException(e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new BusinessException("Error transaction get number orders");
-        }
     }
 
     private void checkMasters() {

@@ -23,11 +23,11 @@ public class CsvOrder {
 
     private static final int SIZE_INDEX = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvOrder.class);
-    @Value("${com.senla.carservice.csv.CsvOrder.orderPath}")
+    @Value("${com.senla.carservice.csv.CsvOrder.orderPath:order.csv}")
     private String orderPath;
-    @Value("${com.senla.carservice.csv.CsvOrder.fieldSeparator}")
+    @Value("${com.senla.carservice.csv.CsvOrder.fieldSeparator:|}")
     private String fieldSeparator;
-    @Value("${com.senla.carservice.csv.CsvOrder.idSeparator}")
+    @Value("${com.senla.carservice.csv.CsvOrder.idSeparator:,}")
     private String idSeparator;
 
     public CsvOrder() {

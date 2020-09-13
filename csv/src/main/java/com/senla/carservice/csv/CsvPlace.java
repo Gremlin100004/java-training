@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 public class CsvPlace {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvPlace.class);
-    @Value("${com.senla.carservice.csv.CsvPlace.placePath}")
+    @Value("${com.senla.carservice.csv.CsvPlace.placePath:place.csv}")
     private String placePath;
-    @Value("${com.senla.carservice.csv.CsvPlace.fieldSeparator}")
+    @Value("${com.senla.carservice.csv.CsvPlace.fieldSeparator:|}")
     private String fieldSeparator;
 
     public CsvPlace() {
