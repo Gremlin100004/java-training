@@ -17,9 +17,9 @@ import java.util.List;
 @Component
 public class MasterServiceImpl implements MasterService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MasterServiceImpl.class);
     @Autowired
     private MasterDao masterDao;
-    private static final Logger LOGGER = LoggerFactory.getLogger(MasterServiceImpl.class);
 
     public MasterServiceImpl() {
     }
@@ -108,7 +108,7 @@ public class MasterServiceImpl implements MasterService {
         LOGGER.debug("Method deleteMaster");
         LOGGER.trace("Parameter idMaster: {}", idMaster);
         Session session = masterDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             masterDao.updateRecord(masterDao.getRecordById(Master.class, idMaster));
             transaction.commit();

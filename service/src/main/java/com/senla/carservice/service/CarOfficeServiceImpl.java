@@ -25,6 +25,8 @@ import java.util.List;
 @Component
 public class CarOfficeServiceImpl implements CarOfficeService {
 
+    private static final int NUMBER_DAY = 1;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeServiceImpl.class);
     @Autowired
     private MasterDao masterDao;
     @Autowired
@@ -37,8 +39,6 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     private CsvOrder csvOrder;
     @Autowired
     private CsvMaster csvMaster;
-    private static final int NUMBER_DAY = 1;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeServiceImpl.class);
 
     public CarOfficeServiceImpl() {
     }

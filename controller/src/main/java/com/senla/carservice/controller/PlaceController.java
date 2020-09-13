@@ -18,10 +18,9 @@ import java.util.List;
 @Component
 public class PlaceController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlaceController.class);
     @Autowired
     private PlaceService placeService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlaceController.class);
-
 
     public PlaceController() {
     }

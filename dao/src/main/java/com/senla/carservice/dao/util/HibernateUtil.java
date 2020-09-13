@@ -15,13 +15,13 @@ public class HibernateUtil implements SessionUtil {
 
     @Override
     public Session getSession() {
-        if (sessionFactory == null){
+        if (sessionFactory == null) {
             initialize();
         }
         return sessionFactory.getCurrentSession();
     }
 
-    private void initialize(){
+    private void initialize() {
         sessionFactory = new Configuration()
             .addAnnotatedClass(Master.class)
             .addAnnotatedClass(Order.class)

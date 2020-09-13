@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 @Component
 public class Builder {
 
+    private static final int INDEX_OFFSET = 1;
+    private static final int MAX_INDEX = 999;
     private Menu rootMenu;
     @Autowired
     private CarOfficeController carOfficeController;
@@ -26,8 +28,6 @@ public class Builder {
     private OrderController orderController;
     @Autowired
     private PlaceController placeController;
-    private static final int INDEX_OFFSET = 1;
-    private static final int MAX_INDEX = 999;
 
     public Builder() {
     }

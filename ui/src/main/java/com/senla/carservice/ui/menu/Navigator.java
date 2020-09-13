@@ -8,8 +8,8 @@ import java.util.List;
 @Component
 public class Navigator {
 
-    private Menu currentMenu;
     private static final int INDEX_OFFSET = 1;
+    private Menu currentMenu;
 
     public Navigator() {
     }

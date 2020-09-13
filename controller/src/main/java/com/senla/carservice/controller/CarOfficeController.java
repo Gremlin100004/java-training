@@ -16,6 +16,7 @@ import java.util.Date;
 @Component
 public class CarOfficeController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeController.class);
     @Autowired
     private CarOfficeService carOfficeService;
     @Autowired
@@ -24,7 +25,6 @@ public class CarOfficeController {
     private PlaceService placeService;
     @Autowired
     private OrderService orderService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeController.class);
 
     public CarOfficeController() {
     }

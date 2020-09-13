@@ -19,14 +19,14 @@ import java.util.stream.IntStream;
 @Component
 public class CsvMaster {
 
+    private static final int SIZE_INDEX = 1;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CsvMaster.class);
     @Value("${com.senla.carservice.csv.CsvMaster.masterPath}")
     private String masterPath;
     @Value("${com.senla.carservice.csv.CsvMaster.fieldSeparator}")
     private String fieldSeparator;
     @Value("${com.senla.carservice.csv.CsvMaster.idSeparator}")
     private String idSeparator;
-    private static final int SIZE_INDEX = 1;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CsvMaster.class);
 
     public CsvMaster() {
     }

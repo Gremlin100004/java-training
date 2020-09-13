@@ -27,6 +27,7 @@ import java.util.List;
 @Component
 public class OrderServiceImpl implements OrderService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
     @Autowired
     private OrderDao orderDao;
     @Autowired
@@ -37,7 +38,6 @@ public class OrderServiceImpl implements OrderService {
     private boolean isBlockShiftTime;
     @Value("${com.senla.carservice.service.OrderServiceImpl.isBlockDeleteOrder}")
     private boolean isBlockDeleteOrder;
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     public OrderServiceImpl() {
     }
@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Parameter model: {}", model);
         LOGGER.debug("Parameter registrationNumber: {}", registrationNumber);
         Session session = orderDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             checkMasters();
             checkPlaces();
@@ -98,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Parameter executionStartTime: {}", executionStartTime);
         LOGGER.debug("Parameter leadTime: {}", leadTime);
         Session session = orderDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             DateUtil.checkDateTime(executionStartTime, leadTime, false);
             Order currentOrder = orderDao.getLastOrder();
@@ -139,7 +139,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method addOrderMasters");
         LOGGER.debug("Parameter idMaster: {}", idMaster);
         Session session = orderDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             Order currentOrder = orderDao.getLastOrder();
             Master master = masterDao.getRecordById(Master.class, idMaster);
@@ -177,7 +177,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method addOrderPlace");
         LOGGER.debug("Parameter idPlace: {}", idPlace);
         Session session = orderDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             Order currentOrder = orderDao.getLastOrder();
             if (currentOrder == null) {
@@ -206,7 +206,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method addOrderPrice");
         LOGGER.debug("Parameter price: {}", price);
         Session session = orderDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             Order currentOrder = orderDao.getLastOrder();
             if (currentOrder == null) {
@@ -235,7 +235,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method completeOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
         Session session = orderDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             Order order = orderDao.getRecordById(Order.class, idOrder);
             checkStatusOrder(order);
@@ -264,7 +264,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method cancelOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
         Session session = orderDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             Order order = orderDao.getRecordById(Order.class, idOrder);
             checkStatusOrder(order);
@@ -298,7 +298,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method closeOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
         Session session = orderDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             Order order = orderDao.getRecordById(Order.class, idOrder);
             checkStatusOrder(order);
@@ -336,7 +336,7 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException("Permission denied");
         }
         Session session = orderDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             orderDao.updateRecord(orderDao.getRecordById(Order.class, idOrder));
             transaction.commit();
@@ -365,7 +365,7 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException("Permission denied");
         }
         Session session = orderDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             DateUtil.checkDateTime(executionStartTime, leadTime, false);
             Order order = orderDao.getRecordById(Order.class, idOrder);

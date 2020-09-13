@@ -22,13 +22,13 @@ import java.util.List;
 @Component
 public class OrderController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
     @Autowired
     private OrderService orderService;
     @Autowired
     private MasterService masterService;
     @Autowired
     private PlaceService placeService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
 
     public OrderController() {
     }

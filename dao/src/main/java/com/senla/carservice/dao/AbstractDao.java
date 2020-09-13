@@ -2,8 +2,8 @@ package com.senla.carservice.dao;
 
 import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.dao.util.SessionUtil;
+import com.senla.carservice.domain.AEntity;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.List;
 
-public abstract class AbstractDao<T, PK extends Serializable> implements GenericDao<T, PK> {
+public abstract class AbstractDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, PK> {
 
     @Autowired
     protected SessionUtil sessionUtil;

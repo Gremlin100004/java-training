@@ -18,13 +18,13 @@ import java.util.List;
 @Component
 public class PlaceServiceImpl implements PlaceService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlaceServiceImpl.class);
     @Autowired
     private PlaceDao placeDao;
     @Value("${com.senla.carservice.service.PlaceServiceImpl.isBlockAddPlace}")
     private Boolean isBlockAddPlace;
     @Value("${com.senla.carservice.service.PlaceServiceImpl.isBlockDeletePlace}")
     private Boolean isBlockDeletePlace;
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlaceServiceImpl.class);
 
     public PlaceServiceImpl() {
     }
@@ -56,7 +56,7 @@ public class PlaceServiceImpl implements PlaceService {
             throw new BusinessException("Permission denied");
         }
         Session session = placeDao.getSession();
-        Transaction transaction =session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         try {
             placeDao.saveRecord(new Place(number));
             transaction.commit();

@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 @Component
 public class CsvPlace {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CsvPlace.class);
     @Value("${com.senla.carservice.csv.CsvPlace.placePath}")
     private String placePath;
     @Value("${com.senla.carservice.csv.CsvPlace.fieldSeparator}")
     private String fieldSeparator;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CsvPlace.class);
 
     public CsvPlace() {
     }
