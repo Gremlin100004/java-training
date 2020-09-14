@@ -1,10 +1,9 @@
 package com.senla.carservice.ui.menu;
 
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.senla.carservice.controller.CarOfficeController;
-import com.senla.carservice.ui.util.Printer;
 import com.senla.carservice.ui.util.ScannerUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class MenuController {

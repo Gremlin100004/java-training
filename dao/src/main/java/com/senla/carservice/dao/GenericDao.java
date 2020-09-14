@@ -5,11 +5,13 @@ import java.util.List;
 
 public interface GenericDao <T, PK extends Serializable> {
 
+    void setType(Class<T> type);
+
     void saveRecord(T object);
 
-    T findById(Class<T> type, PK id);
+    T findById(PK id);
 
-    List<T> getAllRecords(Class<T> type);
+    List<T> getAllRecords();
 
     void updateRecord(T object);
 

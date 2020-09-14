@@ -26,12 +26,11 @@ public class MasterServiceImpl implements MasterService {
     @Transactional(readOnly = true)
     public List<Master> getMasters() {
         LOGGER.debug("Method getMasters");
-        List<Master> masters = masterDao.getAllRecords(Master.class);
+        List<Master> masters = masterDao.getAllRecords();
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }
         return masters;
-
     }
 
     @Override
@@ -67,7 +66,7 @@ public class MasterServiceImpl implements MasterService {
     public void deleteMaster(Long idMaster) {
         LOGGER.debug("Method deleteMaster");
         LOGGER.trace("Parameter idMaster: {}", idMaster);
-        masterDao.updateRecord(masterDao.findById(Master.class, idMaster));
+        masterDao.updateRecord(masterDao.findById(idMaster));
     }
 
     @Override

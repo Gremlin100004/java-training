@@ -19,6 +19,7 @@ import java.util.List;
 public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
 
     public PlaceDaoImpl() {
+        setType(Place.class);
     }
 
     @Override

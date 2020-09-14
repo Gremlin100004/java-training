@@ -66,10 +66,10 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Transactional
     public void importEntities() {
         LOGGER.debug("Method importEntities");
-        masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords(Order.class)));
+        masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords()));
         placeDao.updateAllRecords(csvPlace.importPlaces());
         List<Order> orders =
-            csvOrder.importOrder(masterDao.getAllRecords(Master.class), placeDao.getAllRecords(Place.class));
+            csvOrder.importOrder(masterDao.getAllRecords(), placeDao.getAllRecords());
         orderDao.updateAllRecords(orders);
     }
 
@@ -108,7 +108,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     private List<Order> getOrders() {
         LOGGER.debug("Method getOrders");
-        List<Order> orders = orderDao.getAllRecords(Order.class);
+        List<Order> orders = orderDao.getAllRecords();
         if (orders.isEmpty()) {
             throw new BusinessException("There are no orders");
         }
@@ -117,7 +117,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     private List<Master> getMasters() {
         LOGGER.debug("Method getMasters");
-        List<Master> masters = masterDao.getAllRecords(Master.class);
+        List<Master> masters = masterDao.getAllRecords();
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }
@@ -126,7 +126,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     private List<Place> getPlaces() {
         LOGGER.debug("Method getPlaces");
-        List<Place> places = placeDao.getAllRecords(Place.class);
+        List<Place> places = placeDao.getAllRecords();
         if (places.isEmpty()) {
             throw new BusinessException("There are no places");
         }

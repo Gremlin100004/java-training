@@ -154,7 +154,12 @@ public class Builder {
 
     private void addItemListOrderMenuPartOne(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SHOW_ORDERS.getValue(), this::isCheckOrder, listOrderMenu));
+            new MenuItem(MenuTittle.SHOW_ORDERS.getValue(), () -> {
+                if (isCheckOrder()) {
+                    return;
+                }
+                Printer.printInfo(orderController.getOrders().get(0));
+            }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.ADD_ORDER.getValue(), this::addOrder, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.DELETE_THE_ORDER.getValue(), () -> {
             if (isCheckOrder()) {

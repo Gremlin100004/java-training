@@ -3,7 +3,6 @@ package com.senla.carservice.service;
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.dao.OrderDao;
 import com.senla.carservice.dao.PlaceDao;
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
@@ -11,8 +10,6 @@ import com.senla.carservice.domain.enumaration.StatusOrder;
 import com.senla.carservice.service.enumaration.SortParameter;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public List<Order> getOrders() {
         LOGGER.debug("Method getOrders");
-            List<Order> orders = orderDao.getAllRecords(Order.class);
+            List<Order> orders = orderDao.getAllRecords();
             if (orders.isEmpty()) {
                 throw new BusinessException("There are no orders");
             }
@@ -64,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
             checkMasters();
             checkPlaces();
             Order order = new Order(automaker, model, registrationNumber);
-            Place place = placeDao.findById(Place.class, (long) 1);
+            Place place = placeDao.findById((long) 1);
             order.setPlace(place);
             orderDao.saveRecord(order);
     }
@@ -101,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method addOrderMasters");
         LOGGER.debug("Parameter idMaster: {}", idMaster);
             Order currentOrder = orderDao.getLastOrder();
-            Master master = masterDao.findById(Master.class, idMaster);
+            Master master = masterDao.findById(idMaster);
             master.setNumberOrders(master.getNumberOrders() + 1);
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
@@ -126,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
             if (currentOrder == null) {
                 throw new BusinessException("There are no orders");
             }
-            currentOrder.setPlace(placeDao.findById(Place.class, idPlace));
+            currentOrder.setPlace(placeDao.findById(idPlace));
             orderDao.updateRecord(currentOrder);
     }
 
@@ -148,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
     public void completeOrder(Long idOrder) {
         LOGGER.debug("Method completeOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
-            Order order = orderDao.findById(Order.class, idOrder);
+            Order order = orderDao.findById(idOrder);
             checkStatusOrder(order);
             order.setStatus(StatusOrder.PERFORM);
             order.setExecutionStartTime(new Date());
@@ -161,7 +158,7 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrder(Long idOrder) {
         LOGGER.debug("Method cancelOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
-            Order order = orderDao.findById(Order.class, idOrder);
+            Order order = orderDao.findById(idOrder);
             checkStatusOrder(order);
             order.setLeadTime(new Date());
             order.setStatus(StatusOrder.CANCELED);
@@ -179,7 +176,7 @@ public class OrderServiceImpl implements OrderService {
     public void closeOrder(Long idOrder) {
         LOGGER.debug("Method closeOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
-            Order order = orderDao.findById(Order.class, idOrder);
+            Order order = orderDao.findById(idOrder);
             checkStatusOrder(order);
             order.setLeadTime(new Date());
             order.setStatus(StatusOrder.COMPLETED);
@@ -201,7 +198,7 @@ public class OrderServiceImpl implements OrderService {
         if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
-            orderDao.updateRecord(orderDao.findById(Order.class, idOrder));
+            orderDao.updateRecord(orderDao.findById(idOrder));
     }
 
     @Override
@@ -215,7 +212,7 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException("Permission denied");
         }
             DateUtil.checkDateTime(executionStartTime, leadTime, false);
-            Order order = orderDao.findById(Order.class, idOrder);
+            Order order = orderDao.findById(idOrder);
             checkStatusOrderShiftTime(order);
             order.setLeadTime(leadTime);
             order.setExecutionStartTime(executionStartTime);
@@ -286,7 +283,7 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getMasterOrders(Long idMaster) {
         LOGGER.debug("Method getMasterOrders");
         LOGGER.debug("Parameter idMaster: {}", idMaster);
-            List<Order> orders = orderDao.getMasterOrders(masterDao.findById(Master.class, idMaster));
+            List<Order> orders = orderDao.getMasterOrders(masterDao.findById(idMaster));
             if (orders.isEmpty()) {
                 throw new BusinessException("Master doesn't have any orders");
             }
@@ -298,7 +295,7 @@ public class OrderServiceImpl implements OrderService {
     public List<Master> getOrderMasters(Long idOrder) {
         LOGGER.debug("Method getOrderMasters");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
-            Order order = orderDao.findById(Order.class, idOrder);
+            Order order = orderDao.findById(idOrder);
             List<Master> masters = orderDao.getOrderMasters(order);
             if (masters.isEmpty()) {
                 throw new BusinessException("There are no masters in order");

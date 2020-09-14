@@ -1,11 +1,8 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.dao.PlaceDao;
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.service.exception.BusinessException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +31,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional(readOnly = true)
     public List<Place> getPlaces() {
         LOGGER.debug("Method getPlaces");
-        List<Place> places = placeDao.getAllRecords(Place.class);
+        List<Place> places = placeDao.getAllRecords();
         if (places.isEmpty()) {
             throw new BusinessException("There are no places");
         }
@@ -60,7 +57,7 @@ public class PlaceServiceImpl implements PlaceService {
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
-        Place place = placeDao.findById(Place.class, idPlace);
+        Place place = placeDao.findById(idPlace);
         if (place.getBusy()) {
             throw new BusinessException("Place is busy");
         }
