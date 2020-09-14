@@ -5,7 +5,7 @@ import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Order_;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.Place_;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -15,7 +15,7 @@ import javax.persistence.criteria.Subquery;
 import java.util.Date;
 import java.util.List;
 
-@Component
+@Repository
 public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
 
     public PlaceDaoImpl() {

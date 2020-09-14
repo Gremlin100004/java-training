@@ -6,18 +6,14 @@ import com.senla.carservice.domain.Master_;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Order_;
 import com.senla.carservice.domain.enumaration.StatusOrder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.Date;
 import java.util.List;
 
-@Component
+@Repository
 public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
 
     public OrderDaoImpl() {

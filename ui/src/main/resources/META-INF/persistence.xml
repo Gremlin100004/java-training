@@ -5,7 +5,7 @@
              version="2.2">
     <persistence-unit name="CarServiceJpa">
         <description>Hibernate EntityManager</description>
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>com.senla.carservice.domain.Order</class>
         <class>com.senla.carservice.domain.Master</class>
         <class>com.senla.carservice.domain.Place</class>

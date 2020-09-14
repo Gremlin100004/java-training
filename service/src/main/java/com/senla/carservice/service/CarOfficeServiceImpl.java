@@ -42,6 +42,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Date getNearestFreeDate() {
         LOGGER.debug("Method getNearestFreeDate");
         checkMasters();
@@ -61,8 +62,8 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         return dayDate;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void importEntities() {
         LOGGER.debug("Method importEntities");
         masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords(Order.class)));
@@ -73,6 +74,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void exportEntities() {
         LOGGER.debug("Method exportEntities");
         List<Order> orders = getOrders();

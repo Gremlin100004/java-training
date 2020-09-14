@@ -44,6 +44,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Order> getOrders() {
         LOGGER.debug("Method getOrders");
             List<Order> orders = orderDao.getAllRecords(Order.class);
@@ -53,8 +54,8 @@ public class OrderServiceImpl implements OrderService {
             return orders;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void addOrder(String automaker, String model, String registrationNumber) {
         LOGGER.debug("Method addOrder");
         LOGGER.debug("Parameter automaker: {}", automaker);
@@ -68,8 +69,8 @@ public class OrderServiceImpl implements OrderService {
             orderDao.saveRecord(order);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
         LOGGER.debug("Method addOrderDeadlines");
         LOGGER.debug("Parameter executionStartTime: {}", executionStartTime);
@@ -94,8 +95,8 @@ public class OrderServiceImpl implements OrderService {
             orderDao.updateRecord(currentOrder);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void addOrderMasters(Long idMaster) {
         LOGGER.debug("Method addOrderMasters");
         LOGGER.debug("Parameter idMaster: {}", idMaster);
@@ -116,8 +117,8 @@ public class OrderServiceImpl implements OrderService {
             currentOrder.getMasters().add(master);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void addOrderPlace(Long idPlace) {
         LOGGER.debug("Method addOrderPlace");
         LOGGER.debug("Parameter idPlace: {}", idPlace);
@@ -129,8 +130,8 @@ public class OrderServiceImpl implements OrderService {
             orderDao.updateRecord(currentOrder);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void addOrderPrice(BigDecimal price) {
         LOGGER.debug("Method addOrderPrice");
         LOGGER.debug("Parameter price: {}", price);
@@ -142,8 +143,8 @@ public class OrderServiceImpl implements OrderService {
             orderDao.updateRecord(currentOrder);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void completeOrder(Long idOrder) {
         LOGGER.debug("Method completeOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
@@ -155,8 +156,8 @@ public class OrderServiceImpl implements OrderService {
             orderDao.updateRecord(order);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void cancelOrder(Long idOrder) {
         LOGGER.debug("Method cancelOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
@@ -173,8 +174,8 @@ public class OrderServiceImpl implements OrderService {
             placeDao.updateRecord(place);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void closeOrder(Long idOrder) {
         LOGGER.debug("Method closeOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
@@ -192,8 +193,8 @@ public class OrderServiceImpl implements OrderService {
             orderDao.updateRecord(order);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void deleteOrder(Long idOrder) {
         LOGGER.debug("Method deleteOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
@@ -203,8 +204,8 @@ public class OrderServiceImpl implements OrderService {
             orderDao.updateRecord(orderDao.findById(Order.class, idOrder));
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void shiftLeadTime(Long idOrder, Date executionStartTime, Date leadTime) {
         LOGGER.debug("Method shiftLeadTime");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
@@ -222,6 +223,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Order> getSortOrders(SortParameter sortParameter) {
         LOGGER.debug("Method getSortOrders");
         LOGGER.debug("Parameter sortParameter: {}", sortParameter);
@@ -246,6 +248,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Order> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter) {
         LOGGER.debug("Method getSortOrdersByPeriod");
         LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
@@ -279,6 +282,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Order> getMasterOrders(Long idMaster) {
         LOGGER.debug("Method getMasterOrders");
         LOGGER.debug("Parameter idMaster: {}", idMaster);
@@ -290,6 +294,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Master> getOrderMasters(Long idOrder) {
         LOGGER.debug("Method getOrderMasters");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
@@ -302,6 +307,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long getNumberOrders() {
         LOGGER.debug("Method getNumberOrders");
             return orderDao.getNumberOrders();

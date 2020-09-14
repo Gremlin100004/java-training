@@ -31,6 +31,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Place> getPlaces() {
         LOGGER.debug("Method getPlaces");
         List<Place> places = placeDao.getAllRecords(Place.class);
@@ -40,8 +41,8 @@ public class PlaceServiceImpl implements PlaceService {
         return places;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void addPlace(Integer number) {
         LOGGER.debug("Method addPlace");
         LOGGER.debug("Parameter number: {}", number);
@@ -51,8 +52,8 @@ public class PlaceServiceImpl implements PlaceService {
         placeDao.saveRecord(new Place(number));
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void deletePlace(Long idPlace) {
         LOGGER.debug("Method deletePlace");
         LOGGER.debug("Parameter idPlace: {}", idPlace);
@@ -67,6 +68,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long getNumberFreePlaceByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreePlaceByDate");
         LOGGER.debug("Parameter startDayDate: {}", startDayDate);
@@ -74,6 +76,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Place> getFreePlaceByDate(Date executeDate) {
         LOGGER.debug("Method getFreePlaceByDate");
         LOGGER.debug("Parameter executeDate: {}", executeDate);
@@ -81,6 +84,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long getNumberPlace() {
         LOGGER.debug("Method getNumberMasters");
         return placeDao.getNumberPlaces();

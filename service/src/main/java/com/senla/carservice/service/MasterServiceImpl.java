@@ -23,6 +23,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Master> getMasters() {
         LOGGER.debug("Method getMasters");
         List<Master> masters = masterDao.getAllRecords(Master.class);
@@ -33,8 +34,8 @@ public class MasterServiceImpl implements MasterService {
 
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void addMaster(String name) {
         LOGGER.debug("Method addMaster");
         LOGGER.trace("Parameter name: {}", name);
@@ -42,6 +43,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Master> getFreeMastersByDate(Date executeDate) {
         LOGGER.debug("Method getFreeMastersByDate");
         LOGGER.trace("Parameter executeDate: {}", executeDate);
@@ -53,14 +55,15 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long getNumberFreeMastersByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreeMastersByDate");
         LOGGER.trace("Parameter startDayDate: {}", startDayDate);
         return masterDao.getNumberFreeMasters(startDayDate);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void deleteMaster(Long idMaster) {
         LOGGER.debug("Method deleteMaster");
         LOGGER.trace("Parameter idMaster: {}", idMaster);
@@ -68,6 +71,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Master> getMasterByAlphabet() {
         LOGGER.debug("Method getMasterByAlphabet");
         List<Master> masters = masterDao.getMasterSortByAlphabet();
@@ -78,6 +82,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Master> getMasterByBusy() {
         LOGGER.debug("Method getMasterByBusy");
         List<Master> masters = masterDao.getMasterSortByBusy();
@@ -88,6 +93,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long getNumberMasters() {
         LOGGER.debug("Method getNumberMasters");
         return masterDao.getNumberMasters();
