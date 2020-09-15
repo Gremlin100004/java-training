@@ -2,7 +2,6 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.domain.Place;
 import com.senla.carservice.service.enumaration.SortParameter;
 
 import java.math.BigDecimal;
@@ -17,29 +16,29 @@ public interface OrderService {
 
     void addOrderDeadlines(Date executionStartTime, Date leadTime);
 
-    void addOrderMasters(int index);
+    void addOrderMasters(Long idPlace);
 
-    void addOrderPlace(Place place);
+    void addOrderPlace(Long idPlace);
 
     void addOrderPrice(BigDecimal price);
 
-    void completeOrder(Order order);
+    void completeOrder(Long idOrder);
 
-    void cancelOrder(Order order);
+    void cancelOrder(Long idOrder);
 
-    void closeOrder(Order order);
+    void closeOrder(Long idOrder);
 
-    void deleteOrder(Order order);
+    void deleteOrder(Long idOrder);
 
-    void shiftLeadTime(Order order, Date executionStartTime, Date leadTime);
+    void shiftLeadTime(Long idOrder, Date executionStartTime, Date leadTime);
 
     List<Order> getSortOrders(SortParameter sortParameter);
 
     List<Order> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter);
 
-    List<Order> getMasterOrders(Master master);
+    List<Order> getMasterOrders(Long idMaster);
 
-    List<Master> getOrderMasters(Order order);
+    List<Master> getOrderMasters(Long idOrder);
 
     Long getNumberOrders();
 }

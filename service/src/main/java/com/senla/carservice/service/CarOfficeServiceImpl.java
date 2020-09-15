@@ -1,129 +1,88 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.util.DateUtil;
-import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Order;
-import com.senla.carservice.domain.Place;
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.csv.CsvMaster;
 import com.senla.carservice.csv.CsvOrder;
 import com.senla.carservice.csv.CsvPlace;
+import com.senla.carservice.dao.MasterDao;
+import com.senla.carservice.dao.OrderDao;
+import com.senla.carservice.dao.PlaceDao;
+import com.senla.carservice.domain.Master;
+import com.senla.carservice.domain.Order;
+import com.senla.carservice.domain.Place;
 import com.senla.carservice.service.exception.BusinessException;
-import com.senla.carservice.hibernatedao.MasterDao;
-import com.senla.carservice.hibernatedao.OrderDao;
-import com.senla.carservice.hibernatedao.PlaceDao;
+import com.senla.carservice.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 
-@Singleton
+@Service
 public class CarOfficeServiceImpl implements CarOfficeService {
 
-    @Dependency
-    private MasterDao masterDao;
-    @Dependency
-    private PlaceDao placeDao;
-    @Dependency
-    private OrderDao orderDao;
-    @Dependency
-    private CsvPlace csvPlace;
-    @Dependency
-    private CsvOrder csvOrder;
-    @Dependency
-    private CsvMaster csvMaster;
     private static final int NUMBER_DAY = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeServiceImpl.class);
+    @Autowired
+    private MasterDao masterDao;
+    @Autowired
+    private PlaceDao placeDao;
+    @Autowired
+    private OrderDao orderDao;
+    @Autowired
+    private CsvPlace csvPlace;
+    @Autowired
+    private CsvOrder csvOrder;
+    @Autowired
+    private CsvMaster csvMaster;
 
     public CarOfficeServiceImpl() {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Date getNearestFreeDate() {
         LOGGER.debug("Method getNearestFreeDate");
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            checkMasters();
-            checkPlaces();
-            checkOrders();
-            Date leadTimeOrder = orderDao.getLastOrder().getLeadTime();
-            Date dayDate = new Date();
-            for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
-                 currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
-                if (masterDao.getFreeMasters(currentDay).isEmpty() || placeDao.getFreePlaces(currentDay).isEmpty()) {
-                    dayDate = currentDay;
-                    currentDay = DateUtil.bringStartOfDayDate(currentDay);
-                } else {
-                    break;
-                }
+        checkMasters();
+        checkPlaces();
+        checkOrders();
+        Date leadTimeOrder = orderDao.getLastOrder().getLeadTime();
+        Date dayDate = new Date();
+        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
+             currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
+            if (masterDao.getFreeMasters(currentDay).isEmpty() || placeDao.getFreePlaces(currentDay).isEmpty()) {
+                dayDate = currentDay;
+                currentDay = DateUtil.bringStartOfDayDate(currentDay);
+            } else {
+                break;
             }
-            transaction.commit();
-            return dayDate;
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction get date");
         }
+        return dayDate;
     }
 
     @Override
+    @Transactional
     public void importEntities() {
         LOGGER.debug("Method importEntities");
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords(Order.class)));
-            placeDao.updateAllRecords(csvPlace.importPlaces());
-            List<Order> orders =
-                csvOrder.importOrder(masterDao.getAllRecords(Master.class), placeDao.getAllRecords(Place.class));
-            orderDao.updateAllRecords(orders);
-            transaction.commit();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction import entities");
-        }
+        masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords()));
+        placeDao.updateAllRecords(csvPlace.importPlaces());
+        List<Order> orders =
+            csvOrder.importOrder(masterDao.getAllRecords(), placeDao.getAllRecords());
+        orderDao.updateAllRecords(orders);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void exportEntities() {
         LOGGER.debug("Method exportEntities");
-        Session session = masterDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            List<Order> orders = getOrders();
-            List<Master> masters = getMasters();
-            List<Place> places = getPlaces();
-            csvOrder.exportOrder(orders);
-            csvMaster.exportMasters(masters);
-            csvPlace.exportPlaces(places);
-            transaction.commit();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction export entities");
-        }
-    }
-
-    @Override
-    public void closeSessionFactory() {
-        if (orderDao.getSessionFactory().isOpen()) {
-            orderDao.getSessionFactory().close();
-        }
+        List<Order> orders = getOrders();
+        List<Master> masters = getMasters();
+        List<Place> places = getPlaces();
+        csvOrder.exportOrder(orders);
+        csvMaster.exportMasters(masters);
+        csvPlace.exportPlaces(places);
     }
 
     private void checkMasters() {
@@ -149,7 +108,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     private List<Order> getOrders() {
         LOGGER.debug("Method getOrders");
-        List<Order> orders = orderDao.getAllRecords(Order.class);
+        List<Order> orders = orderDao.getAllRecords();
         if (orders.isEmpty()) {
             throw new BusinessException("There are no orders");
         }
@@ -158,7 +117,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     private List<Master> getMasters() {
         LOGGER.debug("Method getMasters");
-        List<Master> masters = masterDao.getAllRecords(Master.class);
+        List<Master> masters = masterDao.getAllRecords();
         if (masters.isEmpty()) {
             throw new BusinessException("There are no masters");
         }
@@ -167,7 +126,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
 
     private List<Place> getPlaces() {
         LOGGER.debug("Method getPlaces");
-        List<Place> places = placeDao.getAllRecords(Place.class);
+        List<Place> places = placeDao.getAllRecords();
         if (places.isEmpty()) {
             throw new BusinessException("There are no places");
         }

@@ -1,9 +1,8 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.controller.util.StringMaster;
 import com.senla.carservice.controller.util.StringOrder;
+import com.senla.carservice.domain.Order;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.PlaceService;
@@ -12,20 +11,24 @@ import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-@Singleton
+@Controller
 public class OrderController {
 
-    @Dependency
-    private OrderService orderService;
-    @Dependency
-    private MasterService masterService;
-    @Dependency
-    private PlaceService placeService;
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private MasterService masterService;
+    @Autowired
+    private PlaceService placeService;
 
     public OrderController() {
     }
@@ -59,34 +62,24 @@ public class OrderController {
         }
     }
 
-    public String addOrderMasters(int index) {
+    public String addOrderMasters(Long idMaster) {
         LOGGER.info("Method addOrderMasters");
-        LOGGER.trace("Parameter index: {}", index);
+        LOGGER.trace("Parameter idMaster: {}", idMaster);
         try {
-            if (masterService.getNumberMasters() < index || index < 0) {
-                return "There is no such master";
-            } else {
-                orderService.addOrderMasters(index);
-                return "masters add successfully";
-            }
+            orderService.addOrderMasters(idMaster);
+            return "masters add successfully";
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
-    public String addOrderPlace(int index, String stringExecuteDate) {
+    public String addOrderPlace(Long idPlace) {
         LOGGER.info("Method addOrderPlace");
-        LOGGER.trace("Parameter index: {}", index);
-        LOGGER.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
+        LOGGER.trace("Parameter index: {}", idPlace);
         try {
-            Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
-            if (placeService.getNumberFreePlaceByDate(executeDate) < index || index < 0) {
-                return "There is no such place!";
-            } else {
-                orderService.addOrderPlace(placeService.getPlaces().get(index));
-                return "place add to order successfully";
-            }
+            orderService.addOrderPlace(idPlace);
+            return "place add to order successfully";
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
@@ -105,24 +98,42 @@ public class OrderController {
         }
     }
 
-    public String getOrders() {
-        LOGGER.info("Method getOrders");
+    public String checkOrders() {
+        LOGGER.info("Method checkPlaces");
         try {
-            return StringOrder.getStringFromOrder(orderService.getOrders());
+            if (orderService.getNumberOrders() == 0) {
+                throw new  BusinessException("There are no orders");
+            }
+            return "verification was successfully";
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
-    public String completeOrder(int index) {
-        LOGGER.info("Method completeOrder");
-        LOGGER.trace("Parameter index: {}", index);
+    public List<String> getOrders() {
+        LOGGER.info("Method getOrders");
+        List<String> stringList = new ArrayList<>();
         try {
-            if (orderService.getNumberOrders() < index || index < 0) {
+            List<Order> orders = orderService.getOrders();
+            stringList.add(StringOrder.getStringFromOrder(orders));
+            stringList.addAll(StringOrder.getListId(orders));
+            return stringList;
+        } catch (BusinessException e) {
+            LOGGER.warn(e.getMessage());
+            stringList.add(e.getMessage());
+            return stringList;
+        }
+    }
+
+    public String completeOrder(Long idOrder) {
+        LOGGER.info("Method completeOrder");
+        LOGGER.trace("Parameter index: {}", idOrder);
+        try {
+            if (orderService.getNumberOrders() < idOrder || idOrder < 0) {
                 return "There are no such order";
             } else {
-                orderService.completeOrder(orderService.getOrders().get(index));
+                orderService.completeOrder(idOrder);
             }
             return " - the order has been transferred to execution status";
         } catch (BusinessException e) {
@@ -131,31 +142,23 @@ public class OrderController {
         }
     }
 
-    public String closeOrder(int index) {
+    public String closeOrder(Long idOrder) {
         LOGGER.info("Method closeOrder");
-        LOGGER.trace("Parameter index: {}", index);
+        LOGGER.trace("Parameter idOrder: {}", idOrder);
         try {
-            if (orderService.getNumberOrders() < index || index < 0) {
-                return "There are no such order";
-            } else {
-                orderService.closeOrder(orderService.getOrders().get(index));
-                return " -the order has been completed.";
-            }
+            orderService.closeOrder(idOrder);
+            return " -the order has been completed.";
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
-    public String cancelOrder(int index) {
+    public String cancelOrder(Long idOrder) {
         LOGGER.info("Method cancelOrder");
-        LOGGER.trace("Parameter index: {}", index);
+        LOGGER.trace("Parameter idOrder: {}", idOrder);
         try {
-            if (orderService.getNumberOrders() < index || index < 0) {
-                return "There are no such order";
-            } else {
-                orderService.cancelOrder(orderService.getOrders().get(index));
-            }
+            orderService.cancelOrder(idOrder);
             return " -the order has been canceled.";
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
@@ -163,34 +166,30 @@ public class OrderController {
         }
     }
 
-    public String deleteOrder(int index) {
+    public String deleteOrder(Long idOrder) {
         LOGGER.info("Method deleteOrder");
-        LOGGER.trace("Parameter index: {}", index);
+        LOGGER.trace("Parameter index: {}", idOrder);
         try {
-            if (orderService.getNumberOrders() < index || index < 0) {
-                return "There are no such order";
-            } else {
-                orderService.deleteOrder(orderService.getOrders().get(index));
-                return " -the order has been deleted.";
-            }
+            orderService.deleteOrder(idOrder);
+            return " -the order has been deleted.";
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
-    public String shiftLeadTime(int index, String stringStartTime, String stringLeadTime) {
+    public String shiftLeadTime(Long idOrder, String stringStartTime, String stringLeadTime) {
         LOGGER.info("Method shiftLeadTime");
-        LOGGER.trace("Parameter index: {}", index);
+        LOGGER.trace("Parameter index: {}", idOrder);
         LOGGER.trace("Parameter stringStartTime: {}", stringStartTime);
         LOGGER.trace("Parameter stringLeadTime: {}", stringLeadTime);
         try {
             Date executionStartTime = DateUtil.getDatesFromString(stringStartTime, true);
             Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
-            if (orderService.getNumberOrders() < index || index < 0) {
+            if (orderService.getNumberOrders() < idOrder || idOrder < 0) {
                 return "There are no such order";
             } else {
-                orderService.shiftLeadTime(orderService.getOrders().get(index), executionStartTime, leadTime);
+                orderService.shiftLeadTime(idOrder, executionStartTime, leadTime);
                 return " -the order lead time has been changed.";
             }
         } catch (BusinessException e) {
@@ -396,32 +395,24 @@ public class OrderController {
         }
     }
 
-    public String getMasterOrders(int index) {
+    public String getMasterOrders(Long idMaster) {
         LOGGER.info("Method getMasterOrders");
-        LOGGER.debug("Parameter index: {}", index);
+        LOGGER.debug("Parameter idOrder: {}", idMaster);
         try {
-            if (masterService.getNumberMasters() < index || index < 0) {
-                return "There are no such master";
-            } else {
-                return StringOrder
-                    .getStringFromOrder(orderService.getMasterOrders(masterService.getMasters().get(index)));
-            }
+            return StringOrder
+                .getStringFromOrder(orderService.getMasterOrders(idMaster));
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
-    public String getOrderMasters(int index) {
+    public String getOrderMasters(Long idOrder) {
         LOGGER.info("Method getOrderMasters");
-        LOGGER.debug("Parameter index: {}", index);
+        LOGGER.debug("Parameter idOrder: {}", idOrder);
         try {
-            if (orderService.getNumberOrders() < index || index < 0) {
-                return "There are no such order";
-            } else {
-                return StringMaster
-                    .getStringFromMasters(orderService.getOrderMasters(orderService.getOrders().get(index)));
-            }
+            return StringMaster
+                .getStringFromMasters(orderService.getOrderMasters(idOrder));
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();

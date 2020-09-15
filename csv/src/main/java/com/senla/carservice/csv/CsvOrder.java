@@ -3,8 +3,8 @@ package com.senla.carservice.csv;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 import com.senla.carservice.csv.exception.CsvException;
 import com.senla.carservice.csv.util.FileUtil;
 import com.senla.carservice.csv.util.ParameterUtil;
@@ -18,17 +18,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Singleton
+@Component
 public class CsvOrder {
 
-    @ConfigProperty
-    private String orderPath;
-    @ConfigProperty
-    private String fieldSeparator;
-    @ConfigProperty
-    private String idSeparator;
     private static final int SIZE_INDEX = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvOrder.class);
+    @Value("${com.senla.carservice.csv.CsvOrder.orderPath:order.csv}")
+    private String orderPath;
+    @Value("${com.senla.carservice.csv.CsvOrder.fieldSeparator:|}")
+    private String fieldSeparator;
+    @Value("${com.senla.carservice.csv.CsvOrder.idSeparator:,}")
+    private String idSeparator;
 
     public CsvOrder() {
     }

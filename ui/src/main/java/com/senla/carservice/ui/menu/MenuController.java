@@ -1,19 +1,18 @@
 package com.senla.carservice.ui.menu;
 
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.controller.CarOfficeController;
-import com.senla.carservice.ui.util.Printer;
 import com.senla.carservice.ui.util.ScannerUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@Singleton
+@Component
 public class MenuController {
 
-    @Dependency
+    @Autowired
     private Navigator navigator;
-    @Dependency
+    @Autowired
     private Builder builder;
-    @Dependency
+    @Autowired
     private CarOfficeController carOfficeController;
 
     public MenuController() {
@@ -30,6 +29,5 @@ public class MenuController {
                 navigator.navigate(answer);
             }
         }
-        Printer.printInfo(carOfficeController.closeSessionFactory());
     }
 }

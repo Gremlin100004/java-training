@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class StringPlaces {
@@ -38,11 +39,11 @@ public class StringPlaces {
         stringBuilder.append(SPLIT_COLUMNS)
             .append(StringUtil.fillStringSpace(FIRST_COLUMN_HEADING, LENGTH_SPACE_FIRST_COLUMN));
         stringBuilder.append(SPLIT_COLUMNS).append(StringUtil.fillStringSpace(SECOND_COLUMN_HEADING,
-                LENGTH_SPACE_SECOND_COLUMN));
+                                                                              LENGTH_SPACE_SECOND_COLUMN));
         stringBuilder.append(SPLIT_COLUMNS).append(StringUtil.fillStringSpace(THIRD_COLUMN_HEADING,
-                LENGTH_SPACE_THIRD_COLUMN));
+                                                                              LENGTH_SPACE_THIRD_COLUMN));
         stringBuilder.append(SPLIT_COLUMNS).append(StringUtil.fillStringSpace(FOURTH_COLUMN_HEADING,
-                LENGTH_SPACE_FOURTH_COLUMN))
+                                                                              LENGTH_SPACE_FOURTH_COLUMN))
             .append(SPLIT_COLUMNS + END_OF_LINE);
         stringBuilder.append(line);
         int bound = places.size();
@@ -54,13 +55,19 @@ public class StringPlaces {
                     .append(StringUtil.fillStringSpace(String.valueOf(places.get(i).getNumber()),
                                                        LENGTH_SPACE_SECOND_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS).append(places.get(i).getBusy() ?
-                                                   StringUtil.fillStringSpace(STATUS_ONE, LENGTH_SPACE_THIRD_COLUMN) :
-                                                   StringUtil.fillStringSpace(STATUS_TWO, LENGTH_SPACE_THIRD_COLUMN));
+                                                           StringUtil.fillStringSpace(STATUS_ONE, LENGTH_SPACE_THIRD_COLUMN) :
+                                                           StringUtil.fillStringSpace(STATUS_TWO, LENGTH_SPACE_THIRD_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS)
-                   .append(StringUtil.fillStringSpace(String.valueOf(places.get(i).getDelete()), LENGTH_SPACE_FOURTH_COLUMN));
+                    .append(StringUtil.fillStringSpace(String.valueOf(places.get(i).getDelete()), LENGTH_SPACE_FOURTH_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS + END_OF_LINE);
             });
         stringBuilder.append(line);
         return stringBuilder.toString();
+    }
+
+    public static List<String> getListId(List<Place> places) {
+        return places.stream()
+            .map(place -> String.valueOf(place.getId()))
+            .collect(Collectors.toList());
     }
 }

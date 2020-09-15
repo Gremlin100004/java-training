@@ -1,158 +1,89 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
-import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
 import com.senla.carservice.service.exception.BusinessException;
-import com.senla.carservice.hibernatedao.PlaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 
-@Singleton
+@Service
 public class PlaceServiceImpl implements PlaceService {
 
-    @Dependency
-    private PlaceDao placeDao;
-    @ConfigProperty
-    private Boolean isBlockAddPlace;
-    @ConfigProperty
-    private Boolean isBlockDeletePlace;
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaceServiceImpl.class);
+    @Autowired
+    private PlaceDao placeDao;
+    @Value("${com.senla.carservice.service.PlaceServiceImpl.isBlockAddPlace:false}")
+    private Boolean isBlockAddPlace;
+    @Value("${com.senla.carservice.service.PlaceServiceImpl.isBlockDeletePlace:false}")
+    private Boolean isBlockDeletePlace;
 
     public PlaceServiceImpl() {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Place> getPlaces() {
         LOGGER.debug("Method getPlaces");
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            List<Place> places = placeDao.getAllRecords(Place.class);
-            if (places.isEmpty()) {
-                throw new BusinessException("There are no places");
-            }
-            transaction.commit();
-            return places;
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction get places");
+        List<Place> places = placeDao.getAllRecords();
+        if (places.isEmpty()) {
+            throw new BusinessException("There are no places");
         }
+        return places;
     }
 
     @Override
+    @Transactional
     public void addPlace(Integer number) {
         LOGGER.debug("Method addPlace");
         LOGGER.debug("Parameter number: {}", number);
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            placeDao.saveRecord(new Place(number));
-            transaction.commit();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction add places");
-        }
+        placeDao.saveRecord(new Place(number));
     }
 
     @Override
-    public void deletePlace(Place place) {
+    @Transactional
+    public void deletePlace(Long idPlace) {
         LOGGER.debug("Method deletePlace");
-        LOGGER.debug("Parameter place: {}", place);
+        LOGGER.debug("Parameter idPlace: {}", idPlace);
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            if (place.getBusy()) {
-                throw new BusinessException("Place is busy");
-            }
-            placeDao.updateRecord(place);
-            transaction.commit();
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction delete place");
+        Place place = placeDao.findById(idPlace);
+        if (place.getBusy()) {
+            throw new BusinessException("Place is busy");
         }
+        placeDao.updateRecord(place);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long getNumberFreePlaceByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreePlaceByDate");
         LOGGER.debug("Parameter startDayDate: {}", startDayDate);
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            Long numberFreePlaces = placeDao.getNumberFreePlaces(startDayDate);
-            transaction.commit();
-            return numberFreePlaces;
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction get number free places");
-        }
+        return placeDao.getNumberFreePlaces(startDayDate);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Place> getFreePlaceByDate(Date executeDate) {
         LOGGER.debug("Method getFreePlaceByDate");
         LOGGER.debug("Parameter executeDate: {}", executeDate);
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            List<Place> freePlace = placeDao.getFreePlaces(executeDate);
-            transaction.commit();
-            return freePlace;
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction free places");
-        }
+        return placeDao.getFreePlaces(executeDate);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long getNumberPlace() {
         LOGGER.debug("Method getNumberMasters");
-        Session session = placeDao.getSessionFactory().getCurrentSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            Long numberPlace = placeDao.getNumberPlaces();
-            transaction.commit();
-            return numberPlace;
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new BusinessException("Error transaction number places");
-        }
+        return placeDao.getNumberPlaces();
     }
 }

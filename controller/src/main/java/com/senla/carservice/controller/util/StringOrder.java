@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StringOrder {
 
@@ -79,7 +80,7 @@ public class StringOrder {
             stringBuilder.append(SPLIT_COLUMNS)
                 .append(StringUtil
                             .fillStringSpace(DateUtil.getStringFromDate(orders.get(i).getExecutionStartTime(), true),
-                                                   LENGTH_SPACE_TIME));
+                                             LENGTH_SPACE_TIME));
             stringBuilder.append(SPLIT_COLUMNS)
                 .append(StringUtil.fillStringSpace(DateUtil.getStringFromDate(orders.get(i).getLeadTime(), true),
                                                    LENGTH_SPACE_TIME));
@@ -97,5 +98,11 @@ public class StringOrder {
         }
         stringBuilder.append(line);
         return stringBuilder.toString();
+    }
+
+    public static List<String> getListId(List<Order> orders) {
+        return orders.stream()
+            .map(order -> String.valueOf(order.getId()))
+            .collect(Collectors.toList());
     }
 }

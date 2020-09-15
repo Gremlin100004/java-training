@@ -1,8 +1,8 @@
 package com.senla.carservice.csv;
 
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 import com.senla.carservice.csv.exception.CsvException;
 import com.senla.carservice.csv.util.FileUtil;
 import com.senla.carservice.csv.util.ParameterUtil;
@@ -13,14 +13,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Singleton
+@Component
 public class CsvPlace {
 
-    @ConfigProperty
-    private String placePath;
-    @ConfigProperty
-    private String fieldSeparator;
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvPlace.class);
+    @Value("${com.senla.carservice.csv.CsvPlace.placePath:place.csv}")
+    private String placePath;
+    @Value("${com.senla.carservice.csv.CsvPlace.fieldSeparator:|}")
+    private String fieldSeparator;
 
     public CsvPlace() {
     }

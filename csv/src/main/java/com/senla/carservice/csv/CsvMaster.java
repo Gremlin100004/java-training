@@ -2,8 +2,8 @@ package com.senla.carservice.csv;
 
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.propertyinjection.annotation.ConfigProperty;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 import com.senla.carservice.csv.exception.CsvException;
 import com.senla.carservice.csv.util.FileUtil;
 import com.senla.carservice.csv.util.ParameterUtil;
@@ -16,17 +16,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@Singleton
+@Component
 public class CsvMaster {
 
-    @ConfigProperty
-    private String masterPath;
-    @ConfigProperty
-    private String fieldSeparator;
-    @ConfigProperty
-    private String idSeparator;
     private static final int SIZE_INDEX = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvMaster.class);
+    @Value("${com.senla.carservice.csv.CsvMaster.masterPath:masters.csv}")
+    private String masterPath;
+    @Value("${com.senla.carservice.csv.CsvMaster.fieldSeparator:|}")
+    private String fieldSeparator;
+    @Value("${com.senla.carservice.csv.CsvMaster.idSeparator:,}")
+    private String idSeparator;
 
     public CsvMaster() {
     }

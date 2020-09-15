@@ -1,7 +1,7 @@
 package com.senla.carservice.ui.menu;
 
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import com.senla.carservice.controller.CarOfficeController;
 import com.senla.carservice.controller.MasterController;
 import com.senla.carservice.controller.OrderController;
@@ -12,21 +12,22 @@ import com.senla.carservice.ui.util.ScannerUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Singleton
+@Component
 public class Builder {
 
-    private Menu rootMenu;
-    @Dependency
-    private CarOfficeController carOfficeController;
-    @Dependency
-    private MasterController masterController;
-    @Dependency
-    private OrderController orderController;
-    @Dependency
-    private PlaceController placeController;
     private static final int INDEX_OFFSET = 1;
     private static final int MAX_INDEX = 999;
+    private Menu rootMenu;
+    @Autowired
+    private CarOfficeController carOfficeController;
+    @Autowired
+    private MasterController masterController;
+    @Autowired
+    private OrderController orderController;
+    @Autowired
+    private PlaceController placeController;
 
     public Builder() {
     }
@@ -96,7 +97,7 @@ public class Builder {
             new MenuItem(MenuTittle.ADD_MASTER.getValue(), () -> Printer
                 .printInfo(masterController.addMaster(ScannerUtil.getStringUser("Enter the name of master", false))),
                          mastersMenu), new MenuItem(MenuTittle.DELETE_MASTER.getValue(), () -> {
-                if (isCheckMaster(true)) {
+                if (isCheckMaster()) {
                     return;
                 }
                 deleteMaster();
@@ -112,16 +113,16 @@ public class Builder {
     private void createItemPlacesMenu(Menu placesMenu) {
         placesMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SHOW_LIST_OF_PLACES.getValue(),
-                         () -> Printer.printInfo(placeController.getArrayPlace()), placesMenu));
+                         () -> Printer.printInfo(placeController.getPlaces()), placesMenu));
         placesMenu.getMenuItems().add(
             new MenuItem(MenuTittle.ADD_PLACE.getValue(), () ->
                 Printer.printInfo(placeController.addPlace(ScannerUtil.getIntUser("Enter the number of place"))),
                          placesMenu));
         placesMenu.getMenuItems().add(new MenuItem(MenuTittle.DELETE_PLACE.getValue(), () -> {
-            if (isCheckPlace(true)) {
+            if (isCheckPlace()) {
                 return;
             }
-            deleteGarage();
+            deletePlace();
         }, placesMenu));
         placesMenu.getMenuItems().add(
             new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
@@ -153,13 +154,17 @@ public class Builder {
 
     private void addItemListOrderMenuPartOne(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SHOW_ORDERS.getValue(), this::isCheckOrder, listOrderMenu));
+            new MenuItem(MenuTittle.SHOW_ORDERS.getValue(), () -> {
+                if (isCheckOrder()) {
+                    return;
+                }
+                Printer.printInfo(orderController.getOrders().get(0));
+            }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.ADD_ORDER.getValue(), this::addOrder, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.DELETE_THE_ORDER.getValue(), () -> {
             if (isCheckOrder()) {
                 return;
             }
-            Printer.printInfo("0. Previous menu");
             deleteOrder();
         }, listOrderMenu));
     }
@@ -169,15 +174,21 @@ public class Builder {
             if (isCheckOrder()) {
                 return;
             }
-            Printer.printInfo("0. Previous menu");
+            List<String> listData = orderController.getOrders();
+            Printer.printInfo(listData.get(0));
+            listData.remove(0);
+            List<Long> listId = getIdFromListString(listData);
             int index;
             String message = "";
             while (!message.equals(" -the order has been completed.")) {
-                index = ScannerUtil.getIntUser("Enter the index number of the order to close:");
-                if (index == 0) {
+                index = ScannerUtil.getIntUser("Enter the index number of the order to close:") - INDEX_OFFSET;
+                if (index + INDEX_OFFSET == 0) {
                     return;
+                } else if (index >= listId.size()) {
+                    Printer.printInfo("There is no such order");
+                    continue;
                 }
-                message = orderController.closeOrder(index - INDEX_OFFSET);
+                message = orderController.closeOrder(listId.get(index));
                 Printer.printInfo(message);
             }
         }, listOrderMenu));
@@ -185,7 +196,6 @@ public class Builder {
             if (isCheckOrder()) {
                 return;
             }
-            Printer.printInfo("0. Previous menu");
             cancelOrder();
         }, listOrderMenu));
     }
@@ -196,22 +206,28 @@ public class Builder {
                 if (isCheckOrder()) {
                     return;
                 }
-                Printer.printInfo("0. Previous menu");
                 completeOrder();
             }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.SHIFT_THE_LEAD_TIME.getValue(), () -> {
             if (isCheckOrder()) {
                 return;
             }
-            Printer.printInfo("0. Previous menu");
+            List<String> listData = orderController.getOrders();
+            Printer.printInfo(listData.get(0));
+            listData.remove(0);
+            List<Long> listId = getIdFromListString(listData);
             String message = "";
             while (!message.equals(" -the order lead time has been changed.")) {
-                int index = ScannerUtil.getIntUser("Enter the index number of the order to shift time:");
-                if (index == 0) {
+                int index = ScannerUtil.getIntUser("Enter the index number of the order to shift time:") -
+                            INDEX_OFFSET;
+                if (index + INDEX_OFFSET == 0) {
                     return;
+                } else if (index >= listId.size()) {
+                    Printer.printInfo("There is no such order");
+                    continue;
                 }
                 message = orderController.shiftLeadTime(
-                    index - INDEX_OFFSET, ScannerUtil.getStringDateUser(
+                    listId.get(index), ScannerUtil.getStringDateUser(
                         "Enter the planing time start to execute the order in format " +
                         "\"yyyy-mm-dd hh:mm\", example:\"2010-10-10 10:00\"", true),
                     ScannerUtil.getStringDateUser(
@@ -241,12 +257,20 @@ public class Builder {
         listOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.GET_ORDERS_EXECUTED_CONCRETE_MASTER.getValue(), () -> {
                 int index;
-                if (isCheckMaster(true)) {
+                if (isCheckMaster()) {
                     return;
                 }
-                index = ScannerUtil.getIntUser("Enter the index number of the master to view orders:");
-                String message = orderController.getMasterOrders(index - INDEX_OFFSET);
-                Printer.printInfo(message);
+                List<String> listData = masterController.getMasters();
+                Printer.printInfo(listData.get(0));
+                listData.remove(0);
+                List<Long> listId = getIdFromListString(listData);
+                index = ScannerUtil.getIntUser("Enter the index number of the master to view orders:") -
+                        INDEX_OFFSET;
+                if (index >= listId.size() || index < 0) {
+                    Printer.printInfo("There is no such master");
+                } else {
+                    Printer.printInfo(orderController.getMasterOrders(listId.get(index)));
+                }
             }, listOrderMenu));
     }
 
@@ -257,8 +281,17 @@ public class Builder {
                 if (isCheckOrder()) {
                     return;
                 }
-                index = ScannerUtil.getIntUser("Enter the index number of the order to view masters:");
-                Printer.printInfo(orderController.getOrderMasters(index - INDEX_OFFSET));
+                List<String> listData = orderController.getOrders();
+                Printer.printInfo(listData.get(0));
+                listData.remove(0);
+                List<Long> listId = getIdFromListString(listData);
+                index = ScannerUtil.getIntUser("Enter the index number of the order to view masters:") -
+                        INDEX_OFFSET;
+                if (index >= listId.size() || index < 0) {
+                    Printer.printInfo("There is no such order");
+                } else {
+                    Printer.printInfo(orderController.getOrderMasters(listId.get(index)));
+                }
             }, listOrderMenu));
     }
 
@@ -416,51 +449,90 @@ public class Builder {
 
 
     private void deleteOrder() {
+        List<String> listData = orderController.getOrders();
+        Printer.printInfo(listData.get(0));
+        listData.remove(0);
+        List<Long> listId = getIdFromListString(listData);
         String message = "";
         int index;
         while (!message.equals(" -the order has been deleted.")) {
-            index = ScannerUtil.getIntUser("Enter the index number of the order to delete:");
-            if (index == 0) {
+            index = ScannerUtil.getIntUser("Enter the index number of the order to delete:") - INDEX_OFFSET;
+            if (index + INDEX_OFFSET == 0) {
                 return;
+            } else if (index >= listId.size()) {
+                Printer.printInfo("There is no such order");
+                continue;
             }
-            message = orderController.deleteOrder(index - INDEX_OFFSET);
+            message = orderController.deleteOrder(listId.get(index));
             Printer.printInfo(message);
         }
     }
 
     private void deleteMaster() {
-        Printer.printInfo(masterController.getMasters());
-        int index = ScannerUtil.getIntUser("Enter the index number of the master to delete:");
-        Printer.printInfo(masterController.deleteMaster(index - INDEX_OFFSET));
+        List<String> listData = masterController.getMasters();
+        Printer.printInfo(listData.get(0));
+        listData.remove(0);
+        List<Long> listId = getIdFromListString(listData);
+        int index = ScannerUtil.getIntUser("Enter the index number of the master to delete:") - INDEX_OFFSET;
+        if (index >= listId.size() || index < 0) {
+            Printer.printInfo("There is no such master");
+        } else {
+            Printer.printInfo(masterController.deleteMaster(listId.get(index)));
+        }
     }
 
-    private void deleteGarage() {
-        int index = ScannerUtil.getIntUser("Enter the index number of the place to delete:");
-        Printer.printInfo(placeController.deletePlace(index - INDEX_OFFSET));
+    private void deletePlace() {
+        List<String> listData = placeController.getPlacesWithId();
+        Printer.printInfo(listData.get(0));
+        listData.remove(0);
+        List<Long> listId = getIdFromListString(listData);
+        int index = ScannerUtil.getIntUser("Enter the index number of the place to delete:") - INDEX_OFFSET;
+        if (index >= listId.size() || index < 0) {
+            Printer.printInfo("There is no such place");
+        } else {
+            Printer.printInfo(placeController.deletePlace(listId.get(index)));
+        }
     }
 
     private void completeOrder() {
+        List<String> listData = orderController.getOrders();
+        Printer.printInfo(listData.get(0));
+        Printer.printInfo("0. Previous menu");
+        listData.remove(0);
+        List<Long> listId = getIdFromListString(listData);
         String message = "";
         int index;
         while (!message.equals(" - the order has been transferred to execution status")) {
-            index = ScannerUtil.getIntUser("Enter the index number of the order to change status:");
-            if (index == 0) {
+            index = ScannerUtil.getIntUser("Enter the index number of the order to change status:") -
+                    INDEX_OFFSET;
+            if (index + INDEX_OFFSET == 0) {
                 return;
+            } else if (index >= listId.size()) {
+                Printer.printInfo("There is no such order");
+                continue;
             }
-            message = orderController.completeOrder(index - INDEX_OFFSET);
+            message = orderController.completeOrder(listId.get(index));
             Printer.printInfo(message);
         }
     }
 
     private void cancelOrder() {
+        List<String> listData = orderController.getOrders();
+        Printer.printInfo(listData.get(0));
+        Printer.printInfo("0. Previous menu");
+        listData.remove(0);
+        List<Long> listId = getIdFromListString(listData);
         String message = "";
         int index;
         while (!message.equals(" -the order has been canceled.")) {
-            index = ScannerUtil.getIntUser("Enter the index number of the order to cancel:");
-            if (index == 0) {
+            index = ScannerUtil.getIntUser("Enter the index number of the order to cancel:") - INDEX_OFFSET;
+            if (index + INDEX_OFFSET == 0) {
                 return;
+            } else if (index >= listId.size()) {
+                Printer.printInfo("There is no such order");
+                continue;
             }
-            message = orderController.cancelOrder(index - INDEX_OFFSET);
+            message = orderController.cancelOrder(listId.get(index));
             Printer.printInfo(message);
         }
     }
@@ -468,13 +540,13 @@ public class Builder {
     private void addOrder() {
         String message = "";
         while (!message.equals("order add successfully!")) {
-            if (isCheckMaster(false) || isCheckPlace(false)) {
+            if (isCheckMaster() || isCheckPlace()) {
                 return;
             }
             String automaker = ScannerUtil.getStringUser("Enter the automaker of car", false);
             String model = ScannerUtil.getStringUser("Enter the model of car", false);
             String registrationNumber = ScannerUtil.getStringUser(
-                    "Enter the registration number of car, example: 1111 AB-7", true);
+                "Enter the registration number of car, example: 1111 AB-7", true);
             message = orderController.addOrder(automaker, model, registrationNumber);
             Printer.printInfo(message);
         }
@@ -502,13 +574,16 @@ public class Builder {
     }
 
     private void addMastersOrder(String executionStartTime) {
-        Printer.printInfo(masterController.getFreeMasters(executionStartTime));
+        List<String> listData = masterController.getFreeMasters(executionStartTime);
+        Printer.printInfo(listData.get(0));
         Printer.printInfo("0. Stop adding");
+        listData.remove(0);
+        List<Long> listId = getIdFromListString(listData);
         int quit = 0;
         int index;
         int number_masters = 0;
         while (quit == 0) {
-            List<Integer> statusInt = addMasters(quit, number_masters);
+            List<Integer> statusInt = addMasters(quit, number_masters, listId);
             quit = statusInt.get(0);
             index = statusInt.get(1);
             number_masters = statusInt.get(2);
@@ -518,22 +593,24 @@ public class Builder {
         }
     }
 
-    private List<Integer> addMasters(int quit, int numberMasters) {
+    private List<Integer> addMasters(int quit, int numberMasters, List<Long> listId) {
         String message = "";
         int index = MAX_INDEX;
         boolean userAnswer = false;
         while (!message.equals("masters add successfully")) {
-            index = ScannerUtil.getIntUser("Enter the index number of the master to add:");
-            if (index == 0) {
+            index = ScannerUtil.getIntUser("Enter the index number of the master to add:") - INDEX_OFFSET;
+            if (index + INDEX_OFFSET == 0) {
                 break;
+            } else if (index >= listId.size()) {
+                Printer.printInfo("There is no such master");
+                continue;
             }
-            message = orderController.addOrderMasters(index - INDEX_OFFSET);
+            message = orderController.addOrderMasters(listId.get(index));
             Printer.printInfo(message);
             if (message.equals("masters add successfully")) {
                 numberMasters++;
                 userAnswer = ScannerUtil.isAnotherMaster();
             }
-
             if (userAnswer) {
                 quit++;
                 break;
@@ -543,36 +620,51 @@ public class Builder {
     }
 
     private void addPlaceOrder(String executionStartTime) {
+        List<String> listData = placeController.getFreePlacesByDate(executionStartTime);
         String message = "";
         int index;
-        Printer.printInfo(placeController.getFreePlacesByDate(executionStartTime));
+        Printer.printInfo(listData.get(0));
         Printer.printInfo("0. Stop adding");
+        listData.remove(0);
+        List<Long> listId = getIdFromListString(listData);
         while (!message.equals("place add to order successfully")) {
-            index = ScannerUtil.getIntUser("Enter the index number of the place to add in order:");
-            message = orderController.addOrderPlace(index - INDEX_OFFSET, executionStartTime);
+            index = ScannerUtil.getIntUser("Enter the index number of the place to add in order:") -
+                    INDEX_OFFSET;
+            message = orderController.addOrderPlace(listId.get(index));
             Printer.printInfo(message);
         }
+    }
+
+    private List<Long> getIdFromListString(List<String> listStringId) {
+        return listStringId.stream()
+            .map(Long::parseLong)
+            .collect(Collectors.toList());
     }
 
     private boolean isCheckOrder() {
-        String message = orderController.getOrders();
-        Printer.printInfo(message);
-        return message.equals("There are no orders");
-    }
-
-    private boolean isCheckMaster(boolean isPrint) {
-        String message = masterController.getMasters();
-        if (isPrint) {
+        String message = orderController.checkOrders();
+        boolean status = message.equals("verification was successfully");
+        if (!status) {
             Printer.printInfo(message);
         }
-        return message.equals("There are no masters");
+        return !status;
     }
 
-    private boolean isCheckPlace(boolean isPrint) {
-        String message = placeController.getArrayPlace();
-        if (isPrint) {
+    private boolean isCheckMaster() {
+        String message = masterController.checkMasters();
+        boolean status = message.equals("verification was successfully");
+        if (!status) {
             Printer.printInfo(message);
         }
-        return message.equals("There are no places");
+        return !status;
+    }
+
+    private boolean isCheckPlace() {
+        String message = placeController.checkPlaces();
+        boolean status = message.equals("verification was successfully");
+        if (!status) {
+            Printer.printInfo(message);
+        }
+        return !status;
     }
 }

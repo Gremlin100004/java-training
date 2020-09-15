@@ -1,15 +1,15 @@
 package com.senla.carservice.ui.menu;
 
-import com.senla.carservice.container.annotation.Singleton;
+import org.springframework.stereotype.Component;
 import com.senla.carservice.ui.util.Printer;
 
 import java.util.List;
 
-@Singleton
+@Component
 public class Navigator {
 
-    private Menu currentMenu;
     private static final int INDEX_OFFSET = 1;
+    private Menu currentMenu;
 
     public Navigator() {
     }

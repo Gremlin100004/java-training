@@ -1,27 +1,30 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.container.annotation.Singleton;
-import com.senla.carservice.container.objectadjuster.dependencyinjection.annotation.Dependency;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.MasterService;
+import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import java.util.Date;
 
-@Singleton
+@Controller
 public class CarOfficeController {
 
-    @Dependency
-    private CarOfficeService carOfficeService;
-    @Dependency
-    private MasterService masterService;
-    @Dependency
-    private PlaceService placeService;
     private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeController.class);
+    @Autowired
+    private CarOfficeService carOfficeService;
+    @Autowired
+    private MasterService masterService;
+    @Autowired
+    private PlaceService placeService;
+    @Autowired
+    private OrderService orderService;
 
     public CarOfficeController() {
     }
@@ -71,17 +74,6 @@ public class CarOfficeController {
         try {
             carOfficeService.importEntities();
             return "Imported completed successfully!";
-        } catch (BusinessException e) {
-            LOGGER.warn(e.getMessage());
-            return e.getMessage();
-        }
-    }
-
-    public String closeSessionFactory() {
-        LOGGER.info("Method closeSessionFactory");
-        try {
-            carOfficeService.closeSessionFactory();
-            return "Bye bye!";
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
