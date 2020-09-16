@@ -26,11 +26,7 @@ public class MasterServiceImpl implements MasterService {
     @Transactional(readOnly = true)
     public List<Master> getMasters() {
         LOGGER.debug("Method getMasters");
-        List<Master> masters = masterDao.getAllRecords();
-        if (masters.isEmpty()) {
-            throw new BusinessException("There are no masters");
-        }
-        return masters;
+        return masterDao.getAllRecords();
     }
 
     @Override
@@ -46,11 +42,7 @@ public class MasterServiceImpl implements MasterService {
     public List<Master> getFreeMastersByDate(Date executeDate) {
         LOGGER.debug("Method getFreeMastersByDate");
         LOGGER.trace("Parameter executeDate: {}", executeDate);
-        List<Master> freeMasters = masterDao.getFreeMasters(executeDate);
-        if (freeMasters.isEmpty()) {
-            throw new BusinessException("There are no free masters");
-        }
-        return freeMasters;
+        return masterDao.getFreeMasters(executeDate);
     }
 
     @Override
@@ -66,7 +58,9 @@ public class MasterServiceImpl implements MasterService {
     public void deleteMaster(Long idMaster) {
         LOGGER.debug("Method deleteMaster");
         LOGGER.trace("Parameter idMaster: {}", idMaster);
-        masterDao.updateRecord(masterDao.findById(idMaster));
+        Master master = masterDao.findById(idMaster);
+        master.setDeleteStatus(true);
+        masterDao.updateRecord(master);
     }
 
     @Override

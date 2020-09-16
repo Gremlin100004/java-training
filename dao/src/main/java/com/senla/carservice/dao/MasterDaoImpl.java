@@ -39,7 +39,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         criteriaQuery.where(masterRoot.get(Master_.id).in(subquery).not());
         TypedQuery<Master> query = entityManager.createQuery(criteriaQuery);
         List<Master> masters = query.getResultList();
-        if (masters == null) {
+        if (masters.isEmpty()) {
             throw new DaoException("Error getting free masters");
         }
         return masters;
