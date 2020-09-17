@@ -19,7 +19,6 @@ import java.util.List;
 
 @Repository
 public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
-
     public OrderDaoImpl() {
         setType(Order.class);
     }
@@ -34,40 +33,11 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         criteriaQuery.orderBy(criteriaBuilder.desc(orderRoot.get(Master_.id)));
         TypedQuery<Order> typedQuery = entityManager.createQuery(criteriaQuery);
         typedQuery.setMaxResults(1);
-        Order order = typedQuery.getSingleResult();
-        if (order == null) {
+        List<Order> order = typedQuery.getResultList();
+        if (order.isEmpty()) {
             throw new DaoException("Error getting last order");
         }
-        return order;
-    }
-
-    @Override
-    public Long getNumberBusyMasters(Date startPeriod, Date endPeriod) {
-        LOGGER.debug("Method getNumberBusyMasters");
-        LOGGER.trace("Parameter startPeriod: {}", startPeriod);
-        LOGGER.trace("Parameter endPeriod: {}", endPeriod);
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<Master> orderRoot = criteriaQuery.from(Master.class);
-        Join<Master, Order> orderJoin = orderRoot.join(Master_.orders);
-        criteriaQuery.distinct(true);
-        criteriaQuery.select(criteriaBuilder.count(orderRoot.get(Master_.id)))
-            .where(criteriaBuilder.between(orderJoin.get(Order_.leadTime), startPeriod, endPeriod));
-        return entityManager.createQuery(criteriaQuery).getSingleResult();
-    }
-
-    @Override
-    public Long getNumberBusyPlaces(Date startPeriod, Date endPeriod) {
-        LOGGER.debug("Method getNumberBusyPlaces");
-        LOGGER.trace("Parameter startPeriod: {}", startPeriod);
-        LOGGER.trace("Parameter endPeriod: {}", endPeriod);
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<Order> orderRoot = criteriaQuery.from(Order.class);
-        criteriaQuery.distinct(true);
-        criteriaQuery.select(criteriaBuilder.count(orderRoot.get(Order_.place)))
-            .where(criteriaBuilder.between(orderRoot.get(Order_.leadTime), startPeriod, endPeriod));
-        return entityManager.createQuery(criteriaQuery).getSingleResult();
+        return order.get(0);
     }
 
     @Override

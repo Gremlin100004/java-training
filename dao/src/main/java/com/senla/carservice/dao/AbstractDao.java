@@ -32,7 +32,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     @Override
     public void saveRecord(T entity) {
         LOGGER.debug("Method saveRecord");
-        LOGGER.trace("Parameter object: {}", entity);
+        LOGGER.trace("Parameter entity: {}", entity);
         entityManager.persist(entity);
     }
 
@@ -41,11 +41,11 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
         LOGGER.debug("Method findById");
         LOGGER.trace("Parameter type: {}", type);
         LOGGER.trace("Parameter id: {}", id);
-        T object = entityManager.find(type, id);
-        if (object == null) {
+        T entity = entityManager.find(type, id);
+        if (entity == null) {
             throw new DaoException("Error get record by id");
         }
-        return object;
+        return entity;
     }
 
     @Override
@@ -57,26 +57,26 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
         Root<T> root = criteriaQuery.from(type);
         criteriaQuery.select(root);
         TypedQuery<T> query = entityManager.createQuery(criteriaQuery);
-        List<T> objects = query.getResultList();
-        if (objects == null) {
-            throw new DaoException("Error getting objects");
+        List<T> entities = query.getResultList();
+        if (entities == null) {
+            throw new DaoException("Error getting entities");
         }
-        return objects;
+        return entities;
     }
 
     @Override
-    public void updateRecord(T object) {
+    public void updateRecord(T entity) {
         LOGGER.debug("Method updateRecord");
-        LOGGER.trace("Parameter object: {}", object);
-        entityManager.merge(object);
+        LOGGER.trace("Parameter entity: {}", entity);
+        entityManager.merge(entity);
     }
 
     @Override
-    public void updateAllRecords(List<T> objects) {
+    public void updateAllRecords(List<T> entities) {
         LOGGER.debug("Method updateAllRecords");
-        LOGGER.trace("Parameter objects: {}", objects);
-        for (T object : objects) {
-            entityManager.merge(object);
+        LOGGER.trace("Parameter entities: {}", entities);
+        for (T entity : entities) {
+            entityManager.merge(entity);
         }
     }
 

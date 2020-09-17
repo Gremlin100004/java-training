@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 class MasterServiceTest {
@@ -40,18 +38,16 @@ class MasterServiceTest {
 
     @Test
     void checkGetMastersShouldReturnList() {
-        when(masterDao.getAllRecords()).thenReturn(masters);
+        Mockito.doReturn(masters).when(masterDao).getAllRecords();
         List<Master> resultMasters = masterService.getMasters();
-        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.atLeastOnce()).getAllRecords();
         Assertions.assertEquals(masters, resultMasters);
     }
 
     @Test
     void checkGetMastersShouldThrowException() {
-//        Mockito.when(masterDao.getAllRecords()).thenThrow(DaoException.class);
-//        Assertions.assertThrows(DaoException.class, () -> {
-//            masterService.getMasters();
-//        });
+        Mockito.doThrow(DaoException.class).when(masterDao).getAllRecords();
+        Assertions.assertThrows(DaoException.class, () -> masterService.getMasters());
     }
 
     @Test
@@ -63,16 +59,16 @@ class MasterServiceTest {
     @Test
     void checkGetFreeMastersByDateShouldReturnList() {
         Date date = new Date();
-        when(masterDao.getFreeMasters(date)).thenReturn(masters);
+        Mockito.doReturn(masters).when(masterDao).getFreeMasters(date);
         List<Master> resultMasters = masterService.getFreeMastersByDate(date);
         Mockito.verify(masterDao, Mockito.times(1)).getFreeMasters(date);
         Assertions.assertEquals(masters, resultMasters);
     }
 
     @Test
-    void checkGetFreeMastersByDateShouldThrowError() {
+    void checkGetFreeMastersByDateShouldThrowException() {
         Date date = new Date();
-        when(masterDao.getFreeMasters(date)).thenThrow(DaoException.class);
+        Mockito.doThrow(DaoException.class).when(masterDao).getFreeMasters(date);
         Assertions.assertThrows(DaoException.class, () -> masterService.getFreeMastersByDate(date));
     }
 
@@ -80,7 +76,7 @@ class MasterServiceTest {
     void checkGetNumberFreeMastersByDateShouldReturnLong() {
         Date date = new Date();
         Long numberFreeMasters = 4L;
-        when(masterDao.getNumberFreeMasters(date)).thenReturn(numberFreeMasters);
+        Mockito.doReturn(numberFreeMasters).when(masterDao).getNumberFreeMasters(date);
         Long resultNumberFreeMasters = masterService.getNumberFreeMastersByDate(date);
         Mockito.verify(masterDao, Mockito.times(1)).getNumberFreeMasters(date);
         Assertions.assertEquals(numberFreeMasters, resultNumberFreeMasters);
@@ -88,37 +84,54 @@ class MasterServiceTest {
 
     @Test
     void checkDeleteMasterShouldDeleteRecordById() {
-        Master master = new Master("test");
-        when(masterDao.findById(ArgumentMatchers.anyLong())).thenReturn(master);
-        masterService.deleteMaster(ArgumentMatchers.anyLong());
-        Mockito.verify(masterDao, Mockito.times(1)).findById(ArgumentMatchers.anyLong());
+        Master master = new Master("test name");
+        Long masterId = 1L;
+        Mockito.doReturn(master).when(masterDao).findById(masterId);
+        masterService.deleteMaster(masterId);
+        Mockito.verify(masterDao, Mockito.atLeastOnce()).findById(masterId);
         Mockito.verify(masterDao, Mockito.times(1)).updateRecord(master);
+        Assertions.assertTrue(master.getDeleteStatus());
+    }
+
+    @Test
+    void checkDeleteMasterShouldThrowException() {
+        Long masterId = 1L;
+        Mockito.doThrow(DaoException.class).when(masterDao).findById(masterId);
+        Assertions.assertThrows(DaoException.class, () -> masterService.deleteMaster(masterId));
     }
 
     @Test
     void checkGetMasterByAlphabetShouldReturnList() {
-        when(masterDao.getMasterSortByAlphabet()).thenReturn(masters);
+        Mockito.doReturn(masters).when(masterDao).getMasterSortByAlphabet();
         List<Master> resultMasters = masterService.getMasterByAlphabet();
-        Mockito.verify(masterDao, Mockito.times(1)).getMasterSortByAlphabet();
+        Mockito.verify(masterDao, Mockito.atLeastOnce()).getMasterSortByAlphabet();
         Assertions.assertEquals(masters, resultMasters);
     }
 
-    //TODO throw test
+    @Test
+    void checkGetMasterByAlphabetShouldThrowException() {
+        Mockito.doThrow(DaoException.class).when(masterDao).getMasterSortByAlphabet();
+        Assertions.assertThrows(DaoException.class, () -> masterService.getMasterByAlphabet());
+    }
 
     @Test
     void checkGetMasterByBusyShouldReturnList() {
-        when(masterDao.getMasterSortByBusy()).thenReturn(masters);
+        Mockito.doReturn(masters).when(masterDao).getMasterSortByBusy();
         List<Master> resultMasters = masterService.getMasterByBusy();
-        Mockito.verify(masterDao, Mockito.times(1)).getMasterSortByBusy();
+        Mockito.verify(masterDao, Mockito.atLeastOnce()).getMasterSortByBusy();
         Assertions.assertEquals(masters, resultMasters);
     }
 
-    //TODO throw test
+    @Test
+    void checkGetMasterByBusyShouldThrowException() {
+        Mockito.doThrow(DaoException.class).when(masterDao).getMasterSortByBusy();
+        Assertions.assertThrows(DaoException.class, () -> masterService.getMasterByBusy());
+    }
 
     @Test
-    void getNumberMasters() {
+    void checkGetNumberMastersShouldReturnNumber() {
         Long numberMasters = 4L;
-        when(masterDao.getNumberMasters()).thenReturn(numberMasters);
+        Mockito.doReturn(numberMasters).when(masterDao).getNumberMasters();
         Long resultNumberMasters = masterService.getNumberMasters();
         Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
         Assertions.assertEquals(numberMasters, resultNumberMasters);
