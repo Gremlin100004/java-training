@@ -9,6 +9,7 @@ import com.senla.carservice.domain.Place;
 import com.senla.carservice.service.config.TestConfig;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.util.exception.DateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -102,7 +103,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void checkAddOrderDeadlinesAddDeadlineToOrder() {
+    void checkAddOrderDeadlinesShouldAddDeadlineToOrder() {
         Long numberMasters = 2L;
         Long numberPlaces = 2L;
         Date executionStartTime = DateUtil.addDays(new Date(), 1);
@@ -116,7 +117,29 @@ class OrderServiceImplTest {
         Mockito.verify(masterDao, Mockito.times(1)).getNumberFreeMasters(executionStartTime);
         Mockito.verify(placeDao, Mockito.times(1)).getNumberFreePlaces(executionStartTime);
     }
-    //TODO THROWS
+
+    @Test
+    void checkAddOrderDeadlinesShouldThrowException() {
+        Long rightNumberMasters = 2L;
+        Long rightNumberPlaces = 2L;
+        Long wrongNumberMasters = 0L;
+        Long wrongNumberPlaces = 0L;
+        Date executionStartTime = DateUtil.addDays(new Date(), 1);
+        Date wrongExecutionStartTime = new Date();
+        Date leadTime = DateUtil.addDays(new Date(), 2);
+        Order order = new Order();
+        Mockito.doReturn(order).when(orderDao).getLastOrder();
+        Mockito.doReturn(wrongNumberMasters).when(masterDao).getNumberFreeMasters(executionStartTime);
+        Assertions.assertThrows(BusinessException.class,
+                () -> orderService.addOrderDeadlines(executionStartTime, leadTime));
+        Mockito.doReturn(rightNumberMasters).when(masterDao).getNumberFreeMasters(executionStartTime);
+        Mockito.doReturn(wrongNumberPlaces).when(placeDao).getNumberFreePlaces(executionStartTime);
+        Assertions.assertThrows(BusinessException.class,
+                () -> orderService.addOrderDeadlines(executionStartTime, leadTime));
+        Mockito.doReturn(rightNumberPlaces).when(placeDao).getNumberFreePlaces(wrongExecutionStartTime);
+        Assertions.assertThrows(DateException.class,
+                () -> orderService.addOrderDeadlines(wrongExecutionStartTime, leadTime));
+    }
 
     @Test
     void checkAddOrderMastersShouldReturn() {
