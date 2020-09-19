@@ -90,9 +90,6 @@ public class OrderServiceImpl implements OrderService {
         Order currentOrder = orderDao.getLastOrder();
         Master master = masterDao.findById(idMaster);
         master.setNumberOrders(master.getNumberOrders() + 1);
-        if (currentOrder == null) {
-            throw new BusinessException("There are no orders");
-        }
         if (master.getDeleteStatus()) {
             throw new BusinessException("Master has been deleted");
         }
@@ -102,6 +99,7 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         currentOrder.getMasters().add(master);
+        orderDao.updateRecord(currentOrder);
     }
 
     @Override
@@ -110,9 +108,6 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method addOrderPlace");
         LOGGER.debug("Parameter idPlace: {}", idPlace);
         Order currentOrder = orderDao.getLastOrder();
-        if (currentOrder == null) {
-            throw new BusinessException("There are no orders");
-        }
         currentOrder.setPlace(placeDao.findById(idPlace));
         orderDao.updateRecord(currentOrder);
     }
@@ -123,9 +118,6 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method addOrderPrice");
         LOGGER.debug("Parameter price: {}", price);
         Order currentOrder = orderDao.getLastOrder();
-        if (currentOrder == null) {
-            throw new BusinessException("There are no orders");
-        }
         currentOrder.setPrice(price);
         orderDao.updateRecord(currentOrder);
     }
@@ -167,7 +159,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.debug("Method closeOrder");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
         Order order = orderDao.findById(idOrder);
-        checkStatusOrder(order);
+        checkStatusOrderShiftTime(order);
         order.setLeadTime(new Date());
         order.setStatus(StatusOrder.COMPLETED);
         orderDao.updateRecord(order);
@@ -188,7 +180,10 @@ public class OrderServiceImpl implements OrderService {
         if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
-        orderDao.updateRecord(orderDao.findById(idOrder));
+        Order order = orderDao.findById(idOrder);
+        checkStatusOrderToDelete(order);
+        order.setDeleteStatus(true);
+        orderDao.updateRecord(order);
     }
 
     @Override
@@ -273,11 +268,7 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getMasterOrders(Long idMaster) {
         LOGGER.debug("Method getMasterOrders");
         LOGGER.debug("Parameter idMaster: {}", idMaster);
-        List<Order> orders = orderDao.getMasterOrders(masterDao.findById(idMaster));
-        if (orders.isEmpty()) {
-            throw new BusinessException("Master doesn't have any orders");
-        }
-        return orders;
+        return orderDao.getMasterOrders(masterDao.findById(idMaster));
     }
 
     @Override
@@ -285,12 +276,7 @@ public class OrderServiceImpl implements OrderService {
     public List<Master> getOrderMasters(Long idOrder) {
         LOGGER.debug("Method getOrderMasters");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
-        Order order = orderDao.findById(idOrder);
-        List<Master> masters = orderDao.getOrderMasters(order);
-        if (masters.isEmpty()) {
-            throw new BusinessException("There are no masters in order");
-        }
-        return masters;
+        return orderDao.getOrderMasters(orderDao.findById(idOrder));
     }
 
     @Override
@@ -341,6 +327,19 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException("The order has been completed");
         }
         if (order.getStatus() == StatusOrder.CANCELED) {
+            throw new BusinessException("The order has been canceled");
+        }
+    }
+    private void checkStatusOrderToDelete(Order order) {
+        LOGGER.debug("Method checkStatusOrderToDelete");
+        LOGGER.debug("Parameter order: {}", order);
+        if (order.isDeleteStatus()) {
+            throw new BusinessException("The order has been deleted");
+        }
+        if (order.getStatus() == StatusOrder.WAIT) {
+            throw new BusinessException("The order has been waiting");
+        }
+        if (order.getStatus() == StatusOrder.PERFORM) {
             throw new BusinessException("The order has been canceled");
         }
     }

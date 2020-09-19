@@ -16,7 +16,7 @@ public interface OrderService {
 
     void addOrderDeadlines(Date executionStartTime, Date leadTime);
 
-    void addOrderMasters(Long idPlace);
+    void addOrderMasters(Long idMaster);
 
     void addOrderPlace(Long idPlace);
 
