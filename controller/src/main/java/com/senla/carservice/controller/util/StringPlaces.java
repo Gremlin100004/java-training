@@ -58,7 +58,7 @@ public class StringPlaces {
                                                            StringUtil.fillStringSpace(STATUS_ONE, LENGTH_SPACE_THIRD_COLUMN) :
                                                            StringUtil.fillStringSpace(STATUS_TWO, LENGTH_SPACE_THIRD_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS)
-                    .append(StringUtil.fillStringSpace(String.valueOf(places.get(i).getDelete()), LENGTH_SPACE_FOURTH_COLUMN));
+                    .append(StringUtil.fillStringSpace(String.valueOf(places.get(i).getDeleteStatus()), LENGTH_SPACE_FOURTH_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS + END_OF_LINE);
             });
         stringBuilder.append(line);

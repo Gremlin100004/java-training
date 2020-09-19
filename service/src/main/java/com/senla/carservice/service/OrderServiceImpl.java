@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Order> getOrders() {
         LOGGER.debug("Method getOrders");
         return orderDao.getAllRecords();
@@ -205,7 +205,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Order> getSortOrders(SortParameter sortParameter) {
         LOGGER.debug("Method getSortOrders");
         LOGGER.debug("Parameter sortParameter: {}", sortParameter);
@@ -230,7 +230,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Order> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter) {
         LOGGER.debug("Method getSortOrdersByPeriod");
         LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
@@ -264,7 +264,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Order> getMasterOrders(Long idMaster) {
         LOGGER.debug("Method getMasterOrders");
         LOGGER.debug("Parameter idMaster: {}", idMaster);
@@ -272,7 +272,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Master> getOrderMasters(Long idOrder) {
         LOGGER.debug("Method getOrderMasters");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
@@ -280,7 +280,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Long getNumberOrders() {
         LOGGER.debug("Method getNumberOrders");
         return orderDao.getNumberOrders();

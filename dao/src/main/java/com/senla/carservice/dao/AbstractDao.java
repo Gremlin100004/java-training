@@ -58,7 +58,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
         criteriaQuery.select(root);
         TypedQuery<T> query = entityManager.createQuery(criteriaQuery);
         List<T> entities = query.getResultList();
-        if (entities == null) {
+        if (entities.isEmpty()) {
             throw new DaoException("Error getting entities");
         }
         return entities;

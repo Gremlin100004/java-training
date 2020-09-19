@@ -14,7 +14,7 @@ public class Place extends AEntity {
     @Column(name = "is_busy")
     private Boolean isBusy;
     @Column(name = "is_deleted")
-    private Boolean isDelete;
+    private Boolean deleteStatus;
 
 
     public Place() {
@@ -23,7 +23,7 @@ public class Place extends AEntity {
     public Place(Integer number) {
         this.number = number;
         this.isBusy = false;
-        this.isDelete = false;
+        this.deleteStatus = false;
     }
 
     public Integer getNumber() {
@@ -34,8 +34,8 @@ public class Place extends AEntity {
         return isBusy;
     }
 
-    public Boolean getDelete() {
-        return isDelete;
+    public Boolean getDeleteStatus() {
+        return deleteStatus;
     }
 
     public void setNumber(Integer number) {
@@ -46,12 +46,12 @@ public class Place extends AEntity {
         this.isBusy = isBusy;
     }
 
-    public void setDelete(Boolean delete) {
-        isDelete = delete;
+    public void setDeleteStatus(Boolean delete) {
+        deleteStatus = delete;
     }
 
     @Override
     public String toString() {
-        return "Place{" + "number=" + number + ", isBusy=" + isBusy + ", isDelete=" + isDelete + '}';
+        return "Place{" + "number=" + number + ", isBusy=" + isBusy + ", isDelete=" + deleteStatus + '}';
     }
 }

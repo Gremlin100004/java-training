@@ -52,7 +52,7 @@ public class CsvOrder {
             .peek(
                 order -> {
                     if (order.getMasters().isEmpty()) {
-                        throw new CsvException("masters not imported");
+                        throw new CsvException("orders not imported");
                     }
                 })
             .collect(Collectors.toList());
@@ -127,7 +127,6 @@ public class CsvOrder {
         stringValue.append(fieldSeparator);
         stringValue.append(DateUtil.getStringFromDate(order.getLeadTime(), true));
         stringValue.append(fieldSeparator);
-//        stringValue.append(order.getPlace().getId());
         stringValue.append(fieldSeparator);
         stringValue.append(order.getAutomaker());
         stringValue.append(fieldSeparator);

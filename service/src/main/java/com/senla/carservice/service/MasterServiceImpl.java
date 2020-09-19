@@ -23,7 +23,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Master> getMasters() {
         LOGGER.debug("Method getMasters");
         return masterDao.getAllRecords();
@@ -38,7 +38,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Master> getFreeMastersByDate(Date executeDate) {
         LOGGER.debug("Method getFreeMastersByDate");
         LOGGER.trace("Parameter executeDate: {}", executeDate);
@@ -46,7 +46,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Long getNumberFreeMastersByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreeMastersByDate");
         LOGGER.trace("Parameter startDayDate: {}", startDayDate);
@@ -64,7 +64,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Master> getMasterByAlphabet() {
         LOGGER.debug("Method getMasterByAlphabet");
         List<Master> masters = masterDao.getMasterSortByAlphabet();
@@ -75,7 +75,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Master> getMasterByBusy() {
         LOGGER.debug("Method getMasterByBusy");
         List<Master> masters = masterDao.getMasterSortByBusy();
@@ -86,7 +86,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Long getNumberMasters() {
         LOGGER.debug("Method getNumberMasters");
         return masterDao.getNumberMasters();

@@ -28,14 +28,10 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Place> getPlaces() {
         LOGGER.debug("Method getPlaces");
-        List<Place> places = placeDao.getAllRecords();
-        if (places.isEmpty()) {
-            throw new BusinessException("There are no places");
-        }
-        return places;
+        return placeDao.getAllRecords();
     }
 
     @Override
@@ -61,11 +57,12 @@ public class PlaceServiceImpl implements PlaceService {
         if (place.getBusy()) {
             throw new BusinessException("Place is busy");
         }
+        place.setDeleteStatus(true);
         placeDao.updateRecord(place);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Long getNumberFreePlaceByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreePlaceByDate");
         LOGGER.debug("Parameter startDayDate: {}", startDayDate);
@@ -73,7 +70,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Place> getFreePlaceByDate(Date executeDate) {
         LOGGER.debug("Method getFreePlaceByDate");
         LOGGER.debug("Parameter executeDate: {}", executeDate);
@@ -81,7 +78,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Long getNumberPlace() {
         LOGGER.debug("Method getNumberMasters");
         return placeDao.getNumberPlaces();
