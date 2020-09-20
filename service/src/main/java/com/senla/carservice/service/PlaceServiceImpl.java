@@ -57,6 +57,9 @@ public class PlaceServiceImpl implements PlaceService {
         if (place.getBusy()) {
             throw new BusinessException("Place is busy");
         }
+        if (place.getDeleteStatus()) {
+            throw new BusinessException("error, place has already been deleted");
+        }
         place.setDeleteStatus(true);
         placeDao.updateRecord(place);
     }

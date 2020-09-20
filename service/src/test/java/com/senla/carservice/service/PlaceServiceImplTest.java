@@ -97,6 +97,18 @@ class PlaceServiceImplTest {
     }
 
     @Test
+    void PlaceServiceImpl_deletePlace_businessException_deleted() {
+        Place place = getTestPlace();
+        place.setDeleteStatus(true);
+        Mockito.doReturn(place).when(placeDao).findById(ID_PLACE);
+
+        Assertions.assertThrows(BusinessException.class, () -> placeService.deletePlace(ID_PLACE));
+        Mockito.verify(placeDao, Mockito.times(1)).findById(ID_PLACE);
+        Mockito.verify(placeDao, Mockito.never()).updateRecord(place);
+        Mockito.reset(placeDao);
+    }
+
+    @Test
     void PlaceServiceImpl_getNumberFreePlaceByDate() {
         Date date = new Date();
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberFreePlaces(date);

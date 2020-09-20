@@ -4,6 +4,7 @@ import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.service.config.TestConfig;
+import com.senla.carservice.service.exception.BusinessException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -115,6 +116,18 @@ class MasterServiceImplTest {
         Mockito.doThrow(DaoException.class).when(masterDao).findById(ID_MASTER);
 
         Assertions.assertThrows(DaoException.class, () -> masterService.deleteMaster(ID_MASTER));
+        Mockito.verify(masterDao, Mockito.times(1)).findById(ID_MASTER);
+        Mockito.verify(masterDao, Mockito.never()).updateRecord(master);
+        Mockito.reset(masterDao);
+    }
+
+    @Test
+    void MasterServiceImpl_deleteMaster_businessException_delete() {
+        Master master = getTestMaster();
+        master.setDeleteStatus(true);
+        Mockito.doReturn(master).when(masterDao).findById(ID_MASTER);
+
+        Assertions.assertThrows(BusinessException.class, () -> masterService.deleteMaster(ID_MASTER));
         Mockito.verify(masterDao, Mockito.times(1)).findById(ID_MASTER);
         Mockito.verify(masterDao, Mockito.never()).updateRecord(master);
         Mockito.reset(masterDao);
