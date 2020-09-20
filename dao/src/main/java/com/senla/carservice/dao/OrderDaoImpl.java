@@ -19,6 +19,7 @@ import java.util.List;
 
 @Repository
 public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
+
     public OrderDaoImpl() {
         setType(Order.class);
     }

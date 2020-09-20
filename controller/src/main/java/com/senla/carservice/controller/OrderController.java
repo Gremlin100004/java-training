@@ -3,12 +3,11 @@ package com.senla.carservice.controller;
 import com.senla.carservice.controller.util.StringMaster;
 import com.senla.carservice.controller.util.StringOrder;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.OrderService;
-import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.enumaration.SortParameter;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.util.exception.DateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +24,6 @@ public class OrderController {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
     @Autowired
     private OrderService orderService;
-    @Autowired
-    private MasterService masterService;
-    @Autowired
-    private PlaceService placeService;
 
     public OrderController() {
     }
@@ -56,7 +51,7 @@ public class OrderController {
             Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
             orderService.addOrderDeadlines(executionStartTime, leadTime);
             return "deadline add to order successfully";
-        } catch (BusinessException e) {
+        } catch (BusinessException | DateException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -102,7 +97,7 @@ public class OrderController {
         LOGGER.info("Method checkPlaces");
         try {
             if (orderService.getNumberOrders() == 0) {
-                throw new  BusinessException("There are no orders");
+                throw new BusinessException("There are no orders");
             }
             return "verification was successfully";
         } catch (BusinessException e) {
@@ -399,8 +394,7 @@ public class OrderController {
         LOGGER.info("Method getMasterOrders");
         LOGGER.debug("Parameter idOrder: {}", idMaster);
         try {
-            return StringOrder
-                .getStringFromOrder(orderService.getMasterOrders(idMaster));
+            return StringOrder.getStringFromOrder(orderService.getMasterOrders(idMaster));
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
@@ -411,8 +405,7 @@ public class OrderController {
         LOGGER.info("Method getOrderMasters");
         LOGGER.debug("Parameter idOrder: {}", idOrder);
         try {
-            return StringMaster
-                .getStringFromMasters(orderService.getOrderMasters(idOrder));
+            return StringMaster.getStringFromMasters(orderService.getOrderMasters(idOrder));
         } catch (BusinessException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();

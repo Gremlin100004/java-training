@@ -60,7 +60,7 @@ class CarOfficeServiceImplTest {
     private CsvMaster csvMaster;
 
     @Test
-    void checkGetNearestFreeDateShouldReturnDate() {
+    void CarOfficeServiceImpl_getNearestFreeDate() {
         Date leadTimeOrder = new Date();
         Order order = new Order(PARAMETER_AUTOMAKER, PARAMETER_MODEL, PARAMETER_MODEL);
         order.setId(ID_ORDER);
@@ -71,30 +71,88 @@ class CarOfficeServiceImplTest {
         Mockito.doReturn(order).when(orderDao).getLastOrder();
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberFreeMasters(ArgumentMatchers.any(Date.class));
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberFreePlaces(ArgumentMatchers.any(Date.class));
-        carOfficeService.getNearestFreeDate();
-        Mockito.verify(masterDao, Mockito.atLeastOnce()).getNumberMasters();
-        Mockito.verify(placeDao, Mockito.atLeastOnce()).getNumberPlaces();
-        Mockito.verify(masterDao, Mockito.atLeastOnce()).getNumberFreeMasters(ArgumentMatchers.any(Date.class));
-        Mockito.verify(placeDao, Mockito.atLeastOnce()).getNumberFreePlaces(ArgumentMatchers.any(Date.class));
+
+        Date resultDate = carOfficeService.getNearestFreeDate();
+        Assertions.assertNotNull(resultDate);
+        Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
+        Mockito.verify(placeDao, Mockito.times(1)).getNumberPlaces();
+        Mockito.verify(orderDao, Mockito.times(1)).getNumberOrders();
+        Mockito.verify(orderDao, Mockito.times(1)).getLastOrder();
+        Mockito.verify(masterDao, Mockito.times(1)).getNumberFreeMasters(ArgumentMatchers.any(Date.class));
+        Mockito.verify(placeDao, Mockito.times(1)).getNumberFreePlaces(ArgumentMatchers.any(Date.class));
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
     }
 
     @Test
-    void checkGetNearestFreeDateShouldThrowException() {
+    void CarOfficeServiceImpl_getNearestFreeDate_businessException_numberMasters() {
         Mockito.doReturn(WRONG_NUMBER_MASTERS).when(masterDao).getNumberMasters();
+        
         Assertions.assertThrows(BusinessException.class, () -> carOfficeService.getNearestFreeDate());
+        Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
+        Mockito.verify(placeDao, Mockito.never()).getNumberPlaces();
+        Mockito.verify(orderDao, Mockito.never()).getNumberOrders();
+        Mockito.verify(orderDao, Mockito.never()).getLastOrder();
+        Mockito.verify(masterDao, Mockito.never()).getNumberFreeMasters(ArgumentMatchers.any(Date.class));
+        Mockito.verify(placeDao, Mockito.never()).getNumberFreePlaces(ArgumentMatchers.any(Date.class));
+        Mockito.reset(masterDao);
+    }
+    @Test
+    void CarOfficeServiceImpl_getNearestFreeDate_businessException_numberPlaces() {
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
         Mockito.doReturn(WRONG_NUMBER_PLACES).when(placeDao).getNumberPlaces();
+        
         Assertions.assertThrows(BusinessException.class, () -> carOfficeService.getNearestFreeDate());
-        Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
-        Mockito.doReturn(WRONG_NUMBER_ORDERS).when(orderDao).getNumberOrders();
-        Assertions.assertThrows(BusinessException.class, () -> carOfficeService.getNearestFreeDate());
-        Mockito.doReturn(RIGHT_NUMBER_ORDERS).when(orderDao).getNumberOrders();
-        Mockito.doThrow(DaoException.class).when(orderDao).getLastOrder();
-        Assertions.assertThrows(DaoException.class, () -> carOfficeService.getNearestFreeDate());
+        Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
+        Mockito.verify(placeDao, Mockito.times(1)).getNumberPlaces();
+        Mockito.verify(orderDao, Mockito.never()).getNumberOrders();
+        Mockito.verify(orderDao, Mockito.never()).getLastOrder();
+        Mockito.verify(masterDao, Mockito.never()).getNumberFreeMasters(ArgumentMatchers.any(Date.class));
+        Mockito.verify(placeDao, Mockito.never()).getNumberFreePlaces(ArgumentMatchers.any(Date.class));
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
     }
 
     @Test
-    void checkImportEntitiesShouldGetAllEntities() {
+    void CarOfficeServiceImpl_getNearestFreeDate_businessException_numberOrders() {
+        Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
+        Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
+        Mockito.doReturn(WRONG_NUMBER_ORDERS).when(orderDao).getNumberOrders();
+        
+        Assertions.assertThrows(BusinessException.class, () -> carOfficeService.getNearestFreeDate());
+        Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
+        Mockito.verify(placeDao, Mockito.times(1)).getNumberPlaces();
+        Mockito.verify(orderDao, Mockito.times(1)).getNumberOrders();
+        Mockito.verify(orderDao, Mockito.never()).getLastOrder();
+        Mockito.verify(masterDao, Mockito.never()).getNumberFreeMasters(ArgumentMatchers.any(Date.class));
+        Mockito.verify(placeDao, Mockito.never()).getNumberFreePlaces(ArgumentMatchers.any(Date.class));
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
+    }
+    
+    @Test
+    void CarOfficeServiceImpl_getNearestFreeDate_orderDao_getLastOrder_daoException() {
+        Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
+        Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
+        Mockito.doReturn(RIGHT_NUMBER_ORDERS).when(orderDao).getNumberOrders();
+        Mockito.doThrow(DaoException.class).when(orderDao).getLastOrder();
+        
+        Assertions.assertThrows(DaoException.class, () -> carOfficeService.getNearestFreeDate());
+        Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
+        Mockito.verify(placeDao, Mockito.times(1)).getNumberPlaces();
+        Mockito.verify(orderDao, Mockito.times(1)).getNumberOrders();
+        Mockito.verify(orderDao, Mockito.times(1)).getLastOrder();
+        Mockito.verify(masterDao, Mockito.never()).getNumberFreeMasters(ArgumentMatchers.any(Date.class));
+        Mockito.verify(placeDao, Mockito.never()).getNumberFreePlaces(ArgumentMatchers.any(Date.class));
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_importEntities() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -104,58 +162,328 @@ class CarOfficeServiceImplTest {
         Mockito.doReturn(orders).when(csvOrder).importOrder(masters, places);
         Mockito.doReturn(masters).when(csvMaster).importMasters(orders);
         Mockito.doReturn(places).when(csvPlace).importPlaces();
-        carOfficeService.importEntities();
-        Mockito.verify(orderDao, Mockito.atLeastOnce()).getAllRecords();
-        Mockito.verify(masterDao, Mockito.atLeastOnce()).getAllRecords();
-        Mockito.verify(placeDao, Mockito.atLeastOnce()).getAllRecords();
-        Mockito.verify(csvOrder, Mockito.atLeastOnce()).importOrder(masters, places);
-        Mockito.verify(csvMaster, Mockito.atLeastOnce()).importMasters(orders);
-        Mockito.verify(csvPlace, Mockito.atLeastOnce()).importPlaces();
-        Mockito.verify(orderDao, Mockito.atLeastOnce()).updateAllRecords(orders);
-        Mockito.verify(masterDao, Mockito.atLeastOnce()).updateAllRecords(masters);
-        Mockito.verify(placeDao, Mockito.atLeastOnce()).updateAllRecords(places);
+
+        Assertions.assertDoesNotThrow(() -> carOfficeService.importEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(placeDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.times(1)).importOrder(masters, places);
+        Mockito.verify(csvMaster, Mockito.times(1)).importMasters(orders);
+        Mockito.verify(csvPlace, Mockito.times(1)).importPlaces();
+        Mockito.verify(orderDao, Mockito.times(1)).updateAllRecords(orders);
+        Mockito.verify(masterDao, Mockito.times(1)).updateAllRecords(masters);
+        Mockito.verify(placeDao, Mockito.times(1)).updateAllRecords(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
+        Mockito.reset(csvOrder);
+        Mockito.reset(csvMaster);
+        Mockito.reset(csvPlace);
     }
 
     @Test
-    void checkImportEntitiesShouldThrowException() {
+    void CarOfficeServiceImpl_importEntities_orderDao_getAllRecords_daoException() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
         Mockito.doThrow(DaoException.class).when(orderDao).getAllRecords();
+
         Assertions.assertThrows(DaoException.class, () -> carOfficeService.importEntities());
-        Mockito.doReturn(orders).when(orderDao).getAllRecords();
-        Mockito.doThrow(CsvException.class).when(csvMaster).importMasters(orders);
-        Assertions.assertThrows(CsvException.class, () -> carOfficeService.importEntities());
-        Mockito.doReturn(masters).when(csvMaster).importMasters(orders);
-        Mockito.doThrow(CsvException.class).when(csvPlace).importPlaces();
-        Assertions.assertThrows(CsvException.class, () -> carOfficeService.importEntities());
-        Mockito.doReturn(places).when(csvPlace).importPlaces();
-        Mockito.doThrow(DaoException.class).when(masterDao).getAllRecords();
-        Assertions.assertThrows(DaoException.class, () -> carOfficeService.importEntities());
-        Mockito.doReturn(masters).when(masterDao).getAllRecords();
-        Mockito.doThrow(DaoException.class).when(placeDao).getAllRecords();
-        Assertions.assertThrows(DaoException.class, () -> carOfficeService.importEntities());
-        Mockito.doReturn(masters).when(placeDao).getAllRecords();
-        Mockito.doThrow(CsvException.class).when(csvOrder).importOrder(masters, places);
-//        Assertions.assertThrows(DaoException.class, () -> carOfficeService.importEntities());
-        //TODO
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.never()).getAllRecords();
+        Mockito.verify(placeDao, Mockito.never()).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.never()).importOrder(masters, places);
+        Mockito.verify(csvMaster, Mockito.never()).importMasters(orders);
+        Mockito.verify(csvPlace, Mockito.never()).importPlaces();
+        Mockito.verify(orderDao, Mockito.never()).updateAllRecords(orders);
+        Mockito.verify(masterDao, Mockito.never()).updateAllRecords(masters);
+        Mockito.verify(placeDao, Mockito.never()).updateAllRecords(places);
+        Mockito.reset(orderDao);
     }
 
     @Test
-    void exportEntities() {
+    void CarOfficeServiceImpl_importEntities_csvMaster_importMasters_csvException() {
+        List<Order> orders = getTestOrders();
+        List<Master> masters = getTestMasters();
+        List<Place> places = getTestPlaces();
+        Mockito.doReturn(orders).when(orderDao).getAllRecords();
+        Mockito.doThrow(CsvException.class).when(csvMaster).importMasters(orders);
+
+        Assertions.assertThrows(CsvException.class, () -> carOfficeService.importEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.never()).getAllRecords();
+        Mockito.verify(placeDao, Mockito.never()).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.never()).importOrder(masters, places);
+        Mockito.verify(csvMaster, Mockito.times(1)).importMasters(orders);
+        Mockito.verify(csvPlace, Mockito.never()).importPlaces();
+        Mockito.verify(orderDao, Mockito.never()).updateAllRecords(orders);
+        Mockito.verify(masterDao, Mockito.never()).updateAllRecords(masters);
+        Mockito.verify(placeDao, Mockito.never()).updateAllRecords(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(csvMaster);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_importEntities_csvPlace_importPlaces_csvException() {
+        List<Order> orders = getTestOrders();
+        List<Master> masters = getTestMasters();
+        List<Place> places = getTestPlaces();
+        Mockito.doReturn(orders).when(orderDao).getAllRecords();
+        Mockito.doReturn(masters).when(csvMaster).importMasters(orders);
+        Mockito.doThrow(CsvException.class).when(csvPlace).importPlaces();
+
+        Assertions.assertThrows(CsvException.class, () -> carOfficeService.importEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.never()).getAllRecords();
+        Mockito.verify(placeDao, Mockito.never()).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.never()).importOrder(masters, places);
+        Mockito.verify(csvMaster, Mockito.times(1)).importMasters(orders);
+        Mockito.verify(csvPlace, Mockito.times(1)).importPlaces();
+        Mockito.verify(orderDao, Mockito.never()).updateAllRecords(orders);
+        Mockito.verify(masterDao, Mockito.times(1)).updateAllRecords(masters);
+        Mockito.verify(placeDao, Mockito.never()).updateAllRecords(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(csvMaster);
+        Mockito.reset(csvPlace);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_importEntities_masterDao_getAllRecords_daoException() {
+        List<Order> orders = getTestOrders();
+        List<Master> masters = getTestMasters();
+        List<Place> places = getTestPlaces();
+        Mockito.doReturn(orders).when(orderDao).getAllRecords();
+        Mockito.doReturn(masters).when(csvMaster).importMasters(orders);
+        Mockito.doReturn(places).when(csvPlace).importPlaces();
+        Mockito.doThrow(DaoException.class).when(masterDao).getAllRecords();
+
+        Assertions.assertThrows(DaoException.class, () -> carOfficeService.importEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(placeDao, Mockito.never()).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.never()).importOrder(masters, places);
+        Mockito.verify(csvMaster, Mockito.times(1)).importMasters(orders);
+        Mockito.verify(csvPlace, Mockito.times(1)).importPlaces();
+        Mockito.verify(orderDao, Mockito.never()).updateAllRecords(orders);
+        Mockito.verify(masterDao, Mockito.times(1)).updateAllRecords(masters);
+        Mockito.verify(placeDao, Mockito.times(1)).updateAllRecords(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
+        Mockito.reset(csvMaster);
+        Mockito.reset(csvPlace);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_importEntities_placeDao_getAllRecords_daoException() {
+        List<Order> orders = getTestOrders();
+        List<Master> masters = getTestMasters();
+        List<Place> places = getTestPlaces();
+        Mockito.doReturn(orders).when(orderDao).getAllRecords();
+        Mockito.doReturn(masters).when(csvMaster).importMasters(orders);
+        Mockito.doReturn(places).when(csvPlace).importPlaces();
+        Mockito.doReturn(masters).when(masterDao).getAllRecords();
+        Mockito.doThrow(DaoException.class).when(placeDao).getAllRecords();
+
+        Assertions.assertThrows(DaoException.class, () -> carOfficeService.importEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(placeDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.never()).importOrder(masters, places);
+        Mockito.verify(csvMaster, Mockito.times(1)).importMasters(orders);
+        Mockito.verify(csvPlace, Mockito.times(1)).importPlaces();
+        Mockito.verify(orderDao, Mockito.never()).updateAllRecords(orders);
+        Mockito.verify(masterDao, Mockito.times(1)).updateAllRecords(masters);
+        Mockito.verify(placeDao, Mockito.times(1)).updateAllRecords(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
+        Mockito.reset(csvMaster);
+        Mockito.reset(csvPlace);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_importEntities_csvOrder_importOrder_csvException() {
+        List<Order> orders = getTestOrders();
+        List<Master> masters = getTestMasters();
+        List<Place> places = getTestPlaces();
+        Mockito.doReturn(orders).when(orderDao).getAllRecords();
+        Mockito.doReturn(masters).when(csvMaster).importMasters(orders);
+        Mockito.doReturn(places).when(csvPlace).importPlaces();
+        Mockito.doReturn(masters).when(masterDao).getAllRecords();
+        Mockito.doReturn(places).when(placeDao).getAllRecords();
+        Mockito.doThrow(CsvException.class).when(csvOrder).importOrder(masters, places);
+
+        Assertions.assertThrows(CsvException.class, () -> carOfficeService.importEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(placeDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.times(1)).importOrder(masters, places);
+        Mockito.verify(csvMaster, Mockito.times(1)).importMasters(orders);
+        Mockito.verify(csvPlace, Mockito.times(1)).importPlaces();
+        Mockito.verify(orderDao, Mockito.never()).updateAllRecords(orders);
+        Mockito.verify(masterDao, Mockito.times(1)).updateAllRecords(masters);
+        Mockito.verify(placeDao, Mockito.times(1)).updateAllRecords(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
+        Mockito.reset(csvOrder);
+        Mockito.reset(csvMaster);
+        Mockito.reset(csvPlace);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_exportEntities() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
         Mockito.doReturn(orders).when(orderDao).getAllRecords();
         Mockito.doReturn(masters).when(masterDao).getAllRecords();
         Mockito.doReturn(places).when(placeDao).getAllRecords();
-        carOfficeService.exportEntities();
-        Mockito.verify(orderDao, Mockito.atLeastOnce()).getAllRecords();
-        Mockito.verify(masterDao, Mockito.atLeastOnce()).getAllRecords();
-        Mockito.verify(placeDao, Mockito.atLeastOnce()).getAllRecords();
-        Mockito.verify(csvOrder, Mockito.atLeastOnce()).exportOrder(orders);
-        Mockito.verify(csvMaster, Mockito.atLeastOnce()).exportMasters(masters);
-        Mockito.verify(csvPlace, Mockito.atLeastOnce()).exportPlaces(places);
+
+        Assertions.assertDoesNotThrow(() -> carOfficeService.exportEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(placeDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.times(1)).exportOrder(orders);
+        Mockito.verify(csvMaster, Mockito.times(1)).exportMasters(masters);
+        Mockito.verify(csvPlace, Mockito.times(1)).exportPlaces(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
+        Mockito.reset(csvOrder);
+        Mockito.reset(csvMaster);
+        Mockito.reset(csvPlace);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_exportEntities_orderDao_getAllRecords_daoException() {
+        List<Order> orders = getTestOrders();
+        List<Master> masters = getTestMasters();
+        List<Place> places = getTestPlaces();
+        Mockito.doThrow(DaoException.class).when(orderDao).getAllRecords();
+
+        Assertions.assertThrows(DaoException.class, () -> carOfficeService.exportEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.never()).getAllRecords();
+        Mockito.verify(placeDao, Mockito.never()).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.never()).exportOrder(orders);
+        Mockito.verify(csvMaster, Mockito.never()).exportMasters(masters);
+        Mockito.verify(csvPlace, Mockito.never()).exportPlaces(places);
+        Mockito.reset(orderDao);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_exportEntities_masterDao_getAllRecords_daoException() {
+        List<Order> orders = getTestOrders();
+        List<Master> masters = getTestMasters();
+        List<Place> places = getTestPlaces();
+        Mockito.doReturn(orders).when(orderDao).getAllRecords();
+        Mockito.doThrow(DaoException.class).when(masterDao).getAllRecords();
+
+        Assertions.assertThrows(DaoException.class, () -> carOfficeService.exportEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(placeDao, Mockito.never()).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.never()).exportOrder(orders);
+        Mockito.verify(csvMaster, Mockito.never()).exportMasters(masters);
+        Mockito.verify(csvPlace, Mockito.never()).exportPlaces(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_exportEntities_placeDao_getAllRecords_daoException() {
+        List<Order> orders = getTestOrders();
+        List<Master> masters = getTestMasters();
+        List<Place> places = getTestPlaces();
+        Mockito.doReturn(orders).when(orderDao).getAllRecords();
+        Mockito.doReturn(masters).when(masterDao).getAllRecords();
+        Mockito.doThrow(DaoException.class).when(placeDao).getAllRecords();
+
+        Assertions.assertThrows(DaoException.class, () -> carOfficeService.exportEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(placeDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.never()).exportOrder(orders);
+        Mockito.verify(csvMaster, Mockito.never()).exportMasters(masters);
+        Mockito.verify(csvPlace, Mockito.never()).exportPlaces(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_exportEntities_csvOrder_exportOrder_csvException() {
+        List<Order> orders = getTestOrders();
+        List<Master> masters = getTestMasters();
+        List<Place> places = getTestPlaces();
+        Mockito.doReturn(orders).when(orderDao).getAllRecords();
+        Mockito.doReturn(masters).when(masterDao).getAllRecords();
+        Mockito.doReturn(places).when(placeDao).getAllRecords();
+        Mockito.doThrow(CsvException.class).when(csvOrder).exportOrder(orders);
+
+        Assertions.assertThrows(CsvException.class, () -> carOfficeService.exportEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(placeDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.times(1)).exportOrder(orders);
+        Mockito.verify(csvMaster, Mockito.never()).exportMasters(masters);
+        Mockito.verify(csvPlace, Mockito.never()).exportPlaces(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
+        Mockito.reset(csvOrder);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_exportEntities_csvMaster_exportMasters_csvException() {
+        List<Order> orders = getTestOrders();
+        List<Master> masters = getTestMasters();
+        List<Place> places = getTestPlaces();
+        Mockito.doReturn(orders).when(orderDao).getAllRecords();
+        Mockito.doReturn(masters).when(masterDao).getAllRecords();
+        Mockito.doReturn(places).when(placeDao).getAllRecords();
+        Mockito.doThrow(CsvException.class).when(csvMaster).exportMasters(masters);
+
+        Assertions.assertThrows(CsvException.class, () -> carOfficeService.exportEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(placeDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.times(1)).exportOrder(orders);
+        Mockito.verify(csvMaster, Mockito.times(1)).exportMasters(masters);
+        Mockito.verify(csvPlace, Mockito.never()).exportPlaces(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
+        Mockito.reset(csvOrder);
+        Mockito.reset(csvMaster);
+    }
+
+    @Test
+    void CarOfficeServiceImpl_exportEntities_csvPlace_exportPlaces_csvException() {
+        List<Order> orders = getTestOrders();
+        List<Master> masters = getTestMasters();
+        List<Place> places = getTestPlaces();
+        Mockito.doReturn(orders).when(orderDao).getAllRecords();
+        Mockito.doReturn(masters).when(masterDao).getAllRecords();
+        Mockito.doReturn(places).when(placeDao).getAllRecords();
+        Mockito.doThrow(CsvException.class).when(csvPlace).exportPlaces(places);
+
+        Assertions.assertThrows(CsvException.class, () -> carOfficeService.exportEntities());
+        Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(placeDao, Mockito.times(1)).getAllRecords();
+        Mockito.verify(csvOrder, Mockito.times(1)).exportOrder(orders);
+        Mockito.verify(csvMaster, Mockito.times(1)).exportMasters(masters);
+        Mockito.verify(csvPlace, Mockito.times(1)).exportPlaces(places);
+        Mockito.reset(orderDao);
+        Mockito.reset(masterDao);
+        Mockito.reset(placeDao);
+        Mockito.reset(csvOrder);
+        Mockito.reset(csvMaster);
+        Mockito.reset(csvPlace);
     }
 
     private Master getTestMaster() {

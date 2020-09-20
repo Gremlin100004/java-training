@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 public class DaoConfiguration {
+
     @Bean
     public LocalEntityManagerFactoryBean emf() {
         LocalEntityManagerFactoryBean result = new LocalEntityManagerFactoryBean();

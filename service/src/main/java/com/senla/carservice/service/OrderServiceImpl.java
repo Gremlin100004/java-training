@@ -24,6 +24,7 @@ import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
     @Autowired
     private OrderDao orderDao;
@@ -131,7 +132,9 @@ public class OrderServiceImpl implements OrderService {
         checkStatusOrder(order);
         order.setStatus(StatusOrder.PERFORM);
         order.setExecutionStartTime(new Date());
-        order.getPlace().setBusy(true);
+        Place place = order.getPlace();
+        place.setBusy(true);
+        placeDao.updateRecord(place);
         orderDao.updateRecord(order);
     }
 
@@ -169,7 +172,6 @@ public class OrderServiceImpl implements OrderService {
         List<Master> masters = orderDao.getOrderMasters(order);
         masters.forEach(master -> master.setNumberOrders(master.getNumberOrders() - 1));
         masterDao.updateAllRecords(masters);
-        orderDao.updateRecord(order);
     }
 
     @Override
@@ -256,9 +258,6 @@ public class OrderServiceImpl implements OrderService {
             orders = orderDao.getDeletedOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
         } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)) {
             orders = orderDao.getDeletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
-        }
-        if (orders.isEmpty()) {
-            throw new BusinessException("There are no orders");
         }
         return orders;
     }

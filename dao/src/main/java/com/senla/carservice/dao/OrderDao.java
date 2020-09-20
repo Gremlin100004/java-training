@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface OrderDao extends GenericDao<Order, Long> {
+
     Order getLastOrder();
 
     List<Order> getOrdersSortByFilingDate();

@@ -59,8 +59,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         subquery.select(subMasterRoot.get(Master_.id)).distinct(true);
         subquery.where(criteriaBuilder.greaterThanOrEqualTo(masterOrderJoin.get(Order_.leadTime), executeDate));
         criteriaQuery.where(masterRoot.get(Master_.id).in(subquery).not());
-        TypedQuery<Long> query = entityManager.createQuery(criteriaQuery);
-        return query.getSingleResult();
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 
     @Override

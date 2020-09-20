@@ -2,7 +2,6 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.domain.Master;
-import com.senla.carservice.service.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,22 +66,14 @@ public class MasterServiceImpl implements MasterService {
     @Transactional
     public List<Master> getMasterByAlphabet() {
         LOGGER.debug("Method getMasterByAlphabet");
-        List<Master> masters = masterDao.getMasterSortByAlphabet();
-        if (masters.isEmpty()) {
-            throw new BusinessException("There are no masters");
-        }
-        return masters;
+        return masterDao.getMasterSortByAlphabet();
     }
 
     @Override
     @Transactional
     public List<Master> getMasterByBusy() {
         LOGGER.debug("Method getMasterByBusy");
-        List<Master> masters = masterDao.getMasterSortByBusy();
-        if (masters.isEmpty()) {
-            throw new BusinessException("There are no masters");
-        }
-        return masters;
+        return masterDao.getMasterSortByBusy();
     }
 
     @Override
