@@ -6,6 +6,7 @@ import com.senla.carservice.domain.Place;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.util.exception.DateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class PlaceController {
         LOGGER.info("Method getArrayPlace");
         try {
             return StringPlaces.getStringFromPlaces(placeService.getPlaces());
-        } catch (BusinessException e) {
+        } catch (BusinessException | DaoException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -68,7 +69,7 @@ public class PlaceController {
             stringList.add(StringPlaces.getStringFromPlaces(places));
             stringList.addAll(StringPlaces.getListId(places));
             return stringList;
-        } catch (BusinessException e) {
+        } catch (BusinessException | DaoException e) {
             LOGGER.warn(e.getMessage());
             stringList.add(e.getMessage());
             return stringList;
@@ -81,7 +82,7 @@ public class PlaceController {
         try {
             placeService.deletePlace(idPlace);
             return " -delete place in service successfully";
-        } catch (BusinessException e) {
+        } catch (BusinessException | DaoException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -97,7 +98,7 @@ public class PlaceController {
             stringList.add(StringPlaces.getStringFromPlaces(places));
             stringList.addAll(StringPlaces.getListId(places));
             return stringList;
-        } catch (BusinessException e) {
+        } catch (BusinessException | DateException | DaoException e) {
             LOGGER.warn(e.getMessage());
             stringList.add(e.getMessage());
             return stringList;

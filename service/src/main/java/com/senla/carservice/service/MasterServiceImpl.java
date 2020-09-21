@@ -1,7 +1,6 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.dao.MasterDao;
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.service.exception.BusinessException;
 import org.slf4j.Logger;
@@ -60,7 +59,7 @@ public class MasterServiceImpl implements MasterService {
         LOGGER.debug("Method deleteMaster");
         LOGGER.trace("Parameter idMaster: {}", idMaster);
         Master master = masterDao.findById(idMaster);
-        if (master.getDeleteStatus()){
+        if (master.getDeleteStatus()) {
             throw new BusinessException("error, master has already been deleted");
         }
         master.setDeleteStatus(true);

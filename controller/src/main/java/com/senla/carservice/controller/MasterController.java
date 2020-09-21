@@ -1,6 +1,7 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.controller.util.StringMaster;
+import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.exception.BusinessException;
@@ -69,7 +70,7 @@ public class MasterController {
         try {
             masterService.deleteMaster(idMaster);
             return " -master has been deleted successfully!";
-        } catch (BusinessException e) {
+        } catch (BusinessException | DaoException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -79,7 +80,7 @@ public class MasterController {
         LOGGER.info("Method getMasterByAlphabet");
         try {
             return StringMaster.getStringFromMasters(masterService.getMasterByAlphabet());
-        } catch (BusinessException e) {
+        } catch (BusinessException | DaoException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -89,7 +90,7 @@ public class MasterController {
         LOGGER.info("Method getMasterByBusy");
         try {
             return StringMaster.getStringFromMasters(masterService.getMasterByBusy());
-        } catch (BusinessException e) {
+        } catch (BusinessException | DaoException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -105,7 +106,7 @@ public class MasterController {
             stringList.add(StringMaster.getStringFromMasters(masters));
             stringList.addAll(StringMaster.getListId(masters));
             return stringList;
-        } catch (BusinessException e) {
+        } catch (BusinessException | DaoException e) {
             LOGGER.warn(e.getMessage());
             stringList.add(e.getMessage());
             return stringList;

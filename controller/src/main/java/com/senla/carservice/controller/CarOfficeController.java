@@ -1,11 +1,13 @@
 package com.senla.carservice.controller;
 
+import com.senla.carservice.csv.exception.CsvException;
+import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.MasterService;
-import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.util.exception.DateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +25,6 @@ public class CarOfficeController {
     private MasterService masterService;
     @Autowired
     private PlaceService placeService;
-    @Autowired
-    private OrderService orderService;
 
     public CarOfficeController() {
     }
@@ -42,7 +42,7 @@ public class CarOfficeController {
             Long numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate);
             return "- number free places in service: " + numberFreePlace + "\n- number free masters in service: " +
                    numberFreeMasters;
-        } catch (BusinessException e) {
+        } catch (BusinessException | DateException | DaoException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -52,7 +52,7 @@ public class CarOfficeController {
         LOGGER.info("Method getNearestFreeDate");
         try {
             return "Nearest free date: " + DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false);
-        } catch (BusinessException e) {
+        } catch (BusinessException | DateException | DaoException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -63,7 +63,7 @@ public class CarOfficeController {
         try {
             carOfficeService.exportEntities();
             return "Export completed successfully!";
-        } catch (BusinessException e) {
+        } catch (BusinessException | CsvException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
@@ -74,7 +74,7 @@ public class CarOfficeController {
         try {
             carOfficeService.importEntities();
             return "Imported completed successfully!";
-        } catch (BusinessException e) {
+        } catch (BusinessException | CsvException e) {
             LOGGER.warn(e.getMessage());
             return e.getMessage();
         }
