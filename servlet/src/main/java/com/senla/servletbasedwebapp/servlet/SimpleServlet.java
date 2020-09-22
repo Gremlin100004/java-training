@@ -1,4 +1,4 @@
-package com.senla.webapp.servlet;
+package com.senla.servletbasedwebapp.servlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +16,6 @@ public class SimpleServlet extends HttpServlet {
         throws ServletException, IOException {
         super.doGet(req, resp);
         PrintWriter printWriter = resp.getWriter();
-        printWriter.println("<h1>HelloWorld</h1>");
+        printWriter.println("HelloWorld");
     }
 }
