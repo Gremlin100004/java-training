@@ -23,14 +23,10 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Master> getMasters() {
         LOGGER.debug("Method getMasters");
-        List<Master> masters = masterDao.getAllRecords();
-        if (masters.isEmpty()) {
-            throw new BusinessException("There are no masters");
-        }
-        return masters;
+        return masterDao.getAllRecords();
     }
 
     @Override
@@ -42,19 +38,15 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Master> getFreeMastersByDate(Date executeDate) {
         LOGGER.debug("Method getFreeMastersByDate");
         LOGGER.trace("Parameter executeDate: {}", executeDate);
-        List<Master> freeMasters = masterDao.getFreeMasters(executeDate);
-        if (freeMasters.isEmpty()) {
-            throw new BusinessException("There are no free masters");
-        }
-        return freeMasters;
+        return masterDao.getFreeMasters(executeDate);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Long getNumberFreeMastersByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreeMastersByDate");
         LOGGER.trace("Parameter startDayDate: {}", startDayDate);
@@ -66,33 +58,30 @@ public class MasterServiceImpl implements MasterService {
     public void deleteMaster(Long idMaster) {
         LOGGER.debug("Method deleteMaster");
         LOGGER.trace("Parameter idMaster: {}", idMaster);
-        masterDao.updateRecord(masterDao.findById(idMaster));
+        Master master = masterDao.findById(idMaster);
+        if (master.getDeleteStatus()) {
+            throw new BusinessException("error, master has already been deleted");
+        }
+        master.setDeleteStatus(true);
+        masterDao.updateRecord(master);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Master> getMasterByAlphabet() {
         LOGGER.debug("Method getMasterByAlphabet");
-        List<Master> masters = masterDao.getMasterSortByAlphabet();
-        if (masters.isEmpty()) {
-            throw new BusinessException("There are no masters");
-        }
-        return masters;
+        return masterDao.getMasterSortByAlphabet();
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Master> getMasterByBusy() {
         LOGGER.debug("Method getMasterByBusy");
-        List<Master> masters = masterDao.getMasterSortByBusy();
-        if (masters.isEmpty()) {
-            throw new BusinessException("There are no masters");
-        }
-        return masters;
+        return masterDao.getMasterSortByBusy();
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Long getNumberMasters() {
         LOGGER.debug("Method getNumberMasters");
         return masterDao.getNumberMasters();

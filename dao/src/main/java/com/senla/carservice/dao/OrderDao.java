@@ -10,10 +10,6 @@ public interface OrderDao extends GenericDao<Order, Long> {
 
     Order getLastOrder();
 
-    Long getNumberBusyMasters(Date startPeriod, Date endPeriod);
-
-    Long getNumberBusyPlaces(Date startPeriod, Date endPeriod);
-
     List<Order> getOrdersSortByFilingDate();
 
     List<Order> getOrdersSortByExecutionDate();

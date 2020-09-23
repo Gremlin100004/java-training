@@ -58,8 +58,7 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
         subquery.select(subOrderRoot.get(Order_.place).get(Place_.id));
         subquery.where(criteriaBuilder.greaterThanOrEqualTo(subOrderRoot.get(Order_.leadTime), executeDate));
         criteriaQuery.where(placeRoot.get(Place_.id).in(subquery).not());
-        TypedQuery<Long> query = entityManager.createQuery(criteriaQuery);
-        return query.getSingleResult();
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 
     @Override

@@ -42,7 +42,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Date getNearestFreeDate() {
         LOGGER.debug("Method getNearestFreeDate");
         checkMasters();
@@ -52,7 +52,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         Date dayDate = new Date();
         for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
              currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
-            if (masterDao.getFreeMasters(currentDay).isEmpty() || placeDao.getFreePlaces(currentDay).isEmpty()) {
+            if (masterDao.getNumberFreeMasters(currentDay) == 0 || placeDao.getNumberFreePlaces(currentDay) == 0) {
                 dayDate = currentDay;
                 currentDay = DateUtil.bringStartOfDayDate(currentDay);
             } else {
@@ -68,18 +68,16 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         LOGGER.debug("Method importEntities");
         masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords()));
         placeDao.updateAllRecords(csvPlace.importPlaces());
-        List<Order> orders =
-            csvOrder.importOrder(masterDao.getAllRecords(), placeDao.getAllRecords());
-        orderDao.updateAllRecords(orders);
+        orderDao.updateAllRecords(csvOrder.importOrder(masterDao.getAllRecords(), placeDao.getAllRecords()));
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public void exportEntities() {
         LOGGER.debug("Method exportEntities");
-        List<Order> orders = getOrders();
-        List<Master> masters = getMasters();
-        List<Place> places = getPlaces();
+        List<Order> orders = orderDao.getAllRecords();
+        List<Master> masters = masterDao.getAllRecords();
+        List<Place> places = placeDao.getAllRecords();
         csvOrder.exportOrder(orders);
         csvMaster.exportMasters(masters);
         csvPlace.exportPlaces(places);
@@ -104,32 +102,5 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         if (orderDao.getNumberOrders() == 0) {
             throw new BusinessException("There are no orders");
         }
-    }
-
-    private List<Order> getOrders() {
-        LOGGER.debug("Method getOrders");
-        List<Order> orders = orderDao.getAllRecords();
-        if (orders.isEmpty()) {
-            throw new BusinessException("There are no orders");
-        }
-        return orders;
-    }
-
-    private List<Master> getMasters() {
-        LOGGER.debug("Method getMasters");
-        List<Master> masters = masterDao.getAllRecords();
-        if (masters.isEmpty()) {
-            throw new BusinessException("There are no masters");
-        }
-        return masters;
-    }
-
-    private List<Place> getPlaces() {
-        LOGGER.debug("Method getPlaces");
-        List<Place> places = placeDao.getAllRecords();
-        if (places.isEmpty()) {
-            throw new BusinessException("There are no places");
-        }
-        return places;
     }
 }
