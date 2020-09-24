@@ -44,8 +44,7 @@ public class CsvOrder {
 
     public List<Order> importOrder(List<Master> masters, List<Place> places) {
         LOGGER.debug("Method importOrder");
-        LOGGER.trace("Parameter masters: {}", masters);
-        LOGGER.trace("Parameter places: {}", places);
+        LOGGER.trace("Parameter masters: {}, places: {}", masters, places);
         List<String> csvLinesOrder = FileUtil.getCsv(orderPath);
         return csvLinesOrder.stream()
             .map(line -> getOrderFromCsv(line, masters, places))
@@ -60,17 +59,15 @@ public class CsvOrder {
 
     private Order getOrderFromCsv(String line, List<Master> masters, List<Place> places) {
         LOGGER.debug("Method getOrderFromCsv");
-        LOGGER.trace("Parameter line: {}", line);
-        LOGGER.trace("Parameter masters: {}", masters);
-        LOGGER.trace("Parameter places: {}", places);
+        LOGGER.trace("Parameter line: {}, masters: {}, places: {}", line, masters, places);
         if (line == null || masters == null || places == null) {
             throw new CsvException("argument is null");
         }
         List<String> values = Arrays.asList((line.split(idSeparator))[0].split(fieldSeparator));
         List<String> arrayIdMaster = Arrays.asList(line.split(idSeparator)[1].split(fieldSeparator));
         Order order = new Order(ParameterUtil.checkValueString(values.get(5)),
-                                ParameterUtil.checkValueString(values.get(6)),
-                                ParameterUtil.checkValueString(values.get(7)));
+            ParameterUtil.checkValueString(values.get(6)),
+            ParameterUtil.checkValueString(values.get(7)));
         order.setId(ParameterUtil.getValueLong(values.get(0)));
         order.setCreationTime(DateUtil.getDatesFromString(values.get(1), true));
         order.setExecutionStartTime(DateUtil.getDatesFromString(values.get(2), true));
@@ -85,8 +82,7 @@ public class CsvOrder {
 
     private List<Master> getMastersById(List<Master> masters, List<String> arrayIdMaster) {
         LOGGER.debug("Method getMastersById");
-        LOGGER.trace("Parameter masters: {}", masters);
-        LOGGER.trace("Parameter arrayIdMaster: {}", arrayIdMaster);
+        LOGGER.trace("Parameter masters: {}, arrayIdMaster: {}", masters, arrayIdMaster);
         if (masters == null || arrayIdMaster == null) {
             throw new CsvException("argument is null");
         }
@@ -101,8 +97,7 @@ public class CsvOrder {
 
     private Place getPlaceById(List<Place> places, Long id) {
         LOGGER.debug("Method getPlaceById");
-        LOGGER.trace("Parameter places: {}", places);
-        LOGGER.trace("Parameter id: {}", id);
+        LOGGER.trace("Parameter places: {}, id: {}", places, id);
         if (places == null || id == null) {
             throw new CsvException("argument is null");
         }

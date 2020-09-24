@@ -142,8 +142,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
     @Override
     public List<Order> getCompletedOrdersSortByFilingDate(Date startPeriodDate, Date endPeriodDate) {
         LOGGER.debug("Method getCompletedOrdersSortByFilingDate");
-        LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
-        LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.trace("Parameters startPeriodDate: {}, endPeriodDate: {}", startPeriodDate, endPeriodDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
@@ -164,8 +163,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
     @Override
     public List<Order> getCompletedOrdersSortByExecutionDate(Date startPeriodDate, Date endPeriodDate) {
         LOGGER.debug("Method getCompletedOrdersSortByExecutionDate");
-        LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
-        LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.trace("Parameters startPeriodDate: {}, endPeriodDate: {}", startPeriodDate, endPeriodDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
@@ -186,8 +184,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
     @Override
     public List<Order> getCompletedOrdersSortByPrice(Date startPeriodDate, Date endPeriodDate) {
         LOGGER.debug("Method getCompletedOrdersSortByPrice");
-        LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
-        LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.trace("Parameter startPeriodDate: {}, endPeriodDate: {}", startPeriodDate, endPeriodDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
@@ -208,8 +205,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
     @Override
     public List<Order> getCanceledOrdersSortByFilingDate(Date startPeriodDate, Date endPeriodDate) {
         LOGGER.debug("Method getCanceledOrdersSortByFilingDate");
-        LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
-        LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.trace("Parameter startPeriodDate: {}, endPeriodDate: {}", startPeriodDate, endPeriodDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
@@ -230,8 +226,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
     @Override
     public List<Order> getCanceledOrdersSortByExecutionDate(Date startPeriodDate, Date endPeriodDate) {
         LOGGER.debug("Method getCanceledOrdersSortByExecutionDate");
-        LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
-        LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.trace("Parameter startPeriodDate: {}, endPeriodDate: {}", startPeriodDate, endPeriodDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
@@ -252,8 +247,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
     @Override
     public List<Order> getCanceledOrdersSortByPrice(Date startPeriodDate, Date endPeriodDate) {
         LOGGER.debug("Method getCanceledOrdersSortByPrice");
-        LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
-        LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.trace("Parameter startPeriodDate: {}, endPeriodDate: {}", startPeriodDate, endPeriodDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
@@ -274,8 +268,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
     @Override
     public List<Order> getDeletedOrdersSortByFilingDate(Date startPeriodDate, Date endPeriodDate) {
         LOGGER.debug("Method getDeletedOrdersSortByFilingDate");
-        LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
-        LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.trace("Parameter startPeriodDate: {}, endPeriodDate: {}", startPeriodDate, endPeriodDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
@@ -296,8 +289,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
     @Override
     public List<Order> getDeletedOrdersSortByExecutionDate(Date startPeriodDate, Date endPeriodDate) {
         LOGGER.debug("Method getDeletedOrdersSortByExecutionDate");
-        LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
-        LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.trace("Parameter startPeriodDate: {}, endPeriodDate: {}", startPeriodDate, endPeriodDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);
@@ -318,8 +310,7 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
     @Override
     public List<Order> getDeletedOrdersSortByPrice(Date startPeriodDate, Date endPeriodDate) {
         LOGGER.debug("Method getDeletedOrdersSortByPrice");
-        LOGGER.trace("Parameter startPeriodDate: {}", startPeriodDate);
-        LOGGER.trace("Parameter endPeriodDate: {}", endPeriodDate);
+        LOGGER.trace("Parameter startPeriodDate: {}, endPeriodDate: {}", startPeriodDate, endPeriodDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);

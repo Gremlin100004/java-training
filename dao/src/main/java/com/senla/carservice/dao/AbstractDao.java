@@ -39,8 +39,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     @Override
     public T findById(PK id) {
         LOGGER.debug("Method findById");
-        LOGGER.trace("Parameter type: {}", type);
-        LOGGER.trace("Parameter id: {}", id);
+        LOGGER.trace("Parameter type: {}, id: {}", type, id);
         T entity = entityManager.find(type, id);
         if (entity == null) {
             throw new DaoException("Error get record by id");

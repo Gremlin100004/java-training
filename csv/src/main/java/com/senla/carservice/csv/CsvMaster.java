@@ -46,8 +46,7 @@ public class CsvMaster {
 
     private Master getMasterFromCsv(String line, List<Order> orders) {
         LOGGER.debug("Method getMasterFromCsv");
-        LOGGER.trace("Parameter line: {}", line);
-        LOGGER.trace("Parameter orders: {}", orders);
+        LOGGER.trace("Parameter line: {}, orders: {}", line, orders);
         if (line == null) {
             throw new CsvException("argument is null");
         }
@@ -93,8 +92,7 @@ public class CsvMaster {
 
     public List<Order> getOrdersById(List<Order> orders, List<String> arrayIdOrder) {
         LOGGER.debug("Method getOrdersById");
-        LOGGER.trace("Parameter orders: {}", orders);
-        LOGGER.trace("Parameter arrayIdOrder: {}", arrayIdOrder);
+        LOGGER.trace("Parameter orders: {}, arrayIdOrder: {}", orders, arrayIdOrder);
         if (orders == null || arrayIdOrder == null) {
             throw new CsvException("argument is null");
         }

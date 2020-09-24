@@ -10,8 +10,7 @@ public class StringUtil {
 
     public static String fillStringSpace(String value, int lengthString) {
         LOGGER.debug("Method fillStringSpace");
-        LOGGER.trace("Parameter value: {}", value);
-        LOGGER.trace("Parameter lengthString: {}", lengthString);
+        LOGGER.trace("Parameter value: {}, lengthString: {}", value, lengthString);
         StringBuilder stringBuilder = new StringBuilder(value);
         if (value.length() < lengthString) {
             stringBuilder.append(REPEAT_SYMBOL.repeat(lengthString - value.length()));

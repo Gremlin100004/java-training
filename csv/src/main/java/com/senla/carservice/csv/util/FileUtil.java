@@ -23,8 +23,7 @@ public final class FileUtil {
 
     public static void saveCsv(List<String> arrayValue, String path) {
         LOGGER.debug("Method saveCsv");
-        LOGGER.trace("Parameter arrayValue: {}", arrayValue);
-        LOGGER.trace("Parameter path: {}", path);
+        LOGGER.trace("Parameter arrayValue: {}, path: {}", arrayValue, path);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             throw new CsvException("export problem");

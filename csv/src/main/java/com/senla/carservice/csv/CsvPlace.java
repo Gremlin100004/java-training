@@ -47,7 +47,7 @@ public class CsvPlace {
 
     private Place getPlaceFromCsv(String line) {
         LOGGER.debug("Method getPlaceFromCsv");
-        LOGGER.debug("Parameter line: {}", line);
+        LOGGER.trace("Parameter line: {}", line);
         if (line == null) {
             throw new CsvException("argument is null");
         }
@@ -62,7 +62,7 @@ public class CsvPlace {
 
     private String convertToCsv(Place place) {
         LOGGER.debug("Method convertToCsv");
-        LOGGER.debug("Parameter place: {}", place);
+        LOGGER.trace("Parameter place: {}", place);
         if (place == null) {
             throw new CsvException("argument is null");
         }

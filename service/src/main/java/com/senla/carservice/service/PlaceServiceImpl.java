@@ -38,7 +38,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional
     public void addPlace(Integer number) {
         LOGGER.debug("Method addPlace");
-        LOGGER.debug("Parameter number: {}", number);
+        LOGGER.trace("Parameter number: {}", number);
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
@@ -49,7 +49,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional
     public void deletePlace(Long idPlace) {
         LOGGER.debug("Method deletePlace");
-        LOGGER.debug("Parameter idPlace: {}", idPlace);
+        LOGGER.trace("Parameter idPlace: {}", idPlace);
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
@@ -68,7 +68,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional
     public Long getNumberFreePlaceByDate(Date startDayDate) {
         LOGGER.debug("Method getNumberFreePlaceByDate");
-        LOGGER.debug("Parameter startDayDate: {}", startDayDate);
+        LOGGER.trace("Parameter startDayDate: {}", startDayDate);
         return placeDao.getNumberFreePlaces(startDayDate);
     }
 
@@ -76,7 +76,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional
     public List<Place> getFreePlaceByDate(Date executeDate) {
         LOGGER.debug("Method getFreePlaceByDate");
-        LOGGER.debug("Parameter executeDate: {}", executeDate);
+        LOGGER.trace("Parameter executeDate: {}", executeDate);
         return placeDao.getFreePlaces(executeDate);
     }
 

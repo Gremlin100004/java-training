@@ -51,9 +51,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void addOrder(String automaker, String model, String registrationNumber) {
         LOGGER.debug("Method addOrder");
-        LOGGER.debug("Parameter automaker: {}", automaker);
-        LOGGER.debug("Parameter model: {}", model);
-        LOGGER.debug("Parameter registrationNumber: {}", registrationNumber);
+        LOGGER.trace("Parameter automaker: {}, model: {}, registrationNumber: {}", automaker, model, registrationNumber);
         checkMasters();
         checkPlaces();
         Order order = new Order(automaker, model, registrationNumber);
@@ -66,8 +64,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
         LOGGER.debug("Method addOrderDeadlines");
-        LOGGER.debug("Parameter executionStartTime: {}", executionStartTime);
-        LOGGER.debug("Parameter leadTime: {}", leadTime);
+        LOGGER.trace("Parameters executionStartTime: {}, leadTime: {}", executionStartTime, leadTime);
         DateUtil.checkDateTime(executionStartTime, leadTime, false);
         Order currentOrder = orderDao.getLastOrder();
         long numberFreeMasters = masterDao.getNumberFreeMasters(executionStartTime);
@@ -87,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void addOrderMasters(Long idMaster) {
         LOGGER.debug("Method addOrderMasters");
-        LOGGER.debug("Parameter idMaster: {}", idMaster);
+        LOGGER.trace("Parameter idMaster: {}", idMaster);
         Order currentOrder = orderDao.getLastOrder();
         Master master = masterDao.findById(idMaster);
         master.setNumberOrders(master.getNumberOrders() + 1);
@@ -107,7 +104,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void addOrderPlace(Long idPlace) {
         LOGGER.debug("Method addOrderPlace");
-        LOGGER.debug("Parameter idPlace: {}", idPlace);
+        LOGGER.trace("Parameter idPlace: {}", idPlace);
         Order currentOrder = orderDao.getLastOrder();
         currentOrder.setPlace(placeDao.findById(idPlace));
         orderDao.updateRecord(currentOrder);
@@ -117,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void addOrderPrice(BigDecimal price) {
         LOGGER.debug("Method addOrderPrice");
-        LOGGER.debug("Parameter price: {}", price);
+        LOGGER.trace("Parameter price: {}", price);
         Order currentOrder = orderDao.getLastOrder();
         currentOrder.setPrice(price);
         orderDao.updateRecord(currentOrder);
@@ -127,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void completeOrder(Long idOrder) {
         LOGGER.debug("Method completeOrder");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
+        LOGGER.trace("Parameter idOrder: {}", idOrder);
         Order order = orderDao.findById(idOrder);
         checkStatusOrder(order);
         order.setStatus(StatusOrder.PERFORM);
@@ -142,7 +139,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void cancelOrder(Long idOrder) {
         LOGGER.debug("Method cancelOrder");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
+        LOGGER.trace("Parameter idOrder: {}", idOrder);
         Order order = orderDao.findById(idOrder);
         checkStatusOrder(order);
         order.setLeadTime(new Date());
@@ -160,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void closeOrder(Long idOrder) {
         LOGGER.debug("Method closeOrder");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
+        LOGGER.trace("Parameter idOrder: {}", idOrder);
         Order order = orderDao.findById(idOrder);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(new Date());
@@ -178,7 +175,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void deleteOrder(Long idOrder) {
         LOGGER.debug("Method deleteOrder");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
+        LOGGER.trace("Parameter idOrder: {}", idOrder);
         if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
@@ -192,9 +189,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void shiftLeadTime(Long idOrder, Date executionStartTime, Date leadTime) {
         LOGGER.debug("Method shiftLeadTime");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
-        LOGGER.debug("Parameter executionStartTime: {}", executionStartTime);
-        LOGGER.debug("Parameter leadTime: {}", leadTime);
+        LOGGER.trace("Parameter idOrder: {}, executionStartTime: {}, leadTime: {}", idOrder, executionStartTime, leadTime);
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
@@ -210,7 +205,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public List<Order> getSortOrders(SortParameter sortParameter) {
         LOGGER.debug("Method getSortOrders");
-        LOGGER.debug("Parameter sortParameter: {}", sortParameter);
+        LOGGER.trace("Parameter sortParameter: {}", sortParameter);
         List<Order> orders = new ArrayList<>();
         if (sortParameter.equals(SortParameter.SORT_BY_FILING_DATE)) {
             orders = orderDao.getOrdersSortByFilingDate();
@@ -235,9 +230,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public List<Order> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter) {
         LOGGER.debug("Method getSortOrdersByPeriod");
-        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
-        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
-        LOGGER.debug("Parameter sortParameter: {}", sortParameter);
+        LOGGER.trace("Parameters startPeriodDate: {}, endPeriodDate: {}, sortParameter: {}",
+            startPeriodDate, endPeriodDate, sortParameter);
         List<Order> orders = new ArrayList<>();
         DateUtil.checkDateTime(startPeriodDate, endPeriodDate, true);
         if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE)) {
@@ -266,7 +260,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public List<Order> getMasterOrders(Long idMaster) {
         LOGGER.debug("Method getMasterOrders");
-        LOGGER.debug("Parameter idMaster: {}", idMaster);
+        LOGGER.trace("Parameter idMaster: {}", idMaster);
         return orderDao.getMasterOrders(masterDao.findById(idMaster));
     }
 
@@ -274,7 +268,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public List<Master> getOrderMasters(Long idOrder) {
         LOGGER.debug("Method getOrderMasters");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
+        LOGGER.trace("Parameter idOrder: {}", idOrder);
         return orderDao.getOrderMasters(orderDao.findById(idOrder));
     }
 
@@ -301,7 +295,7 @@ public class OrderServiceImpl implements OrderService {
 
     private void checkStatusOrder(Order order) {
         LOGGER.debug("Method checkStatusOrder");
-        LOGGER.debug("Parameter order: {}", order);
+        LOGGER.trace("Parameter order: {}", order);
         if (order.isDeleteStatus()) {
             throw new BusinessException("The order has been deleted");
         }
@@ -318,7 +312,7 @@ public class OrderServiceImpl implements OrderService {
 
     private void checkStatusOrderShiftTime(Order order) {
         LOGGER.debug("Method checkStatusOrderShiftTime");
-        LOGGER.debug("Parameter order: {}", order);
+        LOGGER.trace("Parameter order: {}", order);
         if (order.isDeleteStatus()) {
             throw new BusinessException("The order has been deleted");
         }
@@ -331,7 +325,7 @@ public class OrderServiceImpl implements OrderService {
     }
     private void checkStatusOrderToDelete(Order order) {
         LOGGER.debug("Method checkStatusOrderToDelete");
-        LOGGER.debug("Parameter order: {}", order);
+        LOGGER.trace("Parameter order: {}", order);
         if (order.isDeleteStatus()) {
             throw new BusinessException("The order has been deleted");
         }

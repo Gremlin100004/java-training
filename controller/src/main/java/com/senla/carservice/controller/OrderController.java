@@ -31,9 +31,7 @@ public class OrderController {
 
     public String addOrder(String automaker, String model, String registrationNumber) {
         LOGGER.info("Method addOrder");
-        LOGGER.trace("Parameter automaker: {}", automaker);
-        LOGGER.trace("Parameter model: {}", model);
-        LOGGER.trace("Parameter registrationNumber: {}", registrationNumber);
+        LOGGER.trace("Parameters automaker: {}, model: {}, registrationNumber: {}", automaker, model, registrationNumber);
         try {
             orderService.addOrder(automaker, model, registrationNumber);
             return "order add successfully!";
@@ -45,8 +43,8 @@ public class OrderController {
 
     public String addOrderDeadlines(String stringExecutionStartTime, String stringLeadTime) {
         LOGGER.info("Method addOrderDeadlines");
-        LOGGER.trace("Parameter stringExecutionStartTime: {}", stringExecutionStartTime);
-        LOGGER.trace("Parameter stringLeadTime: {}", stringLeadTime);
+        LOGGER.trace("Parameter stringExecutionStartTime: {}, stringLeadTime: {}",
+            stringExecutionStartTime, stringLeadTime);
         try {
             Date executionStartTime = DateUtil.getDatesFromString(stringExecutionStartTime, true);
             Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
@@ -176,9 +174,8 @@ public class OrderController {
 
     public String shiftLeadTime(Long idOrder, String stringStartTime, String stringLeadTime) {
         LOGGER.info("Method shiftLeadTime");
-        LOGGER.trace("Parameter index: {}", idOrder);
-        LOGGER.trace("Parameter stringStartTime: {}", stringStartTime);
-        LOGGER.trace("Parameter stringLeadTime: {}", stringLeadTime);
+        LOGGER.trace("Parameters index: {}, stringStartTime: {}, stringLeadTime: {}",
+            idOrder, stringStartTime, stringLeadTime);
         try {
             Date executionStartTime = DateUtil.getDatesFromString(stringStartTime, true);
             Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
@@ -258,8 +255,7 @@ public class OrderController {
 
     public String getCompletedOrdersFilingDate(String startPeriod, String endPeriod) {
         LOGGER.info("Method getCompletedOrdersFilingDate");
-        LOGGER.trace("Parameter startPeriod: {}", startPeriod);
-        LOGGER.trace("Parameter endPeriod: {}", endPeriod);
+        LOGGER.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
@@ -273,8 +269,7 @@ public class OrderController {
 
     public String getCompletedOrdersExecutionDate(String startPeriod, String endPeriod) {
         LOGGER.info("Method getCompletedOrdersExecutionDate");
-        LOGGER.trace("Parameter startPeriod: {}", startPeriod);
-        LOGGER.trace("Parameter endPeriod: {}", endPeriod);
+        LOGGER.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
@@ -288,8 +283,7 @@ public class OrderController {
 
     public String getCompletedOrdersPrice(String startPeriod, String endPeriod) {
         LOGGER.info("Method getCompletedOrdersPrice");
-        LOGGER.debug("Parameter startPeriod: {}", startPeriod);
-        LOGGER.debug("Parameter endPeriod: {}", endPeriod);
+        LOGGER.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
@@ -303,8 +297,7 @@ public class OrderController {
 
     public String getCanceledOrdersFilingDate(String startPeriod, String endPeriod) {
         LOGGER.info("Method getCanceledOrdersFilingDate");
-        LOGGER.debug("Parameter startPeriod: {}", startPeriod);
-        LOGGER.debug("Parameter endPeriod: {}", endPeriod);
+        LOGGER.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
@@ -318,8 +311,7 @@ public class OrderController {
 
     public String getCanceledOrdersExecutionDate(String startPeriod, String endPeriod) {
         LOGGER.info("Method getCanceledOrdersExecutionDate");
-        LOGGER.debug("Parameter startPeriod: {}", startPeriod);
-        LOGGER.debug("Parameter endPeriod: {}", endPeriod);
+        LOGGER.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
@@ -333,8 +325,7 @@ public class OrderController {
 
     public String getCanceledOrdersPrice(String startPeriod, String endPeriod) {
         LOGGER.info("Method getCanceledOrdersPrice");
-        LOGGER.debug("Parameter startPeriod: {}", startPeriod);
-        LOGGER.debug("Parameter endPeriod: {}", endPeriod);
+        LOGGER.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
@@ -348,8 +339,7 @@ public class OrderController {
 
     public String getDeletedOrdersFilingDate(String startPeriod, String endPeriod) {
         LOGGER.info("Method getDeletedOrdersFilingDate");
-        LOGGER.debug("Parameter startPeriod: {}", startPeriod);
-        LOGGER.debug("Parameter endPeriod: {}", endPeriod);
+        LOGGER.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
@@ -363,8 +353,7 @@ public class OrderController {
 
     public String getDeletedOrdersExecutionDate(String startPeriod, String endPeriod) {
         LOGGER.info("Method getDeletedOrdersExecutionDate");
-        LOGGER.debug("Parameter startPeriod: {}", startPeriod);
-        LOGGER.debug("Parameter endPeriod: {}", endPeriod);
+        LOGGER.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
@@ -378,8 +367,7 @@ public class OrderController {
 
     public String getDeletedOrdersPrice(String startPeriod, String endPeriod) {
         LOGGER.info("Method getDeletedOrdersPrice");
-        LOGGER.debug("Parameter startPeriod: {}", startPeriod);
-        LOGGER.debug("Parameter endPeriod: {}", endPeriod);
+        LOGGER.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
@@ -393,7 +381,7 @@ public class OrderController {
 
     public String getMasterOrders(Long idMaster) {
         LOGGER.info("Method getMasterOrders");
-        LOGGER.debug("Parameter idOrder: {}", idMaster);
+        LOGGER.trace("Parameter idOrder: {}", idMaster);
         try {
             return StringOrder.getStringFromOrder(orderService.getMasterOrders(idMaster));
         } catch (BusinessException | DaoException e) {
@@ -404,7 +392,7 @@ public class OrderController {
 
     public String getOrderMasters(Long idOrder) {
         LOGGER.info("Method getOrderMasters");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
+        LOGGER.trace("Parameter idOrder: {}", idOrder);
         try {
             return StringMaster.getStringFromMasters(orderService.getOrderMasters(idOrder));
         } catch (BusinessException | DaoException e) {
