@@ -1,5 +1,11 @@
 package com.senla.carservice.ui.menu;
 
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum MenuTittle {
 
     CAR_SERVICE_MENU("Car Service Menu"),
@@ -52,13 +58,6 @@ public enum MenuTittle {
     SORT_BY_EXECUTION_DATE("Sort by execution date"),
     SORT_BY_PRICE("Sort by price");
 
-    private String value;
-
-    MenuTittle(final String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
+    @NonNull
+    private final String value;
 }

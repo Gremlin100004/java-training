@@ -88,7 +88,7 @@ class PlaceServiceImplTest {
     void PlaceServiceImpl_deletePlace_placeIsBusy() {
         Place place = getTestPlace();
         Mockito.doReturn(place).when(placeDao).findById(ID_PLACE);
-        place.setBusy(true);
+        place.setIsBusy(true);
 
         Assertions.assertThrows(BusinessException.class, () -> placeService.deletePlace(ID_PLACE));
         Mockito.verify(placeDao, Mockito.times(1)).findById(ID_PLACE);

@@ -5,6 +5,7 @@ import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Order_;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.Place_;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
@@ -16,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
 
     public PlaceDaoImpl() {
@@ -24,8 +26,8 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
 
     @Override
     public List<Place> getFreePlaces(Date executeDate) {
-        LOGGER.debug("Method getFreePlaces");
-        LOGGER.trace("Parameter executeDate: {}", executeDate);
+        log.debug("Method getFreePlaces");
+        log.trace("Parameter executeDate: {}", executeDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Place> criteriaQuery = criteriaBuilder.createQuery(Place.class);
         Root<Place> placeRoot = criteriaQuery.from(Place.class);
@@ -46,8 +48,8 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
 
     @Override
     public Long getNumberFreePlaces(Date executeDate) {
-        LOGGER.debug("Method getFreePlaces");
-        LOGGER.trace("Parameter executeDate: {}", executeDate);
+        log.debug("Method getFreePlaces");
+        log.trace("Parameter executeDate: {}", executeDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Place> placeRoot = criteriaQuery.from(Place.class);
@@ -63,7 +65,7 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
 
     @Override
     public Long getNumberPlaces() {
-        LOGGER.debug("Method getNumberPlaces");
+        log.debug("Method getNumberPlaces");
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Place> placeRoot = criteriaQuery.from(Place.class);

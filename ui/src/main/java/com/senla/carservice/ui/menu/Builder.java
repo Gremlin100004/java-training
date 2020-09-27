@@ -1,5 +1,6 @@
 package com.senla.carservice.ui.menu;
 
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.senla.carservice.controller.CarOfficeController;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@NoArgsConstructor
 public class Builder {
 
     private static final int INDEX_OFFSET = 1;
@@ -28,9 +30,6 @@ public class Builder {
     private OrderController orderController;
     @Autowired
     private PlaceController placeController;
-
-    public Builder() {
-    }
 
     public void buildMenu() {
         this.rootMenu = new Menu(MenuTittle.CAR_SERVICE_MENU.getValue());

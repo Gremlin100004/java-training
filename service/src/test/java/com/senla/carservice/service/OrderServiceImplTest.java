@@ -382,7 +382,7 @@ class OrderServiceImplTest {
 
         Assertions.assertDoesNotThrow(() -> orderService.completeOrder(ID_PLACE));
         Assertions.assertEquals(StatusOrder.PERFORM, order.getStatus());
-        Assertions.assertEquals(true, order.getPlace().getBusy());
+        Assertions.assertEquals(true, order.getPlace().getIsBusy());
         Assertions.assertNotNull(order.getExecutionStartTime());
         Mockito.verify(orderDao, Mockito.times(1)).findById(ID_ORDER);
         Mockito.verify(placeDao, Mockito.times(1)).updateRecord(place);
@@ -471,7 +471,7 @@ class OrderServiceImplTest {
         master.setNumberOrders(NUMBER_ORDERS);
         List<Master> masters = Collections.singletonList(master);
         Place place = getTestPlace();
-        place.setBusy(true);
+        place.setIsBusy(true);
         Order order = getTestOrder();
         order.setPlace(place);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
@@ -479,7 +479,7 @@ class OrderServiceImplTest {
 
         Assertions.assertDoesNotThrow(() -> orderService.cancelOrder(ID_PLACE));
         Assertions.assertEquals(StatusOrder.CANCELED, order.getStatus());
-        Assertions.assertEquals(false, order.getPlace().getBusy());
+        Assertions.assertEquals(false, order.getPlace().getIsBusy());
         Assertions.assertNotNull(order.getLeadTime());
         Assertions.assertEquals(UPDATE_NUMBER_ORDERS, master.getNumberOrders());
         Mockito.verify(orderDao, Mockito.times(1)).findById(ID_ORDER);
@@ -599,7 +599,7 @@ class OrderServiceImplTest {
 
         Assertions.assertDoesNotThrow(() -> orderService.closeOrder(ID_PLACE));
         Assertions.assertEquals(StatusOrder.COMPLETED, order.getStatus());
-        Assertions.assertEquals(false, order.getPlace().getBusy());
+        Assertions.assertEquals(false, order.getPlace().getIsBusy());
         Assertions.assertNotNull(order.getLeadTime());
         Assertions.assertEquals(UPDATE_NUMBER_ORDERS, master.getNumberOrders());
         Mockito.verify(orderDao, Mockito.times(1)).findById(ID_ORDER);

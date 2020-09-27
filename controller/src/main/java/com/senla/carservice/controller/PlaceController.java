@@ -7,8 +7,8 @@ import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.exception.DateException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -17,52 +17,50 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
+@NoArgsConstructor
+@Slf4j
 public class PlaceController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlaceController.class);
+    
     @Autowired
     private PlaceService placeService;
 
-    public PlaceController() {
-    }
-
     public String addPlace(int number) {
-        LOGGER.info("Method addPlace");
-        LOGGER.trace("Parameter number: {}", number);
+        log.info("Method addPlace");
+        log.trace("Parameter number: {}", number);
         try {
             placeService.addPlace(number);
             return "-place \"" + number + "\" has been added to service";
         } catch (BusinessException | DaoException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public String checkPlaces() {
-        LOGGER.info("Method checkPlaces");
+        log.info("Method checkPlaces");
         try {
             if (placeService.getNumberPlace() == 0) {
                 throw new  BusinessException("There are no places");
             }
             return "verification was successfully";
         } catch (BusinessException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public String getPlaces() {
-        LOGGER.info("Method getArrayPlace");
+        log.info("Method getArrayPlace");
         try {
             return StringPlaces.getStringFromPlaces(placeService.getPlaces());
         } catch (BusinessException | DaoException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public List<String> getPlacesWithId() {
-        LOGGER.info("Method getArrayPlace");
+        log.info("Method getArrayPlace");
         List<String> stringList = new ArrayList<>();
         try {
             List<Place> places = placeService.getPlaces();
@@ -70,27 +68,27 @@ public class PlaceController {
             stringList.addAll(StringPlaces.getListId(places));
             return stringList;
         } catch (BusinessException | DaoException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             stringList.add(e.getMessage());
             return stringList;
         }
     }
 
     public String deletePlace(Long idPlace) {
-        LOGGER.info("Method deletePlace");
-        LOGGER.trace("Parameter idPlace: {}", idPlace);
+        log.info("Method deletePlace");
+        log.trace("Parameter idPlace: {}", idPlace);
         try {
             placeService.deletePlace(idPlace);
             return " -delete place in service successfully";
         } catch (BusinessException | DaoException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public List<String> getFreePlacesByDate(String stringExecuteDate) {
-        LOGGER.info("Method getFreePlacesByDate");
-        LOGGER.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
+        log.info("Method getFreePlacesByDate");
+        log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
         List<String> stringList = new ArrayList<>();
         try {
             Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
@@ -99,7 +97,7 @@ public class PlaceController {
             stringList.addAll(StringPlaces.getListId(places));
             return stringList;
         } catch (BusinessException | DateException | DaoException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             stringList.add(e.getMessage());
             return stringList;
         }

@@ -1,8 +1,8 @@
 package com.senla.carservice.csv.util;
 
 import com.senla.carservice.csv.exception.CsvException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,16 +14,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
+@Slf4j
 public final class FileUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
-
-    private FileUtil() {
-    }
-
     public static void saveCsv(List<String> arrayValue, String path) {
-        LOGGER.debug("Method saveCsv");
-        LOGGER.trace("Parameter arrayValue: {}, path: {}", arrayValue, path);
+        log.debug("Method saveCsv");
+        log.trace("Parameter arrayValue: {}, path: {}", arrayValue, path);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             throw new CsvException("export problem");
@@ -35,14 +32,14 @@ public final class FileUtil {
         try (PrintStream printStream = new PrintStream(new FileOutputStream(String.valueOf(Path.of(url.toURI()))))) {
             arrayValue.forEach(printStream::println);
         } catch (IOException | URISyntaxException e) {
-            LOGGER.error(e.getMessage());
+            log.error(e.getMessage());
             throw new CsvException("export problem");
         }
     }
 
     public static List<String> getCsv(String path) {
-        LOGGER.debug("Method getCsv");
-        LOGGER.trace("Parameter path: {}", path);
+        log.debug("Method getCsv");
+        log.trace("Parameter path: {}", path);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         List<String> csvLines = new ArrayList<>();
         if (classLoader == null) {
@@ -55,7 +52,7 @@ public final class FileUtil {
         try {
             return Files.readAllLines(Path.of(url.toURI()));
         } catch (IOException | URISyntaxException e) {
-            LOGGER.error(e.getMessage());
+            log.error(e.getMessage());
             throw new CsvException("import problem");
         }
     }

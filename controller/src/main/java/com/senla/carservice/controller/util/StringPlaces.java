@@ -54,7 +54,7 @@ public class StringPlaces {
                 stringBuilder.append(SPLIT_COLUMNS)
                     .append(StringUtil.fillStringSpace(String.valueOf(places.get(i).getNumber()),
                                                        LENGTH_SPACE_SECOND_COLUMN));
-                stringBuilder.append(SPLIT_COLUMNS).append(places.get(i).getBusy() ?
+                stringBuilder.append(SPLIT_COLUMNS).append(places.get(i).getIsBusy() ?
                                                            StringUtil.fillStringSpace(STATUS_ONE, LENGTH_SPACE_THIRD_COLUMN) :
                                                            StringUtil.fillStringSpace(STATUS_TWO, LENGTH_SPACE_THIRD_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS)

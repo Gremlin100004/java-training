@@ -2,8 +2,7 @@ package com.senla.carservice.dao;
 
 import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.AEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,9 +13,9 @@ import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.List;
 
+@Slf4j
 public abstract class AbstractDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, PK> {
-
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    
     private Class<T> type;
     @PersistenceContext
     protected EntityManager entityManager;
@@ -31,15 +30,15 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public void saveRecord(T entity) {
-        LOGGER.debug("Method saveRecord");
-        LOGGER.trace("Parameter entity: {}", entity);
+        log.debug("Method saveRecord");
+        log.trace("Parameter entity: {}", entity);
         entityManager.persist(entity);
     }
 
     @Override
     public T findById(PK id) {
-        LOGGER.debug("Method findById");
-        LOGGER.trace("Parameter type: {}, id: {}", type, id);
+        log.debug("Method findById");
+        log.trace("Parameter type: {}, id: {}", type, id);
         T entity = entityManager.find(type, id);
         if (entity == null) {
             throw new DaoException("Error get record by id");
@@ -49,8 +48,8 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public List<T> getAllRecords() {
-        LOGGER.debug("Method getAllRecords");
-        LOGGER.trace("Parameter type: {}", type);
+        log.debug("Method getAllRecords");
+        log.trace("Parameter type: {}", type);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(type);
         Root<T> root = criteriaQuery.from(type);
@@ -65,15 +64,15 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public void updateRecord(T entity) {
-        LOGGER.debug("Method updateRecord");
-        LOGGER.trace("Parameter entity: {}", entity);
+        log.debug("Method updateRecord");
+        log.trace("Parameter entity: {}", entity);
         entityManager.merge(entity);
     }
 
     @Override
     public void updateAllRecords(List<T> entities) {
-        LOGGER.debug("Method updateAllRecords");
-        LOGGER.trace("Parameter entities: {}", entities);
+        log.debug("Method updateAllRecords");
+        log.trace("Parameter entities: {}", entities);
         for (T entity : entities) {
             entityManager.merge(entity);
         }
@@ -81,8 +80,8 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public void deleteRecord(PK id) {
-        LOGGER.debug("Method deleteRecord");
-        LOGGER.trace("Parameter id: {}", id);
+        log.debug("Method deleteRecord");
+        log.trace("Parameter id: {}", id);
         entityManager.remove(id);
     }
 }

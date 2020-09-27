@@ -6,8 +6,8 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -15,17 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@NoArgsConstructor
+@Slf4j
 public class MasterController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MasterController.class);
     @Autowired
     private MasterService masterService;
 
-    public MasterController() {
-    }
-
     public List<String> getMasters() {
-        LOGGER.info("Method getMasters");
+        log.info("Method getMasters");
         List<String> stringList = new ArrayList<>();
         try {
             List<Master> masters = masterService.getMasters();
@@ -33,72 +31,72 @@ public class MasterController {
             stringList.addAll(StringMaster.getListId(masters));
             return stringList;
         } catch (BusinessException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             stringList.add(e.getMessage());
             return stringList;
         }
     }
 
     public String addMaster(String name) {
-        LOGGER.info("Method addMaster");
-        LOGGER.trace("Parameter name: {}", name);
+        log.info("Method addMaster");
+        log.trace("Parameter name: {}", name);
         try {
             masterService.addMaster(name);
             return " -master \"" + name + "\" has been added to service.";
         } catch (BusinessException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public String checkMasters() {
-        LOGGER.info("Method checkMasters");
+        log.info("Method checkMasters");
         try {
             if (masterService.getNumberMasters() == 0) {
                 throw new  BusinessException("There are no masters");
             }
             return "verification was successfully";
         } catch (BusinessException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public String deleteMaster(Long idMaster) {
-        LOGGER.info("Method deleteMaster");
-        LOGGER.trace("Parameter index: {}", idMaster);
+        log.info("Method deleteMaster");
+        log.trace("Parameter index: {}", idMaster);
         try {
             masterService.deleteMaster(idMaster);
             return " -master has been deleted successfully!";
         } catch (BusinessException | DaoException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public String getMasterByAlphabet() {
-        LOGGER.info("Method getMasterByAlphabet");
+        log.info("Method getMasterByAlphabet");
         try {
             return StringMaster.getStringFromMasters(masterService.getMasterByAlphabet());
         } catch (BusinessException | DaoException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public String getMasterByBusy() {
-        LOGGER.info("Method getMasterByBusy");
+        log.info("Method getMasterByBusy");
         try {
             return StringMaster.getStringFromMasters(masterService.getMasterByBusy());
         } catch (BusinessException | DaoException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public List<String> getFreeMasters(String stringExecuteDate) {
-        LOGGER.info("Method getFreeMasters");
-        LOGGER.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
+        log.info("Method getFreeMasters");
+        log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
         List<String> stringList = new ArrayList<>();
         try {
             List<Master> masters = masterService.getFreeMastersByDate(
@@ -107,7 +105,7 @@ public class MasterController {
             stringList.addAll(StringMaster.getListId(masters));
             return stringList;
         } catch (BusinessException | DaoException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             stringList.add(e.getMessage());
             return stringList;
         }

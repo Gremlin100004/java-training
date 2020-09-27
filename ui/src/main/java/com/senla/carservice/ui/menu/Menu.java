@@ -1,9 +1,19 @@
 package com.senla.carservice.ui.menu;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Menu {
 
     private static final String EXIT_MENU = "0. Exit program\n---------------";
@@ -12,31 +22,9 @@ public class Menu {
     private static final String LINE_SEPARATOR = "~";
     private static final String START_OF_MENU_BAR = ". ";
     private static final int INDEX_ADDITION = 1;
+    @NonNull
     private String name;
     private List<MenuItem> menuItems = new ArrayList<>();
-
-    public Menu() {
-    }
-
-    public Menu(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<MenuItem> getMenuItems() {
-        return menuItems;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setMenuItems(List<MenuItem> menuItems) {
-        this.menuItems = menuItems;
-    }
 
     @Override
     public String toString() {

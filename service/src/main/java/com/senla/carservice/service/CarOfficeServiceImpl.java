@@ -11,8 +11,8 @@ import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +21,11 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@NoArgsConstructor
+@Slf4j
 public class CarOfficeServiceImpl implements CarOfficeService {
 
     private static final int NUMBER_DAY = 1;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeServiceImpl.class);
     @Autowired
     private MasterDao masterDao;
     @Autowired
@@ -38,13 +39,10 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Autowired
     private CsvMaster csvMaster;
 
-    public CarOfficeServiceImpl() {
-    }
-
     @Override
     @Transactional
     public Date getNearestFreeDate() {
-        LOGGER.debug("Method getNearestFreeDate");
+        log.debug("Method getNearestFreeDate");
         checkMasters();
         checkPlaces();
         checkOrders();
@@ -65,7 +63,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     @Transactional
     public void importEntities() {
-        LOGGER.debug("Method importEntities");
+        log.debug("Method importEntities");
         masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords()));
         placeDao.updateAllRecords(csvPlace.importPlaces());
         orderDao.updateAllRecords(csvOrder.importOrder(masterDao.getAllRecords(), placeDao.getAllRecords()));
@@ -74,7 +72,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     @Transactional
     public void exportEntities() {
-        LOGGER.debug("Method exportEntities");
+        log.debug("Method exportEntities");
         List<Order> orders = orderDao.getAllRecords();
         List<Master> masters = masterDao.getAllRecords();
         List<Place> places = placeDao.getAllRecords();
@@ -84,21 +82,21 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     private void checkMasters() {
-        LOGGER.debug("Method checkMasters");
+        log.debug("Method checkMasters");
         if (masterDao.getNumberMasters() == 0) {
             throw new BusinessException("There are no masters");
         }
     }
 
     private void checkPlaces() {
-        LOGGER.debug("Method checkPlaces");
+        log.debug("Method checkPlaces");
         if (placeDao.getNumberPlaces() == 0) {
             throw new BusinessException("There are no places");
         }
     }
 
     private void checkOrders() {
-        LOGGER.debug("Method checkOrders");
+        log.debug("Method checkOrders");
         if (orderDao.getNumberOrders() == 0) {
             throw new BusinessException("There are no orders");
         }

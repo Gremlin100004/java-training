@@ -1,57 +1,30 @@
 package com.senla.carservice.domain;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "places")
-
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Place extends AEntity {
 
     @Column(name = "number")
+    @NonNull
     private Integer number;
     @Column(name = "is_busy")
-    private Boolean isBusy;
+    private Boolean isBusy = false;
     @Column(name = "is_deleted")
-    private Boolean deleteStatus;
-
-
-    public Place() {
-    }
-
-    public Place(Integer number) {
-        this.number = number;
-        this.isBusy = false;
-        this.deleteStatus = false;
-    }
-
-    public Integer getNumber() {
-        return number;
-    }
-
-    public Boolean getBusy() {
-        return isBusy;
-    }
-
-    public Boolean getDeleteStatus() {
-        return deleteStatus;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
-    public void setBusy(Boolean isBusy) {
-        this.isBusy = isBusy;
-    }
-
-    public void setDeleteStatus(Boolean delete) {
-        deleteStatus = delete;
-    }
-
-    @Override
-    public String toString() {
-        return "Place{" + "number=" + number + ", isBusy=" + isBusy + ", isDelete=" + deleteStatus + '}';
-    }
+    private Boolean deleteStatus = false;
 }

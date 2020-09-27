@@ -1,33 +1,31 @@
 package com.senla.carservice.csv;
 
-import com.senla.carservice.domain.Place;
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Value;
 import com.senla.carservice.csv.exception.CsvException;
 import com.senla.carservice.csv.util.FileUtil;
 import com.senla.carservice.csv.util.ParameterUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.senla.carservice.domain.Place;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@NoArgsConstructor
+@Slf4j
 public class CsvPlace {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CsvPlace.class);
+    
     @Value("${com.senla.carservice.csv.CsvPlace.placePath:place.csv}")
     private String placePath;
     @Value("${com.senla.carservice.csv.CsvPlace.fieldSeparator:|}")
     private String fieldSeparator;
 
-    public CsvPlace() {
-    }
-
     public void exportPlaces(List<Place> places) {
-        LOGGER.debug("Method exportPlaces");
-        LOGGER.trace("Parameter places: {}", places);
+        log.debug("Method exportPlaces");
+        log.trace("Parameter places: {}", places);
         if (places == null) {
             throw new CsvException("argument is null");
         }
@@ -38,7 +36,7 @@ public class CsvPlace {
     }
 
     public List<Place> importPlaces() {
-        LOGGER.debug("Method importPlaces");
+        log.debug("Method importPlaces");
         List<String> csvLinesPlace = FileUtil.getCsv(placePath);
         return csvLinesPlace.stream()
             .map(this::getPlaceFromCsv)
@@ -46,8 +44,8 @@ public class CsvPlace {
     }
 
     private Place getPlaceFromCsv(String line) {
-        LOGGER.debug("Method getPlaceFromCsv");
-        LOGGER.trace("Parameter line: {}", line);
+        log.debug("Method getPlaceFromCsv");
+        log.trace("Parameter line: {}", line);
         if (line == null) {
             throw new CsvException("argument is null");
         }
@@ -55,14 +53,14 @@ public class CsvPlace {
         Place place = new Place();
         place.setId(ParameterUtil.getValueLong(values.get(0)));
         place.setNumber(ParameterUtil.getValueInteger(values.get(1)));
-        place.setBusy(ParameterUtil.getValueBoolean(values.get(2)));
+        place.setIsBusy(ParameterUtil.getValueBoolean(values.get(2)));
         place.setDeleteStatus(ParameterUtil.getValueBoolean(values.get(3)));
         return place;
     }
 
     private String convertToCsv(Place place) {
-        LOGGER.debug("Method convertToCsv");
-        LOGGER.trace("Parameter place: {}", place);
+        log.debug("Method convertToCsv");
+        log.trace("Parameter place: {}", place);
         if (place == null) {
             throw new CsvException("argument is null");
         }
@@ -70,7 +68,7 @@ public class CsvPlace {
                fieldSeparator +
                place.getNumber() +
                fieldSeparator +
-               place.getBusy() +
+               place.getIsBusy() +
                fieldSeparator +
                place.getDeleteStatus();
     }

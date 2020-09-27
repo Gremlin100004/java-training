@@ -8,17 +8,18 @@ import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.exception.DateException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.Date;
 
 @Controller
+@NoArgsConstructor
+@Slf4j
 public class CarOfficeController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CarOfficeController.class);
+    
     @Autowired
     private CarOfficeService carOfficeService;
     @Autowired
@@ -26,12 +27,9 @@ public class CarOfficeController {
     @Autowired
     private PlaceService placeService;
 
-    public CarOfficeController() {
-    }
-
     public String getFreePlacesMastersByDate(String date) {
-        LOGGER.info("Method getFreePlacesMastersByDate");
-        LOGGER.trace("Parameter date: {}", date);
+        log.info("Method getFreePlacesMastersByDate");
+        log.trace("Parameter date: {}", date);
         Date dateFree = DateUtil.getDatesFromString(date, false);
         if (dateFree == null) {
             return "error date";
@@ -43,39 +41,39 @@ public class CarOfficeController {
             return "- number free places in service: " + numberFreePlace + "\n- number free masters in service: " +
                    numberFreeMasters;
         } catch (BusinessException | DateException | DaoException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public String getNearestFreeDate() {
-        LOGGER.info("Method getNearestFreeDate");
+        log.info("Method getNearestFreeDate");
         try {
             return "Nearest free date: " + DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false);
         } catch (BusinessException | DateException | DaoException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public String exportEntities() {
-        LOGGER.info("Method exportEntities");
+        log.info("Method exportEntities");
         try {
             carOfficeService.exportEntities();
             return "Export completed successfully!";
         } catch (BusinessException | CsvException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
 
     public String importEntities() {
-        LOGGER.info("Method importEntities");
+        log.info("Method importEntities");
         try {
             carOfficeService.importEntities();
             return "Imported completed successfully!";
         } catch (BusinessException | CsvException e) {
-            LOGGER.warn(e.getMessage());
+            log.warn(e.getMessage());
             return e.getMessage();
         }
     }
