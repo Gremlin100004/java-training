@@ -74,7 +74,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getOrders_daoException() {
+    void OrderServiceImpl_getOrders_orderDao_getAllRecords_emptyRecords() {
         Mockito.doThrow(DaoException.class).when(orderDao).getAllRecords();
         Assertions.assertThrows(DaoException.class, () -> orderService.getOrders());
         Mockito.verify(orderDao, Mockito.times(1)).getAllRecords();
@@ -100,7 +100,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrder_masterDao_getNumberMasters_businessException() {
+    void OrderServiceImpl_addOrder_masterDao_getNumberMasters_zeroNumberOfMasters() {
         Mockito.doReturn(WRONG_NUMBER_MASTERS).when(masterDao).getNumberMasters();
 
         Assertions.assertThrows(BusinessException.class,
@@ -113,7 +113,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrder_placeDao_getNumberMasters_businessException() {
+    void OrderServiceImpl_addOrder_placeDao_getNumberPlaces_zeroNumberOfPlaces() {
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
         Mockito.doReturn(WRONG_NUMBER_PLACES).when(placeDao).getNumberPlaces();
 
@@ -128,7 +128,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrder_placeDao_findById_daoException() {
+    void OrderServiceImpl_addOrder_placeDao_findById_wrongId() {
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
         Mockito.doThrow(DaoException.class).when(placeDao).findById(ID_PLACE);
@@ -165,7 +165,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrderDeadlines_dateException() {
+    void OrderServiceImpl_addOrderDeadlines_wrongDate() {
         Date wrongExecutionStartTime = new Date();
         Date leadTime = DateUtil.addDays(new Date(), 2);
         Order order = getTestOrder();
@@ -179,7 +179,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrderDeadlines_orderDao_getLastOrder_daoException() {
+    void OrderServiceImpl_addOrderDeadlines_orderDao_getLastOrder_orderDoesNotExist() {
         Order order = getTestOrder();
         Date executionStartTime = DateUtil.addDays(new Date(), 1);
         Date leadTime = DateUtil.addDays(new Date(), 2);
@@ -194,7 +194,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrderDeadlines_businessException_numberFreeMasters() {
+    void OrderServiceImpl_addOrderDeadlines_zeroNumberOfMasters() {
         Date executionStartTime = DateUtil.addDays(new Date(), 1);
         Date leadTime = DateUtil.addDays(new Date(), 2);
         Order order = getTestOrder();
@@ -213,7 +213,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrderDeadlines_businessException_numberFreePlaces() {
+    void OrderServiceImpl_addOrderDeadlines_businessException_zeroNumberOfPlaces() {
         Date executionStartTime = DateUtil.addDays(new Date(), 1);
         Date leadTime = DateUtil.addDays(new Date(), 2);
         Order order = getTestOrder();
@@ -250,7 +250,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrderMasters_orderDao_getLastOrder_daoException() {
+    void OrderServiceImpl_addOrderMasters_orderDao_getLastOrder_orderDoesNotExist() {
         Order order = getTestOrder();
         Mockito.doThrow(DaoException.class).when(orderDao).getLastOrder();
 
@@ -262,7 +262,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrderMasters_orderDao_findById_daoException() {
+    void OrderServiceImpl_addOrderMasters_orderDao_findById_wrongId() {
         Order order = getTestOrder();
         Mockito.doReturn(order).when(orderDao).getLastOrder();
         Mockito.doThrow(DaoException.class).when(masterDao).findById(ID_MASTER);
@@ -276,7 +276,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_businessException_master_delete() {
+    void OrderServiceImpl_addOrderMasters_masterDeleted() {
         Order order = getTestOrder();
         Master master = getTestMaster();
         Mockito.doReturn(order).when(orderDao).getLastOrder();
@@ -292,7 +292,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_businessException_existMaster() {
+    void OrderServiceImpl_addOrderMasters_theMasterAlreadyExists() {
         Master master = getTestMaster();
         Order order = getTestOrder();
         order.getMasters().add(master);
@@ -325,7 +325,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrderPlace_orderDao_getLastOrder_daoException() {
+    void OrderServiceImpl_addOrderPlace_orderDao_getLastOrder_orderDoesNotExist() {
         Order order = getTestOrder();
         Mockito.doThrow(DaoException.class).when(orderDao).getLastOrder();
 
@@ -337,7 +337,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrderPlace_placeDao_findById_daoException() {
+    void OrderServiceImpl_addOrderPlace_placeDao_findById_wrongId() {
         Order order = getTestOrder();
         Mockito.doReturn(order).when(orderDao).getLastOrder();
         Mockito.doThrow(DaoException.class).when(placeDao).findById(ID_PLACE);
@@ -363,7 +363,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_addOrderPrice_orderDao_getLastOrder_daoException() {
+    void OrderServiceImpl_addOrderPrice_orderDao_getLastOrder_orderDoesNotExist() {
         Order order = getTestOrder();
         Mockito.doThrow(DaoException.class).when(orderDao).getLastOrder();
 
@@ -392,7 +392,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_completeOrder_orderDao_findById_daoException() {
+    void OrderServiceImpl_completeOrder_orderDao_findById_wrongId() {
         Place place = getTestPlace();
         Order order = getTestOrder();
         order.setPlace(place);
@@ -406,7 +406,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_completeOrder_businessException_order_delete() {
+    void OrderServiceImpl_completeOrder_orderDeleted() {
         Place place = getTestPlace();
         Order order = getTestOrder();
         order.setPlace(place);
@@ -421,7 +421,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_completeOrder_businessException_order_completed() {
+    void OrderServiceImpl_completeOrder_orderStatusCompleted() {
         Place place = getTestPlace();
         Order order = getTestOrder();
         order.setPlace(place);
@@ -436,7 +436,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_completeOrder_businessException_order_perform() {
+    void OrderServiceImpl_completeOrder_orderStatusPerform() {
         Place place = getTestPlace();
         Order order = getTestOrder();
         order.setPlace(place);
@@ -451,7 +451,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_completeOrder_businessException_order_canceled() {
+    void OrderServiceImpl_completeOrder_orderStatusCanceled() {
         Place place = getTestPlace();
         Order order = getTestOrder();
         order.setPlace(place);
@@ -493,7 +493,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_cancelOrder_orderDao_findById_daoException() {
+    void OrderServiceImpl_cancelOrder_orderDao_findById_wrongId() {
         Master master = getTestMaster();
         master.setNumberOrders(NUMBER_ORDERS);
         List<Master> masters = Collections.singletonList(master);
@@ -511,7 +511,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_cancelOrder_businessException_order_deleted() {
+    void OrderServiceImpl_cancelOrder_orderDeleted() {
         Master master = getTestMaster();
         master.setNumberOrders(NUMBER_ORDERS);
         List<Master> masters = Collections.singletonList(master);
@@ -530,7 +530,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_cancelOrder_businessException_order_completed() {
+    void OrderServiceImpl_cancelOrder_orderStatusCompleted() {
         Master master = getTestMaster();
         master.setNumberOrders(NUMBER_ORDERS);
         List<Master> masters = Collections.singletonList(master);
@@ -549,7 +549,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_cancelOrder_businessException_order_perform() {
+    void OrderServiceImpl_cancelOrder_orderStatusPerform() {
         Master master = getTestMaster();
         master.setNumberOrders(NUMBER_ORDERS);
         List<Master> masters = Collections.singletonList(master);
@@ -568,7 +568,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_cancelOrder_businessException_order_canceled() {
+    void OrderServiceImpl_cancelOrder_businessException_orderStatusCanceled() {
         Master master = getTestMaster();
         master.setNumberOrders(NUMBER_ORDERS);
         List<Master> masters = Collections.singletonList(master);
@@ -613,7 +613,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_closeOrder_orderDao_findById_daoException() {
+    void OrderServiceImpl_closeOrder_orderDao_findById_wrongId() {
         Master master = getTestMaster();
         master.setNumberOrders(NUMBER_ORDERS);
         List<Master> masters = Collections.singletonList(master);
@@ -632,7 +632,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_closeOrder_businessException_order_deleted() {
+    void OrderServiceImpl_closeOrder_orderDeleted() {
         Master master = getTestMaster();
         master.setNumberOrders(NUMBER_ORDERS);
         List<Master> masters = Collections.singletonList(master);
@@ -652,7 +652,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_closeOrder_businessException_order_completed() {
+    void OrderServiceImpl_closeOrder_orderStatusCompleted() {
         Master master = getTestMaster();
         master.setNumberOrders(NUMBER_ORDERS);
         List<Master> masters = Collections.singletonList(master);
@@ -672,7 +672,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_closeOrder_businessException_order_canceled() {
+    void OrderServiceImpl_closeOrder_orderStatusCanceled() {
         Master master = getTestMaster();
         master.setNumberOrders(NUMBER_ORDERS);
         List<Master> masters = Collections.singletonList(master);
@@ -705,7 +705,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_deleteOrder_orderDao_findById_daoException() {
+    void OrderServiceImpl_deleteOrder_orderDao_findById_wrongId() {
         Order order = getTestOrder();
         Mockito.doThrow(DaoException.class).when(orderDao).findById(ID_ORDER);
 
@@ -716,7 +716,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_deleteOrder_businessException_order_deleted() {
+    void OrderServiceImpl_deleteOrder_orderDeleted() {
         Order order = getTestOrder();
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
         order.setDeleteStatus(true);
@@ -728,7 +728,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_deleteOrder_businessException_order_wait() {
+    void OrderServiceImpl_deleteOrder_orderStatusWait() {
         Order order = getTestOrder();
         order.setDeleteStatus(false);
         order.setStatus(StatusOrder.WAIT);
@@ -741,7 +741,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_deleteOrder_businessException_order_perform() {
+    void OrderServiceImpl_deleteOrder_orderStatusPerform() {
         Order order = getTestOrder();
         order.setStatus(StatusOrder.PERFORM);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
@@ -768,7 +768,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_shiftLeadTime_dateException() {
+    void OrderServiceImpl_shiftLeadTime_wrongDate() {
         Date wrongExecutionStartTime = new Date();
         Date rightLeadTime = DateUtil.addDays(new Date(), 2);
         Order order = getTestOrder();
@@ -781,7 +781,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_shiftLeadTime_orderDao_findById_daoException() {
+    void OrderServiceImpl_shiftLeadTime_orderDao_findById_wrongId() {
         Date rightExecutionStartTime = DateUtil.addDays(new Date(), 1);
         Date rightLeadTime = DateUtil.addDays(new Date(), 2);
         Order order = getTestOrder();
@@ -794,7 +794,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_shiftLeadTime_businessException_order_deleted() {
+    void OrderServiceImpl_shiftLeadTime_orderDeleted() {
         Date rightExecutionStartTime = DateUtil.addDays(new Date(), 1);
         Date rightLeadTime = DateUtil.addDays(new Date(), 2);
         Order order = getTestOrder();
@@ -809,7 +809,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_shiftLeadTime_businessException_order_completed() {
+    void OrderServiceImpl_shiftLeadTime_orderStatusCompleted() {
         Date rightExecutionStartTime = DateUtil.addDays(new Date(), 1);
         Date rightLeadTime = DateUtil.addDays(new Date(), 2);
         Order order = getTestOrder();
@@ -824,7 +824,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_shiftLeadTime_businessException_order_canceled() {
+    void OrderServiceImpl_shiftLeadTime_orderStatusCanceled() {
         Date rightExecutionStartTime = DateUtil.addDays(new Date(), 1);
         Date rightLeadTime = DateUtil.addDays(new Date(), 2);
         Order order = getTestOrder();
@@ -853,7 +853,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrders_orderDao_getOrdersSortByFilingDate_daoException() {
+    void OrderServiceImpl_getSortOrders_orderDao_getOrdersSortByFilingDate_emptyList() {
         Mockito.doThrow(DaoException.class).when(orderDao).getOrdersSortByFilingDate();
 
         Assertions.assertThrows(DaoException.class, () -> orderService.getSortOrders(SortParameter.SORT_BY_FILING_DATE));
@@ -876,7 +876,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrders_orderDao_getOrdersSortByExecutionDate_daoException() {
+    void OrderServiceImpl_getSortOrders_orderDao_getOrdersSortByExecutionDate_emptyList() {
         Mockito.doThrow(DaoException.class).when(orderDao).getOrdersSortByExecutionDate();
 
         Assertions.assertThrows(DaoException.class,
@@ -900,7 +900,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrders_orderDao_getOrdersSortByPlannedStartDate_daoException() {
+    void OrderServiceImpl_getSortOrders_orderDao_getOrdersSortByPlannedStartDate_emptyList() {
         Mockito.doThrow(DaoException.class).when(orderDao).getOrdersSortByPlannedStartDate();
 
         Assertions.assertThrows(DaoException.class,
@@ -924,7 +924,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrders_orderDao_getOrdersSortByPrice_daoException() {
+    void OrderServiceImpl_getSortOrders_orderDao_getOrdersSortByPrice_emptyList() {
         Mockito.doThrow(DaoException.class).when(orderDao).getOrdersSortByPrice();
 
         Assertions.assertThrows(DaoException.class, () -> orderService.getSortOrders(SortParameter.SORT_BY_PRICE));
@@ -947,11 +947,11 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrders_orderDao_getExecuteOrderSortByFilingDate_daoException() {
+    void OrderServiceImpl_getSortOrders_orderDao_getExecuteOrderSortByFilingDate_emptyList() {
         Mockito.doThrow(DaoException.class).when(orderDao).getExecuteOrderSortByFilingDate();
 
         Assertions.assertThrows(DaoException.class,
-                                () -> orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE));
+           () -> orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE));
         Mockito.verify(orderDao, Mockito.times(1)).getExecuteOrderSortByFilingDate();
         Mockito.reset(orderDao);
     }
@@ -971,7 +971,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrders_orderDao_getExecuteOrderSortExecutionDate_daoException() {
+    void OrderServiceImpl_getSortOrders_orderDao_getExecuteOrderSortExecutionDate_emptyList() {
         Mockito.doThrow(DaoException.class).when(orderDao).getExecuteOrderSortExecutionDate();
 
         Assertions.assertThrows(DaoException.class,
@@ -981,7 +981,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrdersByPeriod_dateException() {
+    void OrderServiceImpl_getSortOrdersByPeriod_wrongDate() {
         Date wrongStartPeriodDate = DateUtil.addDays(new Date(), 3);
         Date rightEndPeriodDate = DateUtil.addDays(new Date(), 2);
 
@@ -1028,7 +1028,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCompletedOrdersSortByFilingDate_daoException() {
+    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCompletedOrdersSortByFilingDate_emptyList() {
         Date rightStartPeriodDate = DateUtil.addDays(new Date(), 1);
         Date rightEndPeriodDate = DateUtil.addDays(new Date(), 2);
         Mockito.doThrow(DaoException.class).when(orderDao)
@@ -1078,7 +1078,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCompletedOrdersSortByExecutionDate_daoException() {
+    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCompletedOrdersSortByExecutionDate_emptyList() {
         Date rightStartPeriodDate = DateUtil.addDays(new Date(), 1);
         Date rightEndPeriodDate = DateUtil.addDays(new Date(), 2);
         Mockito.doThrow(DaoException.class).when(orderDao)
@@ -1127,7 +1127,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCompletedOrdersSortByPrice_daoException() {
+    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCompletedOrdersSortByPrice_emptyList() {
         Date rightStartPeriodDate = DateUtil.addDays(new Date(), 1);
         Date rightEndPeriodDate = DateUtil.addDays(new Date(), 2);
         Mockito.doThrow(DaoException.class).when(orderDao)
@@ -1177,7 +1177,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCanceledOrdersSortByFilingDate_daoException() {
+    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCanceledOrdersSortByFilingDate_emptyList() {
         Date rightStartPeriodDate = DateUtil.addDays(new Date(), 1);
         Date rightEndPeriodDate = DateUtil.addDays(new Date(), 2);
         Mockito.doThrow(DaoException.class).when(orderDao)
@@ -1226,7 +1226,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCanceledOrdersSortByExecutionDate_daoException() {
+    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCanceledOrdersSortByExecutionDate_emptyList() {
         Date rightStartPeriodDate = DateUtil.addDays(new Date(), 1);
         Date rightEndPeriodDate = DateUtil.addDays(new Date(), 2);
         Mockito.doThrow(DaoException.class).when(orderDao)
@@ -1275,7 +1275,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCanceledOrdersSortByPrice_daoException() {
+    void OrderServiceImpl_getSortOrdersByPeriod_dateException_orderDao_getCanceledOrdersSortByPrice_emptyList() {
         Date rightStartPeriodDate = DateUtil.addDays(new Date(), 1);
         Date rightEndPeriodDate = DateUtil.addDays(new Date(), 2);
         Mockito.doThrow(DaoException.class).when(orderDao)
@@ -1325,7 +1325,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrdersByPeriod_dateException_getDeletedOrdersSortByFilingDate_daoException() {
+    void OrderServiceImpl_getSortOrdersByPeriod_dateException_getDeletedOrdersSortByFilingDate_emptyList() {
         Date rightStartPeriodDate = DateUtil.addDays(new Date(), 1);
         Date rightEndPeriodDate = DateUtil.addDays(new Date(), 2);
         Mockito.doThrow(DaoException.class).when(orderDao)
@@ -1375,7 +1375,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrdersByPeriod_dateException_getDeletedOrdersSortByExecutionDate_daoException() {
+    void OrderServiceImpl_getSortOrdersByPeriod_dateException_getDeletedOrdersSortByExecutionDate_emptyList() {
         Date rightStartPeriodDate = DateUtil.addDays(new Date(), 1);
         Date rightEndPeriodDate = DateUtil.addDays(new Date(), 2);
         Mockito.doThrow(DaoException.class).when(orderDao)
@@ -1424,7 +1424,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getSortOrdersByPeriod_dateException_getDeletedOrdersSortByPrice_daoException() {
+    void OrderServiceImpl_getSortOrdersByPeriod_dateException_getDeletedOrdersSortByPrice_emptyList() {
         Date rightStartPeriodDate = DateUtil.addDays(new Date(), 1);
         Date rightEndPeriodDate = DateUtil.addDays(new Date(), 2);
         Mockito.doThrow(DaoException.class).when(orderDao)
@@ -1475,7 +1475,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getMasterOrders_masterDao_findById_daoException() {
+    void OrderServiceImpl_getMasterOrders_masterDao_findById_wrongId() {
         Master master = getTestMaster();
         Mockito.doThrow(DaoException.class).when(masterDao).findById(ID_MASTER);
 
@@ -1486,7 +1486,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getMasterOrders_orderDao_getMasterOrders_daoException() {
+    void OrderServiceImpl_getMasterOrders_orderDao_getMasterOrders_emptyMasterListOrders() {
         Master master = getTestMaster();
         Mockito.doReturn(master).when(masterDao).findById(ID_MASTER);
         Mockito.doThrow(DaoException.class).when(orderDao).getMasterOrders(master);
@@ -1516,7 +1516,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getOrderMasters_orderDao_findById_daoException() {
+    void OrderServiceImpl_getOrderMasters_orderDao_findById_wrongId() {
         Order order = getTestOrder();
         Mockito.doThrow(DaoException.class).when(orderDao).findById(ID_MASTER);
 
@@ -1527,7 +1527,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    void OrderServiceImpl_getOrderMasters_orderDao_findById() {
+    void OrderServiceImpl_getOrderMasters_orderDao_getOrderMasters_emptyOrderListMasters() {
         Order order = getTestOrder();
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
         Mockito.doThrow(DaoException.class).when(orderDao).getOrderMasters(order);

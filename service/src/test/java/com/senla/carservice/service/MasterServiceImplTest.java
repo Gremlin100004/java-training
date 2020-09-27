@@ -46,7 +46,7 @@ class MasterServiceImplTest {
     }
 
     @Test
-    void MasterServiceImpl_getMasters_masterDao_getAllRecords_daoException() {
+    void MasterServiceImpl_getMasters_masterDao_getAllRecords_emptyRecords() {
         Mockito.doThrow(DaoException.class).when(masterDao).getAllRecords();
 
         Assertions.assertThrows(DaoException.class, () -> masterService.getMasters());
@@ -77,7 +77,7 @@ class MasterServiceImplTest {
     }
 
     @Test
-    void MasterServiceImpl_getFreeMastersByDate_masterDao_getFreeMasters_daoException() {
+    void MasterServiceImpl_getFreeMastersByDate_masterDao_getFreeMasters_emptyList() {
         Date date = new Date();
         Mockito.doThrow(DaoException.class).when(masterDao).getFreeMasters(date);
 
@@ -111,7 +111,7 @@ class MasterServiceImplTest {
     }
 
     @Test
-    void MasterServiceImpl_deleteMaster_masterDao_findById_daoException() {
+    void MasterServiceImpl_deleteMaster_masterDao_findById_wrongId() {
         Master master = getTestMaster();
         Mockito.doThrow(DaoException.class).when(masterDao).findById(ID_MASTER);
 
@@ -122,7 +122,7 @@ class MasterServiceImplTest {
     }
 
     @Test
-    void MasterServiceImpl_deleteMaster_businessException_delete() {
+    void MasterServiceImpl_deleteMaster_masterDeleted() {
         Master master = getTestMaster();
         master.setDeleteStatus(true);
         Mockito.doReturn(master).when(masterDao).findById(ID_MASTER);
@@ -148,7 +148,7 @@ class MasterServiceImplTest {
     }
 
     @Test
-    void MasterServiceImpl_getMasterByAlphabet_masterDao_getMasterSortByAlphabet_daoException() {
+    void MasterServiceImpl_getMasterByAlphabet_masterDao_getMasterSortByAlphabet_emptyList() {
         Mockito.doThrow(DaoException.class).when(masterDao).getMasterSortByAlphabet();
 
         Assertions.assertThrows(DaoException.class, () -> masterService.getMasterByAlphabet());
@@ -171,7 +171,7 @@ class MasterServiceImplTest {
     }
 
     @Test
-    void MasterServiceImpl_getMasterByBusy_masterDao_getMasterSortByBusy_daoException() {
+    void MasterServiceImpl_getMasterByBusy_masterDao_getMasterSortByBusy_emptyList() {
         Mockito.doThrow(DaoException.class).when(masterDao).getMasterSortByBusy();
 
         Assertions.assertThrows(DaoException.class, () -> masterService.getMasterByBusy());

@@ -46,7 +46,7 @@ class PlaceServiceImplTest {
     }
 
     @Test
-    void PlaceServiceImpl_getPlaces_placeDao_getAllRecords_daoException() {
+    void PlaceServiceImpl_getPlaces_placeDao_getAllRecords_emptyList() {
         Mockito.doThrow(DaoException.class).when(placeDao).getAllRecords();
         
         Assertions.assertThrows(DaoException.class, () -> placeService.getPlaces());
@@ -74,7 +74,7 @@ class PlaceServiceImplTest {
     }
 
     @Test
-    void PlaceServiceImpl_deletePlace_placeDao_findById_daoException() {
+    void PlaceServiceImpl_deletePlace_placeDao_findById_wrongId() {
         Place place = getTestPlace();
         Mockito.doThrow(DaoException.class).when(placeDao).findById(ID_PLACE);
 
@@ -85,7 +85,7 @@ class PlaceServiceImplTest {
     }
 
     @Test
-    void PlaceServiceImpl_deletePlace_businessException_placeBusy() {
+    void PlaceServiceImpl_deletePlace_placeIsBusy() {
         Place place = getTestPlace();
         Mockito.doReturn(place).when(placeDao).findById(ID_PLACE);
         place.setBusy(true);
@@ -97,7 +97,7 @@ class PlaceServiceImplTest {
     }
 
     @Test
-    void PlaceServiceImpl_deletePlace_businessException_deleted() {
+    void PlaceServiceImpl_deletePlace_placeDeleted() {
         Place place = getTestPlace();
         place.setDeleteStatus(true);
         Mockito.doReturn(place).when(placeDao).findById(ID_PLACE);
@@ -136,7 +136,7 @@ class PlaceServiceImplTest {
     }
 
     @Test
-    void PlaceServiceImpl_getFreePlaceByDate_placeDao_getFreePlaces_daoException() {
+    void PlaceServiceImpl_getFreePlaceByDate_placeDao_getFreePlaces_emptyList() {
         Date date = new Date();
         Mockito.doThrow(DaoException.class).when(placeDao).getFreePlaces(date);
 
