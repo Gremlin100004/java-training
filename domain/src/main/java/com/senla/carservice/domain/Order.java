@@ -32,7 +32,6 @@ import java.util.List;
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class Order extends AEntity {
-
     @Column(name = "creation_time")
     private Date creationTime;
     @Column(name = "execution_start_time")

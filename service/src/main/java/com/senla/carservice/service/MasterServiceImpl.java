@@ -2,6 +2,7 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.domain.Master;
+import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.service.exception.BusinessException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,9 +24,9 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
-    public List<Master> getMasters() {
+    public List<MasterDto> getMasters() {
         log.debug("Method getMasters");
-        return masterDao.getAllRecords();
+        return transferDataFromMasterToMasterDto(masterDao.getAllRecords());
     }
 
     @Override
@@ -37,10 +39,10 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
-    public List<Master> getFreeMastersByDate(Date executeDate) {
+    public List<MasterDto> getFreeMastersByDate(Date executeDate) {
         log.debug("Method getFreeMastersByDate");
         log.trace("Parameter executeDate: {}", executeDate);
-        return masterDao.getFreeMasters(executeDate);
+        return transferDataFromMasterToMasterDto(masterDao.getFreeMasters(executeDate));
     }
 
     @Override
@@ -66,16 +68,16 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
-    public List<Master> getMasterByAlphabet() {
+    public List<MasterDto> getMasterByAlphabet() {
         log.debug("Method getMasterByAlphabet");
-        return masterDao.getMasterSortByAlphabet();
+        return transferDataFromMasterToMasterDto(masterDao.getMasterSortByAlphabet());
     }
 
     @Override
     @Transactional
-    public List<Master> getMasterByBusy() {
+    public List<MasterDto> getMasterByBusy() {
         log.debug("Method getMasterByBusy");
-        return masterDao.getMasterSortByBusy();
+        return transferDataFromMasterToMasterDto(masterDao.getMasterSortByBusy());
     }
 
     @Override
@@ -83,5 +85,18 @@ public class MasterServiceImpl implements MasterService {
     public Long getNumberMasters() {
         log.debug("Method getNumberMasters");
         return masterDao.getNumberMasters();
+    }
+
+    private List<MasterDto> transferDataFromMasterToMasterDto(List<Master> masters) {
+        List<MasterDto> mastersDto = new ArrayList<>();
+        for (Master master: masters) {
+            MasterDto masterDto = new MasterDto();
+            masterDto.setId(master.getId());
+            masterDto.setName(master.getName());
+            masterDto.setNumberOrders(master.getNumberOrders());
+            masterDto.setDeleteStatus(master.getDeleteStatus());
+            mastersDto.add(masterDto);
+        }
+        return mastersDto;
     }
 }

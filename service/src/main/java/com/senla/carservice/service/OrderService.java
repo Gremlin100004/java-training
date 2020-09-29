@@ -1,7 +1,7 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Order;
+import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.enumaration.SortParameter;
 
 import java.math.BigDecimal;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    List<Order> getOrders();
+    List<OrderDto> getOrders();
 
     void addOrder(String automaker, String model, String registrationNumber);
 
@@ -32,13 +32,13 @@ public interface OrderService {
 
     void shiftLeadTime(Long idOrder, Date executionStartTime, Date leadTime);
 
-    List<Order> getSortOrders(SortParameter sortParameter);
+    List<OrderDto> getSortOrders(SortParameter sortParameter);
 
-    List<Order> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter);
+    List<OrderDto> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter);
 
-    List<Order> getMasterOrders(Long idMaster);
+    List<OrderDto> getMasterOrders(Long idMaster);
 
-    List<Master> getOrderMasters(Long idOrder);
+    List<MasterDto> getOrderMasters(Long idOrder);
 
     Long getNumberOrders();
 }

@@ -15,7 +15,6 @@ import java.util.List;
 
 @Slf4j
 public abstract class AbstractDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, PK> {
-    
     private Class<T> type;
     @PersistenceContext
     protected EntityManager entityManager;

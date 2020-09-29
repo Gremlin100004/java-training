@@ -15,7 +15,6 @@ import javax.persistence.MappedSuperclass;
 @Setter
 @EqualsAndHashCode
 public abstract class AEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

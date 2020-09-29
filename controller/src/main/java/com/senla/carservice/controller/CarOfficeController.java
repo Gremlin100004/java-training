@@ -19,7 +19,6 @@ import java.util.Date;
 @NoArgsConstructor
 @Slf4j
 public class CarOfficeController {
-    
     @Autowired
     private CarOfficeService carOfficeService;
     @Autowired

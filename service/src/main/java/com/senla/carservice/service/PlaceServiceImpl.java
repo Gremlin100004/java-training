@@ -2,6 +2,7 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.domain.Place;
+import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.service.exception.BusinessException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,9 +29,9 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     @Transactional
-    public List<Place> getPlaces() {
+    public List<PlaceDto> getPlaces() {
         log.debug("Method getPlaces");
-        return placeDao.getAllRecords();
+        return transferDataFromPlaceToPLaceDto(placeDao.getAllRecords());
     }
 
     @Override
@@ -72,10 +74,10 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     @Transactional
-    public List<Place> getFreePlaceByDate(Date executeDate) {
+    public List<PlaceDto> getFreePlaceByDate(Date executeDate) {
         log.debug("Method getFreePlaceByDate");
         log.trace("Parameter executeDate: {}", executeDate);
-        return placeDao.getFreePlaces(executeDate);
+        return transferDataFromPlaceToPLaceDto(placeDao.getFreePlaces(executeDate));
     }
 
     @Override
@@ -83,5 +85,18 @@ public class PlaceServiceImpl implements PlaceService {
     public Long getNumberPlace() {
         log.debug("Method getNumberMasters");
         return placeDao.getNumberPlaces();
+    }
+
+    private List<PlaceDto> transferDataFromPlaceToPLaceDto(List<Place> places) {
+        List<PlaceDto> placesDto = new ArrayList<>();
+        for (Place place: places) {
+            PlaceDto placeDto = new PlaceDto();
+            placeDto.setId(place.getId());
+            placeDto.setNumber(place.getNumber());
+            placeDto.setIsBusy(place.getIsBusy());
+            placeDto.setDeleteStatus(place.getDeleteStatus());
+            placesDto.add(placeDto);
+        }
+        return placesDto;
     }
 }

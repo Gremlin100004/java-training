@@ -2,7 +2,7 @@ package com.senla.carservice.controller;
 
 import com.senla.carservice.controller.util.StringMaster;
 import com.senla.carservice.dao.exception.DaoException;
-import com.senla.carservice.domain.Master;
+import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
@@ -26,9 +26,9 @@ public class MasterController {
         log.info("Method getMasters");
         List<String> stringList = new ArrayList<>();
         try {
-            List<Master> masters = masterService.getMasters();
-            stringList.add(StringMaster.getStringFromMasters(masters));
-            stringList.addAll(StringMaster.getListId(masters));
+            List<MasterDto> mastersDto = masterService.getMasters();
+            stringList.add(StringMaster.getStringFromMasters(mastersDto));
+            stringList.addAll(StringMaster.getListId(mastersDto));
             return stringList;
         } catch (BusinessException e) {
             log.warn(e.getMessage());
@@ -99,10 +99,10 @@ public class MasterController {
         log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
         List<String> stringList = new ArrayList<>();
         try {
-            List<Master> masters = masterService.getFreeMastersByDate(
+            List<MasterDto> mastersDto = masterService.getFreeMastersByDate(
                 DateUtil.getDatesFromString(stringExecuteDate, true));
-            stringList.add(StringMaster.getStringFromMasters(masters));
-            stringList.addAll(StringMaster.getListId(masters));
+            stringList.add(StringMaster.getStringFromMasters(mastersDto));
+            stringList.addAll(StringMaster.getListId(mastersDto));
             return stringList;
         } catch (BusinessException | DaoException e) {
             log.warn(e.getMessage());

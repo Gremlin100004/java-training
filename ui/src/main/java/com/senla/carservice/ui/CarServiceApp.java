@@ -15,5 +15,4 @@ public class CarServiceApp {
         MenuController menuController = applicationContext.getBean(MenuController.class);
         menuController.run();
     }
-    //ToDo see scope in pom.xml
 }

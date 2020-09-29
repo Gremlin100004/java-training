@@ -2,7 +2,7 @@ package com.senla.carservice.controller;
 
 import com.senla.carservice.controller.util.StringPlaces;
 import com.senla.carservice.dao.exception.DaoException;
-import com.senla.carservice.domain.Place;
+import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
@@ -20,7 +20,6 @@ import java.util.List;
 @NoArgsConstructor
 @Slf4j
 public class PlaceController {
-    
     @Autowired
     private PlaceService placeService;
 
@@ -63,9 +62,9 @@ public class PlaceController {
         log.info("Method getArrayPlace");
         List<String> stringList = new ArrayList<>();
         try {
-            List<Place> places = placeService.getPlaces();
-            stringList.add(StringPlaces.getStringFromPlaces(places));
-            stringList.addAll(StringPlaces.getListId(places));
+            List<PlaceDto> placesDto = placeService.getPlaces();
+            stringList.add(StringPlaces.getStringFromPlaces(placesDto));
+            stringList.addAll(StringPlaces.getListId(placesDto));
             return stringList;
         } catch (BusinessException | DaoException e) {
             log.warn(e.getMessage());
@@ -92,9 +91,9 @@ public class PlaceController {
         List<String> stringList = new ArrayList<>();
         try {
             Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
-            List<Place> places = placeService.getFreePlaceByDate(executeDate);
-            stringList.add(StringPlaces.getStringFromPlaces(places));
-            stringList.addAll(StringPlaces.getListId(places));
+            List<PlaceDto> placesDto = placeService.getFreePlaceByDate(executeDate);
+            stringList.add(StringPlaces.getStringFromPlaces(placesDto));
+            stringList.addAll(StringPlaces.getListId(placesDto));
             return stringList;
         } catch (BusinessException | DateException | DaoException e) {
             log.warn(e.getMessage());

@@ -38,4 +38,5 @@
     <suppress checks="FileLength" files="properties$"/>
     <suppress checks="FileTabCharacter" files="properties$"/>
     <suppress checks="Translation" files="properties$"/>
+    <suppress checks="RegexpMultiline" files="java$"/>
 </suppressions>

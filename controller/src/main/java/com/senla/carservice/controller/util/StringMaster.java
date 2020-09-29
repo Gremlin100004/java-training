@@ -1,6 +1,6 @@
 package com.senla.carservice.controller.util;
 
-import com.senla.carservice.domain.Master;
+import com.senla.carservice.dto.MasterDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +29,9 @@ public class StringMaster {
     private static final Logger LOGGER = LoggerFactory.getLogger(StringMaster.class);
 
 
-    public static String getStringFromMasters(List<Master> masters) {
+    public static String getStringFromMasters(List<MasterDto> mastersDto) {
         LOGGER.debug("Method getStringFromMasters");
-        LOGGER.debug("Parameter masters: {}", masters.toString());
+        LOGGER.debug("Parameter masters: {}", mastersDto);
         String line = START_OF_LINE_DELIMITER + String.join(SYMBOL_FOR_JOIN_METHOD, Collections.nCopies(LINE_LENGTH, LINE_SEPARATOR)) +
                       END_OF_LINE;
         StringBuilder stringBuilder = new StringBuilder(line);
@@ -45,18 +45,18 @@ public class StringMaster {
                                                                               LENGTH_SPACE_FOURTH_COLUMN))
             .append(SPLIT_COLUMNS + END_OF_LINE);
         stringBuilder.append(line);
-        int bound = masters.size();
+        int bound = mastersDto.size();
         IntStream.range(0, bound)
             .forEach(i -> {
                 stringBuilder.append(SPLIT_COLUMNS)
                     .append(StringUtil.fillStringSpace(String.valueOf(i + INDEX_ADDITION), LENGTH_SPACE_FIRST_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS)
-                    .append(StringUtil.fillStringSpace(masters.get(i).getName(), LENGTH_SPACE_SECOND_COLUMN));
+                    .append(StringUtil.fillStringSpace(mastersDto.get(i).getName(), LENGTH_SPACE_SECOND_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS)
-                    .append(StringUtil.fillStringSpace(String.valueOf(masters.get(i).getNumberOrders()),
+                    .append(StringUtil.fillStringSpace(String.valueOf(mastersDto.get(i).getNumberOrders()),
                                                        LENGTH_SPACE_THIRD_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS)
-                    .append(StringUtil.fillStringSpace(String.valueOf(masters.get(i).getDeleteStatus()),
+                    .append(StringUtil.fillStringSpace(String.valueOf(mastersDto.get(i).getDeleteStatus()),
                                                        LENGTH_SPACE_FOURTH_COLUMN));
                 stringBuilder.append(SPLIT_COLUMNS + END_OF_LINE);
             });
@@ -64,8 +64,8 @@ public class StringMaster {
         return stringBuilder.toString();
     }
 
-    public static List<String> getListId(List<Master> masters) {
-        return masters.stream()
+    public static List<String> getListId(List<MasterDto> mastersDto) {
+        return mastersDto.stream()
             .map(master -> String.valueOf(master.getId()))
             .collect(Collectors.toList());
     }

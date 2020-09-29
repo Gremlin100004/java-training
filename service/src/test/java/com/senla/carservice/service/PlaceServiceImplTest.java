@@ -3,6 +3,7 @@ package com.senla.carservice.service;
 import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Place;
+import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.service.config.TestConfig;
 import com.senla.carservice.service.exception.BusinessException;
 import org.junit.jupiter.api.Assertions;
@@ -34,13 +35,14 @@ class PlaceServiceImplTest {
     @Test
     void PlaceServiceImpl_getPlaces() {
         List<Place> places = getTestPlaces();
+        List<PlaceDto> placesDto = getTestPlacesDto();
         Mockito.doReturn(places).when(placeDao).getAllRecords();
         
-        List<Place> resultPlaces = placeService.getPlaces();
-        Assertions.assertNotNull(resultPlaces);
-        Assertions.assertEquals(RIGHT_NUMBER_PLACES, resultPlaces.size());
-        Assertions.assertFalse(resultPlaces.isEmpty());
-        Assertions.assertEquals(places, resultPlaces);
+        List<PlaceDto> resultPlacesDto = placeService.getPlaces();
+        Assertions.assertNotNull(resultPlacesDto);
+        Assertions.assertEquals(RIGHT_NUMBER_PLACES, resultPlacesDto.size());
+        Assertions.assertFalse(resultPlacesDto.isEmpty());
+        Assertions.assertEquals(placesDto, resultPlacesDto);
         Mockito.verify(placeDao, Mockito.times(1)).getAllRecords();
         Mockito.reset(placeDao);
     }
@@ -124,13 +126,14 @@ class PlaceServiceImplTest {
     void PlaceServiceImpl_getFreePlaceByDate() {
         Date date = new Date();
         List<Place> places = getTestPlaces();
+        List<PlaceDto> placesDto = getTestPlacesDto();
         Mockito.doReturn(places).when(placeDao).getFreePlaces(date);
 
-        List<Place> resultPlaces = placeService.getFreePlaceByDate(date);
-        Assertions.assertNotNull(resultPlaces);
-        Assertions.assertEquals(RIGHT_NUMBER_PLACES, resultPlaces.size());
-        Assertions.assertFalse(resultPlaces.isEmpty());
-        Assertions.assertEquals(places, resultPlaces);
+        List<PlaceDto> resultPlacesDto = placeService.getFreePlaceByDate(date);
+        Assertions.assertNotNull(resultPlacesDto);
+        Assertions.assertEquals(RIGHT_NUMBER_PLACES, resultPlacesDto.size());
+        Assertions.assertFalse(resultPlacesDto.isEmpty());
+        Assertions.assertEquals(placesDto, resultPlacesDto);
         Mockito.verify(placeDao, Mockito.times(1)).getFreePlaces(date);
         Mockito.reset(placeDao);
     }
@@ -162,10 +165,24 @@ class PlaceServiceImplTest {
         return place;
     }
 
+    private PlaceDto getTestPlaceDto() {
+        PlaceDto placeDto = new PlaceDto();
+        placeDto.setId(ID_PLACE);
+        placeDto.setNumber(NUMBER_PLACE);
+        return placeDto;
+    }
+
     private List<Place> getTestPlaces() {
         Place placeOne = getTestPlace();
         Place placeTwo = getTestPlace();
         placeTwo.setId(ID_OTHER_PLACE);
         return Arrays.asList(placeOne, placeTwo);
+    }
+
+    private List<PlaceDto> getTestPlacesDto() {
+        PlaceDto placeDtoOne = getTestPlaceDto();
+        PlaceDto placeDtoTwo = getTestPlaceDto();
+        placeDtoTwo.setId(ID_OTHER_PLACE);
+        return Arrays.asList(placeDtoOne, placeDtoTwo);
     }
 }

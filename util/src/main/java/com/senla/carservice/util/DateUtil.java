@@ -15,7 +15,7 @@ public final class DateUtil {
     private static final int START_DAY_MINUTE = 0;
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd kk:mm");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-    
+
     private DateUtil() {
     }
 
@@ -73,8 +73,8 @@ public final class DateUtil {
 
     public static void checkDateTime(Date executionStartTime, Date leadTime, Boolean periodTime) {
         log.debug("Method checkDateTime");
-        log.trace("Parameter executionStartTime: {}, leadTime: {}, periodTime: {}",
-            executionStartTime, leadTime, periodTime);
+        log.trace("Parameter executionStartTime: {}, leadTime: {}, periodTime: {}", executionStartTime, leadTime,
+                  periodTime);
         if (executionStartTime == null || leadTime == null) {
             throw new DateException("Error date format, should be \"yyyy-MM-dd hh:mm\"");
         }

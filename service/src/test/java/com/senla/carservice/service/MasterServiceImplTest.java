@@ -3,6 +3,7 @@ package com.senla.carservice.service;
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Master;
+import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.service.config.TestConfig;
 import com.senla.carservice.service.exception.BusinessException;
 import org.junit.jupiter.api.Assertions;
@@ -34,13 +35,14 @@ class MasterServiceImplTest {
     @Test
     void MasterServiceImpl_getMasters() {
         List<Master> masters = getTestMasters();
+        List<MasterDto> mastersDto = getTestMastersDto();
         Mockito.doReturn(masters).when(masterDao).getAllRecords();
-        
-        List<Master> resultMasters = masterService.getMasters();
-        Assertions.assertNotNull(resultMasters);
-        Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMasters.size());
-        Assertions.assertFalse(resultMasters.isEmpty());
-        Assertions.assertEquals(masters, resultMasters);
+
+        List<MasterDto> resultMastersDto = masterService.getMasters();
+        Assertions.assertNotNull(resultMastersDto);
+        Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMastersDto.size());
+        Assertions.assertFalse(resultMastersDto.isEmpty());
+        Assertions.assertEquals(mastersDto, resultMastersDto);
         Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
         Mockito.reset(masterDao);
     }
@@ -65,13 +67,14 @@ class MasterServiceImplTest {
     void MasterServiceImpl_getFreeMastersByDate() {
         Date date = new Date();
         List<Master> masters = getTestMasters();
+        List<MasterDto> mastersDto = getTestMastersDto();
         Mockito.doReturn(masters).when(masterDao).getFreeMasters(date);
 
-        List<Master> resultMasters = masterService.getFreeMastersByDate(date);
-        Assertions.assertNotNull(resultMasters);
-        Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMasters.size());
-        Assertions.assertFalse(resultMasters.isEmpty());
-        Assertions.assertEquals(masters, resultMasters);
+        List<MasterDto> resultMastersDto = masterService.getFreeMastersByDate(date);
+        Assertions.assertNotNull(resultMastersDto);
+        Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMastersDto.size());
+        Assertions.assertFalse(resultMastersDto.isEmpty());
+        Assertions.assertEquals(mastersDto, resultMastersDto);
         Mockito.verify(masterDao, Mockito.times(1)).getFreeMasters(date);
         Mockito.reset(masterDao);
     }
@@ -136,13 +139,14 @@ class MasterServiceImplTest {
     @Test
     void MasterServiceImpl_getMasterByAlphabet() {
         List<Master> masters = getTestMasters();
+        List<MasterDto> mastersDto = getTestMastersDto();
         Mockito.doReturn(masters).when(masterDao).getMasterSortByAlphabet();
 
-        List<Master> resultMasters = masterService.getMasterByAlphabet();
-        Assertions.assertNotNull(resultMasters);
-        Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMasters.size());
-        Assertions.assertFalse(resultMasters.isEmpty());
-        Assertions.assertEquals(masters, resultMasters);
+        List<MasterDto> resultMastersDto = masterService.getMasterByAlphabet();
+        Assertions.assertNotNull(resultMastersDto);
+        Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMastersDto.size());
+        Assertions.assertFalse(resultMastersDto.isEmpty());
+        Assertions.assertEquals(mastersDto, resultMastersDto);
         Mockito.verify(masterDao, Mockito.times(1)).getMasterSortByAlphabet();
         Mockito.reset(masterDao);
     }
@@ -159,13 +163,14 @@ class MasterServiceImplTest {
     @Test
     void MasterServiceImpl_getMasterByBusy() {
         List<Master> masters = getTestMasters();
+        List<MasterDto> mastersDto = getTestMastersDto();
         Mockito.doReturn(masters).when(masterDao).getMasterSortByBusy();
 
-        List<Master> resultMasters = masterService.getMasterByBusy();
-        Assertions.assertNotNull(resultMasters);
-        Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMasters.size());
-        Assertions.assertFalse(resultMasters.isEmpty());
-        Assertions.assertEquals(masters, resultMasters);
+        List<MasterDto> resultMastersDto = masterService.getMasterByBusy();
+        Assertions.assertNotNull(resultMastersDto);
+        Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMastersDto.size());
+        Assertions.assertFalse(resultMastersDto.isEmpty());
+        Assertions.assertEquals(mastersDto, resultMastersDto);
         Mockito.verify(masterDao, Mockito.times(1)).getMasterSortByBusy();
         Mockito.reset(masterDao);
     }
@@ -195,10 +200,24 @@ class MasterServiceImplTest {
         return master;
     }
 
+    private MasterDto getTestMasterDto() {
+        MasterDto masterDto = new MasterDto();
+        masterDto.setName(PARAMETER_NAME);
+        masterDto.setId(ID_MASTER);
+        return masterDto;
+    }
+
     private List<Master> getTestMasters() {
         Master masterOne = getTestMaster();
         Master masterTwo = getTestMaster();
         masterTwo.setId(ID_OTHER_MASTER);
         return Arrays.asList(masterOne, masterTwo);
+    }
+
+    private List<MasterDto> getTestMastersDto() {
+        MasterDto masterDtoOne = getTestMasterDto();
+        MasterDto masterDtoTwo = getTestMasterDto();
+        masterDtoTwo.setId(ID_OTHER_MASTER);
+        return Arrays.asList(masterDtoOne, masterDtoTwo);
     }
 }

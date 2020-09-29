@@ -7,6 +7,8 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.enumaration.StatusOrder;
+import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.enumaration.SortParameter;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
@@ -40,9 +42,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public List<Order> getOrders() {
+    public List<OrderDto> getOrders() {
         log.debug("Method getOrders");
-        return orderDao.getAllRecords();
+        return transferDataFromOrderToOrderDto(orderDao.getAllRecords());
     }
 
     @Override
@@ -201,7 +203,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public List<Order> getSortOrders(SortParameter sortParameter) {
+    public List<OrderDto> getSortOrders(SortParameter sortParameter) {
         log.debug("Method getSortOrders");
         log.trace("Parameter sortParameter: {}", sortParameter);
         List<Order> orders = new ArrayList<>();
@@ -221,12 +223,12 @@ public class OrderServiceImpl implements OrderService {
         if (orders.isEmpty()) {
             throw new BusinessException("There are no orders");
         }
-        return orders;
+        return transferDataFromOrderToOrderDto(orders);
     }
 
     @Override
     @Transactional
-    public List<Order> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter) {
+    public List<OrderDto> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter) {
         log.debug("Method getSortOrdersByPeriod");
         log.trace("Parameters startPeriodDate: {}, endPeriodDate: {}, sortParameter: {}",
             startPeriodDate, endPeriodDate, sortParameter);
@@ -251,23 +253,23 @@ public class OrderServiceImpl implements OrderService {
         } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)) {
             orders = orderDao.getDeletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
         }
-        return orders;
+        return transferDataFromOrderToOrderDto(orders);
     }
 
     @Override
     @Transactional
-    public List<Order> getMasterOrders(Long idMaster) {
+    public List<OrderDto> getMasterOrders(Long idMaster) {
         log.debug("Method getMasterOrders");
         log.trace("Parameter idMaster: {}", idMaster);
-        return orderDao.getMasterOrders(masterDao.findById(idMaster));
+        return transferDataFromOrderToOrderDto(orderDao.getMasterOrders(masterDao.findById(idMaster)));
     }
 
     @Override
     @Transactional
-    public List<Master> getOrderMasters(Long idOrder) {
+    public List<MasterDto> getOrderMasters(Long idOrder) {
         log.debug("Method getOrderMasters");
         log.trace("Parameter idOrder: {}", idOrder);
-        return orderDao.getOrderMasters(orderDao.findById(idOrder));
+        return transferDataFromMasterToMasterDto(orderDao.getOrderMasters(orderDao.findById(idOrder)));
     }
 
     @Override
@@ -275,6 +277,39 @@ public class OrderServiceImpl implements OrderService {
     public Long getNumberOrders() {
         log.debug("Method getNumberOrders");
         return orderDao.getNumberOrders();
+    }
+
+    private List<OrderDto> transferDataFromOrderToOrderDto(List<Order> orders) {
+        List<OrderDto> ordersDto = new ArrayList<>();
+        for (Order order: orders) {
+            OrderDto orderDto = new OrderDto();
+            orderDto.setId(order.getId());
+            orderDto.setAutomaker(order.getAutomaker());
+            orderDto.setModel(order.getModel());
+            orderDto.setRegistrationNumber(order.getRegistrationNumber());
+            orderDto.setCreationTime(order.getCreationTime());
+            orderDto.setExecutionStartTime(order.getExecutionStartTime());
+            orderDto.setLeadTime(order.getLeadTime());
+            orderDto.setPrice(order.getPrice());
+            orderDto.setStatus(String.valueOf(order.getStatus()));
+            orderDto.setAutomaker(order.getAutomaker());
+            orderDto.setDeleteStatus(order.isDeleteStatus());
+            ordersDto.add(orderDto);
+        }
+        return ordersDto;
+    }
+
+    private List<MasterDto> transferDataFromMasterToMasterDto(List<Master> masters) {
+        List<MasterDto> mastersDto = new ArrayList<>();
+        for (Master master: masters) {
+            MasterDto masterDto = new MasterDto();
+            masterDto.setId(master.getId());
+            masterDto.setName(master.getName());
+            masterDto.setNumberOrders(master.getNumberOrders());
+            masterDto.setDeleteStatus(master.getDeleteStatus());
+            mastersDto.add(masterDto);
+        }
+        return mastersDto;
     }
 
     private void checkMasters() {

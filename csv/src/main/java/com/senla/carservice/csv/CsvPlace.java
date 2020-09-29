@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Slf4j
 public class CsvPlace {
-    
+
     @Value("${com.senla.carservice.csv.CsvPlace.placePath:place.csv}")
     private String placePath;
     @Value("${com.senla.carservice.csv.CsvPlace.fieldSeparator:|}")
@@ -29,18 +29,14 @@ public class CsvPlace {
         if (places == null) {
             throw new CsvException("argument is null");
         }
-        List<String> valueCsv = places.stream()
-            .map(this::convertToCsv)
-            .collect(Collectors.toList());
+        List<String> valueCsv = places.stream().map(this::convertToCsv).collect(Collectors.toList());
         FileUtil.saveCsv(valueCsv, placePath);
     }
 
     public List<Place> importPlaces() {
         log.debug("Method importPlaces");
         List<String> csvLinesPlace = FileUtil.getCsv(placePath);
-        return csvLinesPlace.stream()
-            .map(this::getPlaceFromCsv)
-            .collect(Collectors.toList());
+        return csvLinesPlace.stream().map(this::getPlaceFromCsv).collect(Collectors.toList());
     }
 
     private Place getPlaceFromCsv(String line) {
@@ -64,12 +60,7 @@ public class CsvPlace {
         if (place == null) {
             throw new CsvException("argument is null");
         }
-        return place.getId() +
-               fieldSeparator +
-               place.getNumber() +
-               fieldSeparator +
-               place.getIsBusy() +
-               fieldSeparator +
-               place.getDeleteStatus();
+        return place.getId() + fieldSeparator + place.getNumber() + fieldSeparator + place.getIsBusy() +
+               fieldSeparator + place.getDeleteStatus();
     }
 }

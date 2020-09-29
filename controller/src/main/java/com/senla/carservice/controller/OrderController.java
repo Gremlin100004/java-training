@@ -3,7 +3,7 @@ package com.senla.carservice.controller;
 import com.senla.carservice.controller.util.StringMaster;
 import com.senla.carservice.controller.util.StringOrder;
 import com.senla.carservice.dao.exception.DaoException;
-import com.senla.carservice.domain.Order;
+import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.enumaration.SortParameter;
 import com.senla.carservice.service.exception.BusinessException;
@@ -23,7 +23,6 @@ import java.util.List;
 @NoArgsConstructor
 @Slf4j
 public class OrderController {
-    
     @Autowired
     private OrderService orderService;
 
@@ -107,9 +106,9 @@ public class OrderController {
         log.info("Method getOrders");
         List<String> stringList = new ArrayList<>();
         try {
-            List<Order> orders = orderService.getOrders();
-            stringList.add(StringOrder.getStringFromOrder(orders));
-            stringList.addAll(StringOrder.getListId(orders));
+            List<OrderDto> ordersDto = orderService.getOrders();
+            stringList.add(StringOrder.getStringFromOrder(ordersDto));
+            stringList.addAll(StringOrder.getListId(ordersDto));
             return stringList;
         } catch (BusinessException | DaoException e) {
             log.warn(e.getMessage());
