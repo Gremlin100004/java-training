@@ -31,10 +31,10 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
-    public void addMaster(String name) {
+    public void addMaster(MasterDto masterDto) {
         log.debug("Method addMaster");
-        log.trace("Parameter name: {}", name);
-        masterDao.saveRecord(new Master(name));
+        log.trace("Parameter masterDto: {}", masterDto);
+        masterDao.saveRecord(new Master(masterDto.getName()));
     }
 
     @Override

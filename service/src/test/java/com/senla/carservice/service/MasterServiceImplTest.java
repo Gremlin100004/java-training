@@ -58,7 +58,9 @@ class MasterServiceImplTest {
 
     @Test
     void MasterServiceImpl_addMaster() {
-        Assertions.assertDoesNotThrow(() -> masterService.addMaster(ArgumentMatchers.anyString()));
+        MasterDto masterDto = getTestMasterDto();
+
+        Assertions.assertDoesNotThrow(() -> masterService.addMaster(masterDto));
         Mockito.verify(masterDao, Mockito.times(1)).saveRecord(ArgumentMatchers.any(Master.class));
         Mockito.reset(masterDao);
     }

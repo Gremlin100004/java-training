@@ -1,5 +1,6 @@
 package com.senla.carservice.dao.config;
 
+import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -19,6 +20,7 @@ public class DaoConfiguration {
 
     private static final String DATA_SOURCE_PACKAGE = "com.senla.carservice.domain";
     private static final String CONNECTION_URL = "jdbc:mysql://localhost:3306/hrinkov_car_service";
+    private static final String DRIVER_DATABASE = "com.mysql.cj.jdbc.Driver";
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
@@ -30,8 +32,10 @@ public class DaoConfiguration {
         return em;
     }
 
+    @SneakyThrows
     @Bean
     public DataSource dataSource() {
+        Class.forName(DRIVER_DATABASE);
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setUrl(CONNECTION_URL);
         return dataSource;

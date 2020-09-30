@@ -10,20 +10,30 @@ import com.senla.carservice.util.exception.DateException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/")
 @NoArgsConstructor
 @Slf4j
 public class PlaceController {
     @Autowired
     private PlaceService placeService;
 
-    public String addPlace(int number) {
+    @PostMapping("places/add")
+    //ToDo add PlaceDto
+    public String addPlace(@RequestBody int number) {
         log.info("Method addPlace");
         log.trace("Parameter number: {}", number);
         try {
@@ -35,6 +45,7 @@ public class PlaceController {
         }
     }
 
+    @GetMapping("places/check")
     public String checkPlaces() {
         log.info("Method checkPlaces");
         try {
@@ -48,32 +59,31 @@ public class PlaceController {
         }
     }
 
-    public String getPlaces() {
+    @GetMapping("places/get")
+    public List<PlaceDto> getPlaces() {
         log.info("Method getArrayPlace");
         try {
-            return StringPlaces.getStringFromPlaces(placeService.getPlaces());
+            return placeService.getPlaces();
         } catch (BusinessException | DaoException e) {
             log.warn(e.getMessage());
-            return e.getMessage();
+            return null;
         }
     }
 
-    public List<String> getPlacesWithId() {
+    @GetMapping("places/get/id")
+    //ToDo delete this method in ui and controller
+    public List<PlaceDto> getPlacesWithId() {
         log.info("Method getArrayPlace");
-        List<String> stringList = new ArrayList<>();
         try {
-            List<PlaceDto> placesDto = placeService.getPlaces();
-            stringList.add(StringPlaces.getStringFromPlaces(placesDto));
-            stringList.addAll(StringPlaces.getListId(placesDto));
-            return stringList;
+            return placeService.getPlaces();
         } catch (BusinessException | DaoException e) {
             log.warn(e.getMessage());
-            stringList.add(e.getMessage());
-            return stringList;
+            return null;
         }
     }
 
-    public String deletePlace(Long idPlace) {
+    @DeleteMapping("places/delete/{idPlace}")
+    public String deletePlace(@PathVariable Long idPlace) {
         log.info("Method deletePlace");
         log.trace("Parameter idPlace: {}", idPlace);
         try {
@@ -85,20 +95,18 @@ public class PlaceController {
         }
     }
 
-    public List<String> getFreePlacesByDate(String stringExecuteDate) {
+    @GetMapping("places/get/free/by-date")
+    public List<PlaceDto> getFreePlacesByDate(@RequestHeader String stringExecuteDate) {
         log.info("Method getFreePlacesByDate");
         log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
-        List<String> stringList = new ArrayList<>();
         try {
             Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
-            List<PlaceDto> placesDto = placeService.getFreePlaceByDate(executeDate);
-            stringList.add(StringPlaces.getStringFromPlaces(placesDto));
-            stringList.addAll(StringPlaces.getListId(placesDto));
-            return stringList;
+            return placeService.getFreePlaceByDate(executeDate);
         } catch (BusinessException | DateException | DaoException e) {
             log.warn(e.getMessage());
-            stringList.add(e.getMessage());
-            return stringList;
+            return null;
         }
     }
+
+    //ToDo all method crud
 }

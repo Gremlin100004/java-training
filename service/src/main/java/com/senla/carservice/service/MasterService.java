@@ -9,7 +9,7 @@ public interface MasterService {
 
     List<MasterDto> getMasters();
 
-    void addMaster(String name);
+    void addMaster(MasterDto masterDto);
 
     List<MasterDto> getFreeMastersByDate(Date executeDate);
 
