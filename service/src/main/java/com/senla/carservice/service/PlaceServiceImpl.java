@@ -36,24 +36,24 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     @Transactional
-    public void addPlace(Integer number) {
+    public void addPlace(PlaceDto placeDto) {
         log.debug("Method addPlace");
-        log.trace("Parameter number: {}", number);
+        log.trace("Parameter placeDto: {}", placeDto);
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
-        placeDao.saveRecord(new Place(number));
+        placeDao.saveRecord(transferDataFromPlaceDtoToPlace(placeDto));
     }
 
     @Override
     @Transactional
-    public void deletePlace(Long idPlace) {
+    public void deletePlace(PlaceDto placeDto) {
         log.debug("Method deletePlace");
-        log.trace("Parameter idPlace: {}", idPlace);
+        log.trace("Parameter placeDto: {}", placeDto);
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
-        Place place = placeDao.findById(idPlace);
+        Place place = transferDataFromPlaceDtoToPlace(placeDto);
         if (place.getIsBusy()) {
             throw new BusinessException("Place is busy");
         }
@@ -98,5 +98,18 @@ public class PlaceServiceImpl implements PlaceService {
             placesDto.add(placeDto);
         }
         return placesDto;
+    }
+
+    private Place transferDataFromPlaceDtoToPlace(PlaceDto placeDto) {
+        Place place;
+        if (placeDto.getId() == null){
+            place = new Place();
+        } else {
+            place = placeDao.findById(placeDto.getId());
+        }
+        place.setNumber(placeDto.getNumber());
+        place.setIsBusy(placeDto.getIsBusy());
+        place.setDeleteStatus(placeDto.getDeleteStatus());
+        return place;
     }
 }
