@@ -1,6 +1,5 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.controller.util.StringMaster;
 import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.service.MasterService;
@@ -9,16 +8,8 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,96 +20,54 @@ public class MasterController {
     @Autowired
     private MasterService masterService;
 
-    @GetMapping("masters/get")
+    @GetMapping("masters")
     public List<MasterDto> getMasters() {
         log.info("Method getMasters");
         return masterService.getMasters();
-//        try {
-//
-//            return stringList;
-//        } catch (BusinessException e) {
-//            log.warn(e.getMessage());
-//            stringList.add(e.getMessage());
-//            return stringList;
-//        }
     }
 
-    @PostMapping("masters/add")
+    @PostMapping("masters")
     public String addMaster(@RequestBody MasterDto masterDto) {
         log.info("Method addMaster");
         log.trace("Parameter masterDto: {}", masterDto);
-        try {
-            System.out.println(masterDto.getName());
-            masterService.addMaster(masterDto);
-            return " -master \"" + masterDto.getName() + "\" has been added to service.";
-        } catch (BusinessException e) {
-            log.warn(e.getMessage());
-            return e.getMessage();
-        }
+        masterService.addMaster(masterDto);
+        return " -master \"" + masterDto.getName() + "\" has been added to service.";
     }
 
     @GetMapping("masters/check")
     public String checkMasters() {
         log.info("Method checkMasters");
-        try {
-            if (masterService.getNumberMasters() == 0) {
+        if (masterService.getNumberMasters() == 0) {
                 throw new BusinessException("There are no masters");
             }
-            return "verification was successfully";
-        } catch (BusinessException e) {
-            log.warn(e.getMessage());
-            return e.getMessage();
-        }
+        return "verification was successfully";
     }
 
-    @DeleteMapping("masters/delete/{idMaster}")
+    @DeleteMapping("masters/{idMaster}")
     public String deleteMaster(@PathVariable Long idMaster) {
         log.info("Method deleteMaster");
         log.trace("Parameter index: {}", idMaster);
-        try {
-            masterService.deleteMaster(idMaster);
-            return " -master has been deleted successfully!";
-        } catch (BusinessException | DaoException e) {
-            log.warn(e.getMessage());
-            return e.getMessage();
-        }
+        masterService.deleteMaster(idMaster);
+        return " -master has been deleted successfully!";
     }
 
-    @GetMapping("masters/get/sort-by-alphabet")
+    @GetMapping("masters/sort-by-alphabet")
     public List<MasterDto> getMasterByAlphabet() {
         log.info("Method getMasterByAlphabet");
-        try {
-            return masterService.getMasterByAlphabet();
-        } catch (BusinessException | DaoException e) {
-            log.warn(e.getMessage());
-//            return e.getMessage();
-            return null;
-        }
+        return masterService.getMasterByAlphabet();
     }
 
-    @GetMapping("masters/get/sort-by-busy")
+    @GetMapping("masters/sort-by-busy")
     public List<MasterDto> getMasterByBusy() {
         log.info("Method getMasterByBusy");
-        try {
-            return masterService.getMasterByBusy();
-        } catch (BusinessException | DaoException e) {
-            log.warn(e.getMessage());
-//            return e.getMessage();
-            return null;
-        }
+        return masterService.getMasterByBusy();
     }
 
-    @GetMapping("masters/get/free")
+    @GetMapping("masters/free")
     public List<MasterDto> getFreeMasters(@RequestHeader String stringExecuteDate) {
         log.info("Method getFreeMasters");
         log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
-        try {
-            return masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate, true));
-        } catch (BusinessException | DaoException e) {
-            log.warn(e.getMessage());
-            return null;
-        }
+        return masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate, true));
     }
-
-    //ToDo all method crud
+    //ToDo all method crud ???
 }
