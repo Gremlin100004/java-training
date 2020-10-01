@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @NoArgsConstructor
@@ -49,24 +50,28 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void addOrder(String automaker, String model, String registrationNumber) {
-        log.debug("Method addOrder");
-        log.trace("Parameter automaker: {}, model: {}, registrationNumber: {}", automaker, model, registrationNumber);
+    //ToDo create test for this method
+    public String checkMastersPlaces() {
+        log.debug("Method checkMastersPlaces");
         checkMasters();
         checkPlaces();
-        Order order = new Order(automaker, model, registrationNumber);
-        Place place = placeDao.findById(1L);
-        order.setPlace(place);
-        orderDao.saveRecord(order);
+        return "you can add order";
     }
 
     @Override
     @Transactional
-    public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
-        log.debug("Method addOrderDeadlines");
+    public void addOrder(OrderDto orderDto) {
+        log.debug("Method addOrder");
+        log.trace("Parameter orderDto: {}", orderDto);
+        orderDao.saveRecord(transferDataFromOrderDtoToOrder(orderDto));
+    }
+
+    @Override
+    @Transactional
+    public void checkOrderDeadlines(Date executionStartTime, Date leadTime) {
+        log.debug("Method checkOrderDeadlines");
         log.trace("Parameters executionStartTime: {}, leadTime: {}", executionStartTime, leadTime);
         DateUtil.checkDateTime(executionStartTime, leadTime, false);
-        Order currentOrder = orderDao.getLastOrder();
         long numberFreeMasters = masterDao.getNumberFreeMasters(executionStartTime);
         long numberFreePlace = placeDao.getNumberFreePlaces(executionStartTime);
         if (numberFreeMasters == 0) {
@@ -75,57 +80,35 @@ public class OrderServiceImpl implements OrderService {
         if (numberFreePlace == 0) {
             throw new BusinessException("The number of places is zero");
         }
-        currentOrder.setExecutionStartTime(executionStartTime);
-        currentOrder.setLeadTime(leadTime);
-        orderDao.updateRecord(currentOrder);
     }
+
+    //ToDo sent to ui
+//    @Override
+//    @Transactional
+//    public void addOrderMasters(Long idMaster) {
+//        log.debug("Method addOrderMasters");
+//        log.trace("Parameter idMaster: {}", idMaster);
+//        Order currentOrder = orderDao.getLastOrder();
+//        Master master = masterDao.findById(idMaster);
+//        master.setNumberOrders(master.getNumberOrders() + 1);
+//        if (master.getDeleteStatus()) {
+//            throw new BusinessException("Master has been deleted");
+//        }
+//        for (Master orderMaster : currentOrder.getMasters()) {
+//            if (orderMaster.equals(master)) {
+//                throw new BusinessException("This master already exists");
+//            }
+//        }
+//        currentOrder.getMasters().add(master);
+//        orderDao.updateRecord(currentOrder);
+//    }
 
     @Override
     @Transactional
-    public void addOrderMasters(Long idMaster) {
-        log.debug("Method addOrderMasters");
-        log.trace("Parameter idMaster: {}", idMaster);
-        Order currentOrder = orderDao.getLastOrder();
-        Master master = masterDao.findById(idMaster);
-        master.setNumberOrders(master.getNumberOrders() + 1);
-        if (master.getDeleteStatus()) {
-            throw new BusinessException("Master has been deleted");
-        }
-        for (Master orderMaster : currentOrder.getMasters()) {
-            if (orderMaster.equals(master)) {
-                throw new BusinessException("This master already exists");
-            }
-        }
-        currentOrder.getMasters().add(master);
-        orderDao.updateRecord(currentOrder);
-    }
-
-    @Override
-    @Transactional
-    public void addOrderPlace(Long idPlace) {
-        log.debug("Method addOrderPlace");
-        log.trace("Parameter idPlace: {}", idPlace);
-        Order currentOrder = orderDao.getLastOrder();
-        currentOrder.setPlace(placeDao.findById(idPlace));
-        orderDao.updateRecord(currentOrder);
-    }
-
-    @Override
-    @Transactional
-    public void addOrderPrice(BigDecimal price) {
-        log.debug("Method addOrderPrice");
-        log.trace("Parameter price: {}", price);
-        Order currentOrder = orderDao.getLastOrder();
-        currentOrder.setPrice(price);
-        orderDao.updateRecord(currentOrder);
-    }
-
-    @Override
-    @Transactional
-    public void completeOrder(Long idOrder) {
+    public void completeOrder(OrderDto orderDto) {
         log.debug("Method completeOrder");
-        log.trace("Parameter idOrder: {}", idOrder);
-        Order order = orderDao.findById(idOrder);
+        log.trace("Parameter orderDto: {}", orderDto);
+        Order order = transferDataFromOrderDtoToOrder(orderDto);
         checkStatusOrder(order);
         order.setStatus(StatusOrder.PERFORM);
         order.setExecutionStartTime(new Date());
@@ -137,10 +120,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void cancelOrder(Long idOrder) {
+    public void cancelOrder(OrderDto orderDto) {
         log.debug("Method cancelOrder");
-        log.trace("Parameter idOrder: {}", idOrder);
-        Order order = orderDao.findById(idOrder);
+        log.trace("Parameter orderDto: {}", orderDto);
+        Order order = transferDataFromOrderDtoToOrder(orderDto);
         checkStatusOrder(order);
         order.setLeadTime(new Date());
         order.setStatus(StatusOrder.CANCELED);
@@ -155,10 +138,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void closeOrder(Long idOrder) {
+    public void closeOrder(OrderDto orderDto) {
         log.debug("Method closeOrder");
-        log.trace("Parameter idOrder: {}", idOrder);
-        Order order = orderDao.findById(idOrder);
+        log.trace("Parameter orderDto: {}", orderDto);
+        Order order = transferDataFromOrderDtoToOrder(orderDto);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(new Date());
         order.setStatus(StatusOrder.COMPLETED);
@@ -173,13 +156,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void deleteOrder(Long idOrder) {
+    public void deleteOrder(OrderDto orderDto) {
         log.debug("Method deleteOrder");
-        log.trace("Parameter idOrder: {}", idOrder);
+        log.trace("Parameter orderDto: {}", orderDto);
         if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
-        Order order = orderDao.findById(idOrder);
+        Order order = transferDataFromOrderDtoToOrder(orderDto);
         checkStatusOrderToDelete(order);
         order.setDeleteStatus(true);
         orderDao.updateRecord(order);
@@ -187,14 +170,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void shiftLeadTime(Long idOrder, Date executionStartTime, Date leadTime) {
+    public void shiftLeadTime(OrderDto orderDto, Date executionStartTime, Date leadTime) {
         log.debug("Method shiftLeadTime");
-        log.trace("Parameter idOrder: {}, executionStartTime: {}, leadTime: {}", idOrder, executionStartTime, leadTime);
+        log.trace("Parameter orderDto: {}, executionStartTime: {}, leadTime: {}", orderDto, executionStartTime, leadTime);
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
         DateUtil.checkDateTime(executionStartTime, leadTime, false);
-        Order order = orderDao.findById(idOrder);
+        Order order = transferDataFromOrderDtoToOrder(orderDto);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(leadTime);
         order.setExecutionStartTime(executionStartTime);
@@ -258,18 +241,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public List<OrderDto> getMasterOrders(Long idMaster) {
+    public List<OrderDto> getMasterOrders(MasterDto masterDto) {
         log.debug("Method getMasterOrders");
-        log.trace("Parameter idMaster: {}", idMaster);
-        return transferDataFromOrderToOrderDto(orderDao.getMasterOrders(masterDao.findById(idMaster)));
+        log.trace("Parameter idMaster: {}", masterDto);
+        return transferDataFromOrderToOrderDto(orderDao.getMasterOrders(masterDao.findById(masterDto.getId())));
     }
 
     @Override
     @Transactional
-    public List<MasterDto> getOrderMasters(Long idOrder) {
+    public List<MasterDto> getOrderMasters(OrderDto orderDto) {
         log.debug("Method getOrderMasters");
-        log.trace("Parameter idOrder: {}", idOrder);
-        return transferDataFromMasterToMasterDto(orderDao.getOrderMasters(orderDao.findById(idOrder)));
+        log.trace("Parameter idOrder: {}", orderDto);
+        return transferDataFromMasterToMasterDto(orderDao.getOrderMasters(transferDataFromOrderDtoToOrder(orderDto)));
     }
 
     @Override
@@ -368,5 +351,44 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus() == StatusOrder.PERFORM) {
             throw new BusinessException("The order has been canceled");
         }
+    }
+
+    private List<OrderDto> transferDataFromOrderToOrderDtoL(List<Order> orders) {
+        return orders.stream()
+            .map(this::transferDataFromOrderToOrderDto)
+            .collect(Collectors.toList());
+    }
+
+    private OrderDto transferDataFromOrderToOrderDto(Order order) {
+        OrderDto orderDto = new OrderDto();
+        orderDto.setAutomaker(order.getAutomaker());
+        orderDto.setModel(order.getModel());
+        orderDto.setRegistrationNumber(order.getRegistrationNumber());
+        orderDto.setCreationTime(order.getCreationTime());
+        orderDto.setExecutionStartTime(order.getExecutionStartTime());
+        orderDto.setLeadTime(order.getLeadTime());
+        orderDto.setStatus(String.valueOf(order.getStatus()));
+        orderDto.setPrice(order.getPrice());
+        orderDto.setDeleteStatus(order.isDeleteStatus());
+        return orderDto;
+    }
+
+    private Order transferDataFromOrderDtoToOrder(OrderDto orderDto) {
+        Order order;
+        if (orderDto.getId() == null){
+            order = new Order();
+        } else {
+            order = orderDao.findById(orderDto.getId());
+        }
+        order.setAutomaker(orderDto.getAutomaker());
+        order.setModel(orderDto.getModel());
+        order.setRegistrationNumber(orderDto.getRegistrationNumber());
+        order.setCreationTime(orderDto.getCreationTime());
+        order.setExecutionStartTime(orderDto.getExecutionStartTime());
+        order.setLeadTime(orderDto.getLeadTime());
+        order.setStatus(StatusOrder.valueOf(orderDto.getStatus()));
+        order.setPrice(orderDto.getPrice());
+        order.setDeleteStatus(orderDto.isDeleteStatus());
+        return order;
     }
 }

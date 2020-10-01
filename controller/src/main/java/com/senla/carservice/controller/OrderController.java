@@ -1,400 +1,250 @@
-//package com.senla.carservice.controller;
-//
-//import com.senla.carservice.controller.util.StringMaster;
-//import com.senla.carservice.controller.util.StringOrder;
-//import com.senla.carservice.dao.exception.DaoException;
-//import com.senla.carservice.dto.OrderDto;
-//import com.senla.carservice.service.OrderService;
-//import com.senla.carservice.service.enumaration.SortParameter;
-//import com.senla.carservice.service.exception.BusinessException;
-//import com.senla.carservice.util.DateUtil;
-//import com.senla.carservice.util.exception.DateException;
-//import lombok.NoArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Controller;
-//
-//import java.math.BigDecimal;
-//import java.util.ArrayList;
-//import java.util.Date;
-//import java.util.List;
-//
-//@Controller
-//@NoArgsConstructor
-//@Slf4j
-//public class OrderController {
-//    @Autowired
-//    private OrderService orderService;
-//
-//    public String addOrder(String automaker, String model, String registrationNumber) {
-//        log.info("Method addOrder");
-//        log.trace("Parameters automaker: {}, model: {}, registrationNumber: {}", automaker, model, registrationNumber);
-//        try {
-//            orderService.addOrder(automaker, model, registrationNumber);
-//            return "order add successfully!";
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String addOrderDeadlines(String stringExecutionStartTime, String stringLeadTime) {
-//        log.info("Method addOrderDeadlines");
-//        log.trace("Parameter stringExecutionStartTime: {}, stringLeadTime: {}",
-//            stringExecutionStartTime, stringLeadTime);
-//        try {
-//            Date executionStartTime = DateUtil.getDatesFromString(stringExecutionStartTime, true);
-//            Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
-//            orderService.addOrderDeadlines(executionStartTime, leadTime);
-//            return "deadline add to order successfully";
-//        } catch (BusinessException | DateException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String addOrderMasters(Long idMaster) {
-//        log.info("Method addOrderMasters");
-//        log.trace("Parameter idMaster: {}", idMaster);
-//        try {
-//            orderService.addOrderMasters(idMaster);
-//            return "masters add successfully";
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String addOrderPlace(Long idPlace) {
-//        log.info("Method addOrderPlace");
-//        log.trace("Parameter index: {}", idPlace);
-//        try {
-//            orderService.addOrderPlace(idPlace);
-//            return "place add to order successfully";
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String addOrderPrice(BigDecimal price) {
-//        log.info("Method addOrderPrice");
-//        log.trace("Parameter price: {}", price);
-//        try {
-//            orderService.addOrderPrice(price);
-//            return "price add to order successfully";
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String checkOrders() {
-//        log.info("Method checkPlaces");
-//        try {
-//            if (orderService.getNumberOrders() == 0) {
-//                throw new BusinessException("There are no orders");
-//            }
-//            return "verification was successfully";
-//        } catch (BusinessException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public List<String> getOrders() {
-//        log.info("Method getOrders");
-//        List<String> stringList = new ArrayList<>();
-//        try {
-//            List<OrderDto> ordersDto = orderService.getOrders();
-//            stringList.add(StringOrder.getStringFromOrder(ordersDto));
-//            stringList.addAll(StringOrder.getListId(ordersDto));
-//            return stringList;
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            stringList.add(e.getMessage());
-//            return stringList;
-//        }
-//    }
-//
-//    public String completeOrder(Long idOrder) {
-//        log.info("Method completeOrder");
-//        log.trace("Parameter index: {}", idOrder);
-//        try {
-//            if (orderService.getNumberOrders() < idOrder || idOrder < 0) {
-//                return "There are no such order";
-//            } else {
-//                orderService.completeOrder(idOrder);
-//            }
-//            return " - the order has been transferred to execution status";
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String closeOrder(Long idOrder) {
-//        log.info("Method closeOrder");
-//        log.trace("Parameter idOrder: {}", idOrder);
-//        try {
-//            orderService.closeOrder(idOrder);
-//            return " -the order has been completed.";
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String cancelOrder(Long idOrder) {
-//        log.info("Method cancelOrder");
-//        log.trace("Parameter idOrder: {}", idOrder);
-//        try {
-//            orderService.cancelOrder(idOrder);
-//            return " -the order has been canceled.";
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String deleteOrder(Long idOrder) {
-//        log.info("Method deleteOrder");
-//        log.trace("Parameter index: {}", idOrder);
-//        try {
-//            orderService.deleteOrder(idOrder);
-//            return " -the order has been deleted.";
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String shiftLeadTime(Long idOrder, String stringStartTime, String stringLeadTime) {
-//        log.info("Method shiftLeadTime");
-//        log.trace("Parameters index: {}, stringStartTime: {}, stringLeadTime: {}",
-//            idOrder, stringStartTime, stringLeadTime);
-//        try {
-//            Date executionStartTime = DateUtil.getDatesFromString(stringStartTime, true);
-//            Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
-//            if (orderService.getNumberOrders() < idOrder || idOrder < 0) {
-//                return "There are no such order";
-//            } else {
-//                orderService.shiftLeadTime(idOrder, executionStartTime, leadTime);
-//                return " -the order lead time has been changed.";
-//            }
-//        } catch (BusinessException | DateException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getOrdersSortByFilingDate() {
-//        log.info("Method getOrdersSortByFilingDate");
-//        try {
-//            return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.SORT_BY_FILING_DATE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getOrdersSortByExecutionDate() {
-//        log.info("Method getOrdersSortByExecutionDate");
-//        try {
-//            return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.SORT_BY_EXECUTION_DATE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getOrdersSortByPlannedStartDate() {
-//        log.info("Method getOrdersSortByPlannedStartDate");
-//        try {
-//            return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.BY_PLANNED_START_DATE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getOrdersSortByPrice() {
-//        log.info("Method getOrdersSortByPrice");
-//        try {
-//            return StringOrder.getStringFromOrder(orderService.getSortOrders(SortParameter.SORT_BY_PRICE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getExecuteOrderFilingDate() {
-//        log.info("Method getExecuteOrderFilingDate");
-//        try {
-//            return StringOrder
-//                .getStringFromOrder(orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getExecuteOrderExecutionDate() {
-//        log.info("Method getExecuteOrderExecutionDate");
-//        try {
-//            return StringOrder
-//                .getStringFromOrder(orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getCompletedOrdersFilingDate(String startPeriod, String endPeriod) {
-//        log.info("Method getCompletedOrdersFilingDate");
-//        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-//        try {
-//            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-//            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-//            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-//                                                                                     SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getCompletedOrdersExecutionDate(String startPeriod, String endPeriod) {
-//        log.info("Method getCompletedOrdersExecutionDate");
-//        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-//        try {
-//            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-//            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-//            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-//                                                                                     SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getCompletedOrdersPrice(String startPeriod, String endPeriod) {
-//        log.info("Method getCompletedOrdersPrice");
-//        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-//        try {
-//            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-//            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-//            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-//                                                                                     SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getCanceledOrdersFilingDate(String startPeriod, String endPeriod) {
-//        log.info("Method getCanceledOrdersFilingDate");
-//        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-//        try {
-//            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-//            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-//            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-//                                                                                     SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getCanceledOrdersExecutionDate(String startPeriod, String endPeriod) {
-//        log.info("Method getCanceledOrdersExecutionDate");
-//        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-//        try {
-//            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-//            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-//            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-//                                                                                     SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getCanceledOrdersPrice(String startPeriod, String endPeriod) {
-//        log.info("Method getCanceledOrdersPrice");
-//        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-//        try {
-//            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-//            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-//            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-//                                                                                     SortParameter.CANCELED_ORDERS_SORT_BY_PRICE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getDeletedOrdersFilingDate(String startPeriod, String endPeriod) {
-//        log.info("Method getDeletedOrdersFilingDate");
-//        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-//        try {
-//            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-//            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-//            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-//                                                                                     SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getDeletedOrdersExecutionDate(String startPeriod, String endPeriod) {
-//        log.info("Method getDeletedOrdersExecutionDate");
-//        log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-//        try {
-//            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-//            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-//            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-//                                                                                     SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getDeletedOrdersPrice(String startPeriod, String endPeriod) {
-//        log.info("Method getDeletedOrdersPrice");
-//        log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-//        try {
-//            Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-//            Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
-//            return StringOrder.getStringFromOrder(orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
-//                                                                                     SortParameter.DELETED_ORDERS_SORT_BY_PRICE));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getMasterOrders(Long idMaster) {
-//        log.info("Method getMasterOrders");
-//        log.trace("Parameter idOrder: {}", idMaster);
-//        try {
-//            return StringOrder.getStringFromOrder(orderService.getMasterOrders(idMaster));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//
-//    public String getOrderMasters(Long idOrder) {
-//        log.info("Method getOrderMasters");
-//        log.trace("Parameter idOrder: {}", idOrder);
-//        try {
-//            return StringMaster.getStringFromMasters(orderService.getOrderMasters(idOrder));
-//        } catch (BusinessException | DaoException e) {
-//            log.warn(e.getMessage());
-//            return e.getMessage();
-//        }
-//    }
-//}
+package com.senla.carservice.controller;
+
+import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.dto.OrderDto;
+import com.senla.carservice.service.OrderService;
+import com.senla.carservice.service.enumaration.SortParameter;
+import com.senla.carservice.service.exception.BusinessException;
+import com.senla.carservice.util.DateUtil;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
+import java.util.List;
+
+@RestController
+@RequestMapping("/")
+@NoArgsConstructor
+@Slf4j
+public class OrderController {
+    @Autowired
+    private OrderService orderService;
+
+    @PostMapping("orders")
+    public String addOrder(@RequestBody OrderDto orderDto) {
+        log.info("Method addOrder");
+        log.trace("Parameters orderDto: {}", orderDto);
+        orderService.addOrder(orderDto);
+        return "order add successfully!";
+    }
+
+    @GetMapping("orders/check-dates")
+    public String checkOrderDeadlines(@RequestParam String stringExecutionStartTime, @RequestParam String stringLeadTime) {
+        log.info("Method addOrderDeadlines");
+        log.trace("Parameter stringExecutionStartTime: {}, stringLeadTime: {}", stringExecutionStartTime,
+                  stringLeadTime);
+        Date executionStartTime = DateUtil.getDatesFromString(stringExecutionStartTime, true);
+        Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
+        orderService.checkOrderDeadlines(executionStartTime, leadTime);
+        return "dates are right";
+    }
+
+    @GetMapping("orders/check")
+    public String checkOrders() {
+        log.info("Method checkPlaces");
+        if (orderService.getNumberOrders() == 0) {
+                throw new BusinessException("There are no orders");
+        }
+        return "verification was successfully";
+    }
+
+    @GetMapping("orders")
+    public List<OrderDto> getOrders() {
+        log.info("Method getOrders");
+        return orderService.getOrders();
+    }
+
+    @PutMapping("orders/complete")
+    public String completeOrder(@RequestBody OrderDto orderDto) {
+        log.info("Method completeOrder");
+        log.trace("Parameter orderDto: {}", orderDto);
+            orderService.completeOrder(orderDto);
+            return " - the order has been transferred to execution status";
+    }
+
+    @PutMapping("orders/close")
+    public String closeOrder(@RequestBody OrderDto orderDto) {
+        log.info("Method closeOrder");
+        log.trace("Parameter orderDto: {}", orderDto);
+            orderService.closeOrder(orderDto);
+            return " -the order has been completed.";
+    }
+
+    @PutMapping("orders/cancel")
+    public String cancelOrder(@RequestBody OrderDto orderDto) {
+        log.info("Method cancelOrder");
+        log.trace("Parameter orderDto: {}", orderDto);
+            orderService.cancelOrder(orderDto);
+            return " -the order has been canceled.";
+    }
+
+    @DeleteMapping("orders")
+    public String deleteOrder(@RequestBody OrderDto orderDto) {
+        log.info("Method deleteOrder");
+        log.trace("Parameter orderDto: {}", orderDto);
+            orderService.deleteOrder(orderDto);
+            return " -the order has been deleted.";
+    }
+
+    @PutMapping("orders/shift-lead-time")
+    public String shiftLeadTime(@RequestBody OrderDto orderDto, @RequestParam String stringStartTime,
+                                @RequestParam String stringLeadTime) {
+        log.info("Method shiftLeadTime");
+        log.trace("Parameters orderDto: {}, stringStartTime: {}, stringLeadTime: {}", orderDto, stringStartTime,
+                  stringLeadTime);
+        Date executionStartTime = DateUtil.getDatesFromString(stringStartTime, true);
+        Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
+        orderService.shiftLeadTime(orderDto, executionStartTime, leadTime);
+        return " -the order lead time has been changed.";
+
+    }
+
+    @GetMapping("orders/sort-by-filing-date")
+    public List<OrderDto> getOrdersSortByFilingDate() {
+        log.info("Method getOrdersSortByFilingDate");
+        return orderService.getSortOrders(SortParameter.SORT_BY_FILING_DATE);
+    }
+
+    @GetMapping("orders/sort-by-execution-date")
+    public List<OrderDto> getOrdersSortByExecutionDate() {
+        log.info("Method getOrdersSortByExecutionDate");
+        return orderService.getSortOrders(SortParameter.SORT_BY_EXECUTION_DATE);
+    }
+
+    @GetMapping("orders/sort-by-planned-start-date")
+    public List<OrderDto> getOrdersSortByPlannedStartDate() {
+        log.info("Method getOrdersSortByPlannedStartDate");
+        return orderService.getSortOrders(SortParameter.BY_PLANNED_START_DATE);
+    }
+
+    @GetMapping("orders/sort-by-price")
+    public List<OrderDto> getOrdersSortByPrice() {
+        log.info("Method getOrdersSortByPrice");
+        return orderService.getSortOrders(SortParameter.SORT_BY_PRICE);
+    }
+
+    @GetMapping("orders/execute/sort-by-filing-date")
+    public List<OrderDto> getExecuteOrderFilingDate() {
+        log.info("Method getExecuteOrderFilingDate");
+        return orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE);
+    }
+
+    @GetMapping("orders/execute/sort-by-execution-date")
+    public List<OrderDto> getExecuteOrderExecutionDate() {
+        log.info("Method getExecuteOrderExecutionDate");
+        return orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE);
+    }
+
+    @GetMapping("orders/complete/sort-by-filing-date")
+    public List<OrderDto> getCompletedOrdersFilingDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
+        log.info("Method getCompletedOrdersFilingDate");
+        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
+           SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE);
+    }
+
+    @GetMapping("orders/complete/sort-by-execution-date")
+    public List<OrderDto> getCompletedOrdersExecutionDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
+        log.info("Method getCompletedOrdersExecutionDate");
+        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
+           SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE);
+    }
+
+    @GetMapping("orders/complete/sort-by-price")
+    public List<OrderDto> getCompletedOrdersPrice(@RequestParam String startPeriod, @RequestParam String endPeriod) {
+        log.info("Method getCompletedOrdersPrice");
+        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
+           SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE);
+    }
+
+    @GetMapping("orders/canceled/sort-by-filing-date")
+    public List<OrderDto> getCanceledOrdersFilingDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
+        log.info("Method getCanceledOrdersFilingDate");
+        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
+           SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE);
+    }
+
+    @GetMapping("orders/canceled/sort-by-execution-date")
+    public List<OrderDto> getCanceledOrdersExecutionDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
+        log.info("Method getCanceledOrdersExecutionDate");
+        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
+           SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE);
+    }
+
+    @GetMapping("orders/canceled/sort-by-price")
+    public List<OrderDto> getCanceledOrdersPrice(@RequestParam String startPeriod, @RequestParam String endPeriod) {
+        log.info("Method getCanceledOrdersPrice");
+        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
+           SortParameter.CANCELED_ORDERS_SORT_BY_PRICE);
+    }
+
+    @GetMapping("orders/deleted/sort-by-filing-date")
+    public List<OrderDto> getDeletedOrdersFilingDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
+        log.info("Method getDeletedOrdersFilingDate");
+        log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
+           SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE);
+    }
+
+    @GetMapping("orders/deleted/sort-by-execution-date")
+    public List<OrderDto> getDeletedOrdersExecutionDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
+        log.info("Method getDeletedOrdersExecutionDate");
+        log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
+           SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE);
+    }
+
+    @GetMapping("orders/deleted/sort-by-price")
+    public List<OrderDto> getDeletedOrdersPrice(@RequestParam String startPeriod, @RequestParam String endPeriod) {
+        log.info("Method getDeletedOrdersPrice");
+        log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
+           SortParameter.DELETED_ORDERS_SORT_BY_PRICE);
+    }
+
+    @GetMapping("orders/master-orders")
+    public List<OrderDto> getMasterOrders(@RequestBody MasterDto masterDto) {
+        log.info("Method getMasterOrders");
+        log.trace("Parameter masterDto: {}", masterDto);
+        return orderService.getMasterOrders(masterDto);
+    }
+
+    @GetMapping("orders/masters")
+    public List<MasterDto> getOrderMasters(@RequestBody OrderDto orderDto) {
+        log.info("Method getOrderMasters");
+        log.trace("Parameter orderDto: {}", orderDto);
+        return orderService.getOrderMasters(orderDto);
+    }
+}

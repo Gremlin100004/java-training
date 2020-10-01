@@ -1,6 +1,5 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.exception.BusinessException;
@@ -8,7 +7,14 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -43,11 +49,11 @@ public class MasterController {
         return "verification was successfully";
     }
 
-    @DeleteMapping("masters/{idMaster}")
-    public String deleteMaster(@PathVariable Long idMaster) {
+    @DeleteMapping("masters")
+    public String deleteMaster(@RequestBody MasterDto masterDto) {
         log.info("Method deleteMaster");
-        log.trace("Parameter index: {}", idMaster);
-        masterService.deleteMaster(idMaster);
+        log.trace("Parameter index: {}", masterDto);
+        masterService.deleteMaster(masterDto);
         return " -master has been deleted successfully!";
     }
 

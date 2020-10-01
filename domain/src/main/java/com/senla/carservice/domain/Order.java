@@ -54,9 +54,9 @@ public class Order extends AEntity {
     private BigDecimal price;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private StatusOrder status;
+    private StatusOrder status = StatusOrder.WAIT;
     @Column(name = "is_deleted")
-    private boolean deleteStatus;
+    private boolean deleteStatus = false;
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "orders_masters", joinColumns = @JoinColumn(name = "order_id"),
         inverseJoinColumns = @JoinColumn(name = "master_id"))

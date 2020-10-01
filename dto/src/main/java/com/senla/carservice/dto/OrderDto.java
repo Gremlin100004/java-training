@@ -20,6 +20,6 @@ public class OrderDto extends GeneralDto {
     private String model;
     private String registrationNumber;
     private BigDecimal price;
-    private String status;
+    private String status = "WAIT";
     private boolean deleteStatus;
 }

@@ -34,7 +34,7 @@ public class MasterServiceImpl implements MasterService {
     public void addMaster(MasterDto masterDto) {
         log.debug("Method addMaster");
         log.trace("Parameter masterDto: {}", masterDto);
-        masterDao.saveRecord(new Master(masterDto.getName()));
+        masterDao.saveRecord(transferDataFromMasterDtoToMaster(masterDto));
     }
 
     @Override
@@ -55,10 +55,10 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
-    public void deleteMaster(Long idMaster) {
+    public void deleteMaster(MasterDto masterDto) {
         log.debug("Method deleteMaster");
-        log.trace("Parameter idMaster: {}", idMaster);
-        Master master = masterDao.findById(idMaster);
+        log.trace("Parameter masterDto: {}", masterDto);
+        Master master = transferDataFromMasterDtoToMaster(masterDto);
         if (master.getDeleteStatus()) {
             throw new BusinessException("error, master has already been deleted");
         }
@@ -89,7 +89,7 @@ public class MasterServiceImpl implements MasterService {
 
     private List<MasterDto> transferDataFromMasterToMasterDto(List<Master> masters) {
         List<MasterDto> mastersDto = new ArrayList<>();
-        for (Master master: masters) {
+        for (Master master : masters) {
             MasterDto masterDto = new MasterDto();
             masterDto.setId(master.getId());
             masterDto.setName(master.getName());
@@ -98,5 +98,18 @@ public class MasterServiceImpl implements MasterService {
             mastersDto.add(masterDto);
         }
         return mastersDto;
+    }
+
+    private Master transferDataFromMasterDtoToMaster(MasterDto masterDto) {
+        Master master;
+        if (masterDto.getId() == null){
+            master = new Master();
+        } else {
+            master = masterDao.findById(masterDto.getId());
+        }
+        master.setName(masterDto.getName());
+        master.setNumberOrders(masterDto.getNumberOrders());
+        master.setDeleteStatus(masterDto.getDeleteStatus());
+        return master;
     }
 }

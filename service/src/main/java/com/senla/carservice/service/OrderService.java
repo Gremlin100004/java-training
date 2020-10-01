@@ -3,8 +3,8 @@ package com.senla.carservice.service;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.enumaration.SortParameter;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -12,33 +12,29 @@ public interface OrderService {
 
     List<OrderDto> getOrders();
 
-    void addOrder(String automaker, String model, String registrationNumber);
+    String checkMastersPlaces();
 
-    void addOrderDeadlines(Date executionStartTime, Date leadTime);
+    void addOrder(OrderDto orderDto);
 
-    void addOrderMasters(Long idMaster);
+    void checkOrderDeadlines(Date executionStartTime, Date leadTime);
 
-    void addOrderPlace(Long idPlace);
+    void completeOrder(OrderDto orderDto);
 
-    void addOrderPrice(BigDecimal price);
+    void cancelOrder(OrderDto orderDto);
 
-    void completeOrder(Long idOrder);
+    void closeOrder(OrderDto orderDto);
 
-    void cancelOrder(Long idOrder);
+    void deleteOrder(OrderDto orderDto);
 
-    void closeOrder(Long idOrder);
-
-    void deleteOrder(Long idOrder);
-
-    void shiftLeadTime(Long idOrder, Date executionStartTime, Date leadTime);
+    void shiftLeadTime(OrderDto orderDto, Date executionStartTime, Date leadTime);
 
     List<OrderDto> getSortOrders(SortParameter sortParameter);
 
     List<OrderDto> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter);
 
-    List<OrderDto> getMasterOrders(Long idMaster);
+    List<OrderDto> getMasterOrders(MasterDto masterDto);
 
-    List<MasterDto> getOrderMasters(Long idOrder);
+    List<MasterDto> getOrderMasters(OrderDto orderDto);
 
     Long getNumberOrders();
 }
