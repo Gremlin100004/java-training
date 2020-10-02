@@ -58,7 +58,9 @@ class MasterServiceImplTest {
 
     @Test
     void MasterServiceImpl_addMaster() {
+        Master master = getTestMaster();
         MasterDto masterDto = getTestMasterDto();
+        Mockito.doReturn(master).when(masterDao).saveRecord(ArgumentMatchers.any(Master.class));
 
         Assertions.assertDoesNotThrow(() -> masterService.addMaster(masterDto));
         Mockito.verify(masterDao, Mockito.times(1)).saveRecord(ArgumentMatchers.any(Master.class));
@@ -105,20 +107,35 @@ class MasterServiceImplTest {
 
     @Test
     void MasterServiceImpl_deleteMaster() {
-        MasterDto masterDto = getTestMasterDto();
+        Master master = getTestMaster();
+        Mockito.doReturn(master).when(masterDao).findById(ID_MASTER);
 
-        Assertions.assertDoesNotThrow(() -> masterService.deleteMaster(masterDto));
-        Mockito.verify(masterDao, Mockito.times(1)).updateRecord(ArgumentMatchers.any(Master.class));
+        Assertions.assertDoesNotThrow(() -> masterService.deleteMaster(ID_MASTER));
+        Assertions.assertTrue(master.getDeleteStatus());
+        Mockito.verify(masterDao, Mockito.times(1)).findById(ID_MASTER);
+        Mockito.verify(masterDao, Mockito.times(1)).updateRecord(master);
+        Mockito.reset(masterDao);
+    }
+
+    @Test
+    void MasterServiceImpl_deleteMaster_masterDao_findById_wrongId() {
+        Master master = getTestMaster();
+        Mockito.doThrow(DaoException.class).when(masterDao).findById(ID_MASTER);
+
+        Assertions.assertThrows(DaoException.class, () -> masterService.deleteMaster(ID_MASTER));
+        Mockito.verify(masterDao, Mockito.times(1)).findById(ID_MASTER);
+        Mockito.verify(masterDao, Mockito.never()).updateRecord(master);
         Mockito.reset(masterDao);
     }
 
     @Test
     void MasterServiceImpl_deleteMaster_masterDeleted() {
         Master master = getTestMaster();
-        MasterDto masterDto = getTestMasterDto();
-        masterDto.setDeleteStatus(true);
+        master.setDeleteStatus(true);
+        Mockito.doReturn(master).when(masterDao).findById(ID_MASTER);
 
-        Assertions.assertThrows(BusinessException.class, () -> masterService.deleteMaster(masterDto));
+        Assertions.assertThrows(BusinessException.class, () -> masterService.deleteMaster(ID_MASTER));
+        Mockito.verify(masterDao, Mockito.times(1)).findById(ID_MASTER);
         Mockito.verify(masterDao, Mockito.never()).updateRecord(master);
         Mockito.reset(masterDao);
     }

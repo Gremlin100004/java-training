@@ -9,9 +9,9 @@ public interface PlaceService {
 
     List<PlaceDto> getPlaces();
 
-    void addPlace(PlaceDto placeDto);
+    PlaceDto addPlace(PlaceDto placeDto);
 
-    void deletePlace(PlaceDto placeDto);
+    void deletePlace(Long orderId);
 
     Long getNumberFreePlaceByDate(Date startDate);
 

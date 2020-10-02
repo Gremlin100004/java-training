@@ -7,14 +7,7 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,11 +26,10 @@ public class MasterController {
     }
 
     @PostMapping("masters")
-    public String addMaster(@RequestBody MasterDto masterDto) {
+    public MasterDto addMaster(@RequestBody MasterDto masterDto) {
         log.info("Method addMaster");
         log.trace("Parameter masterDto: {}", masterDto);
-        masterService.addMaster(masterDto);
-        return " -master \"" + masterDto.getName() + "\" has been added to service.";
+        return masterService.addMaster(masterDto);
     }
 
     @GetMapping("masters/check")
@@ -49,11 +41,11 @@ public class MasterController {
         return "verification was successfully";
     }
 
-    @DeleteMapping("masters")
-    public String deleteMaster(@RequestBody MasterDto masterDto) {
+    @DeleteMapping("masters/{id}")
+    public String deleteMaster(@PathVariable("id") Long masterId) {
         log.info("Method deleteMaster");
-        log.trace("Parameter index: {}", masterDto);
-        masterService.deleteMaster(masterDto);
+        log.trace("Parameter masterId: {}", masterId);
+        masterService.deleteMaster(masterId);
         return " -master has been deleted successfully!";
     }
 
@@ -70,10 +62,9 @@ public class MasterController {
     }
 
     @GetMapping("masters/free")
-    public List<MasterDto> getFreeMasters(@RequestHeader String stringExecuteDate) {
+    public List<MasterDto> getFreeMasters(@RequestParam String stringExecuteDate) {
         log.info("Method getFreeMasters");
         log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
         return masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate, true));
     }
-    //ToDo all method crud ???
 }

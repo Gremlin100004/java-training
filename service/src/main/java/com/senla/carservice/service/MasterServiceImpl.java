@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @NoArgsConstructor
@@ -31,10 +31,10 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
-    public void addMaster(MasterDto masterDto) {
+    public MasterDto addMaster(MasterDto masterDto) {
         log.debug("Method addMaster");
         log.trace("Parameter masterDto: {}", masterDto);
-        masterDao.saveRecord(transferDataFromMasterDtoToMaster(masterDto));
+        return transferDataFromMasterToMasterDto(masterDao.saveRecord(new Master(masterDto.getName())));
     }
 
     @Override
@@ -55,10 +55,10 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
-    public void deleteMaster(MasterDto masterDto) {
+    public void deleteMaster(Long masterId) {
         log.debug("Method deleteMaster");
-        log.trace("Parameter masterDto: {}", masterDto);
-        Master master = transferDataFromMasterDtoToMaster(masterDto);
+        log.trace("Parameter masterId: {}", masterId);
+        Master master = masterDao.findById(masterId);
         if (master.getDeleteStatus()) {
             throw new BusinessException("error, master has already been deleted");
         }
@@ -87,17 +87,19 @@ public class MasterServiceImpl implements MasterService {
         return masterDao.getNumberMasters();
     }
 
+    private MasterDto transferDataFromMasterToMasterDto(Master master) {
+        MasterDto masterDto = new MasterDto();
+        masterDto.setId(master.getId());
+        masterDto.setName(master.getName());
+        masterDto.setNumberOrders(master.getNumberOrders());
+        masterDto.setDeleteStatus(master.getDeleteStatus());
+        return masterDto;
+    }
+
     private List<MasterDto> transferDataFromMasterToMasterDto(List<Master> masters) {
-        List<MasterDto> mastersDto = new ArrayList<>();
-        for (Master master : masters) {
-            MasterDto masterDto = new MasterDto();
-            masterDto.setId(master.getId());
-            masterDto.setName(master.getName());
-            masterDto.setNumberOrders(master.getNumberOrders());
-            masterDto.setDeleteStatus(master.getDeleteStatus());
-            mastersDto.add(masterDto);
-        }
-        return mastersDto;
+        return masters.stream()
+                .map(this::transferDataFromMasterToMasterDto)
+                .collect(Collectors.toList());
     }
 
     private Master transferDataFromMasterDtoToMaster(MasterDto masterDto) {

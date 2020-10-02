@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,27 +49,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    //ToDo create test for this method
-    public String checkMastersPlaces() {
-        log.debug("Method checkMastersPlaces");
-        checkMasters();
-        checkPlaces();
-        return "you can add order";
-    }
-
-    @Override
-    @Transactional
-    public void addOrder(OrderDto orderDto) {
+    public OrderDto addOrder(OrderDto orderDto) {
         log.debug("Method addOrder");
         log.trace("Parameter orderDto: {}", orderDto);
-        orderDao.saveRecord(transferDataFromOrderDtoToOrder(orderDto));
+        return transferDataFromOrderToOrderDto(orderDao.saveRecord(transferDataFromOrderDtoToOrder(orderDto)));
     }
 
     @Override
     @Transactional
-    public void checkOrderDeadlines(Date executionStartTime, Date leadTime) {
+    public void checkOrderDeadlines(OrderDto orderDto) {
         log.debug("Method checkOrderDeadlines");
-        log.trace("Parameters executionStartTime: {}, leadTime: {}", executionStartTime, leadTime);
+        log.trace("Parameters orderDto: {}", orderDto);
+        Date executionStartTime = orderDto.getExecutionStartTime();
+        Date leadTime = orderDto.getLeadTime();
         DateUtil.checkDateTime(executionStartTime, leadTime, false);
         long numberFreeMasters = masterDao.getNumberFreeMasters(executionStartTime);
         long numberFreePlace = placeDao.getNumberFreePlaces(executionStartTime);
@@ -105,10 +96,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void completeOrder(OrderDto orderDto) {
+    public void completeOrder(Long orderId) {
         log.debug("Method completeOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
-        Order order = transferDataFromOrderDtoToOrder(orderDto);
+        log.trace("Parameter orderId: {}", orderId);
+        Order order = orderDao.findById(orderId);
         checkStatusOrder(order);
         order.setStatus(StatusOrder.PERFORM);
         order.setExecutionStartTime(new Date());
@@ -120,10 +111,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void cancelOrder(OrderDto orderDto) {
+    public void cancelOrder(Long orderId) {
         log.debug("Method cancelOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
-        Order order = transferDataFromOrderDtoToOrder(orderDto);
+        log.trace("Parameter orderId: {}", orderId);
+        Order order = orderDao.findById(orderId);
         checkStatusOrder(order);
         order.setLeadTime(new Date());
         order.setStatus(StatusOrder.CANCELED);
@@ -138,10 +129,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void closeOrder(OrderDto orderDto) {
+    public void closeOrder(Long orderId) {
         log.debug("Method closeOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
-        Order order = transferDataFromOrderDtoToOrder(orderDto);
+        log.trace("Parameter orderId: {}", orderId);
+        Order order = orderDao.findById(orderId);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(new Date());
         order.setStatus(StatusOrder.COMPLETED);
@@ -156,13 +147,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void deleteOrder(OrderDto orderDto) {
+    public void deleteOrder(Long orderId) {
         log.debug("Method deleteOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
+        log.trace("Parameter orderId: {}", orderId);
         if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
-        Order order = transferDataFromOrderDtoToOrder(orderDto);
+        Order order = orderDao.findById(orderId);
         checkStatusOrderToDelete(order);
         order.setDeleteStatus(true);
         orderDao.updateRecord(order);
@@ -170,14 +161,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void shiftLeadTime(OrderDto orderDto, Date executionStartTime, Date leadTime) {
+    public void shiftLeadTime(OrderDto orderDto) {
         log.debug("Method shiftLeadTime");
-        log.trace("Parameter orderDto: {}, executionStartTime: {}, leadTime: {}", orderDto, executionStartTime, leadTime);
+        log.trace("Parameter orderDto: {}", orderDto);
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
+        Date executionStartTime = orderDto.getExecutionStartTime();
+        Date leadTime = orderDto.getLeadTime();
         DateUtil.checkDateTime(executionStartTime, leadTime, false);
-        Order order = transferDataFromOrderDtoToOrder(orderDto);
+        Order order = orderDao.findById(orderDto.getId());
+        order.setExecutionStartTime(executionStartTime);
+        order.setLeadTime(leadTime);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(leadTime);
         order.setExecutionStartTime(executionStartTime);
@@ -262,26 +257,6 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.getNumberOrders();
     }
 
-    private List<OrderDto> transferDataFromOrderToOrderDto(List<Order> orders) {
-        List<OrderDto> ordersDto = new ArrayList<>();
-        for (Order order: orders) {
-            OrderDto orderDto = new OrderDto();
-            orderDto.setId(order.getId());
-            orderDto.setAutomaker(order.getAutomaker());
-            orderDto.setModel(order.getModel());
-            orderDto.setRegistrationNumber(order.getRegistrationNumber());
-            orderDto.setCreationTime(order.getCreationTime());
-            orderDto.setExecutionStartTime(order.getExecutionStartTime());
-            orderDto.setLeadTime(order.getLeadTime());
-            orderDto.setPrice(order.getPrice());
-            orderDto.setStatus(String.valueOf(order.getStatus()));
-            orderDto.setAutomaker(order.getAutomaker());
-            orderDto.setDeleteStatus(order.isDeleteStatus());
-            ordersDto.add(orderDto);
-        }
-        return ordersDto;
-    }
-
     private List<MasterDto> transferDataFromMasterToMasterDto(List<Master> masters) {
         List<MasterDto> mastersDto = new ArrayList<>();
         for (Master master: masters) {
@@ -293,20 +268,6 @@ public class OrderServiceImpl implements OrderService {
             mastersDto.add(masterDto);
         }
         return mastersDto;
-    }
-
-    private void checkMasters() {
-        log.debug("Method checkMasters");
-        if (masterDao.getNumberMasters() == 0) {
-            throw new BusinessException("There are no masters");
-        }
-    }
-
-    private void checkPlaces() {
-        log.debug("Method checkPlaces");
-        if (placeDao.getNumberPlaces() == 0) {
-            throw new BusinessException("There are no places");
-        }
     }
 
     private void checkStatusOrder(Order order) {
@@ -353,7 +314,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private List<OrderDto> transferDataFromOrderToOrderDtoL(List<Order> orders) {
+    private List<OrderDto> transferDataFromOrderToOrderDto(List<Order> orders) {
         return orders.stream()
             .map(this::transferDataFromOrderToOrderDto)
             .collect(Collectors.toList());
@@ -361,6 +322,7 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderDto transferDataFromOrderToOrderDto(Order order) {
         OrderDto orderDto = new OrderDto();
+        orderDto.setId(order.getId());
         orderDto.setAutomaker(order.getAutomaker());
         orderDto.setModel(order.getModel());
         orderDto.setRegistrationNumber(order.getRegistrationNumber());
@@ -386,9 +348,12 @@ public class OrderServiceImpl implements OrderService {
         order.setCreationTime(orderDto.getCreationTime());
         order.setExecutionStartTime(orderDto.getExecutionStartTime());
         order.setLeadTime(orderDto.getLeadTime());
-        order.setStatus(StatusOrder.valueOf(orderDto.getStatus()));
+        if (orderDto.getStatus() != null) {
+            order.setStatus(StatusOrder.valueOf(orderDto.getStatus()));
+        }
         order.setPrice(orderDto.getPrice());
         order.setDeleteStatus(orderDto.isDeleteStatus());
+        order.setMasters(orderDto.getMasters());
         return order;
     }
 }

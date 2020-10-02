@@ -1,5 +1,6 @@
 package com.senla.carservice.controller;
 
+import com.senla.carservice.domain.Order;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.OrderService;
@@ -9,14 +10,7 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -29,22 +23,20 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @GetMapping("orders/check-masters-places")
+
     @PostMapping("orders")
-    public String addOrder(@RequestBody OrderDto orderDto) {
+    public OrderDto addOrder(@RequestBody OrderDto orderDto) {
         log.info("Method addOrder");
         log.trace("Parameters orderDto: {}", orderDto);
-        orderService.addOrder(orderDto);
-        return "order add successfully!";
+        return orderService.addOrder(orderDto);
     }
 
     @GetMapping("orders/check-dates")
-    public String checkOrderDeadlines(@RequestParam String stringExecutionStartTime, @RequestParam String stringLeadTime) {
+    public String checkOrderDeadlines(@RequestBody OrderDto orderDto) {
         log.info("Method addOrderDeadlines");
-        log.trace("Parameter stringExecutionStartTime: {}, stringLeadTime: {}", stringExecutionStartTime,
-                  stringLeadTime);
-        Date executionStartTime = DateUtil.getDatesFromString(stringExecutionStartTime, true);
-        Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
-        orderService.checkOrderDeadlines(executionStartTime, leadTime);
+        log.trace("Parameter orderDto: {}", orderDto);
+        orderService.checkOrderDeadlines(orderDto);
         return "dates are right";
     }
 
@@ -63,47 +55,43 @@ public class OrderController {
         return orderService.getOrders();
     }
 
-    @PutMapping("orders/complete")
-    public String completeOrder(@RequestBody OrderDto orderDto) {
+    @PutMapping("orders/{id}/complete")
+    public String completeOrder(@PathVariable("id") Long orderId) {
         log.info("Method completeOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
-            orderService.completeOrder(orderDto);
+        log.trace("Parameter orderId: {}", orderId);
+            orderService.completeOrder(orderId);
             return " - the order has been transferred to execution status";
     }
 
-    @PutMapping("orders/close")
-    public String closeOrder(@RequestBody OrderDto orderDto) {
+    @PutMapping("orders/{id}/close")
+    public String closeOrder(@PathVariable("id") Long orderId) {
         log.info("Method closeOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
-            orderService.closeOrder(orderDto);
+        log.trace("Parameter orderId: {}", orderId);
+            orderService.closeOrder(orderId);
             return " -the order has been completed.";
     }
 
-    @PutMapping("orders/cancel")
-    public String cancelOrder(@RequestBody OrderDto orderDto) {
+    @PutMapping("orders/{id}/cancel")
+    public String cancelOrder(@PathVariable("id") Long orderId) {
         log.info("Method cancelOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
-            orderService.cancelOrder(orderDto);
+        log.trace("Parameter orderId: {}", orderId);
+            orderService.cancelOrder(orderId);
             return " -the order has been canceled.";
     }
 
-    @DeleteMapping("orders")
-    public String deleteOrder(@RequestBody OrderDto orderDto) {
+    @DeleteMapping("orders/{id}")
+    public String deleteOrder(@PathVariable("id") Long orderId) {
         log.info("Method deleteOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
-            orderService.deleteOrder(orderDto);
+        log.trace("Parameter orderId: {}", orderId);
+            orderService.deleteOrder(orderId);
             return " -the order has been deleted.";
     }
 
     @PutMapping("orders/shift-lead-time")
-    public String shiftLeadTime(@RequestBody OrderDto orderDto, @RequestParam String stringStartTime,
-                                @RequestParam String stringLeadTime) {
+    public String shiftLeadTime(@RequestBody OrderDto orderDto) {
         log.info("Method shiftLeadTime");
-        log.trace("Parameters orderDto: {}, stringStartTime: {}, stringLeadTime: {}", orderDto, stringStartTime,
-                  stringLeadTime);
-        Date executionStartTime = DateUtil.getDatesFromString(stringStartTime, true);
-        Date leadTime = DateUtil.getDatesFromString(stringLeadTime, true);
-        orderService.shiftLeadTime(orderDto, executionStartTime, leadTime);
+        log.trace("Parameters orderDto: {}", orderDto);
+        orderService.shiftLeadTime(orderDto);
         return " -the order lead time has been changed.";
 
     }

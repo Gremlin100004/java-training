@@ -36,24 +36,24 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     @Transactional
-    public void addPlace(PlaceDto placeDto) {
+    public PlaceDto addPlace(PlaceDto placeDto) {
         log.debug("Method addPlace");
         log.trace("Parameter placeDto: {}", placeDto);
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
-        placeDao.saveRecord(transferDataFromPlaceDtoToPlace(placeDto));
+        return transferDataFromPlaceToPLaceDto(placeDao.saveRecord(new Place(placeDto.getNumber())));
     }
 
     @Override
     @Transactional
-    public void deletePlace(PlaceDto placeDto) {
+    public void deletePlace(Long orderId) {
         log.debug("Method deletePlace");
-        log.trace("Parameter placeDto: {}", placeDto);
+        log.trace("Parameter orderId: {}", orderId);
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
-        Place place = transferDataFromPlaceDtoToPlace(placeDto);
+        Place place = placeDao.findById(orderId);
         if (place.getIsBusy()) {
             throw new BusinessException("Place is busy");
         }
@@ -90,14 +90,18 @@ public class PlaceServiceImpl implements PlaceService {
     private List<PlaceDto> transferDataFromPlaceToPLaceDto(List<Place> places) {
         List<PlaceDto> placesDto = new ArrayList<>();
         for (Place place: places) {
-            PlaceDto placeDto = new PlaceDto();
-            placeDto.setId(place.getId());
-            placeDto.setNumber(place.getNumber());
-            placeDto.setIsBusy(place.getIsBusy());
-            placeDto.setDeleteStatus(place.getDeleteStatus());
-            placesDto.add(placeDto);
+            placesDto.add(transferDataFromPlaceToPLaceDto(place));
         }
         return placesDto;
+    }
+
+    private PlaceDto transferDataFromPlaceToPLaceDto(Place place) {
+        PlaceDto placeDto = new PlaceDto();
+        placeDto.setId(place.getId());
+        placeDto.setNumber(place.getNumber());
+        placeDto.setIsBusy(place.getIsBusy());
+        placeDto.setDeleteStatus(place.getDeleteStatus());
+        return placeDto;
     }
 
     private Place transferDataFromPlaceDtoToPlace(PlaceDto placeDto) {

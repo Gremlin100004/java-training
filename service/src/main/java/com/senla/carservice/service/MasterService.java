@@ -9,13 +9,13 @@ public interface MasterService {
 
     List<MasterDto> getMasters();
 
-    void addMaster(MasterDto masterDto);
+    MasterDto addMaster(MasterDto masterDto);
 
     List<MasterDto> getFreeMastersByDate(Date executeDate);
 
     Long getNumberFreeMastersByDate(Date startDate);
 
-    void deleteMaster(MasterDto masterDto);
+    void deleteMaster(Long masterId);
 
     List<MasterDto> getMasterByAlphabet();
 

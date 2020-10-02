@@ -11,6 +11,6 @@ import lombok.ToString;
 @NoArgsConstructor
 public class MasterDto extends GeneralDto {
     private String name;
-    private Integer numberOrders = 0;
-    private Boolean deleteStatus = false;
+    private Integer numberOrders;
+    private Boolean deleteStatus;
 }

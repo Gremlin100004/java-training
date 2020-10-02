@@ -11,6 +11,6 @@ import lombok.ToString;
 @NoArgsConstructor
 public class PlaceDto extends GeneralDto {
     private Integer number;
-    private Boolean isBusy = false;
-    private Boolean deleteStatus = false;
+    private Boolean isBusy;
+    private Boolean deleteStatus;
 }

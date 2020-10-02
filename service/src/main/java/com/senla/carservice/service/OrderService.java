@@ -3,7 +3,6 @@ package com.senla.carservice.service;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.enumaration.SortParameter;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -12,21 +11,19 @@ public interface OrderService {
 
     List<OrderDto> getOrders();
 
-    String checkMastersPlaces();
+    OrderDto addOrder(OrderDto orderDto);
 
-    void addOrder(OrderDto orderDto);
+    void checkOrderDeadlines(OrderDto orderDto);
 
-    void checkOrderDeadlines(Date executionStartTime, Date leadTime);
+    void completeOrder(Long orderId);
 
-    void completeOrder(OrderDto orderDto);
+    void cancelOrder(Long orderId);
 
-    void cancelOrder(OrderDto orderDto);
+    void closeOrder(Long orderId);
 
-    void closeOrder(OrderDto orderDto);
+    void deleteOrder(Long orderId);
 
-    void deleteOrder(OrderDto orderDto);
-
-    void shiftLeadTime(OrderDto orderDto, Date executionStartTime, Date leadTime);
+    void shiftLeadTime(OrderDto orderDto);
 
     List<OrderDto> getSortOrders(SortParameter sortParameter);
 

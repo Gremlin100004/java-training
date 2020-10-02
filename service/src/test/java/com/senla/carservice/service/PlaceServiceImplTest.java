@@ -36,6 +36,7 @@ class PlaceServiceImplTest {
         List<Place> places = getTestPlaces();
         List<PlaceDto> placesDto = getTestPlacesDto();
         Mockito.doReturn(places).when(placeDao).getAllRecords();
+
         List<PlaceDto> resultPlacesDto = placeService.getPlaces();
         Assertions.assertNotNull(resultPlacesDto);
         Assertions.assertEquals(RIGHT_NUMBER_PLACES, resultPlacesDto.size());
@@ -48,6 +49,7 @@ class PlaceServiceImplTest {
     @Test
     void PlaceServiceImpl_getPlaces_placeDao_getAllRecords_emptyList() {
         Mockito.doThrow(DaoException.class).when(placeDao).getAllRecords();
+
         Assertions.assertThrows(DaoException.class, () -> placeService.getPlaces());
         Mockito.verify(placeDao, Mockito.times(1)).getAllRecords();
         Mockito.reset(placeDao);
@@ -57,21 +59,10 @@ class PlaceServiceImplTest {
     void PlaceServiceImpl_addPlace() {
         Place place = getTestPlace();
         PlaceDto placeDto = getTestPlaceDto();
-        Mockito.doReturn(place).when(placeDao).findById(ID_PLACE);
+        Mockito.doReturn(place).when(placeDao).saveRecord(ArgumentMatchers.any(Place.class));
+
         Assertions.assertDoesNotThrow(() -> placeService.addPlace(placeDto));
         Mockito.verify(placeDao, Mockito.times(1)).saveRecord(ArgumentMatchers.any(Place.class));
-        Mockito.verify(placeDao, Mockito.times(1)).findById(ID_PLACE);
-        Mockito.reset(placeDao);
-    }
-
-    @Test
-    void PlaceServiceImpl_addPlace_placeDao_findById_wrongId() {
-        Place place = getTestPlace();
-        PlaceDto placeDto = getTestPlaceDto();
-        Mockito.doThrow(DaoException.class).when(placeDao).findById(ID_PLACE);
-        Assertions.assertThrows(DaoException.class, () -> placeService.addPlace(placeDto));
-        Mockito.verify(placeDao, Mockito.times(1)).findById(ID_PLACE);
-        Mockito.verify(placeDao, Mockito.never()).saveRecord(place);
         Mockito.reset(placeDao);
     }
 
@@ -80,7 +71,8 @@ class PlaceServiceImplTest {
         Place place = getTestPlace();
         PlaceDto placeDto = getTestPlaceDto();
         Mockito.doReturn(place).when(placeDao).findById(ID_PLACE);
-        Assertions.assertDoesNotThrow(() -> placeService.deletePlace(placeDto));
+
+        Assertions.assertDoesNotThrow(() -> placeService.deletePlace(ID_PLACE));
         Assertions.assertTrue(place.getDeleteStatus());
         Mockito.verify(placeDao, Mockito.times(1)).findById(ID_PLACE);
         Mockito.verify(placeDao, Mockito.times(1)).updateRecord(place);
@@ -92,7 +84,8 @@ class PlaceServiceImplTest {
         Place place = getTestPlace();
         PlaceDto placeDto = getTestPlaceDto();
         Mockito.doThrow(DaoException.class).when(placeDao).findById(ID_PLACE);
-        Assertions.assertThrows(DaoException.class, () -> placeService.deletePlace(placeDto));
+
+        Assertions.assertThrows(DaoException.class, () -> placeService.deletePlace(ID_PLACE));
         Mockito.verify(placeDao, Mockito.times(1)).findById(ID_PLACE);
         Mockito.verify(placeDao, Mockito.never()).updateRecord(place);
         Mockito.reset(placeDao);
@@ -105,7 +98,8 @@ class PlaceServiceImplTest {
         place.setIsBusy(true);
         PlaceDto placeDto = getTestPlaceDto();
         placeDto.setIsBusy(true);
-        Assertions.assertThrows(BusinessException.class, () -> placeService.deletePlace(placeDto));
+
+        Assertions.assertThrows(BusinessException.class, () -> placeService.deletePlace(ID_PLACE));
         Mockito.verify(placeDao, Mockito.times(1)).findById(ID_PLACE);
         Mockito.verify(placeDao, Mockito.never()).updateRecord(place);
         Mockito.reset(placeDao);
@@ -118,7 +112,8 @@ class PlaceServiceImplTest {
         PlaceDto placeDto = getTestPlaceDto();
         placeDto.setDeleteStatus(true);
         Mockito.doReturn(place).when(placeDao).findById(ID_PLACE);
-        Assertions.assertThrows(BusinessException.class, () -> placeService.deletePlace(placeDto));
+
+        Assertions.assertThrows(BusinessException.class, () -> placeService.deletePlace(ID_PLACE));
         Mockito.verify(placeDao, Mockito.times(1)).findById(ID_PLACE);
         Mockito.verify(placeDao, Mockito.never()).updateRecord(place);
         Mockito.reset(placeDao);
@@ -128,6 +123,7 @@ class PlaceServiceImplTest {
     void PlaceServiceImpl_getNumberFreePlaceByDate() {
         Date date = new Date();
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberFreePlaces(date);
+
         Long numberFreePlaceByDate = placeService.getNumberFreePlaceByDate(date);
         Assertions.assertNotNull(numberFreePlaceByDate);
         Assertions.assertEquals(RIGHT_NUMBER_PLACES, numberFreePlaceByDate);
@@ -141,6 +137,7 @@ class PlaceServiceImplTest {
         List<Place> places = getTestPlaces();
         List<PlaceDto> placesDto = getTestPlacesDto();
         Mockito.doReturn(places).when(placeDao).getFreePlaces(date);
+
         List<PlaceDto> resultPlacesDto = placeService.getFreePlaceByDate(date);
         Assertions.assertNotNull(resultPlacesDto);
         Assertions.assertEquals(RIGHT_NUMBER_PLACES, resultPlacesDto.size());
@@ -154,6 +151,7 @@ class PlaceServiceImplTest {
     void PlaceServiceImpl_getFreePlaceByDate_placeDao_getFreePlaces_emptyList() {
         Date date = new Date();
         Mockito.doThrow(DaoException.class).when(placeDao).getFreePlaces(date);
+
         Assertions.assertThrows(DaoException.class, () -> placeService.getFreePlaceByDate(date));
         Mockito.verify(placeDao, Mockito.times(1)).getFreePlaces(date);
         Mockito.reset(placeDao);
@@ -162,6 +160,7 @@ class PlaceServiceImplTest {
     @Test
     void getNumberPlace() {
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
+
         Long resultNumberPlaces = placeService.getNumberPlace();
         Assertions.assertEquals(RIGHT_NUMBER_PLACES, resultNumberPlaces);
         Assertions.assertNotNull(resultNumberPlaces);
@@ -179,6 +178,8 @@ class PlaceServiceImplTest {
         PlaceDto placeDto = new PlaceDto();
         placeDto.setId(ID_PLACE);
         placeDto.setNumber(NUMBER_PLACE);
+        placeDto.setIsBusy(false);
+        placeDto.setDeleteStatus(false);
         return placeDto;
     }
 

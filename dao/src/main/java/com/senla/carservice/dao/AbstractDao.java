@@ -28,10 +28,11 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     }
 
     @Override
-    public void saveRecord(T entity) {
+    public T saveRecord(T entity) {
         log.debug("Method saveRecord");
         log.trace("Parameter entity: {}", entity);
         entityManager.persist(entity);
+        return entity;
     }
 
     @Override

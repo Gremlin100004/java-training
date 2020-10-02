@@ -7,13 +7,7 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -27,11 +21,10 @@ public class PlaceController {
     private PlaceService placeService;
 
     @PostMapping("places")
-    public String addPlace(@RequestBody PlaceDto placeDto) {
+    public PlaceDto addPlace(@RequestBody PlaceDto placeDto) {
         log.info("Method addPlace");
         log.trace("Parameter placeDto: {}", placeDto);
-        placeService.addPlace(placeDto);
-        return "-place \"" + placeDto.getNumber() + "\" has been added to service";
+        return placeService.addPlace(placeDto);
     }
 
     @GetMapping("places/check")
@@ -51,11 +44,11 @@ public class PlaceController {
 
     //ToDo in ui get with id
 
-    @DeleteMapping("places")
-    public String deletePlace(@RequestBody PlaceDto placeDto) {
+    @DeleteMapping("places/{id}")
+    public String deletePlace(@PathVariable("id") Long orderId) {
         log.info("Method deletePlace");
-        log.trace("Parameter placeDto: {}", placeDto);
-        placeService.deletePlace(placeDto);
+        log.trace("Parameter orderId: {}", orderId);
+        placeService.deletePlace(orderId);
         return " -delete place in service successfully";
     }
 
