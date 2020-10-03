@@ -1,6 +1,5 @@
 package com.senla.carservice.dao.config;
 
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +14,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
@@ -37,11 +35,10 @@ public class DaoConfiguration {
         return em;
     }
 
-    @SneakyThrows
     @Bean
     public DataSource dataSource() {
-        Class.forName(environment.getRequiredProperty(DRIVER_DATABASE));
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(environment.getRequiredProperty(DRIVER_DATABASE));
         dataSource.setUrl(environment.getRequiredProperty(CONNECTION_URL));
         return dataSource;
     }

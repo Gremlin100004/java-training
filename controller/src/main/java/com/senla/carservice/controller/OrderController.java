@@ -1,6 +1,6 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.domain.Order;
+import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.OrderService;
@@ -10,7 +10,15 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
@@ -23,8 +31,6 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @GetMapping("orders/check-masters-places")
-
     @PostMapping("orders")
     public OrderDto addOrder(@RequestBody OrderDto orderDto) {
         log.info("Method addOrder");
@@ -32,21 +38,21 @@ public class OrderController {
         return orderService.addOrder(orderDto);
     }
 
-    @GetMapping("orders/check-dates")
-    public String checkOrderDeadlines(@RequestBody OrderDto orderDto) {
+    @PostMapping("orders/check-dates")
+    public ClientMessageDto checkOrderDeadlines(@RequestBody OrderDto orderDto) {
         log.info("Method addOrderDeadlines");
         log.trace("Parameter orderDto: {}", orderDto);
         orderService.checkOrderDeadlines(orderDto);
-        return "dates are right";
+        return new ClientMessageDto("dates are right");
     }
 
     @GetMapping("orders/check")
-    public String checkOrders() {
+    public ClientMessageDto checkOrders() {
         log.info("Method checkPlaces");
         if (orderService.getNumberOrders() == 0) {
                 throw new BusinessException("There are no orders");
         }
-        return "verification was successfully";
+        return new ClientMessageDto("Verification was successfully");
     }
 
     @GetMapping("orders")
@@ -56,43 +62,43 @@ public class OrderController {
     }
 
     @PutMapping("orders/{id}/complete")
-    public String completeOrder(@PathVariable("id") Long orderId) {
+    public ClientMessageDto completeOrder(@PathVariable("id") Long orderId) {
         log.info("Method completeOrder");
         log.trace("Parameter orderId: {}", orderId);
             orderService.completeOrder(orderId);
-            return " - the order has been transferred to execution status";
+            return new ClientMessageDto(" - the order has been transferred to execution status");
     }
 
     @PutMapping("orders/{id}/close")
-    public String closeOrder(@PathVariable("id") Long orderId) {
+    public ClientMessageDto closeOrder(@PathVariable("id") Long orderId) {
         log.info("Method closeOrder");
         log.trace("Parameter orderId: {}", orderId);
             orderService.closeOrder(orderId);
-            return " -the order has been completed.";
+            return new ClientMessageDto(" -the order has been completed.");
     }
 
     @PutMapping("orders/{id}/cancel")
-    public String cancelOrder(@PathVariable("id") Long orderId) {
+    public ClientMessageDto cancelOrder(@PathVariable("id") Long orderId) {
         log.info("Method cancelOrder");
         log.trace("Parameter orderId: {}", orderId);
             orderService.cancelOrder(orderId);
-            return " -the order has been canceled.";
+            return new ClientMessageDto(" -the order has been canceled.");
     }
 
     @DeleteMapping("orders/{id}")
-    public String deleteOrder(@PathVariable("id") Long orderId) {
+    public ClientMessageDto deleteOrder(@PathVariable("id") Long orderId) {
         log.info("Method deleteOrder");
         log.trace("Parameter orderId: {}", orderId);
             orderService.deleteOrder(orderId);
-            return " -the order has been deleted.";
+            return new ClientMessageDto(" -the order has been deleted.");
     }
 
     @PutMapping("orders/shift-lead-time")
-    public String shiftLeadTime(@RequestBody OrderDto orderDto) {
+    public ClientMessageDto shiftLeadTime(@RequestBody OrderDto orderDto) {
         log.info("Method shiftLeadTime");
         log.trace("Parameters orderDto: {}", orderDto);
         orderService.shiftLeadTime(orderDto);
-        return " -the order lead time has been changed.";
+        return new ClientMessageDto(" -the order lead time has been changed.");
 
     }
 
@@ -222,14 +228,14 @@ public class OrderController {
            SortParameter.DELETED_ORDERS_SORT_BY_PRICE);
     }
 
-    @GetMapping("orders/master-orders")
+    @PostMapping("orders/master-orders")
     public List<OrderDto> getMasterOrders(@RequestBody MasterDto masterDto) {
         log.info("Method getMasterOrders");
         log.trace("Parameter masterDto: {}", masterDto);
         return orderService.getMasterOrders(masterDto);
     }
 
-    @GetMapping("orders/masters")
+    @PostMapping("orders/masters")
     public List<MasterDto> getOrderMasters(@RequestBody OrderDto orderDto) {
         log.info("Method getOrderMasters");
         log.trace("Parameter orderDto: {}", orderDto);

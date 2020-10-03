@@ -1,4 +1,4 @@
-package com.senla.carservice.controller.util;
+package com.senla.carservice.ui.util;
 
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.util.DateUtil;

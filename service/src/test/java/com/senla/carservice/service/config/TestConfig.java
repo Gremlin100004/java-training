@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = "com.senla.carservice.service")
+@ComponentScan("com.senla.carservice.service")
 public class TestConfig {
 
     @Bean

@@ -274,16 +274,16 @@ public class OrderServiceImpl implements OrderService {
         log.debug("Method checkStatusOrder");
         log.trace("Parameter order: {}", order);
         if (order.isDeleteStatus()) {
-            throw new BusinessException("The order has been deleted");
+            throw new BusinessException("Error, the order has been deleted");
         }
         if (order.getStatus() == StatusOrder.COMPLETED) {
-            throw new BusinessException("The order has been completed");
+            throw new BusinessException("Error, the order has been completed");
         }
         if (order.getStatus() == StatusOrder.PERFORM) {
-            throw new BusinessException("Order is being executed");
+            throw new BusinessException("Error, order is being executed");
         }
         if (order.getStatus() == StatusOrder.CANCELED) {
-            throw new BusinessException("The order has been canceled");
+            throw new BusinessException("Error, the order has been canceled");
         }
     }
 
@@ -291,26 +291,26 @@ public class OrderServiceImpl implements OrderService {
         log.debug("Method checkStatusOrderShiftTime");
         log.trace("Parameter order: {}", order);
         if (order.isDeleteStatus()) {
-            throw new BusinessException("The order has been deleted");
+            throw new BusinessException("Error, the order has been deleted");
         }
         if (order.getStatus() == StatusOrder.COMPLETED) {
-            throw new BusinessException("The order has been completed");
+            throw new BusinessException("Error, the order has been completed");
         }
         if (order.getStatus() == StatusOrder.CANCELED) {
-            throw new BusinessException("The order has been canceled");
+            throw new BusinessException("Error, the order has been canceled");
         }
     }
     private void checkStatusOrderToDelete(Order order) {
         log.debug("Method checkStatusOrderToDelete");
         log.trace("Parameter order: {}", order);
         if (order.isDeleteStatus()) {
-            throw new BusinessException("The order has been deleted");
+            throw new BusinessException("Error, the order has been deleted");
         }
         if (order.getStatus() == StatusOrder.WAIT) {
-            throw new BusinessException("The order has been waiting");
+            throw new BusinessException("Error, the order has been waiting");
         }
         if (order.getStatus() == StatusOrder.PERFORM) {
-            throw new BusinessException("The order has been canceled");
+            throw new BusinessException("Error, the order has been canceled");
         }
     }
 
@@ -337,7 +337,7 @@ public class OrderServiceImpl implements OrderService {
 
     private Order transferDataFromOrderDtoToOrder(OrderDto orderDto) {
         Order order;
-        if (orderDto.getId() == null){
+        if (orderDto.getId() == null) {
             order = new Order();
         } else {
             order = orderDao.findById(orderDto.getId());
@@ -353,7 +353,26 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setPrice(orderDto.getPrice());
         order.setDeleteStatus(orderDto.isDeleteStatus());
-        order.setMasters(orderDto.getMasters());
+        order.setMasters(transferDataFromMasterDtoToMaster(orderDto.getMasters()));
         return order;
+    }
+
+    private List<Master> transferDataFromMasterDtoToMaster(List<MasterDto> mastersDto) {
+        return mastersDto.stream()
+            .map(this::transferDataFromMasterDtoToMaster)
+            .collect(Collectors.toList());
+    }
+
+    private Master transferDataFromMasterDtoToMaster(MasterDto masterDto) {
+        Master master;
+        if (masterDto.getId() == null) {
+            master = new Master();
+        } else {
+            master = masterDao.findById(masterDto.getId());
+        }
+        master.setName(masterDto.getName());
+        master.setNumberOrders(masterDto.getNumberOrders());
+        master.setDeleteStatus(masterDto.getDeleteStatus());
+        return master;
     }
 }

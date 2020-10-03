@@ -101,17 +101,4 @@ public class MasterServiceImpl implements MasterService {
                 .map(this::transferDataFromMasterToMasterDto)
                 .collect(Collectors.toList());
     }
-
-    private Master transferDataFromMasterDtoToMaster(MasterDto masterDto) {
-        Master master;
-        if (masterDto.getId() == null){
-            master = new Master();
-        } else {
-            master = masterDao.findById(masterDto.getId());
-        }
-        master.setName(masterDto.getName());
-        master.setNumberOrders(masterDto.getNumberOrders());
-        master.setDeleteStatus(masterDto.getDeleteStatus());
-        return master;
-    }
 }

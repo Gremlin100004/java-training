@@ -1,5 +1,6 @@
 package com.senla.carservice.controller;
 
+import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.exception.BusinessException;
@@ -7,7 +8,14 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -33,20 +41,20 @@ public class MasterController {
     }
 
     @GetMapping("masters/check")
-    public String checkMasters() {
+    public ClientMessageDto checkMasters() {
         log.info("Method checkMasters");
         if (masterService.getNumberMasters() == 0) {
                 throw new BusinessException("There are no masters");
             }
-        return "verification was successfully";
+        return new ClientMessageDto("verification was successfully");
     }
 
     @DeleteMapping("masters/{id}")
-    public String deleteMaster(@PathVariable("id") Long masterId) {
+    public ClientMessageDto deleteMaster(@PathVariable("id") Long masterId) {
         log.info("Method deleteMaster");
         log.trace("Parameter masterId: {}", masterId);
         masterService.deleteMaster(masterId);
-        return " -master has been deleted successfully!";
+        return new ClientMessageDto(" -master has been deleted successfully!");
     }
 
     @GetMapping("masters/sort-by-alphabet")

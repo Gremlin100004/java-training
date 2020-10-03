@@ -19,12 +19,12 @@ public class OrderDto extends GeneralDto {
     private Date creationTime;
     private Date executionStartTime;
     private Date leadTime;
-    private Place place;
+    private PlaceDto place;
     private String automaker;
     private String model;
     private String registrationNumber;
     private BigDecimal price;
     private String status;
     private boolean deleteStatus;
-    private List<Master> masters;
+    private List<MasterDto> masters;
 }

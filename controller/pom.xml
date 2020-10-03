@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>controller</artifactId>
     <build>
-        <finalName>controller</finalName>
+        <finalName>carservice</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
@@ -18,7 +18,7 @@
                 <version>2.2</version>
                 <configuration>
                     <url>http://localhost:8080/manager/text</url>
-                    <path>/controller</path>
+                    <path>/carservice</path>
                     <username>admin</username>
                     <password>password</password>
                 </configuration>

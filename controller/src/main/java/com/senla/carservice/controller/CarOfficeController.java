@@ -1,21 +1,22 @@
 package com.senla.carservice.controller;
 
-import com.senla.carservice.csv.exception.CsvException;
-import com.senla.carservice.dao.exception.DaoException;
+import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.service.CarOfficeService;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.PlaceService;
-import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
-import com.senla.carservice.util.exception.DateException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 
-@Controller
+@RestController
+@RequestMapping("/")
 @NoArgsConstructor
 @Slf4j
 public class CarOfficeController {
@@ -26,54 +27,35 @@ public class CarOfficeController {
     @Autowired
     private PlaceService placeService;
 
-    public String getFreePlacesMastersByDate(String date) {
+    @GetMapping("number-of-free-places")
+    public ClientMessageDto getFreePlacesMastersByDate(@RequestParam String date) {
         log.info("Method getFreePlacesMastersByDate");
         log.trace("Parameter date: {}", date);
+        //Todo Validation Date
         Date dateFree = DateUtil.getDatesFromString(date, false);
-        if (dateFree == null) {
-            return "error date";
-        }
-        try {
-            Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
-            Long numberFreeMasters = masterService.getNumberFreeMastersByDate(startDayDate);
-            Long numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate);
-            return "- number free places in service: " + numberFreePlace + "\n- number free masters in service: " +
-                   numberFreeMasters;
-        } catch (BusinessException | DateException | DaoException e) {
-            log.warn(e.getMessage());
-            return e.getMessage();
-        }
+        Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
+        Long numberFreeMasters = masterService.getNumberFreeMastersByDate(startDayDate);
+        Long numberFreePlace = placeService.getNumberFreePlaceByDate(startDayDate);
+        return new ClientMessageDto("- number free places in service: " + numberFreePlace + "\n- number free masters in service: " +
+                                 numberFreeMasters);
     }
-
-    public String getNearestFreeDate() {
+    @GetMapping("nearest-free-date")
+    public ClientMessageDto getNearestFreeDate() {
         log.info("Method getNearestFreeDate");
-        try {
-            return "Nearest free date: " + DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false);
-        } catch (BusinessException | DateException | DaoException e) {
-            log.warn(e.getMessage());
-            return e.getMessage();
-        }
+        return new ClientMessageDto("Nearest free date: " + DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false));
     }
 
-    public String exportEntities() {
+    @GetMapping("export")
+    public ClientMessageDto exportEntities() {
         log.info("Method exportEntities");
-        try {
-            carOfficeService.exportEntities();
-            return "Export completed successfully!";
-        } catch (BusinessException | CsvException e) {
-            log.warn(e.getMessage());
-            return e.getMessage();
-        }
+        carOfficeService.exportEntities();
+        return new ClientMessageDto("Export completed successfully!");
     }
 
-    public String importEntities() {
+    @GetMapping("import")
+    public ClientMessageDto importEntities() {
         log.info("Method importEntities");
-        try {
-            carOfficeService.importEntities();
-            return "Imported completed successfully!";
-        } catch (BusinessException | CsvException e) {
-            log.warn(e.getMessage());
-            return e.getMessage();
-        }
+        carOfficeService.importEntities();
+        return new ClientMessageDto("Imported completed successfully!");
     }
 }

@@ -103,17 +103,4 @@ public class PlaceServiceImpl implements PlaceService {
         placeDto.setDeleteStatus(place.getDeleteStatus());
         return placeDto;
     }
-
-    private Place transferDataFromPlaceDtoToPlace(PlaceDto placeDto) {
-        Place place;
-        if (placeDto.getId() == null){
-            place = new Place();
-        } else {
-            place = placeDao.findById(placeDto.getId());
-        }
-        place.setNumber(placeDto.getNumber());
-        place.setIsBusy(placeDto.getIsBusy());
-        place.setDeleteStatus(placeDto.getDeleteStatus());
-        return place;
-    }
 }

@@ -1,5 +1,6 @@
 package com.senla.carservice.controller;
 
+import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.service.exception.BusinessException;
@@ -7,7 +8,14 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
@@ -28,12 +36,12 @@ public class PlaceController {
     }
 
     @GetMapping("places/check")
-    public String checkPlaces() {
+    public ClientMessageDto checkPlaces() {
         log.info("Method checkPlaces");
         if (placeService.getNumberPlace() == 0) {
             throw new  BusinessException("There are no places");
         }
-        return "verification was successfully";
+        return new ClientMessageDto("verification was successfully");
     }
 
     @GetMapping("places")
@@ -45,11 +53,11 @@ public class PlaceController {
     //ToDo in ui get with id
 
     @DeleteMapping("places/{id}")
-    public String deletePlace(@PathVariable("id") Long orderId) {
+    public ClientMessageDto deletePlace(@PathVariable("id") Long orderId) {
         log.info("Method deletePlace");
         log.trace("Parameter orderId: {}", orderId);
         placeService.deletePlace(orderId);
-        return " -delete place in service successfully";
+        return new ClientMessageDto(" -delete place in service successfully");
     }
 
     @GetMapping("places/free-by-date")

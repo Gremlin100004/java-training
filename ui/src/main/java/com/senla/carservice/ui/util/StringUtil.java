@@ -1,4 +1,4 @@
-package com.senla.carservice.controller.util;
+package com.senla.carservice.ui.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
