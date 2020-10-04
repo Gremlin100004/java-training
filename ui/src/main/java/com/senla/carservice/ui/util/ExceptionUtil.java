@@ -7,7 +7,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 public class ExceptionUtil {
 
-    public static String getMessageFromException(HttpClientErrorException.Conflict exception){
+    public static String getMessageFromException(HttpClientErrorException.Conflict exception) {
         ClientMessageDto clientMessageDto;
         try {
             clientMessageDto = new ObjectMapper().readValue(exception.getResponseBodyAsString(), ClientMessageDto.class);

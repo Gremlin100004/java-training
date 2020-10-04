@@ -38,11 +38,13 @@ public class OrderController {
         return orderService.addOrder(orderDto);
     }
 
-    @PostMapping("orders/check-dates")
-    public ClientMessageDto checkOrderDeadlines(@RequestBody OrderDto orderDto) {
+    @GetMapping("orders/check-dates")
+    public ClientMessageDto checkOrderDeadlines(@RequestParam String stringExecutionStartTime, @RequestParam String stringLeadTime) {
         log.info("Method addOrderDeadlines");
-        log.trace("Parameter orderDto: {}", orderDto);
-        orderService.checkOrderDeadlines(orderDto);
+        log.trace("Parameters stringExecutionStartTime: {}, stringLeadTime: {}", stringExecutionStartTime, stringLeadTime);
+        Date executionStartTime = DateUtil.getDatesFromString(stringExecutionStartTime.replace('%', ' '), true);
+        Date leadTime = DateUtil.getDatesFromString(stringLeadTime.replace('%', ' '), true);
+        orderService.checkOrderDeadlines(executionStartTime, leadTime);
         return new ClientMessageDto("dates are right");
     }
 
@@ -50,9 +52,9 @@ public class OrderController {
     public ClientMessageDto checkOrders() {
         log.info("Method checkPlaces");
         if (orderService.getNumberOrders() == 0) {
-                throw new BusinessException("There are no orders");
+                throw new BusinessException("Error, there are no orders");
         }
-        return new ClientMessageDto("Verification was successfully");
+        return new ClientMessageDto("verification was successfully");
     }
 
     @GetMapping("orders")
@@ -142,8 +144,8 @@ public class OrderController {
     public List<OrderDto> getCompletedOrdersFilingDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCompletedOrdersFilingDate");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod.replace('%', ' '), true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod.replace('%', ' '), true);
         return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
            SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE);
     }
@@ -152,8 +154,8 @@ public class OrderController {
     public List<OrderDto> getCompletedOrdersExecutionDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCompletedOrdersExecutionDate");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod.replace('%', ' '), true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod.replace('%', ' '), true);
         return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
            SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE);
     }
@@ -162,8 +164,8 @@ public class OrderController {
     public List<OrderDto> getCompletedOrdersPrice(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCompletedOrdersPrice");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod.replace('%', ' '), true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod.replace('%', ' '), true);
         return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
            SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE);
     }
@@ -172,8 +174,8 @@ public class OrderController {
     public List<OrderDto> getCanceledOrdersFilingDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCanceledOrdersFilingDate");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod.replace('%', ' '), true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod.replace('%', ' '), true);
         return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
            SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE);
     }
@@ -182,8 +184,8 @@ public class OrderController {
     public List<OrderDto> getCanceledOrdersExecutionDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCanceledOrdersExecutionDate");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod.replace('%', ' '), true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod.replace('%', ' '), true);
         return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
            SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE);
     }
@@ -192,8 +194,8 @@ public class OrderController {
     public List<OrderDto> getCanceledOrdersPrice(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCanceledOrdersPrice");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod.replace('%', ' '), true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod.replace('%', ' '), true);
         return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
            SortParameter.CANCELED_ORDERS_SORT_BY_PRICE);
     }
@@ -202,8 +204,8 @@ public class OrderController {
     public List<OrderDto> getDeletedOrdersFilingDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getDeletedOrdersFilingDate");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
-        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod.replace('%', ' '), true);
+        Date endPeriodDate = DateUtil.getDatesFromString(endPeriod.replace('%', ' '), true);
         return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
            SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE);
     }
@@ -211,8 +213,8 @@ public class OrderController {
     @GetMapping("orders/deleted/sort-by-execution-date")
     public List<OrderDto> getDeletedOrdersExecutionDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getDeletedOrdersExecutionDate");
-        log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+        log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod.replace('%', ' '), endPeriod);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod.replace('%', ' '), true);
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
            SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE);
@@ -221,8 +223,8 @@ public class OrderController {
     @GetMapping("orders/deleted/sort-by-price")
     public List<OrderDto> getDeletedOrdersPrice(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getDeletedOrdersPrice");
-        log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
-        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod, true);
+        log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod.replace('%', ' '), endPeriod);
+        Date startPeriodDate = DateUtil.getDatesFromString(startPeriod.replace('%', ' '), true);
         Date endPeriodDate = DateUtil.getDatesFromString(endPeriod, true);
         return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate,
            SortParameter.DELETED_ORDERS_SORT_BY_PRICE);

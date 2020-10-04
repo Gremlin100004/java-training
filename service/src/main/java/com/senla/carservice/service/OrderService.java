@@ -13,7 +13,7 @@ public interface OrderService {
 
     OrderDto addOrder(OrderDto orderDto);
 
-    void checkOrderDeadlines(OrderDto orderDto);
+    void checkOrderDeadlines(Date executionStartTime, Date leadTime);
 
     void completeOrder(Long orderId);
 

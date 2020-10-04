@@ -51,7 +51,7 @@ public final class DateUtil {
         try {
             return isTime ? DATE_TIME_FORMAT.parse(stringDate) : DATE_FORMAT.parse(stringDate);
         } catch (ParseException e) {
-            if (isTime){
+            if (isTime) {
                 throw new DateException("Error date format, should be \"yyyy-MM-dd hh:mm\"");
             } else {
                 throw new DateException("Error date format, should be \"dd.MM.yyyy\"");
@@ -83,10 +83,10 @@ public final class DateUtil {
             throw new DateException("Error date format, should be \"yyyy-MM-dd hh:mm\"");
         }
         if (executionStartTime.after(leadTime)) {
-            throw new DateException("The execution start time is greater than lead time");
+            throw new DateException("Error, the execution start time is greater than lead time");
         }
         if (executionStartTime.before(new Date()) && !periodTime) {
-            throw new DateException("The execution start time is less than current Date");
+            throw new DateException("Error, the execution start time is less than current Date");
         }
     }
 }

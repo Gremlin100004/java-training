@@ -44,7 +44,7 @@ public class MasterController {
     public ClientMessageDto checkMasters() {
         log.info("Method checkMasters");
         if (masterService.getNumberMasters() == 0) {
-                throw new BusinessException("There are no masters");
+                throw new BusinessException("Error, there are no masters");
             }
         return new ClientMessageDto("verification was successfully");
     }
@@ -73,6 +73,6 @@ public class MasterController {
     public List<MasterDto> getFreeMasters(@RequestParam String stringExecuteDate) {
         log.info("Method getFreeMasters");
         log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
-        return masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate, true));
+        return masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate.replace('%', ' '), true));
     }
 }

@@ -86,13 +86,11 @@ class OrderServiceImplTest {
     void OrderServiceImpl_addOrder() {
         Order order = getTestOrder();
         OrderDto orderDto = getTestOrderDto();
-        Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
         Mockito.doReturn(order).when(orderDao).saveRecord(order);
 
         Assertions.assertDoesNotThrow(
             () -> orderService.addOrder(orderDto));
         Mockito.verify(orderDao, Mockito.times(1)).saveRecord(ArgumentMatchers.any(Order.class));
-        Mockito.verify(orderDao, Mockito.times(1)).findById(ID_ORDER);
         Mockito.reset(orderDao);
     }
 
@@ -100,13 +98,10 @@ class OrderServiceImplTest {
     void OrderServiceImpl_checkOrderDeadlines() {
         Date executionStartTime = DateUtil.addDays(new Date(), 1);
         Date leadTime = DateUtil.addDays(new Date(), 2);
-        OrderDto orderDto = getTestOrderDto();
-        orderDto.setExecutionStartTime(executionStartTime);
-        orderDto.setLeadTime(leadTime);
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberFreeMasters(executionStartTime);
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberFreePlaces(executionStartTime);
 
-        Assertions.assertDoesNotThrow(() -> orderService.checkOrderDeadlines(orderDto));
+        Assertions.assertDoesNotThrow(() -> orderService.checkOrderDeadlines(executionStartTime, leadTime));
         Mockito.verify(masterDao, Mockito.times(1)).getNumberFreeMasters(executionStartTime);
         Mockito.verify(placeDao, Mockito.times(1)).getNumberFreePlaces(executionStartTime);
         Mockito.reset(placeDao);
@@ -117,12 +112,9 @@ class OrderServiceImplTest {
     void OrderServiceImpl_checkOrderDeadlines_wrongDate() {
         Date wrongExecutionStartTime = DateUtil.addDays(new Date(), -2);
         Date leadTime = DateUtil.addDays(new Date(), 2);
-        OrderDto orderDto = getTestOrderDto();
-        orderDto.setExecutionStartTime(wrongExecutionStartTime);
-        orderDto.setLeadTime(leadTime);
 
         Assertions.assertThrows(DateException.class,
-             () -> orderService.checkOrderDeadlines(orderDto));
+           () -> orderService.checkOrderDeadlines(wrongExecutionStartTime, leadTime));
         Mockito.verify(masterDao, Mockito.never()).getNumberFreeMasters(wrongExecutionStartTime);
         Mockito.verify(placeDao, Mockito.never()).getNumberFreePlaces(wrongExecutionStartTime);
     }
@@ -131,13 +123,10 @@ class OrderServiceImplTest {
     void OrderServiceImpl_checkOrderDeadlines_zeroNumberOfMasters() {
         Date executionStartTime = DateUtil.addDays(new Date(), 1);
         Date leadTime = DateUtil.addDays(new Date(), 2);
-        OrderDto orderDto = getTestOrderDto();
-        orderDto.setExecutionStartTime(executionStartTime);
-        orderDto.setLeadTime(leadTime);
         Mockito.doReturn(WRONG_NUMBER_MASTERS).when(masterDao).getNumberFreeMasters(executionStartTime);
 
         Assertions.assertThrows(BusinessException.class,
-            () -> orderService.checkOrderDeadlines(orderDto));
+           () -> orderService.checkOrderDeadlines(executionStartTime, leadTime));
         Mockito.verify(masterDao, Mockito.times(1)).getNumberFreeMasters(executionStartTime);
         Mockito.verify(placeDao, Mockito.times(1)).getNumberFreePlaces(executionStartTime);
         Mockito.reset(placeDao);
@@ -148,14 +137,11 @@ class OrderServiceImplTest {
     void OrderServiceImpl_checkOrderDeadlines_businessException_zeroNumberOfPlaces() {
         Date executionStartTime = DateUtil.addDays(new Date(), 1);
         Date leadTime = DateUtil.addDays(new Date(), 2);
-        OrderDto orderDto = getTestOrderDto();
-        orderDto.setExecutionStartTime(executionStartTime);
-        orderDto.setLeadTime(leadTime);
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberFreeMasters(executionStartTime);
         Mockito.doReturn(WRONG_NUMBER_PLACES).when(placeDao).getNumberFreePlaces(executionStartTime);
 
         Assertions.assertThrows(BusinessException.class,
-            () -> orderService.checkOrderDeadlines(orderDto));
+           () -> orderService.checkOrderDeadlines(executionStartTime, leadTime));
         Mockito.verify(masterDao, Mockito.times(1)).getNumberFreeMasters(executionStartTime);
         Mockito.verify(placeDao, Mockito.times(1)).getNumberFreePlaces(executionStartTime);
         Mockito.reset(placeDao);
@@ -1333,7 +1319,6 @@ class OrderServiceImplTest {
         OrderDto orderDto = getTestOrderDto();
         List<Master> masters = getTestMasters();
         List<MasterDto> mastersDto = getTestMastersDto();
-        Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
         Mockito.doReturn(masters).when(orderDao).getOrderMasters(order);
 
         List<MasterDto> resultMastersDto = orderService.getOrderMasters(orderDto);
@@ -1341,20 +1326,7 @@ class OrderServiceImplTest {
         Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMastersDto.size());
         Assertions.assertFalse(resultMastersDto.isEmpty());
         Assertions.assertEquals(mastersDto, resultMastersDto);
-        Mockito.verify(orderDao, Mockito.times(1)).findById(ID_ORDER);
         Mockito.verify(orderDao, Mockito.times(1)).getOrderMasters(order);
-        Mockito.reset(orderDao);
-    }
-
-    @Test
-    void OrderServiceImpl_getOrderMasters_orderDao_findById_wrongId() {
-        Order order = getTestOrder();
-        OrderDto orderDto = getTestOrderDto();
-        Mockito.doThrow(DaoException.class).when(orderDao).findById(ID_MASTER);
-
-        Assertions.assertThrows(DaoException.class, () -> orderService.getOrderMasters(orderDto));
-        Mockito.verify(orderDao, Mockito.times(1)).findById(ID_ORDER);
-        Mockito.verify(orderDao, Mockito.never()).getOrderMasters(order);
         Mockito.reset(orderDao);
     }
 
@@ -1362,11 +1334,9 @@ class OrderServiceImplTest {
     void OrderServiceImpl_getOrderMasters_orderDao_getOrderMasters_emptyOrderListMasters() {
         Order order = getTestOrder();
         OrderDto orderDto = getTestOrderDto();
-        Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
         Mockito.doThrow(DaoException.class).when(orderDao).getOrderMasters(order);
 
         Assertions.assertThrows(DaoException.class, () -> orderService.getOrderMasters(orderDto));
-        Mockito.verify(orderDao, Mockito.times(1)).findById(ID_ORDER);
         Mockito.verify(orderDao, Mockito.times(1)).getOrderMasters(order);
         Mockito.reset(orderDao);
     }

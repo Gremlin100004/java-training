@@ -84,21 +84,21 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     private void checkMasters() {
         log.debug("Method checkMasters");
         if (masterDao.getNumberMasters() == 0) {
-            throw new BusinessException("There are no masters");
+            throw new BusinessException("Error, there are no masters");
         }
     }
 
     private void checkPlaces() {
         log.debug("Method checkPlaces");
         if (placeDao.getNumberPlaces() == 0) {
-            throw new BusinessException("There are no places");
+            throw new BusinessException("Error, there are no places");
         }
     }
 
     private void checkOrders() {
         log.debug("Method checkOrders");
         if (orderDao.getNumberOrders() == 0) {
-            throw new BusinessException("There are no orders");
+            throw new BusinessException("Error, there are no orders");
         }
     }
 }

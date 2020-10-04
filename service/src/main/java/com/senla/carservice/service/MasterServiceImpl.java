@@ -4,6 +4,7 @@ import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.service.exception.BusinessException;
+import com.senla.carservice.service.util.MasterMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @NoArgsConstructor
@@ -26,7 +26,7 @@ public class MasterServiceImpl implements MasterService {
     @Transactional
     public List<MasterDto> getMasters() {
         log.debug("Method getMasters");
-        return transferDataFromMasterToMasterDto(masterDao.getAllRecords());
+        return MasterMapper.transferDataFromMasterToMasterDto(masterDao.getAllRecords());
     }
 
     @Override
@@ -34,7 +34,7 @@ public class MasterServiceImpl implements MasterService {
     public MasterDto addMaster(MasterDto masterDto) {
         log.debug("Method addMaster");
         log.trace("Parameter masterDto: {}", masterDto);
-        return transferDataFromMasterToMasterDto(masterDao.saveRecord(new Master(masterDto.getName())));
+        return MasterMapper.transferDataFromMasterToMasterDto(masterDao.saveRecord(new Master(masterDto.getName())));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class MasterServiceImpl implements MasterService {
     public List<MasterDto> getFreeMastersByDate(Date executeDate) {
         log.debug("Method getFreeMastersByDate");
         log.trace("Parameter executeDate: {}", executeDate);
-        return transferDataFromMasterToMasterDto(masterDao.getFreeMasters(executeDate));
+        return MasterMapper.transferDataFromMasterToMasterDto(masterDao.getFreeMasters(executeDate));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class MasterServiceImpl implements MasterService {
         log.trace("Parameter masterId: {}", masterId);
         Master master = masterDao.findById(masterId);
         if (master.getDeleteStatus()) {
-            throw new BusinessException("error, master has already been deleted");
+            throw new BusinessException("Error, master has already been deleted");
         }
         master.setDeleteStatus(true);
         masterDao.updateRecord(master);
@@ -70,14 +70,14 @@ public class MasterServiceImpl implements MasterService {
     @Transactional
     public List<MasterDto> getMasterByAlphabet() {
         log.debug("Method getMasterByAlphabet");
-        return transferDataFromMasterToMasterDto(masterDao.getMasterSortByAlphabet());
+        return MasterMapper.transferDataFromMasterToMasterDto(masterDao.getMasterSortByAlphabet());
     }
 
     @Override
     @Transactional
     public List<MasterDto> getMasterByBusy() {
         log.debug("Method getMasterByBusy");
-        return transferDataFromMasterToMasterDto(masterDao.getMasterSortByBusy());
+        return MasterMapper.transferDataFromMasterToMasterDto(masterDao.getMasterSortByBusy());
     }
 
     @Override
@@ -85,20 +85,5 @@ public class MasterServiceImpl implements MasterService {
     public Long getNumberMasters() {
         log.debug("Method getNumberMasters");
         return masterDao.getNumberMasters();
-    }
-
-    private MasterDto transferDataFromMasterToMasterDto(Master master) {
-        MasterDto masterDto = new MasterDto();
-        masterDto.setId(master.getId());
-        masterDto.setName(master.getName());
-        masterDto.setNumberOrders(master.getNumberOrders());
-        masterDto.setDeleteStatus(master.getDeleteStatus());
-        return masterDto;
-    }
-
-    private List<MasterDto> transferDataFromMasterToMasterDto(List<Master> masters) {
-        return masters.stream()
-                .map(this::transferDataFromMasterToMasterDto)
-                .collect(Collectors.toList());
     }
 }

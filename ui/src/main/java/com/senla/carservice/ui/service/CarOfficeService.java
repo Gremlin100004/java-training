@@ -3,6 +3,7 @@ package com.senla.carservice.ui.service;
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.ui.util.ExceptionUtil;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @NoArgsConstructor
+@Slf4j
 public class CarOfficeService {
     @Value("${carservice.connection.url:http://localhost:8080/}")
     private String connectionUrl;
@@ -24,6 +26,8 @@ public class CarOfficeService {
     private RestTemplate restTemplate;
 
     public String getFreePlacesMastersByDate(String date) {
+        log.debug("Method getFreePlacesMastersByDate");
+        log.trace("Parameter date: {}", date);
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 connectionUrl + GET_FREE_PLACES_MASTERS_BY_DATE_PATH)
@@ -36,11 +40,13 @@ public class CarOfficeService {
             }
             return clientMessageDto.getMessage();
         } catch (HttpClientErrorException.Conflict exception) {
+            log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
         }
     }
 
     public String getNearestFreeDate() {
+        log.debug("Method getNearestFreeDate");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 connectionUrl + GET_NEAREST_FREE_DATE_PATH, ClientMessageDto.class);
@@ -50,11 +56,13 @@ public class CarOfficeService {
             }
             return clientMessageDto.getMessage();
         } catch (HttpClientErrorException.Conflict exception) {
+            log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
         }
     }
 
     public String exportEntities() {
+        log.debug("Method exportEntities");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 connectionUrl + EXPORT_ENTITIES_PATH, ClientMessageDto.class);
@@ -64,11 +72,13 @@ public class CarOfficeService {
             }
             return clientMessageDto.getMessage();
         } catch (HttpClientErrorException.Conflict exception) {
+            log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
         }
     }
 
     public String importEntities() {
+        log.debug("Method importEntities");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 connectionUrl + IMPORT_ENTITIES_PATH, ClientMessageDto.class);
@@ -78,6 +88,7 @@ public class CarOfficeService {
             }
             return clientMessageDto.getMessage();
         } catch (HttpClientErrorException.Conflict exception) {
+            log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
         }
     }

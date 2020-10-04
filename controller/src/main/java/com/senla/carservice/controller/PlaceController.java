@@ -39,7 +39,7 @@ public class PlaceController {
     public ClientMessageDto checkPlaces() {
         log.info("Method checkPlaces");
         if (placeService.getNumberPlace() == 0) {
-            throw new  BusinessException("There are no places");
+            throw new  BusinessException("Error, there are no places");
         }
         return new ClientMessageDto("verification was successfully");
     }
@@ -49,8 +49,6 @@ public class PlaceController {
         log.info("Method getArrayPlace");
         return placeService.getPlaces();
     }
-
-    //ToDo in ui get with id
 
     @DeleteMapping("places/{id}")
     public ClientMessageDto deletePlace(@PathVariable("id") Long orderId) {
@@ -64,7 +62,7 @@ public class PlaceController {
     public List<PlaceDto> getFreePlacesByDate(@RequestParam String stringExecuteDate) {
         log.info("Method getFreePlacesByDate");
         log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
-        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate, true);
+        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate.replace('%', ' '), true);
         return placeService.getFreePlaceByDate(executeDate);
     }
 }

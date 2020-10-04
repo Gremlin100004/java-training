@@ -1,7 +1,5 @@
 package com.senla.carservice.dto;
 
-import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Place;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

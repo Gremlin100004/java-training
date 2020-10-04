@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class StringPlaces {
@@ -63,11 +62,5 @@ public class StringPlaces {
             });
         stringBuilder.append(line);
         return stringBuilder.toString();
-    }
-
-    public static List<String> getListId(List<PlaceDto> placesDto) {
-        return placesDto.stream()
-            .map(place -> String.valueOf(place.getId()))
-            .collect(Collectors.toList());
     }
 }

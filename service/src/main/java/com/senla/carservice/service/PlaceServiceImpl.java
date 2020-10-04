@@ -4,6 +4,7 @@ import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.service.exception.BusinessException;
+import com.senla.carservice.service.util.PlaceMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional
     public List<PlaceDto> getPlaces() {
         log.debug("Method getPlaces");
-        return transferDataFromPlaceToPLaceDto(placeDao.getAllRecords());
+        return PlaceMapper.transferDataFromPlaceToPLaceDto(placeDao.getAllRecords());
     }
 
     @Override
@@ -42,7 +42,7 @@ public class PlaceServiceImpl implements PlaceService {
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
-        return transferDataFromPlaceToPLaceDto(placeDao.saveRecord(new Place(placeDto.getNumber())));
+        return PlaceMapper.transferDataFromPlaceToPLaceDto(placeDao.saveRecord(new Place(placeDto.getNumber())));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class PlaceServiceImpl implements PlaceService {
             throw new BusinessException("Place is busy");
         }
         if (place.getDeleteStatus()) {
-            throw new BusinessException("error, place has already been deleted");
+            throw new BusinessException("Error, place has already been deleted");
         }
         place.setDeleteStatus(true);
         placeDao.updateRecord(place);
@@ -77,7 +77,7 @@ public class PlaceServiceImpl implements PlaceService {
     public List<PlaceDto> getFreePlaceByDate(Date executeDate) {
         log.debug("Method getFreePlaceByDate");
         log.trace("Parameter executeDate: {}", executeDate);
-        return transferDataFromPlaceToPLaceDto(placeDao.getFreePlaces(executeDate));
+        return PlaceMapper.transferDataFromPlaceToPLaceDto(placeDao.getFreePlaces(executeDate));
     }
 
     @Override
@@ -85,22 +85,5 @@ public class PlaceServiceImpl implements PlaceService {
     public Long getNumberPlace() {
         log.debug("Method getNumberMasters");
         return placeDao.getNumberPlaces();
-    }
-
-    private List<PlaceDto> transferDataFromPlaceToPLaceDto(List<Place> places) {
-        List<PlaceDto> placesDto = new ArrayList<>();
-        for (Place place: places) {
-            placesDto.add(transferDataFromPlaceToPLaceDto(place));
-        }
-        return placesDto;
-    }
-
-    private PlaceDto transferDataFromPlaceToPLaceDto(Place place) {
-        PlaceDto placeDto = new PlaceDto();
-        placeDto.setId(place.getId());
-        placeDto.setNumber(place.getNumber());
-        placeDto.setIsBusy(place.getIsBusy());
-        placeDto.setDeleteStatus(place.getDeleteStatus());
-        return placeDto;
     }
 }

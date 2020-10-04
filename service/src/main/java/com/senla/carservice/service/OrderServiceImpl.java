@@ -11,6 +11,8 @@ import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.enumaration.SortParameter;
 import com.senla.carservice.service.exception.BusinessException;
+import com.senla.carservice.service.util.MasterMapper;
+import com.senla.carservice.service.util.OrderMapper;
 import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @NoArgsConstructor
@@ -44,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public List<OrderDto> getOrders() {
         log.debug("Method getOrders");
-        return transferDataFromOrderToOrderDto(orderDao.getAllRecords());
+        return OrderMapper.transferDataFromOrderToOrderDto(orderDao.getAllRecords());
     }
 
     @Override
@@ -52,47 +53,25 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto addOrder(OrderDto orderDto) {
         log.debug("Method addOrder");
         log.trace("Parameter orderDto: {}", orderDto);
-        return transferDataFromOrderToOrderDto(orderDao.saveRecord(transferDataFromOrderDtoToOrder(orderDto)));
+        return OrderMapper.transferDataFromOrderToOrderDto(
+            orderDao.saveRecord(OrderMapper.transferDataFromOrderDtoToOrder(orderDto, masterDao, placeDao)));
     }
 
     @Override
     @Transactional
-    public void checkOrderDeadlines(OrderDto orderDto) {
+    public void checkOrderDeadlines(Date executionStartTime, Date leadTime) {
         log.debug("Method checkOrderDeadlines");
-        log.trace("Parameters orderDto: {}", orderDto);
-        Date executionStartTime = orderDto.getExecutionStartTime();
-        Date leadTime = orderDto.getLeadTime();
+        log.trace("Parameters executionStartTime: {}, leadTime: {}", executionStartTime, leadTime);
         DateUtil.checkDateTime(executionStartTime, leadTime, false);
         long numberFreeMasters = masterDao.getNumberFreeMasters(executionStartTime);
         long numberFreePlace = placeDao.getNumberFreePlaces(executionStartTime);
         if (numberFreeMasters == 0) {
-            throw new BusinessException("The number of masters is zero");
+            throw new BusinessException("Error, the number of masters is zero");
         }
         if (numberFreePlace == 0) {
-            throw new BusinessException("The number of places is zero");
+            throw new BusinessException("Error, the number of places is zero");
         }
     }
-
-    //ToDo sent to ui
-//    @Override
-//    @Transactional
-//    public void addOrderMasters(Long idMaster) {
-//        log.debug("Method addOrderMasters");
-//        log.trace("Parameter idMaster: {}", idMaster);
-//        Order currentOrder = orderDao.getLastOrder();
-//        Master master = masterDao.findById(idMaster);
-//        master.setNumberOrders(master.getNumberOrders() + 1);
-//        if (master.getDeleteStatus()) {
-//            throw new BusinessException("Master has been deleted");
-//        }
-//        for (Master orderMaster : currentOrder.getMasters()) {
-//            if (orderMaster.equals(master)) {
-//                throw new BusinessException("This master already exists");
-//            }
-//        }
-//        currentOrder.getMasters().add(master);
-//        orderDao.updateRecord(currentOrder);
-//    }
 
     @Override
     @Transactional
@@ -199,9 +178,9 @@ public class OrderServiceImpl implements OrderService {
             orders = orderDao.getExecuteOrderSortExecutionDate();
         }
         if (orders.isEmpty()) {
-            throw new BusinessException("There are no orders");
+            throw new BusinessException("Error, there are no orders");
         }
-        return transferDataFromOrderToOrderDto(orders);
+        return OrderMapper.transferDataFromOrderToOrderDto(orders);
     }
 
     @Override
@@ -231,7 +210,7 @@ public class OrderServiceImpl implements OrderService {
         } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)) {
             orders = orderDao.getDeletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
         }
-        return transferDataFromOrderToOrderDto(orders);
+        return OrderMapper.transferDataFromOrderToOrderDto(orders);
     }
 
     @Override
@@ -239,7 +218,8 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> getMasterOrders(MasterDto masterDto) {
         log.debug("Method getMasterOrders");
         log.trace("Parameter idMaster: {}", masterDto);
-        return transferDataFromOrderToOrderDto(orderDao.getMasterOrders(masterDao.findById(masterDto.getId())));
+        return OrderMapper.transferDataFromOrderToOrderDto(
+            orderDao.getMasterOrders(masterDao.findById(masterDto.getId())));
     }
 
     @Override
@@ -247,7 +227,8 @@ public class OrderServiceImpl implements OrderService {
     public List<MasterDto> getOrderMasters(OrderDto orderDto) {
         log.debug("Method getOrderMasters");
         log.trace("Parameter idOrder: {}", orderDto);
-        return transferDataFromMasterToMasterDto(orderDao.getOrderMasters(transferDataFromOrderDtoToOrder(orderDto)));
+        return MasterMapper.transferDataFromMasterToMasterDto(
+            orderDao.getOrderMasters(OrderMapper.transferDataFromOrderDtoToOrder(orderDto, masterDao, placeDao)));
     }
 
     @Override
@@ -255,19 +236,6 @@ public class OrderServiceImpl implements OrderService {
     public Long getNumberOrders() {
         log.debug("Method getNumberOrders");
         return orderDao.getNumberOrders();
-    }
-
-    private List<MasterDto> transferDataFromMasterToMasterDto(List<Master> masters) {
-        List<MasterDto> mastersDto = new ArrayList<>();
-        for (Master master: masters) {
-            MasterDto masterDto = new MasterDto();
-            masterDto.setId(master.getId());
-            masterDto.setName(master.getName());
-            masterDto.setNumberOrders(master.getNumberOrders());
-            masterDto.setDeleteStatus(master.getDeleteStatus());
-            mastersDto.add(masterDto);
-        }
-        return mastersDto;
     }
 
     private void checkStatusOrder(Order order) {
@@ -312,67 +280,5 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus() == StatusOrder.PERFORM) {
             throw new BusinessException("Error, the order has been canceled");
         }
-    }
-
-    private List<OrderDto> transferDataFromOrderToOrderDto(List<Order> orders) {
-        return orders.stream()
-            .map(this::transferDataFromOrderToOrderDto)
-            .collect(Collectors.toList());
-    }
-
-    private OrderDto transferDataFromOrderToOrderDto(Order order) {
-        OrderDto orderDto = new OrderDto();
-        orderDto.setId(order.getId());
-        orderDto.setAutomaker(order.getAutomaker());
-        orderDto.setModel(order.getModel());
-        orderDto.setRegistrationNumber(order.getRegistrationNumber());
-        orderDto.setCreationTime(order.getCreationTime());
-        orderDto.setExecutionStartTime(order.getExecutionStartTime());
-        orderDto.setLeadTime(order.getLeadTime());
-        orderDto.setStatus(String.valueOf(order.getStatus()));
-        orderDto.setPrice(order.getPrice());
-        orderDto.setDeleteStatus(order.isDeleteStatus());
-        return orderDto;
-    }
-
-    private Order transferDataFromOrderDtoToOrder(OrderDto orderDto) {
-        Order order;
-        if (orderDto.getId() == null) {
-            order = new Order();
-        } else {
-            order = orderDao.findById(orderDto.getId());
-        }
-        order.setAutomaker(orderDto.getAutomaker());
-        order.setModel(orderDto.getModel());
-        order.setRegistrationNumber(orderDto.getRegistrationNumber());
-        order.setCreationTime(orderDto.getCreationTime());
-        order.setExecutionStartTime(orderDto.getExecutionStartTime());
-        order.setLeadTime(orderDto.getLeadTime());
-        if (orderDto.getStatus() != null) {
-            order.setStatus(StatusOrder.valueOf(orderDto.getStatus()));
-        }
-        order.setPrice(orderDto.getPrice());
-        order.setDeleteStatus(orderDto.isDeleteStatus());
-        order.setMasters(transferDataFromMasterDtoToMaster(orderDto.getMasters()));
-        return order;
-    }
-
-    private List<Master> transferDataFromMasterDtoToMaster(List<MasterDto> mastersDto) {
-        return mastersDto.stream()
-            .map(this::transferDataFromMasterDtoToMaster)
-            .collect(Collectors.toList());
-    }
-
-    private Master transferDataFromMasterDtoToMaster(MasterDto masterDto) {
-        Master master;
-        if (masterDto.getId() == null) {
-            master = new Master();
-        } else {
-            master = masterDao.findById(masterDto.getId());
-        }
-        master.setName(masterDto.getName());
-        master.setNumberOrders(masterDto.getNumberOrders());
-        master.setDeleteStatus(masterDto.getDeleteStatus());
-        return master;
     }
 }

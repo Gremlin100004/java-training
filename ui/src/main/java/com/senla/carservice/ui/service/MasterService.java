@@ -2,9 +2,11 @@ package com.senla.carservice.ui.service;
 
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.ui.exception.BusinessException;
 import com.senla.carservice.ui.util.ExceptionUtil;
 import com.senla.carservice.ui.util.StringMaster;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +15,12 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Component
 @NoArgsConstructor
+@Slf4j
 public class MasterService {
     private static final String GET_MASTERS_PATH = "masters";
     private static final String ADD_MASTER_PATH = "masters";
@@ -32,28 +34,28 @@ public class MasterService {
     @Value("${carservice.connection.url:http://localhost:8080/}")
     private String connectionUrl;
 
-    public List<String> getMasters() {
-        List<String> requiredList = new ArrayList<>();
+    public List<MasterDto> getMasters() {
+        log.debug("Method getMasters");
         try {
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
                 connectionUrl + GET_MASTERS_PATH, MasterDto[].class);
             MasterDto[] arrayMasterDto = response.getBody();
             if (arrayMasterDto == null) {
-                requiredList.add("There are no message from server");
-                return requiredList;
+                throw new BusinessException("Error, there are no masters");
             }
-            List<MasterDto> mastersDto = Arrays.asList(arrayMasterDto);
-            requiredList.add(StringMaster.getStringFromMasters(mastersDto));
-            requiredList.addAll(StringMaster.getListId(mastersDto));
-            return requiredList;
+            return Arrays.asList(arrayMasterDto);
         } catch (HttpClientErrorException.Conflict exception) {
-            requiredList.add(ExceptionUtil.getMessageFromException(exception));
-            return requiredList;
+            log.error(exception.getResponseBodyAsString());
+            throw new BusinessException(ExceptionUtil.getMessageFromException(exception));
         }
     }
 
-    public String addMaster(MasterDto masterDto) {
+    public String addMaster(String name) {
+        log.debug("Method addMaster");
+        log.trace("Parameter name: {}", name);
         try {
+            MasterDto masterDto = new MasterDto();
+            masterDto.setName(name);
             ResponseEntity<MasterDto> response = restTemplate.postForEntity(
                 connectionUrl + ADD_MASTER_PATH, masterDto, MasterDto.class);
             MasterDto receivedMasterDto = response.getBody();
@@ -62,11 +64,13 @@ public class MasterService {
             }
             return "Master added successfully";
         } catch (HttpClientErrorException.Conflict exception) {
+            log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
         }
     }
 
     public String checkMasters() {
+        log.debug("Method checkMasters");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 connectionUrl + CHECK_MASTERS_PATH, ClientMessageDto.class);
@@ -76,20 +80,25 @@ public class MasterService {
             }
             return clientMessageDto.getMessage();
         } catch (HttpClientErrorException.Conflict exception) {
+            log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
         }
     }
 
     public String deleteMaster(Long idMaster) {
+        log.debug("Method deleteMaster");
+        log.trace("Parameter idMaster: {}", idMaster);
         try {
             restTemplate.delete(connectionUrl + DELETE_MASTER_PATH + idMaster, MasterDto.class);
             return "The master has been deleted successfully";
         } catch (HttpClientErrorException.Conflict exception) {
+            log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
         }
     }
 
     public String getMasterByAlphabet() {
+        log.debug("Method getMasterByAlphabet");
         try {
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
                 connectionUrl + GET_MASTER_BY_ALPHABET_PATH, MasterDto[].class);
@@ -99,11 +108,13 @@ public class MasterService {
             }
             return StringMaster.getStringFromMasters(Arrays.asList(arrayMastersDto));
         } catch (HttpClientErrorException.Conflict exception) {
+            log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
         }
     }
 
     public String getMasterByBusy() {
+        log.debug("Method getMasterByBusy");
         try {
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
                 connectionUrl + GET_MASTER_BY_BUSY_PATH, MasterDto[].class);
@@ -113,22 +124,25 @@ public class MasterService {
             }
             return StringMaster.getStringFromMasters(Arrays.asList(arrayMastersDto));
         } catch (HttpClientErrorException.Conflict exception) {
+            log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
         }
     }
 
-    public String getFreeMasters(String stringExecuteDate) {
+    public List<MasterDto> getFreeMasters(String stringExecuteDate) {
+        log.debug("Method getFreeMasters");
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_FREE_MASTERS_PATH)
                 .queryParam("stringExecuteDate", stringExecuteDate);
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(builder.toUriString(), MasterDto[].class);
             MasterDto[] arrayMastersDto = response.getBody();
             if (arrayMastersDto == null) {
-                return "There are no message from server";
+                throw new BusinessException("Error, there are no masters");
             }
-            return StringMaster.getStringFromMasters(Arrays.asList(arrayMastersDto));
+            return Arrays.asList(arrayMastersDto);
         } catch (HttpClientErrorException.Conflict exception) {
-            return ExceptionUtil.getMessageFromException(exception);
+            log.error(exception.getResponseBodyAsString());
+            throw new BusinessException(ExceptionUtil.getMessageFromException(exception));
         }
     }
 }
