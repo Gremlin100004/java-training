@@ -31,7 +31,6 @@ public class CarOfficeController {
     public ClientMessageDto getFreePlacesMastersByDate(@RequestParam String date) {
         log.info("Method getFreePlacesMastersByDate");
         log.trace("Parameter date: {}", date);
-        //Todo Validation Date
         Date dateFree = DateUtil.getDatesFromString(date, false);
         Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
         Long numberFreeMasters = masterService.getNumberFreeMastersByDate(startDayDate);

@@ -51,7 +51,11 @@ public final class DateUtil {
         try {
             return isTime ? DATE_TIME_FORMAT.parse(stringDate) : DATE_FORMAT.parse(stringDate);
         } catch (ParseException e) {
-            return null;
+            if (isTime){
+                throw new DateException("Error date format, should be \"yyyy-MM-dd hh:mm\"");
+            } else {
+                throw new DateException("Error date format, should be \"dd.MM.yyyy\"");
+            }
         }
     }
 

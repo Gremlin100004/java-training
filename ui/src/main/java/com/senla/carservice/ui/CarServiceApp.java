@@ -7,6 +7,7 @@ import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.ui.service.CarOfficeService;
+import com.senla.carservice.ui.service.MasterService;
 import com.senla.carservice.ui.service.OrderService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -29,7 +30,7 @@ public class CarServiceApp {
 //        menuController.run();
 
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CarServiceApp.class);
-        OrderService orderService = applicationContext.getBean(OrderService.class);
+        MasterService masterService = applicationContext.getBean(MasterService.class);
         String date = "10.15.2020";
         OrderDto orderDto = new OrderDto();
         orderDto.setId(1L);
@@ -51,10 +52,7 @@ public class CarServiceApp {
         masterDto.setDeleteStatus(false);
         orderDto.setMasters(Collections.singletonList(masterDto));
 
-
-        String startPeriod = "";
-        String endPeriod = "";
-        System.out.println(orderDto);
-        System.out.println(orderService.shiftLeadTime(orderDto));
+        String stringExecuteDate = "2020-10-15 10:00";
+        System.out.println(masterService.getFreeMasters(stringExecuteDate));
     }
 }

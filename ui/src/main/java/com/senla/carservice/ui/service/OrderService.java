@@ -22,8 +22,6 @@ import java.util.List;
 @Component
 @NoArgsConstructor
 public class OrderService {
-    @Value("${carservice.connection.url:http://localhost:8080/}")
-    private String connectionUrl;
     private static final String ADD_ORDER_PATH = "orders";
     private static final String CHECK_ORDER_DEADLINES_PATH = "orders/check-dates";
     private static final String CHECK_ORDERS_PATH = "orders/check";
@@ -55,6 +53,8 @@ public class OrderService {
     private static final String GET_ORDER_MASTERS_PATH = "orders/masters";
     @Autowired
     private RestTemplate restTemplate;
+    @Value("${carservice.connection.url:http://localhost:8080/}")
+    private String connectionUrl;
 
     public String addOrder(OrderDto orderDto) {
         try {
