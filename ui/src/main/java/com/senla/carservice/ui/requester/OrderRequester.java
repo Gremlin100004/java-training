@@ -1,4 +1,4 @@
-package com.senla.carservice.ui.service;
+package com.senla.carservice.ui.requester;
 
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.MasterDto;
@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 @NoArgsConstructor
 @Slf4j
-public class OrderService {
+public class OrderRequester {
     private static final String ADD_ORDER_PATH = "orders";
     private static final String CHECK_ORDER_DEADLINES_PATH = "orders/check-dates";
     private static final String CHECK_ORDERS_PATH = "orders/check";
@@ -53,8 +53,21 @@ public class OrderService {
     private static final String GET_DELETED_ORDERS_PRICE = "orders/deleted/sort-by-price";
     private static final String GET_MASTER_ORDERS_PATH = "orders/master-orders";
     private static final String GET_ORDER_MASTERS_PATH = "orders/masters";
+    private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
+    private static final String REQUEST_PARAMETER_START_DATE = "startPeriod";
+    private static final String REQUEST_PARAMETER_END_DATE = "endPeriod";
+    private static final String REQUEST_PARAMETER_STRING_EXECUTION_START_TIME = "stringExecutionStartTime";
+    private static final String REQUEST_PARAMETER_STRING_LEAD_TIME = "stringLeadTime";
+    private static final String VERIFICATION_SUCCESS_MESSAGE = "verification was successfully";
+    private static final String ORDER_TRANSFERRED_SUCCESS_MESSAGE = "The order has been transferred to execution status";
+    private static final String ORDER_COMPLETE_SUCCESS_MESSAGE = "The order has been completed successfully";
+    private static final String ORDER_CANCEL_SUCCESS_MESSAGE = "The order has been canceled successfully";
+    private static final String ORDER_DELETE_SUCCESS_MESSAGE = "The order has been deleted";
+    private static final String ORDER_CHANGE_TIME_SUCCESS_MESSAGE = "The order lead time has been changed successfully";
+
     @Autowired
     private RestTemplate restTemplate;
+
     @Value("${carservice.connection.url:http://localhost:8080/}")
     private String connectionUrl;
 
@@ -66,7 +79,7 @@ public class OrderService {
                 connectionUrl + ADD_ORDER_PATH, orderDto, OrderDto.class);
             OrderDto receivedOrderDto = response.getBody();
             if (receivedOrderDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return "Order added successfully";
         } catch (HttpClientErrorException.Conflict exception) {
@@ -80,15 +93,15 @@ public class OrderService {
         log.trace("Parameter stringExecutionStartTime: {}, stringLeadTime: {}", stringExecutionStartTime, stringLeadTime);
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(connectionUrl + CHECK_ORDER_DEADLINES_PATH)
-                .queryParam("stringExecutionStartTime", stringExecutionStartTime)
-                .queryParam("stringLeadTime", stringLeadTime);
+                .queryParam(REQUEST_PARAMETER_STRING_EXECUTION_START_TIME, stringExecutionStartTime)
+                .queryParam(REQUEST_PARAMETER_STRING_LEAD_TIME, stringLeadTime);
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 builder.toUriString(), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
-            return "verification was successfully";
+            return VERIFICATION_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
@@ -102,7 +115,7 @@ public class OrderService {
                 connectionUrl + CHECK_ORDERS_PATH, ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return clientMessageDto.getMessage();
         } catch (HttpClientErrorException.Conflict exception) {
@@ -133,7 +146,7 @@ public class OrderService {
         try {
             restTemplate.put(
                 connectionUrl + COMPLETE_ORDER_START_PATH + idOrder + COMPLETE_ORDER_END_PATH, OrderDto.class);
-            return "The order has been transferred to execution status";
+            return ORDER_TRANSFERRED_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
@@ -146,7 +159,7 @@ public class OrderService {
         try {
             restTemplate.put(
                 connectionUrl + CLOSE_ORDER_START_PATH + idOrder + CLOSE_ORDER_END_PATH, OrderDto.class);
-            return "The order has been completed successfully";
+            return ORDER_COMPLETE_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
@@ -158,7 +171,7 @@ public class OrderService {
         log.trace("Parameter idOrder: {}", idOrder);
         try {
             restTemplate.put(connectionUrl + CANCEL_ORDER_START_PATH + idOrder + CANCEL_ORDER_END_PATH, OrderDto.class);
-            return "The order has been canceled";
+            return ORDER_CANCEL_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
@@ -170,7 +183,7 @@ public class OrderService {
         log.trace("Parameter idOrder: {}", idOrder);
         try {
             restTemplate.delete(connectionUrl + DELETE_ORDER_PATH + idOrder, OrderDto.class);
-            return "The order has been deleted";
+            return ORDER_DELETE_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
@@ -182,7 +195,7 @@ public class OrderService {
         log.trace("Parameter orderDto: {}", orderDto);
         try {
             restTemplate.put(connectionUrl + SHIFT_LEAD_TIME_PATH, orderDto, OrderDto.class);
-            return "The order lead time has been changed successfully";
+            return ORDER_CHANGE_TIME_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
@@ -196,7 +209,7 @@ public class OrderService {
                 restTemplate.getForEntity(connectionUrl + GET_ORDERS_SORT_BY_FILING_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -212,7 +225,7 @@ public class OrderService {
                 restTemplate.getForEntity(connectionUrl + GET_ORDERS_SORT_BY_EXECUTION_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -228,7 +241,7 @@ public class OrderService {
                 restTemplate.getForEntity(connectionUrl + GET_ORDERS_SORT_BY_PLANNED_START_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -244,7 +257,7 @@ public class OrderService {
                 restTemplate.getForEntity(connectionUrl + GET_ORDERS_SORT_BY_PRICE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -260,7 +273,7 @@ public class OrderService {
                 restTemplate.getForEntity(connectionUrl + GET_EXECUTE_ORDER_FILING_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -276,7 +289,7 @@ public class OrderService {
                 restTemplate.getForEntity(connectionUrl + GET_EXECUTE_ORDER_EXECUTION_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -289,13 +302,13 @@ public class OrderService {
         log.debug("Method getCompletedOrdersFilingDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_COMPLETED_ORDERS_FILING_DATE_PATH)
-                    .queryParam("startPeriod", startPeriod).queryParam("endPeriod", endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                connectionUrl + GET_COMPLETED_ORDERS_FILING_DATE_PATH)
+                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -308,13 +321,13 @@ public class OrderService {
         log.debug("Method getCompletedOrdersExecutionDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_COMPLETED_ORDERS_EXECUTION_DATE_PATH)
-                    .queryParam("startPeriod", startPeriod).queryParam("endPeriod", endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                connectionUrl + GET_COMPLETED_ORDERS_EXECUTION_DATE_PATH)
+                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -327,13 +340,13 @@ public class OrderService {
         log.debug("Method getCompletedOrdersPrice");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_COMPLETED_ORDERS_PRICE_PATH)
-                    .queryParam("startPeriod", startPeriod).queryParam("endPeriod", endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                connectionUrl + GET_COMPLETED_ORDERS_PRICE_PATH)
+                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -346,13 +359,13 @@ public class OrderService {
         log.debug("Method getCanceledOrdersFilingDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_CANCELED_ORDERS_FILING_DATE_PATH)
-                    .queryParam("startPeriod", startPeriod).queryParam("endPeriod", endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                connectionUrl + GET_CANCELED_ORDERS_FILING_DATE_PATH)
+                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -365,13 +378,13 @@ public class OrderService {
         log.debug("Method getCanceledOrdersExecutionDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_CANCELED_ORDERS_EXECUTION_DATE_PATH)
-                    .queryParam("startPeriod", startPeriod).queryParam("endPeriod", endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                connectionUrl + GET_CANCELED_ORDERS_EXECUTION_DATE_PATH)
+                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -384,13 +397,13 @@ public class OrderService {
         log.debug("Method getCanceledOrdersPrice");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_CANCELED_ORDERS_PRICE_PATH)
-                    .queryParam("startPeriod", startPeriod).queryParam("endPeriod", endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                connectionUrl + GET_CANCELED_ORDERS_PRICE_PATH)
+                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -403,13 +416,13 @@ public class OrderService {
         log.debug("Method getDeletedOrdersFilingDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_DELETED_ORDERS_FILING_DATE_PATH)
-                    .queryParam("startPeriod", startPeriod).queryParam("endPeriod", endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                connectionUrl + GET_DELETED_ORDERS_FILING_DATE_PATH)
+                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -422,13 +435,13 @@ public class OrderService {
         log.debug("Method getDeletedOrdersExecutionDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder =
-                UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_DELETED_ORDERS_EXECUTION_DATE_PATH)
-                    .queryParam("startPeriod", startPeriod).queryParam("endPeriod", endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                connectionUrl + GET_DELETED_ORDERS_EXECUTION_DATE_PATH)
+                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -442,11 +455,11 @@ public class OrderService {
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_DELETED_ORDERS_PRICE)
-                .queryParam("startPeriod", startPeriod).queryParam("endPeriod", endPeriod);
+                .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return StringOrder.getStringFromOrder(Arrays.asList(arrayOrdersDto));
         } catch (HttpClientErrorException.Conflict exception) {
@@ -463,7 +476,7 @@ public class OrderService {
                 restTemplate.postForEntity(connectionUrl + GET_MASTER_ORDERS_PATH, masterDto, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             List<OrderDto> ordersDto = Arrays.asList(arrayOrdersDto);
             return StringOrder.getStringFromOrder(ordersDto);
@@ -481,7 +494,7 @@ public class OrderService {
                 restTemplate.postForEntity(connectionUrl + GET_ORDER_MASTERS_PATH, orderDto, MasterDto[].class);
             MasterDto[] arrayMasterDto = response.getBody();
             if (arrayMasterDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             List<MasterDto> mastersDto = Arrays.asList(arrayMasterDto);
             return StringMaster.getStringFromMasters(mastersDto);

@@ -26,7 +26,6 @@ import java.util.List;
 public class MasterController {
     @Autowired
     private MasterService masterService;
-
     @GetMapping("masters")
     public List<MasterDto> getMasters() {
         log.info("Method getMasters");

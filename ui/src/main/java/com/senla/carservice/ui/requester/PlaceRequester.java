@@ -1,4 +1,4 @@
-package com.senla.carservice.ui.service;
+package com.senla.carservice.ui.requester;
 
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.PlaceDto;
@@ -20,12 +20,16 @@ import java.util.List;
 @Component
 @NoArgsConstructor
 @Slf4j
-public class PlaceService {
+public class PlaceRequester {
     private static final String ADD_PLACE_PATH = "places";
     private static final String CHECK_PLACES_PATH = "places/check";
     private static final String GET_PLACES_PATH = "places";
     private static final String DELETE_PLACE_PATH = "places/";
     private static final String GET_FREE_PLACES_BY_DATE_PATH = "places/free-by-date";
+    private static final String REQUEST_PARAMETER_STRING_EXECUTION_DATE = "stringExecuteDate";
+    private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
+    private static final String PLACE_ADD_SUCCESS_MESSAGE = "Place added successfully";
+    private static final String PLACE_DELETE_SUCCESS_MESSAGE = "The place has been deleted successfully";
     @Autowired
     private RestTemplate restTemplate;
     @Value("${carservice.connection.url:http://localhost:8080/}")
@@ -41,9 +45,9 @@ public class PlaceService {
                 connectionUrl + ADD_PLACE_PATH, placeDto, PlaceDto.class);
             PlaceDto receivedPlaceDto = response.getBody();
             if (receivedPlaceDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
-            return "Place added successfully";
+            return PLACE_ADD_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
@@ -57,7 +61,7 @@ public class PlaceService {
                 connectionUrl + CHECK_PLACES_PATH, ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
-                return "There are no message from server";
+                return WARNING_SERVER_MESSAGE;
             }
             return clientMessageDto.getMessage();
         } catch (HttpClientErrorException.Conflict exception) {
@@ -87,7 +91,7 @@ public class PlaceService {
         log.trace("Parameter idPlace: {}", idPlace);
         try {
             restTemplate.delete(connectionUrl + DELETE_PLACE_PATH + idPlace, PlaceDto.class);
-            return "The place has been deleted successfully";
+            return PLACE_DELETE_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessageFromException(exception);
@@ -99,7 +103,7 @@ public class PlaceService {
         log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_FREE_PLACES_BY_DATE_PATH)
-                .queryParam("stringExecuteDate", stringExecuteDate);
+                .queryParam(REQUEST_PARAMETER_STRING_EXECUTION_DATE, stringExecuteDate);
             ResponseEntity<PlaceDto[]> response = restTemplate.getForEntity(builder.toUriString(), PlaceDto[].class);
             PlaceDto[] arrayPlacesDto = response.getBody();
             if (arrayPlacesDto == null) {

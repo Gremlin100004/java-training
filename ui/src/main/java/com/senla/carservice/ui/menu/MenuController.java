@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Slf4j
 public class MenuController {
-
+    private static final String MENU_ITEM_INPUT_HEADER = "Enter number item menu:";
     @Autowired
     private Navigator navigator;
     @Autowired
@@ -23,7 +23,7 @@ public class MenuController {
         int answer = 1;
         while (answer != 0) {
             this.navigator.printMenu();
-            answer = ScannerUtil.getIntUser("Enter number item menu:");
+            answer = ScannerUtil.getIntUser(MENU_ITEM_INPUT_HEADER);
             if (answer != 0) {
                 navigator.navigate(answer);
             }

@@ -13,6 +13,7 @@ import java.util.List;
 public class Navigator {
 
     private static final int INDEX_OFFSET = 1;
+    private static final String WARNING_ITEM_MESSAGE = "There is no such item!!!";
     private Menu currentMenu;
 
     public void addCurrentMenu(Menu currentMenu) {
@@ -32,7 +33,7 @@ public class Navigator {
         log.trace("Parameter index: {}", index);
         List<MenuItem> menuItems = this.currentMenu.getMenuItems();
         if (index > menuItems.size()) {
-            Printer.printInfo("There is no such item!!!");
+            Printer.printInfo(WARNING_ITEM_MESSAGE);
             return;
         }
         MenuItem menuItem = menuItems.get(index - INDEX_OFFSET);

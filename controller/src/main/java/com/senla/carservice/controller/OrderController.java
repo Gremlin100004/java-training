@@ -68,7 +68,7 @@ public class OrderController {
         log.info("Method completeOrder");
         log.trace("Parameter orderId: {}", orderId);
             orderService.completeOrder(orderId);
-            return new ClientMessageDto(" - the order has been transferred to execution status");
+            return new ClientMessageDto("The order has been transferred to execution status successfully");
     }
 
     @PutMapping("orders/{id}/close")
@@ -84,7 +84,7 @@ public class OrderController {
         log.info("Method cancelOrder");
         log.trace("Parameter orderId: {}", orderId);
             orderService.cancelOrder(orderId);
-            return new ClientMessageDto(" -the order has been canceled.");
+            return new ClientMessageDto("The order has been canceled successfully");
     }
 
     @DeleteMapping("orders/{id}")
@@ -92,7 +92,7 @@ public class OrderController {
         log.info("Method deleteOrder");
         log.trace("Parameter orderId: {}", orderId);
             orderService.deleteOrder(orderId);
-            return new ClientMessageDto(" -the order has been deleted.");
+            return new ClientMessageDto("The order has been deleted successfully");
     }
 
     @PutMapping("orders/shift-lead-time")
@@ -100,7 +100,7 @@ public class OrderController {
         log.info("Method shiftLeadTime");
         log.trace("Parameters orderDto: {}", orderDto);
         orderService.shiftLeadTime(orderDto);
-        return new ClientMessageDto(" -the order lead time has been changed.");
+        return new ClientMessageDto("The order lead time has been changed successfully");
 
     }
 
