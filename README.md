@@ -10,11 +10,11 @@ Simple project to study Java.
 
 - tomcat version 8.5.3
 
-###DEPENDENCIES
+### DEPENDENCIES
 
 all dependencies you can found in pom.xml
 
-###SETTINGS
+### SETTINGS
 
 Add the contents of the users.xml to file:
 "%TOMCAT8_PATH%/conf/tomcat-users.xml"
