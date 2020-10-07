@@ -13,4 +13,5 @@ public class PlaceDto extends GeneralDto {
     private Integer number;
     private Boolean isBusy;
     private Boolean deleteStatus;
+
 }

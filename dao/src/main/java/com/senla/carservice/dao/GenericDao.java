@@ -18,4 +18,5 @@ public interface GenericDao <T, PK extends Serializable> {
     void updateAllRecords(List<T> objects);
 
     void deleteRecord(PK id);
+
 }

@@ -1,7 +1,6 @@
 package com.senla.carservice.ui.util;
 
 import com.senla.carservice.dto.OrderDto;
-import com.senla.carservice.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,11 +72,11 @@ public class StringOrder {
             stringBuilder.append(SPLIT_COLUMNS)
                 .append(StringUtil.fillStringSpace(ordersDto.get(i).getRegistrationNumber(), LENGTH_SPACE_FORTH));
             stringBuilder.append(SPLIT_COLUMNS).append(StringUtil.fillStringSpace(
-                DateUtil.getStringFromDate(ordersDto.get(i).getCreationTime(), true), LENGTH_SPACE_TIME));
+                ordersDto.get(i).getCreationTime(), LENGTH_SPACE_TIME));
             stringBuilder.append(SPLIT_COLUMNS).append(StringUtil.fillStringSpace(
-                DateUtil.getStringFromDate(ordersDto.get(i).getExecutionStartTime(), true), LENGTH_SPACE_TIME));
+                ordersDto.get(i).getExecutionStartTime(), LENGTH_SPACE_TIME));
             stringBuilder.append(SPLIT_COLUMNS).append(StringUtil.fillStringSpace(
-                DateUtil.getStringFromDate(ordersDto.get(i).getLeadTime(), true), LENGTH_SPACE_TIME));
+                ordersDto.get(i).getLeadTime(), LENGTH_SPACE_TIME));
             stringBuilder.append(SPLIT_COLUMNS).append(
                 StringUtil.fillStringSpace(String.valueOf(ordersDto.get(i).getPrice()), LENGTH_SPACE_EIGHTH_COLUMN));
             stringBuilder.append(SPLIT_COLUMNS).append(
@@ -89,4 +88,5 @@ public class StringOrder {
         stringBuilder.append(line);
         return stringBuilder.toString();
     }
+
 }

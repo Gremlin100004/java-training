@@ -9,4 +9,5 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class GeneralDto {
     protected Long id;
+
 }

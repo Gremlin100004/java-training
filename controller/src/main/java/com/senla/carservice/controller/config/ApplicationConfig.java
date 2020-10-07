@@ -8,4 +8,5 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:application.properties")
 @ComponentScan("com.senla.carservice")
 public class ApplicationConfig {
+
 }

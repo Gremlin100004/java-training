@@ -27,7 +27,7 @@ public class CarOfficeController {
     @Autowired
     private PlaceService placeService;
 
-    @GetMapping("number-of-free-places")
+    @GetMapping("numberOfFreePlaces")
     public ClientMessageDto getFreePlacesMastersByDate(@RequestParam String date) {
         log.info("Method getFreePlacesMastersByDate");
         log.trace("Parameter date: {}", date);
@@ -38,7 +38,7 @@ public class CarOfficeController {
         return new ClientMessageDto("- number free places in service: " + numberFreePlace + "\n- number free masters in service: " +
                                  numberFreeMasters);
     }
-    @GetMapping("nearest-free-date")
+    @GetMapping("nearestFreeDate")
     public ClientMessageDto getNearestFreeDate() {
         log.info("Method getNearestFreeDate");
         return new ClientMessageDto("Nearest free date: " + DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false));
@@ -57,4 +57,5 @@ public class CarOfficeController {
         carOfficeService.importEntities();
         return new ClientMessageDto("Imported completed successfully!");
     }
+
 }

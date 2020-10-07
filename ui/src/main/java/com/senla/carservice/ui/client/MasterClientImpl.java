@@ -1,10 +1,12 @@
-package com.senla.carservice.ui.requester;
+package com.senla.carservice.ui.client;
 
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.ui.exception.BusinessException;
 import com.senla.carservice.ui.util.ExceptionUtil;
 import com.senla.carservice.ui.util.StringMaster;
+import com.senla.carservice.ui.util.StringOrder;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +23,16 @@ import java.util.List;
 @Component
 @NoArgsConstructor
 @Slf4j
-public class MasterRequester {
+public class MasterClientImpl implements MasterClient {
     private static final String GET_MASTERS_PATH = "masters";
     private static final String ADD_MASTER_PATH = "masters";
     private static final String CHECK_MASTERS_PATH = "masters/check";
     private static final String DELETE_MASTER_PATH = "masters/";
-    private static final String GET_MASTER_BY_ALPHABET_PATH = "masters/sort-by-alphabet";
-    private static final String GET_MASTER_BY_BUSY_PATH = "masters/sort-by-busy";
+    private static final String GET_MASTER_BY_ALPHABET_PATH = "masters/sort/byAlphabet";
+    private static final String GET_MASTER_BY_BUSY_PATH = "masters/sort/byBusy";
     private static final String GET_FREE_MASTERS_PATH = "masters/free";
+    private static final String GET_MASTER_ORDERS_START_PATH = "orders/";
+    private static final String GET_MASTER_ORDERS_END_PATH = "/master/orders";
     private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
     private static final String MASTER_ADD_SUCCESS_MESSAGE = "Master added successfully";
     private static final String MASTER_DELETE_SUCCESS_MESSAGE = "The master has been deleted successfully";
@@ -38,6 +42,7 @@ public class MasterRequester {
     @Value("${carservice.connection.url:http://localhost:8080/}")
     private String connectionUrl;
 
+    @Override
     public List<MasterDto> getMasters() {
         log.debug("Method getMasters");
         try {
@@ -54,6 +59,7 @@ public class MasterRequester {
         }
     }
 
+    @Override
     public String addMaster(String name) {
         log.debug("Method addMaster");
         log.trace("Parameter name: {}", name);
@@ -73,6 +79,7 @@ public class MasterRequester {
         }
     }
 
+    @Override
     public String checkMasters() {
         log.debug("Method checkMasters");
         try {
@@ -89,6 +96,7 @@ public class MasterRequester {
         }
     }
 
+    @Override
     public String deleteMaster(Long idMaster) {
         log.debug("Method deleteMaster");
         log.trace("Parameter idMaster: {}", idMaster);
@@ -101,6 +109,7 @@ public class MasterRequester {
         }
     }
 
+    @Override
     public String getMasterByAlphabet() {
         log.debug("Method getMasterByAlphabet");
         try {
@@ -117,6 +126,7 @@ public class MasterRequester {
         }
     }
 
+    @Override
     public String getMasterByBusy() {
         log.debug("Method getMasterByBusy");
         try {
@@ -133,6 +143,7 @@ public class MasterRequester {
         }
     }
 
+    @Override
     public List<MasterDto> getFreeMasters(String stringExecuteDate) {
         log.debug("Method getFreeMasters");
         try {
@@ -149,4 +160,24 @@ public class MasterRequester {
             throw new BusinessException(ExceptionUtil.getMessageFromException(exception));
         }
     }
+
+    @Override
+    public String getMasterOrders(Long masterId) {
+        log.debug("Method getMasterOrders");
+        log.trace("Parameter masterId: {}", masterId);
+        try {
+            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
+                    connectionUrl + GET_MASTER_ORDERS_START_PATH + masterId + GET_MASTER_ORDERS_END_PATH, OrderDto[].class);
+            OrderDto[] arrayOrdersDto = response.getBody();
+            if (arrayOrdersDto == null) {
+                return WARNING_SERVER_MESSAGE;
+            }
+            List<OrderDto> ordersDto = Arrays.asList(arrayOrdersDto);
+            return StringOrder.getStringFromOrder(ordersDto);
+        } catch (HttpClientErrorException.Conflict exception) {
+            log.error(exception.getResponseBodyAsString());
+            return ExceptionUtil.getMessageFromException(exception);
+        }
+    }
+
 }

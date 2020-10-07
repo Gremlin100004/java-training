@@ -1,4 +1,4 @@
-package com.senla.carservice.ui.requester;
+package com.senla.carservice.ui.client;
 
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.MasterDto;
@@ -23,9 +23,9 @@ import java.util.List;
 @Component
 @NoArgsConstructor
 @Slf4j
-public class OrderRequester {
+public class OrderClientImpl implements OrderClient {
     private static final String ADD_ORDER_PATH = "orders";
-    private static final String CHECK_ORDER_DEADLINES_PATH = "orders/check-dates";
+    private static final String CHECK_ORDER_DEADLINES_PATH = "orders/check/dates";
     private static final String CHECK_ORDERS_PATH = "orders/check";
     private static final String GET_ORDERS_PATH = "orders";
     private static final String COMPLETE_ORDER_START_PATH = "orders/";
@@ -35,24 +35,24 @@ public class OrderRequester {
     private static final String CANCEL_ORDER_START_PATH = "orders/";
     private static final String CANCEL_ORDER_END_PATH = "/cancel";
     private static final String DELETE_ORDER_PATH = "orders/";
-    private static final String SHIFT_LEAD_TIME_PATH = "orders/shift-lead-time";
-    private static final String GET_ORDERS_SORT_BY_FILING_DATE_PATH = "orders/sort-by-filing-date";
-    private static final String GET_ORDERS_SORT_BY_EXECUTION_DATE_PATH = "orders/sort-by-execution-date";
-    private static final String GET_ORDERS_SORT_BY_PLANNED_START_DATE_PATH = "orders/sort-by-planned-start-date";
-    private static final String GET_ORDERS_SORT_BY_PRICE_PATH = "orders/sort-by-price";
-    private static final String GET_EXECUTE_ORDER_FILING_DATE_PATH = "orders/execute/sort-by-filing-date";
-    private static final String GET_EXECUTE_ORDER_EXECUTION_DATE_PATH = "orders/execute/sort-by-execution-date";
-    private static final String GET_COMPLETED_ORDERS_FILING_DATE_PATH = "orders/complete/sort-by-filing-date";
-    private static final String GET_COMPLETED_ORDERS_EXECUTION_DATE_PATH = "orders/complete/sort-by-execution-date";
-    private static final String GET_COMPLETED_ORDERS_PRICE_PATH = "orders/complete/sort-by-price";
-    private static final String GET_CANCELED_ORDERS_FILING_DATE_PATH = "orders/canceled/sort-by-filing-date";
-    private static final String GET_CANCELED_ORDERS_EXECUTION_DATE_PATH = "orders/canceled/sort-by-execution-date";
-    private static final String GET_CANCELED_ORDERS_PRICE_PATH = "orders/canceled/sort-by-price";
-    private static final String GET_DELETED_ORDERS_FILING_DATE_PATH = "orders/deleted/sort-by-filing-date";
-    private static final String GET_DELETED_ORDERS_EXECUTION_DATE_PATH = "orders/deleted/sort-by-execution-date";
-    private static final String GET_DELETED_ORDERS_PRICE = "orders/deleted/sort-by-price";
-    private static final String GET_MASTER_ORDERS_PATH = "orders/master-orders";
-    private static final String GET_ORDER_MASTERS_PATH = "orders/masters";
+    private static final String SHIFT_LEAD_TIME_PATH = "orders/shiftLeadTime";
+    private static final String GET_ORDERS_SORT_BY_FILING_DATE_PATH = "orders/sort/byFilingDate";
+    private static final String GET_ORDERS_SORT_BY_EXECUTION_DATE_PATH = "orders/sort/byExecutionDate";
+    private static final String GET_ORDERS_SORT_BY_PLANNED_START_DATE_PATH = "orders/sort/byPlannedStartDate";
+    private static final String GET_ORDERS_SORT_BY_PRICE_PATH = "orders/sort/byPrice";
+    private static final String GET_EXECUTE_ORDER_FILING_DATE_PATH = "orders/execute/sort/byFilingDate";
+    private static final String GET_EXECUTE_ORDER_EXECUTION_DATE_PATH = "orders/execute/sort/byExecutionDate";
+    private static final String GET_COMPLETED_ORDERS_FILING_DATE_PATH = "orders/complete/sort/byFilingDate";
+    private static final String GET_COMPLETED_ORDERS_EXECUTION_DATE_PATH = "orders/complete/sort/byExecutionDate";
+    private static final String GET_COMPLETED_ORDERS_PRICE_PATH = "orders/complete/sort/byPrice";
+    private static final String GET_CANCELED_ORDERS_FILING_DATE_PATH = "orders/canceled/sort/byFilingDate";
+    private static final String GET_CANCELED_ORDERS_EXECUTION_DATE_PATH = "orders/canceled/sort/byExecutionDate";
+    private static final String GET_CANCELED_ORDERS_PRICE_PATH = "orders/canceled/sort/byPrice";
+    private static final String GET_DELETED_ORDERS_FILING_DATE_PATH = "orders/deleted/sort/byFilingDate";
+    private static final String GET_DELETED_ORDERS_EXECUTION_DATE_PATH = "orders/deleted/sort/byExecutionDate";
+    private static final String GET_DELETED_ORDERS_PRICE = "orders/deleted/sort/byPrice";
+    private static final String GET_ORDER_MASTERS_START_PATH = "orders/";
+    private static final String GET_ORDER_MASTERS_END_PATH = "/masters";
     private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
     private static final String REQUEST_PARAMETER_START_DATE = "startPeriod";
     private static final String REQUEST_PARAMETER_END_DATE = "endPeriod";
@@ -71,6 +71,7 @@ public class OrderRequester {
     @Value("${carservice.connection.url:http://localhost:8080/}")
     private String connectionUrl;
 
+    @Override
     public String addOrder(OrderDto orderDto) {
         log.debug("Method addOrder");
         log.trace("Parameter orderDto: {}", orderDto);
@@ -88,6 +89,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String checkOrderDeadlines(String stringExecutionStartTime, String stringLeadTime) {
         log.debug("Method addOrder");
         log.trace("Parameter stringExecutionStartTime: {}, stringLeadTime: {}", stringExecutionStartTime, stringLeadTime);
@@ -108,6 +110,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String checkOrders() {
         log.debug("Method checkOrders");
         try {
@@ -124,6 +127,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public List<OrderDto> getOrders() {
         log.debug("Method getOrders");
         try {
@@ -140,6 +144,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String completeOrder(Long idOrder) {
         log.debug("Method completeOrder");
         log.trace("Parameter idOrder: {}", idOrder);
@@ -153,6 +158,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String closeOrder(Long idOrder) {
         log.debug("Method closeOrder");
         log.trace("Parameter idOrder: {}", idOrder);
@@ -166,6 +172,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String cancelOrder(Long idOrder) {
         log.debug("Method cancelOrder");
         log.trace("Parameter idOrder: {}", idOrder);
@@ -178,6 +185,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String deleteOrder(Long idOrder) {
         log.debug("Method deleteOrder");
         log.trace("Parameter idOrder: {}", idOrder);
@@ -190,6 +198,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String shiftLeadTime(OrderDto orderDto) {
         log.debug("Method shiftLeadTime");
         log.trace("Parameter orderDto: {}", orderDto);
@@ -202,11 +211,12 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getOrdersSortByFilingDate() {
         log.debug("Method getOrdersSortByFilingDate");
         try {
-            ResponseEntity<OrderDto[]> response =
-                restTemplate.getForEntity(connectionUrl + GET_ORDERS_SORT_BY_FILING_DATE_PATH, OrderDto[].class);
+            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
+                connectionUrl + GET_ORDERS_SORT_BY_FILING_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -218,11 +228,12 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getOrdersSortByExecutionDate() {
         log.debug("Method getOrdersSortByExecutionDate");
         try {
-            ResponseEntity<OrderDto[]> response =
-                restTemplate.getForEntity(connectionUrl + GET_ORDERS_SORT_BY_EXECUTION_DATE_PATH, OrderDto[].class);
+            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
+                connectionUrl + GET_ORDERS_SORT_BY_EXECUTION_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -234,11 +245,12 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getOrdersSortByPlannedStartDate() {
         log.debug("Method getOrdersSortByPlannedStartDate");
         try {
-            ResponseEntity<OrderDto[]> response =
-                restTemplate.getForEntity(connectionUrl + GET_ORDERS_SORT_BY_PLANNED_START_DATE_PATH, OrderDto[].class);
+            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
+                connectionUrl + GET_ORDERS_SORT_BY_PLANNED_START_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -250,6 +262,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getOrdersSortByPrice() {
         log.debug("Method getOrdersSortByPrice");
         try {
@@ -266,6 +279,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getExecuteOrderFilingDate() {
         log.debug("Method getExecuteOrderFilingDate");
         try {
@@ -282,6 +296,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getExecuteOrderExecutionDate() {
         log.debug("Method getExecuteOrderExecutionDate");
         try {
@@ -298,6 +313,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getCompletedOrdersFilingDate(String startPeriod, String endPeriod) {
         log.debug("Method getCompletedOrdersFilingDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -317,6 +333,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getCompletedOrdersExecutionDate(String startPeriod, String endPeriod) {
         log.debug("Method getCompletedOrdersExecutionDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -336,6 +353,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getCompletedOrdersPrice(String startPeriod, String endPeriod) {
         log.debug("Method getCompletedOrdersPrice");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -355,6 +373,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getCanceledOrdersFilingDate(String startPeriod, String endPeriod) {
         log.debug("Method getCanceledOrdersFilingDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -374,6 +393,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getCanceledOrdersExecutionDate(String startPeriod, String endPeriod) {
         log.debug("Method getCanceledOrdersExecutionDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -393,6 +413,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getCanceledOrdersPrice(String startPeriod, String endPeriod) {
         log.debug("Method getCanceledOrdersPrice");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -412,6 +433,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getDeletedOrdersFilingDate(String startPeriod, String endPeriod) {
         log.debug("Method getDeletedOrdersFilingDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -431,6 +453,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getDeletedOrdersExecutionDate(String startPeriod, String endPeriod) {
         log.debug("Method getDeletedOrdersExecutionDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -450,6 +473,7 @@ public class OrderRequester {
         }
     }
 
+    @Override
     public String getDeletedOrdersPrice(String startPeriod, String endPeriod) {
         log.debug("Method getDeletedOrdersPrice");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -468,30 +492,13 @@ public class OrderRequester {
         }
     }
 
-    public String getMasterOrders(MasterDto masterDto) {
-        log.debug("Method getMasterOrders");
-        log.trace("Parameter masterDto: {}", masterDto);
-        try {
-            ResponseEntity<OrderDto[]> response =
-                restTemplate.postForEntity(connectionUrl + GET_MASTER_ORDERS_PATH, masterDto, OrderDto[].class);
-            OrderDto[] arrayOrdersDto = response.getBody();
-            if (arrayOrdersDto == null) {
-                return WARNING_SERVER_MESSAGE;
-            }
-            List<OrderDto> ordersDto = Arrays.asList(arrayOrdersDto);
-            return StringOrder.getStringFromOrder(ordersDto);
-        } catch (HttpClientErrorException.Conflict exception) {
-            log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessageFromException(exception);
-        }
-    }
-
-    public String getOrderMasters(OrderDto orderDto) {
+    @Override
+    public String getOrderMasters(Long orderId) {
         log.debug("Method getOrderMasters");
-        log.trace("Parameter orderDto: {}", orderDto);
+        log.trace("Parameter orderId: {}", orderId);
         try {
-            ResponseEntity<MasterDto[]> response =
-                restTemplate.postForEntity(connectionUrl + GET_ORDER_MASTERS_PATH, orderDto, MasterDto[].class);
+            ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
+                connectionUrl + GET_ORDER_MASTERS_START_PATH + orderId + GET_ORDER_MASTERS_END_PATH, MasterDto[].class);
             MasterDto[] arrayMasterDto = response.getBody();
             if (arrayMasterDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -503,4 +510,5 @@ public class OrderRequester {
             return ExceptionUtil.getMessageFromException(exception);
         }
     }
+
 }

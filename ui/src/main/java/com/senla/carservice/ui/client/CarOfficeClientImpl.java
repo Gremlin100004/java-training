@@ -1,4 +1,4 @@
-package com.senla.carservice.ui.requester;
+package com.senla.carservice.ui.client;
 
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.ui.util.ExceptionUtil;
@@ -15,17 +15,18 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 @NoArgsConstructor
 @Slf4j
-public class CarOfficeRequester {
+public class CarOfficeClientImpl implements CarOfficeClient {
     @Value("${carservice.connection.url:http://localhost:8080/}")
     private String connectionUrl;
-    private static final String GET_FREE_PLACES_MASTERS_BY_DATE_PATH = "number-of-free-places";
-    private static final String GET_NEAREST_FREE_DATE_PATH = "nearest-free-date";
+    private static final String GET_FREE_PLACES_MASTERS_BY_DATE_PATH = "numberOfFreePlaces";
+    private static final String GET_NEAREST_FREE_DATE_PATH = "nearestFreeDate";
     private static final String EXPORT_ENTITIES_PATH = "export";
     private static final String IMPORT_ENTITIES_PATH = "import";
     private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
     @Autowired
     private RestTemplate restTemplate;
 
+    @Override
     public String getFreePlacesMastersByDate(String date) {
         log.debug("Method getFreePlacesMastersByDate");
         log.trace("Parameter date: {}", date);
@@ -46,6 +47,7 @@ public class CarOfficeRequester {
         }
     }
 
+    @Override
     public String getNearestFreeDate() {
         log.debug("Method getNearestFreeDate");
         try {
@@ -62,6 +64,7 @@ public class CarOfficeRequester {
         }
     }
 
+    @Override
     public String exportEntities() {
         log.debug("Method exportEntities");
         try {
@@ -78,6 +81,7 @@ public class CarOfficeRequester {
         }
     }
 
+    @Override
     public String importEntities() {
         log.debug("Method importEntities");
         try {
@@ -93,4 +97,5 @@ public class CarOfficeRequester {
             return ExceptionUtil.getMessageFromException(exception);
         }
     }
+
 }

@@ -3,11 +3,15 @@ package com.senla.carservice.ui.menu;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.dto.PlaceDto;
+import com.senla.carservice.ui.client.CarOfficeClient;
+import com.senla.carservice.ui.client.MasterClient;
+import com.senla.carservice.ui.client.OrderClient;
+import com.senla.carservice.ui.client.PlaceClient;
 import com.senla.carservice.ui.exception.BusinessException;
-import com.senla.carservice.ui.requester.CarOfficeRequester;
-import com.senla.carservice.ui.requester.MasterRequester;
-import com.senla.carservice.ui.requester.OrderRequester;
-import com.senla.carservice.ui.requester.PlaceRequester;
+import com.senla.carservice.ui.client.CarOfficeClientImpl;
+import com.senla.carservice.ui.client.MasterClientImpl;
+import com.senla.carservice.ui.client.OrderClientImpl;
+import com.senla.carservice.ui.client.PlaceClientImpl;
 import com.senla.carservice.ui.util.StringMaster;
 import com.senla.carservice.ui.util.StringOrder;
 import com.senla.carservice.ui.util.StringPlaces;
@@ -78,13 +82,13 @@ public class Builder {
 
     private Menu rootMenu;
     @Autowired
-    private CarOfficeRequester carOfficeService;
+    private CarOfficeClient carOfficeService;
     @Autowired
-    private MasterRequester masterService;
+    private MasterClient masterService;
     @Autowired
-    private OrderRequester orderService;
+    private OrderClient orderService;
     @Autowired
-    private PlaceRequester placeService;
+    private PlaceClient placeService;
 
     public void buildMenu() {
         this.rootMenu = new Menu(MenuTittle.CAR_SERVICE_MENU.getValue());
@@ -280,8 +284,8 @@ public class Builder {
                 OrderDto orderDto = ordersDto.get(index);
                 String executionStartTime = ScannerUtil.getStringDateUser(PLANING_TIME_START_INPUT_HEADER, true);
                 String leadTime = ScannerUtil.getStringDateUser(LEAD_TIME_INPUT_HEADER, true);
-                orderDto.setExecutionStartTime(DateUtil.getDatesFromString(executionStartTime, true));
-                orderDto.setLeadTime(DateUtil.getDatesFromString(leadTime, true));
+                orderDto.setExecutionStartTime(executionStartTime);
+                orderDto.setLeadTime(leadTime);
                 message = orderService.shiftLeadTime(orderDto);
                 Printer.printInfo(message);
             }
@@ -318,7 +322,7 @@ public class Builder {
                     if (index >= mastersDto.size() || index < 0) {
                         Printer.printInfo(WARNING_MASTER_MESSAGE);
                     } else {
-                        Printer.printInfo(orderService.getMasterOrders(mastersDto.get(index)));
+                        Printer.printInfo(masterService.getMasterOrders(mastersDto.get(index).getId()));
                     }
                 } catch (BusinessException exception) {
                     Printer.printInfo(exception.getMessage());
@@ -340,7 +344,7 @@ public class Builder {
                 if (index >= ordersDto.size() || index < 0) {
                     Printer.printInfo(WARNING_ORDER_MESSAGE);
                 } else {
-                    Printer.printInfo(orderService.getOrderMasters(ordersDto.get(index)));
+                    Printer.printInfo(orderService.getOrderMasters(ordersDto.get(index).getId()));
                 }
             }, listOrderMenu));
     }
@@ -565,7 +569,7 @@ public class Builder {
             return;
         }
         orderDto.setPrice(ScannerUtil.getBigDecimalUser(ORDER_PRICE_INPUT_HEADER));
-        orderDto.setCreationTime(new Date());
+        orderDto.setCreationTime(DateUtil.getStringFromDate(new Date(), true));
         Printer.printInfo(orderService.addOrder(orderDto));
     }
 
@@ -596,16 +600,15 @@ public class Builder {
             message = orderService.checkOrderDeadlines(executionStartTime, leadTime);
 
         }
-        orderDto.setExecutionStartTime(DateUtil.getDatesFromString(executionStartTime, true));
-        orderDto.setLeadTime(DateUtil.getDatesFromString(leadTime, true));
+        orderDto.setExecutionStartTime(executionStartTime);
+        orderDto.setLeadTime(leadTime);
     }
 
     private boolean addMastersOrder(OrderDto orderDto) {
         log.debug("addMastersOrder");
         log.trace("Parameter orderDto: {}", orderDto);
         try {
-            List<MasterDto> freeMasters = masterService.getFreeMasters(
-                DateUtil.getStringFromDate(orderDto.getExecutionStartTime(), true));
+            List<MasterDto> freeMasters = masterService.getFreeMasters(orderDto.getExecutionStartTime());
             Printer.printInfo(StringMaster.getStringFromMasters(freeMasters));
             Printer.printInfo(STOP_ADDING_MENU_ITEM);
             boolean quit = false;
@@ -654,8 +657,7 @@ public class Builder {
         log.debug("addPlaceOrder");
         log.trace("Parameter orderDto: {}", orderDto);
         try {
-            List<PlaceDto> placesDto = placeService.getFreePlacesByDate(
-                DateUtil.getStringFromDate(orderDto.getExecutionStartTime(), true));
+            List<PlaceDto> placesDto = placeService.getFreePlacesByDate(orderDto.getExecutionStartTime());
             Printer.printInfo(StringPlaces.getStringFromPlaces(placesDto));
             Integer index = null;
             while (index == null) {
@@ -703,4 +705,5 @@ public class Builder {
         }
         return !status;
     }
+
 }

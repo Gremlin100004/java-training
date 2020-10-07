@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -14,9 +13,9 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 public class OrderDto extends GeneralDto {
-    private Date creationTime;
-    private Date executionStartTime;
-    private Date leadTime;
+    private String creationTime;
+    private String executionStartTime;
+    private String leadTime;
     private PlaceDto place;
     private String automaker;
     private String model;
@@ -25,4 +24,5 @@ public class OrderDto extends GeneralDto {
     private String status;
     private boolean deleteStatus;
     private List<MasterDto> masters;
+
 }

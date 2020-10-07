@@ -5,7 +5,6 @@ import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.OrderService;
 import com.senla.carservice.service.enumaration.SortParameter;
-import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,21 +23,21 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/orders")
 @NoArgsConstructor
 @Slf4j
 public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @PostMapping("orders")
+    @PostMapping
     public OrderDto addOrder(@RequestBody OrderDto orderDto) {
         log.info("Method addOrder");
         log.trace("Parameters orderDto: {}", orderDto);
         return orderService.addOrder(orderDto);
     }
 
-    @GetMapping("orders/check-dates")
+    @GetMapping("check/dates")
     public ClientMessageDto checkOrderDeadlines(@RequestParam String stringExecutionStartTime, @RequestParam String stringLeadTime) {
         log.info("Method addOrderDeadlines");
         log.trace("Parameters stringExecutionStartTime: {}, stringLeadTime: {}", stringExecutionStartTime, stringLeadTime);
@@ -48,22 +47,20 @@ public class OrderController {
         return new ClientMessageDto("dates are right");
     }
 
-    @GetMapping("orders/check")
+    @GetMapping("check")
     public ClientMessageDto checkOrders() {
         log.info("Method checkPlaces");
-        if (orderService.getNumberOrders() == 0) {
-                throw new BusinessException("Error, there are no orders");
-        }
+        orderService.checkOrders();
         return new ClientMessageDto("verification was successfully");
     }
 
-    @GetMapping("orders")
+    @GetMapping
     public List<OrderDto> getOrders() {
         log.info("Method getOrders");
         return orderService.getOrders();
     }
 
-    @PutMapping("orders/{id}/complete")
+    @PutMapping("{id}/complete")
     public ClientMessageDto completeOrder(@PathVariable("id") Long orderId) {
         log.info("Method completeOrder");
         log.trace("Parameter orderId: {}", orderId);
@@ -71,7 +68,7 @@ public class OrderController {
             return new ClientMessageDto("The order has been transferred to execution status successfully");
     }
 
-    @PutMapping("orders/{id}/close")
+    @PutMapping("{id}/close")
     public ClientMessageDto closeOrder(@PathVariable("id") Long orderId) {
         log.info("Method closeOrder");
         log.trace("Parameter orderId: {}", orderId);
@@ -79,7 +76,7 @@ public class OrderController {
             return new ClientMessageDto(" -the order has been completed.");
     }
 
-    @PutMapping("orders/{id}/cancel")
+    @PutMapping("{id}/cancel")
     public ClientMessageDto cancelOrder(@PathVariable("id") Long orderId) {
         log.info("Method cancelOrder");
         log.trace("Parameter orderId: {}", orderId);
@@ -87,7 +84,7 @@ public class OrderController {
             return new ClientMessageDto("The order has been canceled successfully");
     }
 
-    @DeleteMapping("orders/{id}")
+    @DeleteMapping("{id}")
     public ClientMessageDto deleteOrder(@PathVariable("id") Long orderId) {
         log.info("Method deleteOrder");
         log.trace("Parameter orderId: {}", orderId);
@@ -95,7 +92,7 @@ public class OrderController {
             return new ClientMessageDto("The order has been deleted successfully");
     }
 
-    @PutMapping("orders/shift-lead-time")
+    @PutMapping("shiftLeadTime")
     public ClientMessageDto shiftLeadTime(@RequestBody OrderDto orderDto) {
         log.info("Method shiftLeadTime");
         log.trace("Parameters orderDto: {}", orderDto);
@@ -104,43 +101,43 @@ public class OrderController {
 
     }
 
-    @GetMapping("orders/sort-by-filing-date")
+    @GetMapping("sort/byFilingDate")
     public List<OrderDto> getOrdersSortByFilingDate() {
         log.info("Method getOrdersSortByFilingDate");
         return orderService.getSortOrders(SortParameter.SORT_BY_FILING_DATE);
     }
 
-    @GetMapping("orders/sort-by-execution-date")
+    @GetMapping("sort/byExecutionDate")
     public List<OrderDto> getOrdersSortByExecutionDate() {
         log.info("Method getOrdersSortByExecutionDate");
         return orderService.getSortOrders(SortParameter.SORT_BY_EXECUTION_DATE);
     }
 
-    @GetMapping("orders/sort-by-planned-start-date")
+    @GetMapping("sort/byPlannedStartDate")
     public List<OrderDto> getOrdersSortByPlannedStartDate() {
         log.info("Method getOrdersSortByPlannedStartDate");
         return orderService.getSortOrders(SortParameter.BY_PLANNED_START_DATE);
     }
 
-    @GetMapping("orders/sort-by-price")
+    @GetMapping("sort/byPrice")
     public List<OrderDto> getOrdersSortByPrice() {
         log.info("Method getOrdersSortByPrice");
         return orderService.getSortOrders(SortParameter.SORT_BY_PRICE);
     }
 
-    @GetMapping("orders/execute/sort-by-filing-date")
+    @GetMapping("execute/sort/byFilingDate")
     public List<OrderDto> getExecuteOrderFilingDate() {
         log.info("Method getExecuteOrderFilingDate");
         return orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE);
     }
 
-    @GetMapping("orders/execute/sort-by-execution-date")
+    @GetMapping("execute/sort/byExecutionDate")
     public List<OrderDto> getExecuteOrderExecutionDate() {
         log.info("Method getExecuteOrderExecutionDate");
         return orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE);
     }
 
-    @GetMapping("orders/complete/sort-by-filing-date")
+    @GetMapping("complete/sort/byFilingDate")
     public List<OrderDto> getCompletedOrdersFilingDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCompletedOrdersFilingDate");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -150,7 +147,7 @@ public class OrderController {
            SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE);
     }
 
-    @GetMapping("orders/complete/sort-by-execution-date")
+    @GetMapping("complete/sort/byExecutionDate")
     public List<OrderDto> getCompletedOrdersExecutionDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCompletedOrdersExecutionDate");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -160,7 +157,7 @@ public class OrderController {
            SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE);
     }
 
-    @GetMapping("orders/complete/sort-by-price")
+    @GetMapping("complete/sort/byPrice")
     public List<OrderDto> getCompletedOrdersPrice(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCompletedOrdersPrice");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -170,7 +167,7 @@ public class OrderController {
            SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE);
     }
 
-    @GetMapping("orders/canceled/sort-by-filing-date")
+    @GetMapping("canceled/sort/byFilingDate")
     public List<OrderDto> getCanceledOrdersFilingDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCanceledOrdersFilingDate");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -180,7 +177,7 @@ public class OrderController {
            SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE);
     }
 
-    @GetMapping("orders/canceled/sort-by-execution-date")
+    @GetMapping("canceled/sort/byExecutionDate")
     public List<OrderDto> getCanceledOrdersExecutionDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCanceledOrdersExecutionDate");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -190,7 +187,7 @@ public class OrderController {
            SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE);
     }
 
-    @GetMapping("orders/canceled/sort-by-price")
+    @GetMapping("canceled/sort/byPrice")
     public List<OrderDto> getCanceledOrdersPrice(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getCanceledOrdersPrice");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -200,7 +197,7 @@ public class OrderController {
            SortParameter.CANCELED_ORDERS_SORT_BY_PRICE);
     }
 
-    @GetMapping("orders/deleted/sort-by-filing-date")
+    @GetMapping("deleted/sort/byFilingDate")
     public List<OrderDto> getDeletedOrdersFilingDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getDeletedOrdersFilingDate");
         log.trace("Parameters startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
@@ -210,7 +207,7 @@ public class OrderController {
            SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE);
     }
 
-    @GetMapping("orders/deleted/sort-by-execution-date")
+    @GetMapping("deleted/sort/byExecutionDate")
     public List<OrderDto> getDeletedOrdersExecutionDate(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getDeletedOrdersExecutionDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod.replace('%', ' '), endPeriod);
@@ -220,7 +217,7 @@ public class OrderController {
            SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE);
     }
 
-    @GetMapping("orders/deleted/sort-by-price")
+    @GetMapping("deleted/sort/byPrice")
     public List<OrderDto> getDeletedOrdersPrice(@RequestParam String startPeriod, @RequestParam String endPeriod) {
         log.info("Method getDeletedOrdersPrice");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod.replace('%', ' '), endPeriod);
@@ -230,17 +227,11 @@ public class OrderController {
            SortParameter.DELETED_ORDERS_SORT_BY_PRICE);
     }
 
-    @PostMapping("orders/master-orders")
-    public List<OrderDto> getMasterOrders(@RequestBody MasterDto masterDto) {
-        log.info("Method getMasterOrders");
-        log.trace("Parameter masterDto: {}", masterDto);
-        return orderService.getMasterOrders(masterDto);
+    @GetMapping("{id}/masters")
+    public List<MasterDto> getOrderMasters(@PathVariable("id") Long orderId) {
+        log.info("Method getOrderMasters");
+        log.trace("Parameter orderId: {}", orderId);
+        return orderService.getOrderMasters(orderId);
     }
 
-    @PostMapping("orders/masters")
-    public List<MasterDto> getOrderMasters(@RequestBody OrderDto orderDto) {
-        log.info("Method getOrderMasters");
-        log.trace("Parameter orderDto: {}", orderDto);
-        return orderService.getOrderMasters(orderDto);
-    }
 }

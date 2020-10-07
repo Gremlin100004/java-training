@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class PlaceMapper {
 
-    public static Place transferDataFromPlaceDtoToPLace(PlaceDto placeDto, PlaceDao placeDao) {
+    public static Place getPlace(PlaceDto placeDto, PlaceDao placeDao) {
         Place place = placeDao.findById(placeDto.getId());
         place.setNumber(placeDto.getNumber());
         place.setIsBusy(placeDto.getIsBusy());
@@ -17,13 +17,13 @@ public class PlaceMapper {
         return place;
     }
 
-    public static List<PlaceDto> transferDataFromPlaceToPLaceDto(List<Place> places) {
+    public static List<PlaceDto> getPlaceDto(List<Place> places) {
         return places.stream()
-            .map(PlaceMapper::transferDataFromPlaceToPLaceDto)
+            .map(PlaceMapper::getPlaceDto)
             .collect(Collectors.toList());
     }
 
-    public static PlaceDto transferDataFromPlaceToPLaceDto(Place place) {
+    public static PlaceDto getPlaceDto(Place place) {
         PlaceDto placeDto = new PlaceDto();
         placeDto.setId(place.getId());
         placeDto.setNumber(place.getNumber());
@@ -31,4 +31,5 @@ public class PlaceMapper {
         placeDto.setDeleteStatus(place.getDeleteStatus());
         return placeDto;
     }
+
 }

@@ -1,4 +1,4 @@
-package com.senla.carservice.ui.requester;
+package com.senla.carservice.ui.client;
 
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.PlaceDto;
@@ -20,12 +20,12 @@ import java.util.List;
 @Component
 @NoArgsConstructor
 @Slf4j
-public class PlaceRequester {
+public class PlaceClientImpl implements PlaceClient {
     private static final String ADD_PLACE_PATH = "places";
     private static final String CHECK_PLACES_PATH = "places/check";
     private static final String GET_PLACES_PATH = "places";
     private static final String DELETE_PLACE_PATH = "places/";
-    private static final String GET_FREE_PLACES_BY_DATE_PATH = "places/free-by-date";
+    private static final String GET_FREE_PLACES_BY_DATE_PATH = "places/freeByDate";
     private static final String REQUEST_PARAMETER_STRING_EXECUTION_DATE = "stringExecuteDate";
     private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
     private static final String PLACE_ADD_SUCCESS_MESSAGE = "Place added successfully";
@@ -35,6 +35,7 @@ public class PlaceRequester {
     @Value("${carservice.connection.url:http://localhost:8080/}")
     private String connectionUrl;
 
+    @Override
     public String addPlace(int numberPlace) {
         log.debug("Method getOrderMasters");
         log.trace("Parameter numberPlace: {}", numberPlace);
@@ -54,6 +55,7 @@ public class PlaceRequester {
         }
     }
 
+    @Override
     public String checkPlaces() {
         log.debug("Method checkPlaces");
         try {
@@ -70,6 +72,7 @@ public class PlaceRequester {
         }
     }
 
+    @Override
     public List<PlaceDto> getPlaces() {
         log.debug("Method getPlaces");
         try {
@@ -86,6 +89,7 @@ public class PlaceRequester {
         }
     }
 
+    @Override
     public String deletePlace(Long idPlace) {
         log.debug("Method deletePlace");
         log.trace("Parameter idPlace: {}", idPlace);
@@ -98,6 +102,7 @@ public class PlaceRequester {
         }
     }
 
+    @Override
     public List<PlaceDto> getFreePlacesByDate(String stringExecuteDate) {
         log.debug("Method getFreePlacesByDate");
         log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
@@ -115,4 +120,5 @@ public class PlaceRequester {
             throw new BusinessException(ExceptionUtil.getMessageFromException(exception));
         }
     }
+
 }

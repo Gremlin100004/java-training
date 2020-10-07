@@ -105,4 +105,23 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         criteriaQuery.select(criteriaBuilder.count(masterRoot));
         return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
+
+    @Override
+    public List<Order> getMasterOrders(Master master) {
+        log.debug("Method getMasterOrders");
+        log.trace("Parameter master: {}", master);
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
+        Root<Order> orderRoot = criteriaQuery.from(Order.class);
+        Join<Order, Master> masterOrderJoin = orderRoot.join(Order_.masters);
+        criteriaQuery.select(orderRoot).distinct(true);
+        criteriaQuery.where(criteriaBuilder.equal(masterOrderJoin.get(Master_.id), master.getId()));
+        TypedQuery<Order> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Order> orders = typedQuery.getResultList();
+        if (orders.isEmpty()) {
+            throw new DaoException("Error getting master orders");
+        }
+        return orders;
+    }
+
 }

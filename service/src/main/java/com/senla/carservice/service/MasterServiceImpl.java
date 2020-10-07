@@ -3,8 +3,10 @@ package com.senla.carservice.service;
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.service.util.MasterMapper;
+import com.senla.carservice.service.util.OrderMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ public class MasterServiceImpl implements MasterService {
     @Transactional
     public List<MasterDto> getMasters() {
         log.debug("Method getMasters");
-        return MasterMapper.transferDataFromMasterToMasterDto(masterDao.getAllRecords());
+        return MasterMapper.getMasterDto(masterDao.getAllRecords());
     }
 
     @Override
@@ -34,7 +36,9 @@ public class MasterServiceImpl implements MasterService {
     public MasterDto addMaster(MasterDto masterDto) {
         log.debug("Method addMaster");
         log.trace("Parameter masterDto: {}", masterDto);
-        return MasterMapper.transferDataFromMasterToMasterDto(masterDao.saveRecord(new Master(masterDto.getName())));
+        Master master = new Master();
+        master.setName(masterDto.getName());
+        return MasterMapper.getMasterDto(masterDao.saveRecord(master));
     }
 
     @Override
@@ -42,7 +46,7 @@ public class MasterServiceImpl implements MasterService {
     public List<MasterDto> getFreeMastersByDate(Date executeDate) {
         log.debug("Method getFreeMastersByDate");
         log.trace("Parameter executeDate: {}", executeDate);
-        return MasterMapper.transferDataFromMasterToMasterDto(masterDao.getFreeMasters(executeDate));
+        return MasterMapper.getMasterDto(masterDao.getFreeMasters(executeDate));
     }
 
     @Override
@@ -70,20 +74,32 @@ public class MasterServiceImpl implements MasterService {
     @Transactional
     public List<MasterDto> getMasterByAlphabet() {
         log.debug("Method getMasterByAlphabet");
-        return MasterMapper.transferDataFromMasterToMasterDto(masterDao.getMasterSortByAlphabet());
+        return MasterMapper.getMasterDto(masterDao.getMasterSortByAlphabet());
     }
 
     @Override
     @Transactional
     public List<MasterDto> getMasterByBusy() {
         log.debug("Method getMasterByBusy");
-        return MasterMapper.transferDataFromMasterToMasterDto(masterDao.getMasterSortByBusy());
+        return MasterMapper.getMasterDto(masterDao.getMasterSortByBusy());
     }
 
     @Override
     @Transactional
-    public Long getNumberMasters() {
+    public void checkMasters() {
         log.debug("Method getNumberMasters");
-        return masterDao.getNumberMasters();
+        if (masterDao.getNumberMasters() == 0) {
+            throw new BusinessException("Error, there are no masters");
+        }
     }
+
+    @Override
+    @Transactional
+    public List<OrderDto> getMasterOrders(Long masterId) {
+        log.debug("Method getMasterOrders");
+        log.trace("Parameter masterId: {}", masterId);
+        return OrderMapper.getOrderDto(
+            masterDao.getMasterOrders(masterDao.findById(masterId)));
+    }
+
 }

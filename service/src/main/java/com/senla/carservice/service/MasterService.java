@@ -1,6 +1,7 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.dto.OrderDto;
 
 import java.util.Date;
 import java.util.List;
@@ -21,5 +22,8 @@ public interface MasterService {
 
     List<MasterDto> getMasterByBusy();
 
-    Long getNumberMasters();
+    List<OrderDto> getMasterOrders(Long masterId);
+
+    void checkMasters();
+
 }

@@ -29,9 +29,7 @@ public interface OrderService {
 
     List<OrderDto> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter);
 
-    List<OrderDto> getMasterOrders(MasterDto masterDto);
+    List<MasterDto> getOrderMasters(Long orderId);
 
-    List<MasterDto> getOrderMasters(OrderDto orderDto);
-
-    Long getNumberOrders();
+    void checkOrders();
 }

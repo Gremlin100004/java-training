@@ -17,5 +17,6 @@ public interface PlaceService {
 
     List<PlaceDto> getFreePlaceByDate(Date executeDate);
 
-    Long getNumberPlace();
+    void checkPlaces();
+
 }

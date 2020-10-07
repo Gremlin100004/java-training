@@ -2,8 +2,6 @@ package com.senla.carservice.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -21,11 +19,9 @@ import java.util.List;
 @Setter
 @ToString(exclude = "orders")
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Master extends AEntity {
 
     @Column(name = "name")
-    @NonNull
     private String name;
     @ManyToMany(mappedBy = "masters", fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
@@ -33,4 +29,5 @@ public class Master extends AEntity {
     private Integer numberOrders = 0;
     @Column(name = "is_deleted")
     private Boolean deleteStatus = false;
+
 }

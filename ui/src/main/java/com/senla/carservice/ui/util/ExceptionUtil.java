@@ -19,4 +19,5 @@ public class ExceptionUtil {
             return "Server message error";
         }
     }
+
 }

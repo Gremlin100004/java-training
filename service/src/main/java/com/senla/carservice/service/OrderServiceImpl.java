@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public List<OrderDto> getOrders() {
         log.debug("Method getOrders");
-        return OrderMapper.transferDataFromOrderToOrderDto(orderDao.getAllRecords());
+        return OrderMapper.getOrderDto(orderDao.getAllRecords());
     }
 
     @Override
@@ -53,8 +53,8 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto addOrder(OrderDto orderDto) {
         log.debug("Method addOrder");
         log.trace("Parameter orderDto: {}", orderDto);
-        return OrderMapper.transferDataFromOrderToOrderDto(
-            orderDao.saveRecord(OrderMapper.transferDataFromOrderDtoToOrder(orderDto, masterDao, placeDao)));
+        return OrderMapper.getOrderDto(
+            orderDao.saveRecord(OrderMapper.getOrder(orderDto, masterDao, placeDao)));
     }
 
     @Override
@@ -146,8 +146,8 @@ public class OrderServiceImpl implements OrderService {
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
-        Date executionStartTime = orderDto.getExecutionStartTime();
-        Date leadTime = orderDto.getLeadTime();
+        Date executionStartTime = DateUtil.getDatesFromString(orderDto.getExecutionStartTime(), true);
+        Date leadTime = DateUtil.getDatesFromString(orderDto.getLeadTime(), true);
         DateUtil.checkDateTime(executionStartTime, leadTime, false);
         Order order = orderDao.findById(orderDto.getId());
         order.setExecutionStartTime(executionStartTime);
@@ -180,7 +180,7 @@ public class OrderServiceImpl implements OrderService {
         if (orders.isEmpty()) {
             throw new BusinessException("Error, there are no orders");
         }
-        return OrderMapper.transferDataFromOrderToOrderDto(orders);
+        return OrderMapper.getOrderDto(orders);
     }
 
     @Override
@@ -210,32 +210,25 @@ public class OrderServiceImpl implements OrderService {
         } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)) {
             orders = orderDao.getDeletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
         }
-        return OrderMapper.transferDataFromOrderToOrderDto(orders);
+        return OrderMapper.getOrderDto(orders);
     }
 
     @Override
     @Transactional
-    public List<OrderDto> getMasterOrders(MasterDto masterDto) {
-        log.debug("Method getMasterOrders");
-        log.trace("Parameter idMaster: {}", masterDto);
-        return OrderMapper.transferDataFromOrderToOrderDto(
-            orderDao.getMasterOrders(masterDao.findById(masterDto.getId())));
-    }
-
-    @Override
-    @Transactional
-    public List<MasterDto> getOrderMasters(OrderDto orderDto) {
+    public List<MasterDto> getOrderMasters(Long orderId) {
         log.debug("Method getOrderMasters");
-        log.trace("Parameter idOrder: {}", orderDto);
-        return MasterMapper.transferDataFromMasterToMasterDto(
-            orderDao.getOrderMasters(OrderMapper.transferDataFromOrderDtoToOrder(orderDto, masterDao, placeDao)));
+        log.trace("Parameter orderId: {}", orderId);
+        return MasterMapper.getMasterDto(
+            orderDao.getOrderMasters(orderDao.findById(orderId)));
     }
 
     @Override
     @Transactional
-    public Long getNumberOrders() {
+    public void checkOrders() {
         log.debug("Method getNumberOrders");
-        return orderDao.getNumberOrders();
+        if (orderDao.getNumberOrders() == 0) {
+            throw new BusinessException("Error, there are no orders");
+        }
     }
 
     private void checkStatusOrder(Order order) {
@@ -281,4 +274,5 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException("Error, the order has been canceled");
         }
     }
+
 }

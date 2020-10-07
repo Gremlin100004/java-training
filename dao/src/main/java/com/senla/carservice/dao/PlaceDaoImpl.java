@@ -72,4 +72,5 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
         criteriaQuery.select(criteriaBuilder.count(placeRoot));
         return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
+
 }

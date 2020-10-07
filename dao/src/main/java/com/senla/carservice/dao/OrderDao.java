@@ -40,9 +40,8 @@ public interface OrderDao extends GenericDao<Order, Long> {
 
     List<Order> getDeletedOrdersSortByPrice(Date startPeriodDate, Date endPeriodDate);
 
-    List<Order> getMasterOrders(Master master);
-
     Long getNumberOrders();
 
     List<Master> getOrderMasters(Order order);
+
 }

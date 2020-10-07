@@ -62,4 +62,5 @@ public class StringMaster {
         stringBuilder.append(line);
         return stringBuilder.toString();
     }
+
 }

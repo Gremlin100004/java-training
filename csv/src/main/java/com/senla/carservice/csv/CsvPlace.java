@@ -63,4 +63,5 @@ public class CsvPlace {
         return place.getId() + fieldSeparator + place.getNumber() + fieldSeparator + place.getIsBusy() +
                fieldSeparator + place.getDeleteStatus();
     }
+
 }

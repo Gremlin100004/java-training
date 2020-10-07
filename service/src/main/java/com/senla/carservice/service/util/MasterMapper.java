@@ -9,16 +9,16 @@ import java.util.List;
 
 public class MasterMapper {
 
-    public static List<Master> transferDataFromMasterDtoToMaster(List<MasterDto> mastersDto, MasterDao masterDao) {
+    public static List<Master> getMaster(List<MasterDto> mastersDto, MasterDao masterDao) {
         List<Master> list = new ArrayList<>();
         for (MasterDto masterDto : mastersDto) {
-            Master master = transferDataFromMasterDtoToMaster(masterDto, masterDao);
+            Master master = getMaster(masterDto, masterDao);
             list.add(master);
         }
         return list;
     }
 
-    public static Master transferDataFromMasterDtoToMaster(MasterDto masterDto, MasterDao masterDao) {
+    public static Master getMaster(MasterDto masterDto, MasterDao masterDao) {
         Master master;
         if (masterDto.getId() != null) {
             master = masterDao.findById(masterDto.getId());
@@ -31,7 +31,7 @@ public class MasterMapper {
         return master;
     }
 
-    public static MasterDto transferDataFromMasterToMasterDto(Master master) {
+    public static MasterDto getMasterDto(Master master) {
         MasterDto masterDto = new MasterDto();
         masterDto.setId(master.getId());
         masterDto.setName(master.getName());
@@ -40,12 +40,13 @@ public class MasterMapper {
         return masterDto;
     }
 
-    public static List<MasterDto> transferDataFromMasterToMasterDto(List<Master> masters) {
+    public static List<MasterDto> getMasterDto(List<Master> masters) {
         List<MasterDto> list = new ArrayList<>();
         for (Master master : masters) {
-            MasterDto transferDataFromMasterToMasterDto = transferDataFromMasterToMasterDto(master);
+            MasterDto transferDataFromMasterToMasterDto = getMasterDto(master);
             list.add(transferDataFromMasterToMasterDto);
         }
         return list;
     }
+
 }

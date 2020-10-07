@@ -31,7 +31,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional
     public List<PlaceDto> getPlaces() {
         log.debug("Method getPlaces");
-        return PlaceMapper.transferDataFromPlaceToPLaceDto(placeDao.getAllRecords());
+        return PlaceMapper.getPlaceDto(placeDao.getAllRecords());
     }
 
     @Override
@@ -42,7 +42,9 @@ public class PlaceServiceImpl implements PlaceService {
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
-        return PlaceMapper.transferDataFromPlaceToPLaceDto(placeDao.saveRecord(new Place(placeDto.getNumber())));
+        Place place = new Place();
+        place.setNumber(placeDto.getNumber());
+        return PlaceMapper.getPlaceDto(placeDao.saveRecord(place));
     }
 
     @Override
@@ -77,13 +79,16 @@ public class PlaceServiceImpl implements PlaceService {
     public List<PlaceDto> getFreePlaceByDate(Date executeDate) {
         log.debug("Method getFreePlaceByDate");
         log.trace("Parameter executeDate: {}", executeDate);
-        return PlaceMapper.transferDataFromPlaceToPLaceDto(placeDao.getFreePlaces(executeDate));
+        return PlaceMapper.getPlaceDto(placeDao.getFreePlaces(executeDate));
     }
 
     @Override
     @Transactional
-    public Long getNumberPlace() {
+    public void checkPlaces() {
         log.debug("Method getNumberMasters");
-        return placeDao.getNumberPlaces();
+        if (placeDao.getNumberPlaces() == 0) {
+            throw new  BusinessException("Error, there are no places");
+        }
     }
+
 }

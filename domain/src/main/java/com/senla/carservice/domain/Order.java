@@ -3,8 +3,6 @@ package com.senla.carservice.domain;
 import com.senla.carservice.domain.enumaration.StatusOrder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -30,7 +28,6 @@ import java.util.List;
 @Setter
 @ToString(exclude = "masters")
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Order extends AEntity {
     @Column(name = "creation_time")
     private Date creationTime;
@@ -42,13 +39,10 @@ public class Order extends AEntity {
     @JoinColumn(name = "place_id")
     private Place place;
     @Column(name = "automaker")
-    @NonNull
     private String automaker;
     @Column(name = "model")
-    @NonNull
     private String model;
     @Column(name = "registration_number")
-    @NonNull
     private String registrationNumber;
     @Column(name = "price")
     private BigDecimal price;
@@ -61,4 +55,5 @@ public class Order extends AEntity {
     @JoinTable(name = "orders_masters", joinColumns = @JoinColumn(name = "order_id"),
         inverseJoinColumns = @JoinColumn(name = "master_id"))
     private List<Master> masters = new ArrayList<>();
+
 }

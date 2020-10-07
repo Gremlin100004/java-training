@@ -40,4 +40,5 @@ public class Navigator {
         menuItem.doAction();
         this.currentMenu = menuItem.getNextMenu();
     }
+
 }

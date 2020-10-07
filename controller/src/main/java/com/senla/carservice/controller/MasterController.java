@@ -2,8 +2,8 @@ package com.senla.carservice.controller;
 
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.MasterService;
-import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,35 +20,33 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/masters")
 @NoArgsConstructor
 @Slf4j
 public class MasterController {
     @Autowired
     private MasterService masterService;
-    @GetMapping("masters")
+    @GetMapping
     public List<MasterDto> getMasters() {
         log.info("Method getMasters");
         return masterService.getMasters();
     }
 
-    @PostMapping("masters")
+    @PostMapping()
     public MasterDto addMaster(@RequestBody MasterDto masterDto) {
         log.info("Method addMaster");
         log.trace("Parameter masterDto: {}", masterDto);
         return masterService.addMaster(masterDto);
     }
 
-    @GetMapping("masters/check")
+    @GetMapping("check")
     public ClientMessageDto checkMasters() {
         log.info("Method checkMasters");
-        if (masterService.getNumberMasters() == 0) {
-                throw new BusinessException("Error, there are no masters");
-            }
+        masterService.checkMasters();
         return new ClientMessageDto("verification was successfully");
     }
 
-    @DeleteMapping("masters/{id}")
+    @DeleteMapping("{id}")
     public ClientMessageDto deleteMaster(@PathVariable("id") Long masterId) {
         log.info("Method deleteMaster");
         log.trace("Parameter masterId: {}", masterId);
@@ -56,22 +54,30 @@ public class MasterController {
         return new ClientMessageDto(" -master has been deleted successfully!");
     }
 
-    @GetMapping("masters/sort-by-alphabet")
+    @GetMapping("sort/byAlphabet")
     public List<MasterDto> getMasterByAlphabet() {
         log.info("Method getMasterByAlphabet");
         return masterService.getMasterByAlphabet();
     }
 
-    @GetMapping("masters/sort-by-busy")
+    @GetMapping("sort/byBusy")
     public List<MasterDto> getMasterByBusy() {
         log.info("Method getMasterByBusy");
         return masterService.getMasterByBusy();
     }
 
-    @GetMapping("masters/free")
+    @GetMapping("free")
     public List<MasterDto> getFreeMasters(@RequestParam String stringExecuteDate) {
         log.info("Method getFreeMasters");
         log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
         return masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate.replace('%', ' '), true));
     }
+
+    @GetMapping("{id}/master/orders")
+    public List<OrderDto> getMasterOrders(@RequestParam Long masterId) {
+        log.info("Method getMasterOrders");
+        log.trace("Parameter masterId: {}", masterId);
+        return masterService.getMasterOrders(masterId);
+    }
+
 }

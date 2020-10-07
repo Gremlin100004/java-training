@@ -331,24 +331,6 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
     }
 
     @Override
-    public List<Order> getMasterOrders(Master master) {
-        log.debug("Method getMasterOrders");
-        log.trace("Parameter master: {}", master);
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
-        Root<Order> orderRoot = criteriaQuery.from(Order.class);
-        Join<Order, Master> masterOrderJoin = orderRoot.join(Order_.masters);
-        criteriaQuery.select(orderRoot).distinct(true);
-        criteriaQuery.where(criteriaBuilder.equal(masterOrderJoin.get(Master_.id), master.getId()));
-        TypedQuery<Order> typedQuery = entityManager.createQuery(criteriaQuery);
-        List<Order> orders = typedQuery.getResultList();
-        if (orders.isEmpty()) {
-            throw new DaoException("Error getting master orders");
-        }
-        return orders;
-    }
-
-    @Override
     public Long getNumberOrders() {
         log.debug("Method getNumberOrders");
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -375,4 +357,5 @@ public class OrderDaoImpl extends AbstractDao<Order, Long> implements OrderDao {
         }
         return masters;
     }
+
 }

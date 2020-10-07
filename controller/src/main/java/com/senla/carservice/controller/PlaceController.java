@@ -3,7 +3,6 @@ package com.senla.carservice.controller;
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.service.PlaceService;
-import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,36 +20,34 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/places")
 @NoArgsConstructor
 @Slf4j
 public class PlaceController {
     @Autowired
     private PlaceService placeService;
 
-    @PostMapping("places")
+    @PostMapping
     public PlaceDto addPlace(@RequestBody PlaceDto placeDto) {
         log.info("Method addPlace");
         log.trace("Parameter placeDto: {}", placeDto);
         return placeService.addPlace(placeDto);
     }
 
-    @GetMapping("places/check")
+    @GetMapping("check")
     public ClientMessageDto checkPlaces() {
         log.info("Method checkPlaces");
-        if (placeService.getNumberPlace() == 0) {
-            throw new  BusinessException("Error, there are no places");
-        }
+        placeService.checkPlaces();
         return new ClientMessageDto("verification was successfully");
     }
 
-    @GetMapping("places")
+    @GetMapping
     public List<PlaceDto> getPlaces() {
         log.info("Method getArrayPlace");
         return placeService.getPlaces();
     }
 
-    @DeleteMapping("places/{id}")
+    @DeleteMapping("{id}")
     public ClientMessageDto deletePlace(@PathVariable("id") Long orderId) {
         log.info("Method deletePlace");
         log.trace("Parameter orderId: {}", orderId);
@@ -58,11 +55,12 @@ public class PlaceController {
         return new ClientMessageDto(" -delete place in service successfully");
     }
 
-    @GetMapping("places/free-by-date")
+    @GetMapping("freeByDate")
     public List<PlaceDto> getFreePlacesByDate(@RequestParam String stringExecuteDate) {
         log.info("Method getFreePlacesByDate");
         log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
         Date executeDate = DateUtil.getDatesFromString(stringExecuteDate.replace('%', ' '), true);
         return placeService.getFreePlaceByDate(executeDate);
     }
+
 }

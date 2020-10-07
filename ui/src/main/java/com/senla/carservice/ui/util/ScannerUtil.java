@@ -90,4 +90,5 @@ public final class ScannerUtil {
         }
         return answer.equals("n");
     }
+
 }

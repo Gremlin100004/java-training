@@ -62,8 +62,11 @@ class CarOfficeServiceImplTest {
     @Test
     void CarOfficeServiceImpl_getNearestFreeDate() {
         Date leadTimeOrder = new Date();
-        Order order = new Order(PARAMETER_AUTOMAKER, PARAMETER_MODEL, PARAMETER_MODEL);
+        Order order = new Order();
         order.setId(ID_ORDER);
+        order.setAutomaker(PARAMETER_AUTOMAKER);
+        order.setModel(PARAMETER_MODEL);
+        order.setRegistrationNumber(PARAMETER_MODEL);
         order.setLeadTime(leadTimeOrder);
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
@@ -487,20 +490,25 @@ class CarOfficeServiceImplTest {
     }
 
     private Master getTestMaster() {
-        Master master = new Master(PARAMETER_NAME);
+        Master master = new Master();
+        master.setName(PARAMETER_NAME);
         master.setId(ID_MASTER);
         return master;
     }
 
     private Order getTestOrder() {
-        Order order = new Order(PARAMETER_AUTOMAKER, PARAMETER_MODEL, PARAMETER_REGISTRATION_NUMBER);
+        Order order = new Order();
         order.setId(ID_ORDER);
+        order.setAutomaker(PARAMETER_AUTOMAKER);
+        order.setModel(PARAMETER_MODEL);
+        order.setRegistrationNumber(PARAMETER_REGISTRATION_NUMBER);
         return order;
     }
 
     private Place getTestPlace() {
-        Place place = new Place(NUMBER_PLACE);
+        Place place = new Place();
         place.setId(ID_PLACE);
+        place.setNumber(NUMBER_PLACE);
         return place;
     }
 

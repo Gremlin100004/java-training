@@ -84,4 +84,5 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
         log.trace("Parameter id: {}", id);
         entityManager.remove(id);
     }
+
 }

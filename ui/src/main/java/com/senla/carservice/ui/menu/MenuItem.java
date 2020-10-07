@@ -1,16 +1,12 @@
 package com.senla.carservice.ui.menu;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public final class MenuItem {
 
-    @NonNull
     private final String title;
-    @NonNull
     private final Action action;
-    @NonNull
     private final Menu nextMenu;
 
     public Menu getNextMenu() {
@@ -27,4 +23,5 @@ public final class MenuItem {
     public String toString() {
         return title;
     }
+
 }

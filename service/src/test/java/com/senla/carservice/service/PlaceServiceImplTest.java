@@ -23,6 +23,7 @@ import java.util.List;
 @ContextConfiguration(classes = TestConfig.class)
 class PlaceServiceImplTest {
     private static final Long RIGHT_NUMBER_PLACES = 2L;
+    private static final Long WRONG_NUMBER_PLACES = 0L;
     private static final Long ID_PLACE = 1L;
     private static final Long ID_OTHER_PLACE = 2L;
     private static final int NUMBER_PLACE = 1;
@@ -69,7 +70,6 @@ class PlaceServiceImplTest {
     @Test
     void PlaceServiceImpl_deletePlace() {
         Place place = getTestPlace();
-        PlaceDto placeDto = getTestPlaceDto();
         Mockito.doReturn(place).when(placeDao).findById(ID_PLACE);
 
         Assertions.assertDoesNotThrow(() -> placeService.deletePlace(ID_PLACE));
@@ -82,7 +82,6 @@ class PlaceServiceImplTest {
     @Test
     void PlaceServiceImpl_deletePlace_placeDao_findById_wrongId() {
         Place place = getTestPlace();
-        PlaceDto placeDto = getTestPlaceDto();
         Mockito.doThrow(DaoException.class).when(placeDao).findById(ID_PLACE);
 
         Assertions.assertThrows(DaoException.class, () -> placeService.deletePlace(ID_PLACE));
@@ -158,19 +157,27 @@ class PlaceServiceImplTest {
     }
 
     @Test
-    void getNumberPlace() {
+    void PlaceServiceImpl_getNumberPlace() {
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
 
-        Long resultNumberPlaces = placeService.getNumberPlace();
-        Assertions.assertEquals(RIGHT_NUMBER_PLACES, resultNumberPlaces);
-        Assertions.assertNotNull(resultNumberPlaces);
+        Assertions.assertDoesNotThrow(() -> placeService.checkPlaces());
+        Mockito.verify(placeDao, Mockito.times(1)).getNumberPlaces();
+        Mockito.reset(placeDao);
+    }
+
+    @Test
+    void PlaceServiceImpl_getNumberPlace_placeDao_getNumberPlaces_zeroNumberPlaces() {
+        Mockito.doReturn(WRONG_NUMBER_PLACES).when(placeDao).getNumberPlaces();
+
+        Assertions.assertThrows(BusinessException.class, () -> placeService.checkPlaces());
         Mockito.verify(placeDao, Mockito.times(1)).getNumberPlaces();
         Mockito.reset(placeDao);
     }
 
     private Place getTestPlace() {
-        Place place = new Place(NUMBER_PLACE);
+        Place place = new Place();
         place.setId(ID_PLACE);
+        place.setNumber(NUMBER_PLACE);
         return place;
     }
 
