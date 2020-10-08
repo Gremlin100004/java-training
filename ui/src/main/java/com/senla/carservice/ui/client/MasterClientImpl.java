@@ -114,7 +114,7 @@ public class MasterClientImpl implements MasterClient {
         log.debug("Method getMasterByAlphabet");
         try {
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
-                connectionUrl + GET_MASTER_BY_ALPHABET_PATH, MasterDto[].class);
+                GET_MASTER_BY_ALPHABET_PATH, MasterDto[].class);
             MasterDto[] arrayMastersDto = response.getBody();
             if (arrayMastersDto == null) {
                 return WARNING_SERVER_MESSAGE;
