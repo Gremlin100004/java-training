@@ -10,7 +10,6 @@ import com.senla.carservice.ui.util.StringOrder;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -39,15 +38,12 @@ public class MasterClientImpl implements MasterClient {
     private static final String REQUEST_PARAMETER_DATE = "stringExecuteDate";
     @Autowired
     private RestTemplate restTemplate;
-    @Value("${carservice.connection.url:http://localhost:8080/}")
-    private String connectionUrl;
 
     @Override
     public List<MasterDto> getMasters() {
         log.debug("Method getMasters");
         try {
-            ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
-                connectionUrl + GET_MASTERS_PATH, MasterDto[].class);
+            ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(GET_MASTERS_PATH, MasterDto[].class);
             MasterDto[] arrayMasterDto = response.getBody();
             if (arrayMasterDto == null) {
                 throw new BusinessException("Error, there are no masters");
@@ -66,8 +62,7 @@ public class MasterClientImpl implements MasterClient {
         try {
             MasterDto masterDto = new MasterDto();
             masterDto.setName(name);
-            ResponseEntity<MasterDto> response = restTemplate.postForEntity(
-                connectionUrl + ADD_MASTER_PATH, masterDto, MasterDto.class);
+            ResponseEntity<MasterDto> response = restTemplate.postForEntity(ADD_MASTER_PATH, masterDto, MasterDto.class);
             MasterDto receivedMasterDto = response.getBody();
             if (receivedMasterDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -84,7 +79,7 @@ public class MasterClientImpl implements MasterClient {
         log.debug("Method checkMasters");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
-                connectionUrl + CHECK_MASTERS_PATH, ClientMessageDto.class);
+                CHECK_MASTERS_PATH, ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -101,7 +96,7 @@ public class MasterClientImpl implements MasterClient {
         log.debug("Method deleteMaster");
         log.trace("Parameter idMaster: {}", idMaster);
         try {
-            restTemplate.delete(connectionUrl + DELETE_MASTER_PATH + idMaster, MasterDto.class);
+            restTemplate.delete(DELETE_MASTER_PATH + idMaster, MasterDto.class);
             return MASTER_DELETE_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
@@ -131,7 +126,7 @@ public class MasterClientImpl implements MasterClient {
         log.debug("Method getMasterByBusy");
         try {
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
-                connectionUrl + GET_MASTER_BY_BUSY_PATH, MasterDto[].class);
+                GET_MASTER_BY_BUSY_PATH, MasterDto[].class);
             MasterDto[] arrayMastersDto = response.getBody();
             if (arrayMastersDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -147,7 +142,7 @@ public class MasterClientImpl implements MasterClient {
     public List<MasterDto> getFreeMasters(String stringExecuteDate) {
         log.debug("Method getFreeMasters");
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_FREE_MASTERS_PATH)
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_FREE_MASTERS_PATH)
                 .queryParam(REQUEST_PARAMETER_DATE, stringExecuteDate);
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(builder.toUriString(), MasterDto[].class);
             MasterDto[] arrayMastersDto = response.getBody();
@@ -167,7 +162,7 @@ public class MasterClientImpl implements MasterClient {
         log.trace("Parameter masterId: {}", masterId);
         try {
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
-                    connectionUrl + GET_MASTER_ORDERS_START_PATH + masterId + GET_MASTER_ORDERS_END_PATH, OrderDto[].class);
+                    GET_MASTER_ORDERS_START_PATH + masterId + GET_MASTER_ORDERS_END_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
                 return WARNING_SERVER_MESSAGE;

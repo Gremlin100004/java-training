@@ -16,8 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @NoArgsConstructor
 @Slf4j
 public class CarOfficeClientImpl implements CarOfficeClient {
-    @Value("${carservice.connection.url:http://localhost:8080/}")
-    private String connectionUrl;
     private static final String GET_FREE_PLACES_MASTERS_BY_DATE_PATH = "numberOfFreePlaces";
     private static final String GET_NEAREST_FREE_DATE_PATH = "nearestFreeDate";
     private static final String EXPORT_ENTITIES_PATH = "export";
@@ -31,8 +29,7 @@ public class CarOfficeClientImpl implements CarOfficeClient {
         log.debug("Method getFreePlacesMastersByDate");
         log.trace("Parameter date: {}", date);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                connectionUrl + GET_FREE_PLACES_MASTERS_BY_DATE_PATH)
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_FREE_PLACES_MASTERS_BY_DATE_PATH)
                     .queryParam("date", date);
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 builder.toUriString(), ClientMessageDto.class);
@@ -52,7 +49,7 @@ public class CarOfficeClientImpl implements CarOfficeClient {
         log.debug("Method getNearestFreeDate");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
-                connectionUrl + GET_NEAREST_FREE_DATE_PATH, ClientMessageDto.class);
+                GET_NEAREST_FREE_DATE_PATH, ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -69,7 +66,7 @@ public class CarOfficeClientImpl implements CarOfficeClient {
         log.debug("Method exportEntities");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
-                connectionUrl + EXPORT_ENTITIES_PATH, ClientMessageDto.class);
+                EXPORT_ENTITIES_PATH, ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -86,7 +83,7 @@ public class CarOfficeClientImpl implements CarOfficeClient {
         log.debug("Method importEntities");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
-                connectionUrl + IMPORT_ENTITIES_PATH, ClientMessageDto.class);
+                IMPORT_ENTITIES_PATH, ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;

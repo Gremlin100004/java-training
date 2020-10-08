@@ -64,12 +64,8 @@ public class OrderClientImpl implements OrderClient {
     private static final String ORDER_CANCEL_SUCCESS_MESSAGE = "The order has been canceled successfully";
     private static final String ORDER_DELETE_SUCCESS_MESSAGE = "The order has been deleted";
     private static final String ORDER_CHANGE_TIME_SUCCESS_MESSAGE = "The order lead time has been changed successfully";
-
     @Autowired
     private RestTemplate restTemplate;
-
-    @Value("${carservice.connection.url:http://localhost:8080/}")
-    private String connectionUrl;
 
     @Override
     public String addOrder(OrderDto orderDto) {
@@ -77,7 +73,7 @@ public class OrderClientImpl implements OrderClient {
         log.trace("Parameter orderDto: {}", orderDto);
         try {
             ResponseEntity<OrderDto> response = restTemplate.postForEntity(
-                connectionUrl + ADD_ORDER_PATH, orderDto, OrderDto.class);
+                ADD_ORDER_PATH, orderDto, OrderDto.class);
             OrderDto receivedOrderDto = response.getBody();
             if (receivedOrderDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -94,7 +90,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method addOrder");
         log.trace("Parameter stringExecutionStartTime: {}, stringLeadTime: {}", stringExecutionStartTime, stringLeadTime);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(connectionUrl + CHECK_ORDER_DEADLINES_PATH)
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(CHECK_ORDER_DEADLINES_PATH)
                 .queryParam(REQUEST_PARAMETER_STRING_EXECUTION_START_TIME, stringExecutionStartTime)
                 .queryParam(REQUEST_PARAMETER_STRING_LEAD_TIME, stringLeadTime);
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
@@ -115,7 +111,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method checkOrders");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
-                connectionUrl + CHECK_ORDERS_PATH, ClientMessageDto.class);
+                CHECK_ORDERS_PATH, ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -131,8 +127,7 @@ public class OrderClientImpl implements OrderClient {
     public List<OrderDto> getOrders() {
         log.debug("Method getOrders");
         try {
-            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
-                connectionUrl + GET_ORDERS_PATH, OrderDto[].class);
+            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(GET_ORDERS_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
                 throw new BusinessException("Error, there are no masters");
@@ -149,8 +144,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method completeOrder");
         log.trace("Parameter idOrder: {}", idOrder);
         try {
-            restTemplate.put(
-                connectionUrl + COMPLETE_ORDER_START_PATH + idOrder + COMPLETE_ORDER_END_PATH, OrderDto.class);
+            restTemplate.put(COMPLETE_ORDER_START_PATH + idOrder + COMPLETE_ORDER_END_PATH, OrderDto.class);
             return ORDER_TRANSFERRED_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
@@ -163,8 +157,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method closeOrder");
         log.trace("Parameter idOrder: {}", idOrder);
         try {
-            restTemplate.put(
-                connectionUrl + CLOSE_ORDER_START_PATH + idOrder + CLOSE_ORDER_END_PATH, OrderDto.class);
+            restTemplate.put(CLOSE_ORDER_START_PATH + idOrder + CLOSE_ORDER_END_PATH, OrderDto.class);
             return ORDER_COMPLETE_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
@@ -177,7 +170,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method cancelOrder");
         log.trace("Parameter idOrder: {}", idOrder);
         try {
-            restTemplate.put(connectionUrl + CANCEL_ORDER_START_PATH + idOrder + CANCEL_ORDER_END_PATH, OrderDto.class);
+            restTemplate.put(CANCEL_ORDER_START_PATH + idOrder + CANCEL_ORDER_END_PATH, OrderDto.class);
             return ORDER_CANCEL_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
@@ -190,7 +183,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method deleteOrder");
         log.trace("Parameter idOrder: {}", idOrder);
         try {
-            restTemplate.delete(connectionUrl + DELETE_ORDER_PATH + idOrder, OrderDto.class);
+            restTemplate.delete(DELETE_ORDER_PATH + idOrder, OrderDto.class);
             return ORDER_DELETE_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
@@ -203,7 +196,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method shiftLeadTime");
         log.trace("Parameter orderDto: {}", orderDto);
         try {
-            restTemplate.put(connectionUrl + SHIFT_LEAD_TIME_PATH, orderDto, OrderDto.class);
+            restTemplate.put(SHIFT_LEAD_TIME_PATH, orderDto, OrderDto.class);
             return ORDER_CHANGE_TIME_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.Conflict exception) {
             log.error(exception.getResponseBodyAsString());
@@ -216,7 +209,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getOrdersSortByFilingDate");
         try {
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
-                connectionUrl + GET_ORDERS_SORT_BY_FILING_DATE_PATH, OrderDto[].class);
+                GET_ORDERS_SORT_BY_FILING_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -233,7 +226,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getOrdersSortByExecutionDate");
         try {
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
-                connectionUrl + GET_ORDERS_SORT_BY_EXECUTION_DATE_PATH, OrderDto[].class);
+                GET_ORDERS_SORT_BY_EXECUTION_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -250,7 +243,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getOrdersSortByPlannedStartDate");
         try {
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
-                connectionUrl + GET_ORDERS_SORT_BY_PLANNED_START_DATE_PATH, OrderDto[].class);
+                GET_ORDERS_SORT_BY_PLANNED_START_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -266,8 +259,8 @@ public class OrderClientImpl implements OrderClient {
     public String getOrdersSortByPrice() {
         log.debug("Method getOrdersSortByPrice");
         try {
-            ResponseEntity<OrderDto[]> response =
-                restTemplate.getForEntity(connectionUrl + GET_ORDERS_SORT_BY_PRICE_PATH, OrderDto[].class);
+            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
+                GET_ORDERS_SORT_BY_PRICE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -283,8 +276,8 @@ public class OrderClientImpl implements OrderClient {
     public String getExecuteOrderFilingDate() {
         log.debug("Method getExecuteOrderFilingDate");
         try {
-            ResponseEntity<OrderDto[]> response =
-                restTemplate.getForEntity(connectionUrl + GET_EXECUTE_ORDER_FILING_DATE_PATH, OrderDto[].class);
+            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
+                GET_EXECUTE_ORDER_FILING_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -300,8 +293,8 @@ public class OrderClientImpl implements OrderClient {
     public String getExecuteOrderExecutionDate() {
         log.debug("Method getExecuteOrderExecutionDate");
         try {
-            ResponseEntity<OrderDto[]> response =
-                restTemplate.getForEntity(connectionUrl + GET_EXECUTE_ORDER_EXECUTION_DATE_PATH, OrderDto[].class);
+            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
+                GET_EXECUTE_ORDER_EXECUTION_DATE_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -318,9 +311,8 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getCompletedOrdersFilingDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                connectionUrl + GET_COMPLETED_ORDERS_FILING_DATE_PATH)
-                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_COMPLETED_ORDERS_FILING_DATE_PATH)
+                .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
@@ -338,9 +330,8 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getCompletedOrdersExecutionDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                connectionUrl + GET_COMPLETED_ORDERS_EXECUTION_DATE_PATH)
-                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_COMPLETED_ORDERS_EXECUTION_DATE_PATH)
+                .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
@@ -358,9 +349,8 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getCompletedOrdersPrice");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                connectionUrl + GET_COMPLETED_ORDERS_PRICE_PATH)
-                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_COMPLETED_ORDERS_PRICE_PATH)
+                .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
@@ -378,9 +368,8 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getCanceledOrdersFilingDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                connectionUrl + GET_CANCELED_ORDERS_FILING_DATE_PATH)
-                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_CANCELED_ORDERS_FILING_DATE_PATH)
+                .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
@@ -398,9 +387,8 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getCanceledOrdersExecutionDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                connectionUrl + GET_CANCELED_ORDERS_EXECUTION_DATE_PATH)
-                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_CANCELED_ORDERS_EXECUTION_DATE_PATH)
+                .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
@@ -418,9 +406,8 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getCanceledOrdersPrice");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                connectionUrl + GET_CANCELED_ORDERS_PRICE_PATH)
-                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_CANCELED_ORDERS_PRICE_PATH)
+                .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
@@ -438,9 +425,8 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getDeletedOrdersFilingDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                connectionUrl + GET_DELETED_ORDERS_FILING_DATE_PATH)
-                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_DELETED_ORDERS_FILING_DATE_PATH)
+                .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
@@ -458,9 +444,8 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getDeletedOrdersExecutionDate");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                connectionUrl + GET_DELETED_ORDERS_EXECUTION_DATE_PATH)
-                    .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_DELETED_ORDERS_EXECUTION_DATE_PATH)
+                .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
@@ -478,7 +463,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("Method getDeletedOrdersPrice");
         log.trace("Parameter startPeriod: {}, endPeriod: {}", startPeriod, endPeriod);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(connectionUrl + GET_DELETED_ORDERS_PRICE)
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_DELETED_ORDERS_PRICE)
                 .queryParam(REQUEST_PARAMETER_START_DATE, startPeriod).queryParam(REQUEST_PARAMETER_END_DATE, endPeriod);
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(builder.toUriString(), OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
@@ -498,7 +483,7 @@ public class OrderClientImpl implements OrderClient {
         log.trace("Parameter orderId: {}", orderId);
         try {
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
-                connectionUrl + GET_ORDER_MASTERS_START_PATH + orderId + GET_ORDER_MASTERS_END_PATH, MasterDto[].class);
+                GET_ORDER_MASTERS_START_PATH + orderId + GET_ORDER_MASTERS_END_PATH, MasterDto[].class);
             MasterDto[] arrayMasterDto = response.getBody();
             if (arrayMasterDto == null) {
                 return WARNING_SERVER_MESSAGE;
