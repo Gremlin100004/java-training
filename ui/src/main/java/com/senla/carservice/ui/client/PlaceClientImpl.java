@@ -1,5 +1,6 @@
 package com.senla.carservice.ui.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.ui.exception.BusinessException;
@@ -31,6 +32,8 @@ public class PlaceClientImpl implements PlaceClient {
     private static final String PLACE_DELETE_SUCCESS_MESSAGE = "The place has been deleted successfully";
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public String addPlace(int numberPlace) {
@@ -45,9 +48,9 @@ public class PlaceClientImpl implements PlaceClient {
                 return WARNING_SERVER_MESSAGE;
             }
             return PLACE_ADD_SUCCESS_MESSAGE;
-        } catch (HttpClientErrorException.Conflict exception) {
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessageFromException(exception);
+            return ExceptionUtil.getMessage(exception, objectMapper);
         }
     }
 
@@ -62,9 +65,9 @@ public class PlaceClientImpl implements PlaceClient {
                 return WARNING_SERVER_MESSAGE;
             }
             return clientMessageDto.getMessage();
-        } catch (HttpClientErrorException.Conflict exception) {
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessageFromException(exception);
+            return ExceptionUtil.getMessage(exception, objectMapper);
         }
     }
 
@@ -78,9 +81,9 @@ public class PlaceClientImpl implements PlaceClient {
                 throw new BusinessException("Error, there are no places");
             }
             return Arrays.asList(arrayPlaceDto);
-        } catch (HttpClientErrorException.Conflict exception) {
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
-            throw new BusinessException(ExceptionUtil.getMessageFromException(exception));
+            throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }
     }
 
@@ -91,9 +94,9 @@ public class PlaceClientImpl implements PlaceClient {
         try {
             restTemplate.delete(DELETE_PLACE_PATH + idPlace, PlaceDto.class);
             return PLACE_DELETE_SUCCESS_MESSAGE;
-        } catch (HttpClientErrorException.Conflict exception) {
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessageFromException(exception);
+            return ExceptionUtil.getMessage(exception, objectMapper);
         }
     }
 
@@ -110,9 +113,9 @@ public class PlaceClientImpl implements PlaceClient {
                 throw new BusinessException("Error, there are no places");
             }
             return Arrays.asList(arrayPlacesDto);
-        } catch (HttpClientErrorException.Conflict exception) {
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
-            throw new BusinessException(ExceptionUtil.getMessageFromException(exception));
+            throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }
     }
 

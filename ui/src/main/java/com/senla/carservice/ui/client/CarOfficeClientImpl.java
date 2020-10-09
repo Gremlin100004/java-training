@@ -1,11 +1,11 @@
 package com.senla.carservice.ui.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.ui.util.ExceptionUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -23,6 +23,9 @@ public class CarOfficeClientImpl implements CarOfficeClient {
     private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private ObjectMapper objectMapper;
+
 
     @Override
     public String getFreePlacesMastersByDate(String date) {
@@ -38,9 +41,9 @@ public class CarOfficeClientImpl implements CarOfficeClient {
                 return WARNING_SERVER_MESSAGE;
             }
             return clientMessageDto.getMessage();
-        } catch (HttpClientErrorException.Conflict exception) {
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessageFromException(exception);
+            return ExceptionUtil.getMessage(exception, objectMapper);
         }
     }
 
@@ -55,9 +58,9 @@ public class CarOfficeClientImpl implements CarOfficeClient {
                 return WARNING_SERVER_MESSAGE;
             }
             return clientMessageDto.getMessage();
-        } catch (HttpClientErrorException.Conflict exception) {
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessageFromException(exception);
+            return ExceptionUtil.getMessage(exception, objectMapper);
         }
     }
 
@@ -72,9 +75,9 @@ public class CarOfficeClientImpl implements CarOfficeClient {
                 return WARNING_SERVER_MESSAGE;
             }
             return clientMessageDto.getMessage();
-        } catch (HttpClientErrorException.Conflict exception) {
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessageFromException(exception);
+            return ExceptionUtil.getMessage(exception, objectMapper);
         }
     }
 
@@ -89,9 +92,9 @@ public class CarOfficeClientImpl implements CarOfficeClient {
                 return WARNING_SERVER_MESSAGE;
             }
             return clientMessageDto.getMessage();
-        } catch (HttpClientErrorException.Conflict exception) {
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessageFromException(exception);
+            return ExceptionUtil.getMessage(exception, objectMapper);
         }
     }
 

@@ -2,6 +2,7 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
+import com.senla.carservice.service.enumaration.MasterSortParameter;
 
 import java.util.Date;
 import java.util.List;
@@ -18,9 +19,7 @@ public interface MasterService {
 
     void deleteMaster(Long masterId);
 
-    List<MasterDto> getMasterByAlphabet();
-
-    List<MasterDto> getMasterByBusy();
+    List<MasterDto> getSortMasters(MasterSortParameter sortParameter);
 
     List<OrderDto> getMasterOrders(Long masterId);
 

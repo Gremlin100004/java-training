@@ -7,6 +7,7 @@ import com.senla.carservice.domain.Order;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.config.TestConfig;
+import com.senla.carservice.service.enumaration.MasterSortParameter;
 import com.senla.carservice.service.exception.BusinessException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -150,12 +151,12 @@ class MasterServiceImplTest {
     }
 
     @Test
-    void MasterServiceImpl_getMasterByAlphabet() {
+    void MasterServiceImpl_getSortMasters_masterDao_getMasterSortByAlphabet() {
         List<Master> masters = getTestMasters();
         List<MasterDto> mastersDto = getTestMastersDto();
         Mockito.doReturn(masters).when(masterDao).getMasterSortByAlphabet();
 
-        List<MasterDto> resultMastersDto = masterService.getMasterByAlphabet();
+        List<MasterDto> resultMastersDto = masterService.getSortMasters(MasterSortParameter.NAME);
         Assertions.assertNotNull(resultMastersDto);
         Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMastersDto.size());
         Assertions.assertFalse(resultMastersDto.isEmpty());
@@ -168,18 +169,18 @@ class MasterServiceImplTest {
     void MasterServiceImpl_getMasterByAlphabet_masterDao_getMasterSortByAlphabet_emptyList() {
         Mockito.doThrow(DaoException.class).when(masterDao).getMasterSortByAlphabet();
 
-        Assertions.assertThrows(DaoException.class, () -> masterService.getMasterByAlphabet());
+        Assertions.assertThrows(DaoException.class, () -> masterService.getSortMasters(MasterSortParameter.NAME));
         Mockito.verify(masterDao, Mockito.times(1)).getMasterSortByAlphabet();
         Mockito.reset(masterDao);
     }
 
     @Test
-    void MasterServiceImpl_getMasterByBusy() {
+    void MasterServiceImpl_getSortMasters_masterDao_getMasterSortByBusy() {
         List<Master> masters = getTestMasters();
         List<MasterDto> mastersDto = getTestMastersDto();
         Mockito.doReturn(masters).when(masterDao).getMasterSortByBusy();
 
-        List<MasterDto> resultMastersDto = masterService.getMasterByBusy();
+        List<MasterDto> resultMastersDto = masterService.getSortMasters(MasterSortParameter.BUSY_STATUS);
         Assertions.assertNotNull(resultMastersDto);
         Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMastersDto.size());
         Assertions.assertFalse(resultMastersDto.isEmpty());
@@ -189,10 +190,10 @@ class MasterServiceImplTest {
     }
 
     @Test
-    void MasterServiceImpl_getMasterByBusy_masterDao_getMasterSortByBusy_emptyList() {
+    void MasterServiceImpl_getMasterByAlphabet_masterDao_getMasterSortByBusy_emptyList() {
         Mockito.doThrow(DaoException.class).when(masterDao).getMasterSortByBusy();
 
-        Assertions.assertThrows(DaoException.class, () -> masterService.getMasterByBusy());
+        Assertions.assertThrows(DaoException.class, () -> masterService.getSortMasters(MasterSortParameter.BUSY_STATUS));
         Mockito.verify(masterDao, Mockito.times(1)).getMasterSortByBusy();
         Mockito.reset(masterDao);
     }

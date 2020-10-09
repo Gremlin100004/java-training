@@ -40,7 +40,7 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
         criteriaQuery.where(placeRoot.get(Place_.id).in(subquery).not());
         TypedQuery<Place> query = entityManager.createQuery(criteriaQuery);
         List<Place> places = query.getResultList();
-        if (places == null) {
+        if (places.isEmpty()) {
             throw new DaoException("Error getting busy places");
         }
         return places;

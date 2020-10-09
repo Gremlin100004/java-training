@@ -13,9 +13,7 @@ public interface MasterClient {
 
     String deleteMaster(Long idMaster);
 
-    String getMasterByAlphabet();
-
-    String getMasterByBusy();
+    String getSortMasters(String sortParameter);
 
     List<MasterDto> getFreeMasters(String stringExecuteDate);
 

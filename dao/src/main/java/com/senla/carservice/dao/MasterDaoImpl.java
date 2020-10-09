@@ -75,7 +75,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         TypedQuery<Master> typedQuery = entityManager.createQuery(criteriaQuery);
         List<Master> masters = typedQuery.getResultList();
         if (masters.isEmpty()) {
-            throw new DaoException("Error getting objects");
+            throw new DaoException("Error getting masters");
         }
         return masters;
     }
@@ -91,7 +91,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         TypedQuery<Master> typedQuery = entityManager.createQuery(criteriaQuery);
         List<Master> masters = typedQuery.getResultList();
         if (masters.isEmpty()) {
-            throw new DaoException("Error getting objects");
+            throw new DaoException("Error getting masters");
         }
         return masters;
     }

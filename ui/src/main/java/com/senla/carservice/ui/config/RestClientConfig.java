@@ -1,5 +1,6 @@
 package com.senla.carservice.ui.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +17,17 @@ public class RestClientConfig {
 
     @Bean
     public RestTemplate restTemplate() {
-        //Todo correct all uri
         SimpleClientHttpRequestFactory clientHttpRequestFactory = new SimpleClientHttpRequestFactory();
         clientHttpRequestFactory.setConnectTimeout(3000);
         clientHttpRequestFactory.setReadTimeout(3000);
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(environment.getRequiredProperty(BASE_URI)));
         return restTemplate;
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 
 }

@@ -11,7 +11,7 @@ import com.senla.carservice.domain.enumaration.StatusOrder;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.config.TestConfig;
-import com.senla.carservice.service.enumaration.SortParameter;
+import com.senla.carservice.service.enumaration.OrderSortParameter;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import com.senla.carservice.util.exception.DateException;
@@ -641,7 +641,7 @@ class OrderServiceImplTest {
         List<OrderDto> ordersDto = getTestOrdersDto();
         Mockito.doReturn(orders).when(orderDao).getOrdersSortByFilingDate();
 
-        List<OrderDto> resultOrdersDto = orderService.getSortOrders(SortParameter.SORT_BY_FILING_DATE);
+        List<OrderDto> resultOrdersDto = orderService.getSortOrders(OrderSortParameter.BY_FILING_DATE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -654,7 +654,8 @@ class OrderServiceImplTest {
     void OrderServiceImpl_getSortOrders_orderDao_getOrdersSortByFilingDate_emptyList() {
         Mockito.doThrow(DaoException.class).when(orderDao).getOrdersSortByFilingDate();
 
-        Assertions.assertThrows(DaoException.class, () -> orderService.getSortOrders(SortParameter.SORT_BY_FILING_DATE));
+        Assertions.assertThrows(DaoException.class, () -> orderService.getSortOrders(
+            OrderSortParameter.BY_FILING_DATE));
         Mockito.verify(orderDao, Mockito.times(1)).getOrdersSortByFilingDate();
         Mockito.reset(orderDao);
     }
@@ -665,7 +666,7 @@ class OrderServiceImplTest {
         List<OrderDto> ordersDto = getTestOrdersDto();
         Mockito.doReturn(orders).when(orderDao).getOrdersSortByExecutionDate();
 
-        List<OrderDto> resultOrdersDto = orderService.getSortOrders(SortParameter.SORT_BY_EXECUTION_DATE);
+        List<OrderDto> resultOrdersDto = orderService.getSortOrders(OrderSortParameter.BY_EXECUTION_DATE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -679,7 +680,7 @@ class OrderServiceImplTest {
         Mockito.doThrow(DaoException.class).when(orderDao).getOrdersSortByExecutionDate();
 
         Assertions.assertThrows(DaoException.class,
-            () -> orderService.getSortOrders(SortParameter.SORT_BY_EXECUTION_DATE));
+            () -> orderService.getSortOrders(OrderSortParameter.BY_EXECUTION_DATE));
         Mockito.verify(orderDao, Mockito.times(1)).getOrdersSortByExecutionDate();
         Mockito.reset(orderDao);
     }
@@ -690,7 +691,7 @@ class OrderServiceImplTest {
         List<OrderDto> ordersDto = getTestOrdersDto();
         Mockito.doReturn(orders).when(orderDao).getOrdersSortByPlannedStartDate();
 
-        List<OrderDto> resultOrdersDto = orderService.getSortOrders(SortParameter.BY_PLANNED_START_DATE);
+        List<OrderDto> resultOrdersDto = orderService.getSortOrders(OrderSortParameter.BY_PLANNED_START_DATE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -704,7 +705,7 @@ class OrderServiceImplTest {
         Mockito.doThrow(DaoException.class).when(orderDao).getOrdersSortByPlannedStartDate();
 
         Assertions.assertThrows(DaoException.class,
-                                () -> orderService.getSortOrders(SortParameter.BY_PLANNED_START_DATE));
+                                () -> orderService.getSortOrders(OrderSortParameter.BY_PLANNED_START_DATE));
         Mockito.verify(orderDao, Mockito.times(1)).getOrdersSortByPlannedStartDate();
         Mockito.reset(orderDao);
     }
@@ -715,7 +716,7 @@ class OrderServiceImplTest {
         List<OrderDto> ordersDto = getTestOrdersDto();
         Mockito.doReturn(orders).when(orderDao).getOrdersSortByPrice();
 
-        List<OrderDto> resultOrdersDto = orderService.getSortOrders(SortParameter.SORT_BY_PRICE);
+        List<OrderDto> resultOrdersDto = orderService.getSortOrders(OrderSortParameter.BY_PRICE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -728,7 +729,7 @@ class OrderServiceImplTest {
     void OrderServiceImpl_getSortOrders_orderDao_getOrdersSortByPrice_emptyList() {
         Mockito.doThrow(DaoException.class).when(orderDao).getOrdersSortByPrice();
 
-        Assertions.assertThrows(DaoException.class, () -> orderService.getSortOrders(SortParameter.SORT_BY_PRICE));
+        Assertions.assertThrows(DaoException.class, () -> orderService.getSortOrders(OrderSortParameter.BY_PRICE));
         Mockito.verify(orderDao, Mockito.times(1)).getOrdersSortByPrice();
         Mockito.reset(orderDao);
     }
@@ -739,7 +740,8 @@ class OrderServiceImplTest {
         List<OrderDto> ordersDto = getTestOrdersDto();
         Mockito.doReturn(orders).when(orderDao).getExecuteOrderSortByFilingDate();
 
-        List<OrderDto> resultOrdersDto = orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE);
+        List<OrderDto> resultOrdersDto = orderService.getSortOrders(
+            OrderSortParameter.EXECUTE_ORDERS_BY_FILING_DATE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -753,7 +755,7 @@ class OrderServiceImplTest {
         Mockito.doThrow(DaoException.class).when(orderDao).getExecuteOrderSortByFilingDate();
 
         Assertions.assertThrows(DaoException.class,
-           () -> orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE));
+           () -> orderService.getSortOrders(OrderSortParameter.EXECUTE_ORDERS_BY_FILING_DATE));
         Mockito.verify(orderDao, Mockito.times(1)).getExecuteOrderSortByFilingDate();
         Mockito.reset(orderDao);
     }
@@ -762,24 +764,51 @@ class OrderServiceImplTest {
     void OrderServiceImpl_getSortOrders_orderDao_getExecuteOrderSortExecutionDate() {
         List<Order> orders = getTestOrders();
         List<OrderDto> ordersDto = getTestOrdersDto();
-        Mockito.doReturn(orders).when(orderDao).getExecuteOrderSortExecutionDate();
+        Mockito.doReturn(orders).when(orderDao).getExecuteOrderSortByExecutionDate();
 
-        List<OrderDto> resultOrdersDto = orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE);
+        List<OrderDto> resultOrdersDto = orderService.getSortOrders(
+            OrderSortParameter.EXECUTE_ORDERS_BY_EXECUTION_DATE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
         Assertions.assertEquals(ordersDto, resultOrdersDto);
-        Mockito.verify(orderDao, Mockito.times(1)).getExecuteOrderSortExecutionDate();
+        Mockito.verify(orderDao, Mockito.times(1)).getExecuteOrderSortByExecutionDate();
         Mockito.reset(orderDao);
     }
 
     @Test
     void OrderServiceImpl_getSortOrders_orderDao_getExecuteOrderSortExecutionDate_emptyList() {
-        Mockito.doThrow(DaoException.class).when(orderDao).getExecuteOrderSortExecutionDate();
+        Mockito.doThrow(DaoException.class).when(orderDao).getExecuteOrderSortByExecutionDate();
 
         Assertions.assertThrows(DaoException.class,
-            () -> orderService.getSortOrders(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE));
-        Mockito.verify(orderDao, Mockito.times(1)).getExecuteOrderSortExecutionDate();
+            () -> orderService.getSortOrders(OrderSortParameter.EXECUTE_ORDERS_BY_EXECUTION_DATE));
+        Mockito.verify(orderDao, Mockito.times(1)).getExecuteOrderSortByExecutionDate();
+        Mockito.reset(orderDao);
+    }
+
+    @Test
+    void OrderServiceImpl_getSortOrders_orderDao_getExecuteOrderSortByPrice() {
+        List<Order> orders = getTestOrders();
+        List<OrderDto> ordersDto = getTestOrdersDto();
+        Mockito.doReturn(orders).when(orderDao).getExecuteOrderSortByPrice();
+
+        List<OrderDto> resultOrdersDto = orderService.getSortOrders(
+            OrderSortParameter.EXECUTE_ORDERS_BY_PRICE);
+        Assertions.assertNotNull(resultOrdersDto);
+        Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
+        Assertions.assertFalse(resultOrdersDto.isEmpty());
+        Assertions.assertEquals(ordersDto, resultOrdersDto);
+        Mockito.verify(orderDao, Mockito.times(1)).getExecuteOrderSortByPrice();
+        Mockito.reset(orderDao);
+    }
+
+    @Test
+    void OrderServiceImpl_getSortOrders_orderDao_getExecuteOrderSortByPrice_emptyList() {
+        Mockito.doThrow(DaoException.class).when(orderDao).getExecuteOrderSortByPrice();
+
+        Assertions.assertThrows(DaoException.class,
+            () -> orderService.getSortOrders(OrderSortParameter.EXECUTE_ORDERS_BY_PRICE));
+        Mockito.verify(orderDao, Mockito.times(1)).getExecuteOrderSortByPrice();
         Mockito.reset(orderDao);
     }
 
@@ -790,7 +819,7 @@ class OrderServiceImplTest {
 
         Assertions.assertThrows(DateException.class,
             () -> orderService.getSortOrdersByPeriod(wrongStartPeriodDate, rightEndPeriodDate,
-                SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE));
+                                                     OrderSortParameter.COMPLETED_ORDERS_BY_FILING_DATE));
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByFilingDate(wrongStartPeriodDate,
             rightEndPeriodDate);
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByExecutionDate(wrongStartPeriodDate,
@@ -821,7 +850,7 @@ class OrderServiceImplTest {
             .getCompletedOrdersSortByFilingDate(rightStartPeriodDate, rightEndPeriodDate);
 
         List<OrderDto> resultOrdersDto = orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-            SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE);
+                                                                            OrderSortParameter.COMPLETED_ORDERS_BY_FILING_DATE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -840,7 +869,7 @@ class OrderServiceImplTest {
 
         Assertions.assertThrows(DaoException.class,
             () -> orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-                SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE));
+                                                     OrderSortParameter.COMPLETED_ORDERS_BY_FILING_DATE));
         Mockito.verify(orderDao, Mockito.times(1)).getCompletedOrdersSortByFilingDate(
             rightStartPeriodDate, rightEndPeriodDate);
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByExecutionDate(
@@ -872,7 +901,7 @@ class OrderServiceImplTest {
             .getCompletedOrdersSortByExecutionDate(rightStartPeriodDate, rightEndPeriodDate);
 
         List<OrderDto> resultOrdersDto = orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-            SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE);
+                                                                            OrderSortParameter.COMPLETED_ORDERS_BY_EXECUTION_DATE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -891,7 +920,7 @@ class OrderServiceImplTest {
 
         Assertions.assertThrows(DaoException.class,
             () -> orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-               SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE));
+                                                     OrderSortParameter.COMPLETED_ORDERS_BY_EXECUTION_DATE));
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByFilingDate(
             rightStartPeriodDate, rightEndPeriodDate);
         Mockito.verify(orderDao, Mockito.times(1)).getCompletedOrdersSortByExecutionDate(
@@ -922,7 +951,7 @@ class OrderServiceImplTest {
         Mockito.doReturn(orders).when(orderDao).getCompletedOrdersSortByPrice(rightStartPeriodDate, rightEndPeriodDate);
 
         List<OrderDto> resultOrdersDto = orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-            SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE);
+                                                                            OrderSortParameter.COMPLETED_ORDERS_BY_PRICE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -941,7 +970,7 @@ class OrderServiceImplTest {
 
         Assertions.assertThrows(DaoException.class,
             () -> orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-                SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE));
+                                                     OrderSortParameter.COMPLETED_ORDERS_BY_PRICE));
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByFilingDate(
             rightStartPeriodDate, rightEndPeriodDate);
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByExecutionDate(
@@ -973,7 +1002,7 @@ class OrderServiceImplTest {
             .getCanceledOrdersSortByFilingDate(rightStartPeriodDate, rightEndPeriodDate);
 
         List<OrderDto> resultOrdersDto = orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-            SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE);
+                                                                            OrderSortParameter.CANCELED_ORDERS_BY_FILING_DATE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -992,7 +1021,7 @@ class OrderServiceImplTest {
 
         Assertions.assertThrows(DaoException.class,
             () -> orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-               SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE));
+                                                     OrderSortParameter.CANCELED_ORDERS_BY_FILING_DATE));
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByFilingDate(
             rightStartPeriodDate, rightEndPeriodDate);
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByExecutionDate(
@@ -1023,7 +1052,7 @@ class OrderServiceImplTest {
         Mockito.doReturn(orders).when(orderDao)
             .getCanceledOrdersSortByExecutionDate(rightStartPeriodDate, rightEndPeriodDate);
         List<OrderDto> resultOrdersDto = orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-            SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE);
+                                                                            OrderSortParameter.CANCELED_ORDERS_BY_EXECUTION_DATE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -1042,7 +1071,7 @@ class OrderServiceImplTest {
 
         Assertions.assertThrows(DaoException.class,
             () -> orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-               SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE));
+                                                     OrderSortParameter.CANCELED_ORDERS_BY_EXECUTION_DATE));
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByFilingDate(
             rightStartPeriodDate, rightEndPeriodDate);
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByExecutionDate(
@@ -1073,7 +1102,7 @@ class OrderServiceImplTest {
         Mockito.doReturn(orders).when(orderDao).getCanceledOrdersSortByPrice(rightStartPeriodDate, rightEndPeriodDate);
 
         List<OrderDto> resultOrdersDto = orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-            SortParameter.CANCELED_ORDERS_SORT_BY_PRICE);
+                                                                            OrderSortParameter.CANCELED_ORDERS_BY_PRICE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -1092,7 +1121,7 @@ class OrderServiceImplTest {
 
         Assertions.assertThrows(DaoException.class,
             () -> orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-               SortParameter.CANCELED_ORDERS_SORT_BY_PRICE));
+                                                     OrderSortParameter.CANCELED_ORDERS_BY_PRICE));
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByFilingDate(
             rightStartPeriodDate, rightEndPeriodDate);
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByExecutionDate(
@@ -1124,7 +1153,7 @@ class OrderServiceImplTest {
             .getDeletedOrdersSortByFilingDate(rightStartPeriodDate, rightEndPeriodDate);
 
         List<OrderDto> resultOrdersDto = orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-            SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE);
+                                                                            OrderSortParameter.DELETED_ORDERS_BY_FILING_DATE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -1143,7 +1172,7 @@ class OrderServiceImplTest {
 
         Assertions.assertThrows(DaoException.class,
             () -> orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-               SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE));
+                                                     OrderSortParameter.DELETED_ORDERS_BY_FILING_DATE));
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByFilingDate(
             rightStartPeriodDate, rightEndPeriodDate);
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByExecutionDate(
@@ -1175,7 +1204,7 @@ class OrderServiceImplTest {
             .getDeletedOrdersSortByExecutionDate(rightStartPeriodDate, rightEndPeriodDate);
 
         List<OrderDto> resultOrdersDto = orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-            SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE);
+                                                                            OrderSortParameter.DELETED_ORDERS_BY_EXECUTION_DATE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -1194,7 +1223,7 @@ class OrderServiceImplTest {
 
         Assertions.assertThrows(DaoException.class,
             () -> orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-               SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE));
+                                                     OrderSortParameter.DELETED_ORDERS_BY_EXECUTION_DATE));
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByFilingDate(
             rightStartPeriodDate, rightEndPeriodDate);
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByExecutionDate(
@@ -1225,7 +1254,7 @@ class OrderServiceImplTest {
         Mockito.doReturn(orders).when(orderDao).getDeletedOrdersSortByPrice(rightStartPeriodDate, rightEndPeriodDate);
 
         List<OrderDto> resultOrdersDto = orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-            SortParameter.DELETED_ORDERS_SORT_BY_PRICE);
+                                                                            OrderSortParameter.DELETED_ORDERS_BY_PRICE);
         Assertions.assertNotNull(resultOrdersDto);
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
@@ -1244,7 +1273,7 @@ class OrderServiceImplTest {
 
         Assertions.assertThrows(DaoException.class,
             () -> orderService.getSortOrdersByPeriod(rightStartPeriodDate, rightEndPeriodDate,
-               SortParameter.DELETED_ORDERS_SORT_BY_PRICE));
+                                                     OrderSortParameter.DELETED_ORDERS_BY_PRICE));
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByFilingDate(
             rightStartPeriodDate, rightEndPeriodDate);
         Mockito.verify(orderDao, Mockito.never()).getCompletedOrdersSortByExecutionDate(

@@ -20,7 +20,9 @@ public interface OrderDao extends GenericDao<Order, Long> {
 
     List<Order> getExecuteOrderSortByFilingDate();
 
-    List<Order> getExecuteOrderSortExecutionDate();
+    List<Order> getExecuteOrderSortByExecutionDate();
+
+    List<Order> getExecuteOrderSortByPrice();
 
     List<Order> getCompletedOrdersSortByFilingDate(Date startPeriodDate, Date endPeriodDate);
 

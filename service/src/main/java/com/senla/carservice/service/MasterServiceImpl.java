@@ -4,6 +4,7 @@ import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
+import com.senla.carservice.service.enumaration.MasterSortParameter;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.service.util.MasterMapper;
 import com.senla.carservice.service.util.OrderMapper;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -72,16 +74,15 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
-    public List<MasterDto> getMasterByAlphabet() {
+    public List<MasterDto> getSortMasters(MasterSortParameter sortParameter) {
         log.debug("Method getMasterByAlphabet");
-        return MasterMapper.getMasterDto(masterDao.getMasterSortByAlphabet());
-    }
-
-    @Override
-    @Transactional
-    public List<MasterDto> getMasterByBusy() {
-        log.debug("Method getMasterByBusy");
-        return MasterMapper.getMasterDto(masterDao.getMasterSortByBusy());
+        List<Master> masters = new ArrayList<>();
+        if (sortParameter == MasterSortParameter.NAME) {
+            masters = masterDao.getMasterSortByAlphabet();
+        } else if (sortParameter == MasterSortParameter.BUSY_STATUS) {
+            masters = masterDao.getMasterSortByBusy();
+        }
+        return MasterMapper.getMasterDto(masters);
     }
 
     @Override

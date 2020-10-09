@@ -15,11 +15,12 @@
     </appender>
 
     <logger name="org.springframework" level="debug" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="com.senla.carservice" level="trace" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
+
     <root level="error">
         <appender-ref ref="STDOUT"/>
     </root>

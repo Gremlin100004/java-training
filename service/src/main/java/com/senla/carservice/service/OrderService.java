@@ -2,7 +2,7 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
-import com.senla.carservice.service.enumaration.SortParameter;
+import com.senla.carservice.service.enumaration.OrderSortParameter;
 
 import java.util.Date;
 import java.util.List;
@@ -25,9 +25,9 @@ public interface OrderService {
 
     void shiftLeadTime(OrderDto orderDto);
 
-    List<OrderDto> getSortOrders(SortParameter sortParameter);
+    List<OrderDto> getSortOrders(OrderSortParameter sortParameter);
 
-    List<OrderDto> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter);
+    List<OrderDto> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, OrderSortParameter sortParameter);
 
     List<MasterDto> getOrderMasters(Long orderId);
 

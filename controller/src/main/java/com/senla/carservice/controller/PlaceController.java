@@ -52,7 +52,7 @@ public class PlaceController {
         log.info("Method deletePlace");
         log.trace("Parameter orderId: {}", orderId);
         placeService.deletePlace(orderId);
-        return new ClientMessageDto(" -delete place in service successfully");
+        return new ClientMessageDto("Delete place in service successfully");
     }
 
     @GetMapping("freeByDate")

@@ -9,7 +9,7 @@ import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.enumaration.StatusOrder;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
-import com.senla.carservice.service.enumaration.SortParameter;
+import com.senla.carservice.service.enumaration.OrderSortParameter;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.service.util.MasterMapper;
 import com.senla.carservice.service.util.OrderMapper;
@@ -160,22 +160,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public List<OrderDto> getSortOrders(SortParameter sortParameter) {
+    public List<OrderDto> getSortOrders(OrderSortParameter sortParameter) {
         log.debug("Method getSortOrders");
         log.trace("Parameter sortParameter: {}", sortParameter);
         List<Order> orders = new ArrayList<>();
-        if (sortParameter.equals(SortParameter.SORT_BY_FILING_DATE)) {
+        if (sortParameter.equals(OrderSortParameter.BY_FILING_DATE)) {
             orders = orderDao.getOrdersSortByFilingDate();
-        } else if (sortParameter.equals(SortParameter.SORT_BY_EXECUTION_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.BY_EXECUTION_DATE)) {
             orders = orderDao.getOrdersSortByExecutionDate();
-        } else if (sortParameter.equals(SortParameter.BY_PLANNED_START_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.BY_PLANNED_START_DATE)) {
             orders = orderDao.getOrdersSortByPlannedStartDate();
-        } else if (sortParameter.equals(SortParameter.SORT_BY_PRICE)) {
+        } else if (sortParameter.equals(OrderSortParameter.BY_PRICE)) {
             orders = orderDao.getOrdersSortByPrice();
-        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.EXECUTE_ORDERS_BY_FILING_DATE)) {
             orders = orderDao.getExecuteOrderSortByFilingDate();
-        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE)) {
-            orders = orderDao.getExecuteOrderSortExecutionDate();
+        } else if (sortParameter.equals(OrderSortParameter.EXECUTE_ORDERS_BY_EXECUTION_DATE)) {
+            orders = orderDao.getExecuteOrderSortByExecutionDate();
+        } else if (sortParameter.equals(OrderSortParameter.EXECUTE_ORDERS_BY_PRICE)) {
+            orders = orderDao.getExecuteOrderSortByPrice();
         }
         if (orders.isEmpty()) {
             throw new BusinessException("Error, there are no orders");
@@ -185,29 +187,29 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public List<OrderDto> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter) {
+    public List<OrderDto> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, OrderSortParameter sortParameter) {
         log.debug("Method getSortOrdersByPeriod");
         log.trace("Parameters startPeriodDate: {}, endPeriodDate: {}, sortParameter: {}",
             startPeriodDate, endPeriodDate, sortParameter);
         List<Order> orders = new ArrayList<>();
         DateUtil.checkDateTime(startPeriodDate, endPeriodDate, true);
-        if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE)) {
+        if (sortParameter.equals(OrderSortParameter.COMPLETED_ORDERS_BY_FILING_DATE)) {
             orders = orderDao.getCompletedOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.COMPLETED_ORDERS_BY_EXECUTION_DATE)) {
             orders = orderDao.getCompletedOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE)) {
+        } else if (sortParameter.equals(OrderSortParameter.COMPLETED_ORDERS_BY_PRICE)) {
             orders = orderDao.getCompletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.CANCELED_ORDERS_BY_FILING_DATE)) {
             orders = orderDao.getCanceledOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.CANCELED_ORDERS_BY_EXECUTION_DATE)) {
             orders = orderDao.getCanceledOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_PRICE)) {
+        } else if (sortParameter.equals(OrderSortParameter.CANCELED_ORDERS_BY_PRICE)) {
             orders = orderDao.getCanceledOrdersSortByPrice(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.DELETED_ORDERS_BY_FILING_DATE)) {
             orders = orderDao.getDeletedOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.DELETED_ORDERS_BY_EXECUTION_DATE)) {
             orders = orderDao.getDeletedOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)) {
+        } else if (sortParameter.equals(OrderSortParameter.DELETED_ORDERS_BY_PRICE)) {
             orders = orderDao.getDeletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
         }
         return OrderMapper.getOrderDto(orders);

@@ -23,35 +23,9 @@ public interface OrderClient {
 
     String shiftLeadTime(OrderDto orderDto);
 
-    String getOrdersSortByFilingDate();
+    String getSortOrders(String sortParameter);
 
-    String getOrdersSortByExecutionDate();
-
-    String getOrdersSortByPlannedStartDate();
-
-    String getOrdersSortByPrice();
-
-    String getExecuteOrderFilingDate();
-
-    String getExecuteOrderExecutionDate();
-
-    String getCompletedOrdersFilingDate(String startPeriod, String endPeriod);
-
-    String getCompletedOrdersExecutionDate(String startPeriod, String endPeriod);
-
-    String getCompletedOrdersPrice(String startPeriod, String endPeriod);
-
-    String getCanceledOrdersFilingDate(String startPeriod, String endPeriod);
-
-    String getCanceledOrdersExecutionDate(String startPeriod, String endPeriod);
-
-    String getCanceledOrdersPrice(String startPeriod, String endPeriod);
-
-    String getDeletedOrdersFilingDate(String startPeriod, String endPeriod);
-
-    String getDeletedOrdersExecutionDate(String startPeriod, String endPeriod);
-
-    String getDeletedOrdersPrice(String startPeriod, String endPeriod);
+    String getSortOrdersByPeriod(String sortParameter, String startPeriod, String endPeriod);
 
     String getOrderMasters(Long orderId);
 

@@ -7,13 +7,10 @@ import org.springframework.web.client.HttpClientErrorException;
 
 public class ExceptionUtil {
 
-    public static String getMessageFromException(HttpClientErrorException.Conflict exception) {
+    public static String getMessage(HttpClientErrorException exception, ObjectMapper objectMapper) {
         ClientMessageDto clientMessageDto;
         try {
-            clientMessageDto = new ObjectMapper().readValue(exception.getResponseBodyAsString(), ClientMessageDto.class);
-            if (clientMessageDto == null) {
-                return "There are no message from server";
-            }
+            clientMessageDto = objectMapper.readValue(exception.getResponseBodyAsString(), ClientMessageDto.class);
             return clientMessageDto.getMessage();
         } catch (JsonProcessingException e) {
             return "Server message error";
