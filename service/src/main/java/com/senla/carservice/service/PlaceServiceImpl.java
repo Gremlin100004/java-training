@@ -30,15 +30,15 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     @Transactional
     public List<PlaceDto> getPlaces() {
-        log.debug("Method getPlaces");
+        log.debug("[getPlaces]");
         return PlaceMapper.getPlaceDto(placeDao.getAllRecords());
     }
 
     @Override
     @Transactional
     public PlaceDto addPlace(PlaceDto placeDto) {
-        log.debug("Method addPlace");
-        log.trace("Parameter placeDto: {}", placeDto);
+        log.debug("[addPlace]");
+        log.trace("[placeDto: {}]", placeDto);
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
@@ -50,8 +50,8 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     @Transactional
     public void deletePlace(Long orderId) {
-        log.debug("Method deletePlace");
-        log.trace("Parameter orderId: {}", orderId);
+        log.debug("[deletePlace]");
+        log.trace("[orderId: {}]", orderId);
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
@@ -69,23 +69,23 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     @Transactional
     public Long getNumberFreePlaceByDate(Date startDayDate) {
-        log.debug("Method getNumberFreePlaceByDate");
-        log.trace("Parameter startDayDate: {}", startDayDate);
+        log.debug("[getNumberFreePlaceByDate]");
+        log.trace("[startDayDate: {}]", startDayDate);
         return placeDao.getNumberFreePlaces(startDayDate);
     }
 
     @Override
     @Transactional
     public List<PlaceDto> getFreePlaceByDate(Date executeDate) {
-        log.debug("Method getFreePlaceByDate");
-        log.trace("Parameter executeDate: {}", executeDate);
+        log.debug("[getFreePlaceByDate]");
+        log.trace("[executeDate: {}]", executeDate);
         return PlaceMapper.getPlaceDto(placeDao.getFreePlaces(executeDate));
     }
 
     @Override
     @Transactional
     public void checkPlaces() {
-        log.debug("Method getNumberMasters");
+        log.debug("[getNumberMasters]");
         if (placeDao.getNumberPlaces() == 0) {
             throw new  BusinessException("Error, there are no places");
         }

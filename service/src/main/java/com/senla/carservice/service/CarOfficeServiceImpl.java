@@ -42,7 +42,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     @Transactional
     public Date getNearestFreeDate() {
-        log.debug("Method getNearestFreeDate");
+        log.debug("[getNearestFreeDate]");
         checkMasters();
         checkPlaces();
         checkOrders();
@@ -63,7 +63,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     @Transactional
     public void importEntities() {
-        log.debug("Method importEntities");
+        log.debug("[importEntities]");
         masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords()));
         placeDao.updateAllRecords(csvPlace.importPlaces());
         orderDao.updateAllRecords(csvOrder.importOrder(masterDao.getAllRecords(), placeDao.getAllRecords()));
@@ -72,7 +72,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Override
     @Transactional
     public void exportEntities() {
-        log.debug("Method exportEntities");
+        log.debug("[exportEntities]");
         List<Order> orders = orderDao.getAllRecords();
         List<Master> masters = masterDao.getAllRecords();
         List<Place> places = placeDao.getAllRecords();
@@ -82,21 +82,21 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     }
 
     private void checkMasters() {
-        log.debug("Method checkMasters");
+        log.debug("[checkMasters]");
         if (masterDao.getNumberMasters() == 0) {
             throw new BusinessException("Error, there are no masters");
         }
     }
 
     private void checkPlaces() {
-        log.debug("Method checkPlaces");
+        log.debug("[checkPlaces]");
         if (placeDao.getNumberPlaces() == 0) {
             throw new BusinessException("Error, there are no places");
         }
     }
 
     private void checkOrders() {
-        log.debug("Method checkOrders");
+        log.debug("[checkOrders]");
         if (orderDao.getNumberOrders() == 0) {
             throw new BusinessException("Error, there are no orders");
         }

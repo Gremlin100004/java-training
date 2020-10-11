@@ -29,38 +29,28 @@ public class PlaceController {
 
     @PostMapping
     public PlaceDto addPlace(@RequestBody PlaceDto placeDto) {
-        log.info("Method addPlace");
-        log.trace("Parameter placeDto: {}", placeDto);
         return placeService.addPlace(placeDto);
     }
 
     @GetMapping("check")
     public ClientMessageDto checkPlaces() {
-        log.info("Method checkPlaces");
         placeService.checkPlaces();
         return new ClientMessageDto("verification was successfully");
     }
 
     @GetMapping
-    public List<PlaceDto> getPlaces() {
-        log.info("Method getArrayPlace");
-        return placeService.getPlaces();
+    public List<PlaceDto> getPlaces(@RequestParam(required = false) String stringExecuteDate) {
+        if (stringExecuteDate == null) {
+            return placeService.getPlaces();
+        } else {
+            Date executeDate = DateUtil.getDatesFromString(stringExecuteDate.replace('%', ' '), true);
+            return placeService.getFreePlaceByDate(executeDate);
+        }
     }
 
     @DeleteMapping("{id}")
     public ClientMessageDto deletePlace(@PathVariable("id") Long orderId) {
-        log.info("Method deletePlace");
-        log.trace("Parameter orderId: {}", orderId);
         placeService.deletePlace(orderId);
         return new ClientMessageDto("Delete place in service successfully");
     }
-
-    @GetMapping("freeByDate")
-    public List<PlaceDto> getFreePlacesByDate(@RequestParam String stringExecuteDate) {
-        log.info("Method getFreePlacesByDate");
-        log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
-        Date executeDate = DateUtil.getDatesFromString(stringExecuteDate.replace('%', ' '), true);
-        return placeService.getFreePlaceByDate(executeDate);
-    }
-
 }

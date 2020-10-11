@@ -20,8 +20,8 @@ public final class DateUtil {
     }
 
     public static Date addDays(Date date, int days) {
-        log.debug("Method addDays");
-        log.trace("Parameters date: {}, days: {}", date, days);
+        log.debug("[addDays]");
+        log.trace("[date: {}] [days: {}]", date, days);
         if (date == null) {
             throw new DateException("date is null");
         }
@@ -32,8 +32,8 @@ public final class DateUtil {
     }
 
     public static Date addHourMinutes(Date date, int hour, int minute) {
-        log.debug("Method addHourMinutes");
-        log.trace("Parameters date: {}, hour: {}, minute: {}", date, hour, minute);
+        log.debug("[addHourMinutes]");
+        log.trace("[date: {}] [hour: {}] [minute: {}]", date, hour, minute);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -46,8 +46,8 @@ public final class DateUtil {
     }
 
     public static Date getDatesFromString(String stringDate, boolean isTime) {
-        log.debug("Method getDatesFromString");
-        log.trace("Parameter stringDate: {}, isTime: {}", stringDate, isTime);
+        log.debug("[getDatesFromString]");
+        log.trace("[stringDate: {}] [isTime: {}]", stringDate, isTime);
         try {
             return isTime ? DATE_TIME_FORMAT.parse(stringDate) : DATE_FORMAT.parse(stringDate);
         } catch (ParseException e) {
@@ -60,14 +60,14 @@ public final class DateUtil {
     }
 
     public static String getStringFromDate(Date date, boolean isTime) {
-        log.debug("Method getStringFromDate");
-        log.trace("Parameter date: {}, isTime: {}", date, isTime);
+        log.debug("[getStringFromDate]");
+        log.trace("[date: {}] [isTime: {}]", date, isTime);
         return isTime ? DATE_TIME_FORMAT.format(date.getTime()) : DATE_FORMAT.format(date.getTime());
     }
 
     public static Date bringStartOfDayDate(Date date) {
-        log.debug("Method bringStartOfDayDate");
-        log.trace("Parameter date: {}", date);
+        log.debug("[bringStartOfDayDate]");
+        log.trace("[date: {}]", date);
         if (addHourMinutes(date, START_DAY_HOUR, START_DAY_MINUTE).before(new Date())) {
             return addHourMinutes(new Date(), START_DAY_HOUR, START_DAY_MINUTE);
         } else {
@@ -76,8 +76,8 @@ public final class DateUtil {
     }
 
     public static void checkDateTime(Date executionStartTime, Date leadTime, Boolean periodTime) {
-        log.debug("Method checkDateTime");
-        log.trace("Parameter executionStartTime: {}, leadTime: {}, periodTime: {}", executionStartTime, leadTime,
+        log.debug("[checkDateTime]");
+        log.trace("[executionStartTime: {}] [leadTime: {}] [periodTime: {}]", executionStartTime, leadTime,
                   periodTime);
         if (executionStartTime == null || leadTime == null) {
             throw new DateException("Error date format, should be \"yyyy-MM-dd hh:mm\"");

@@ -17,20 +17,20 @@ public class Navigator {
     private Menu currentMenu;
 
     public void addCurrentMenu(Menu currentMenu) {
-        log.debug("Method addCurrentMenu");
-        log.trace("Parameter currentMenu: {}", currentMenu);
+        log.debug("[addCurrentMenu]");
+        log.trace("[currentMenu: {}]", currentMenu);
         this.currentMenu = currentMenu;
     }
 
     public void printMenu() {
-        log.info("Method printMenu");
+        log.info("[printMenu]");
         log.info(this.currentMenu.toString());
         Printer.printInfo(this.currentMenu.toString());
     }
 
     public void navigate(Integer index) {
-        log.debug("Method navigate");
-        log.trace("Parameter index: {}", index);
+        log.debug("[navigate]");
+        log.trace("[index: {}]", index);
         List<MenuItem> menuItems = this.currentMenu.getMenuItems();
         if (index > menuItems.size()) {
             Printer.printInfo(WARNING_ITEM_MESSAGE);

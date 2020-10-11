@@ -29,15 +29,15 @@ public class MasterServiceImpl implements MasterService {
     @Override
     @Transactional
     public List<MasterDto> getMasters() {
-        log.debug("Method getMasters");
+        log.debug("[getMasters]");
         return MasterMapper.getMasterDto(masterDao.getAllRecords());
     }
 
     @Override
     @Transactional
     public MasterDto addMaster(MasterDto masterDto) {
-        log.debug("Method addMaster");
-        log.trace("Parameter masterDto: {}", masterDto);
+        log.debug("[addMaster]");
+        log.trace("[masterDto: {}]", masterDto);
         Master master = new Master();
         master.setName(masterDto.getName());
         return MasterMapper.getMasterDto(masterDao.saveRecord(master));
@@ -46,24 +46,24 @@ public class MasterServiceImpl implements MasterService {
     @Override
     @Transactional
     public List<MasterDto> getFreeMastersByDate(Date executeDate) {
-        log.debug("Method getFreeMastersByDate");
-        log.trace("Parameter executeDate: {}", executeDate);
+        log.debug("[getFreeMastersByDate]");
+        log.trace("[executeDate: {}]", executeDate);
         return MasterMapper.getMasterDto(masterDao.getFreeMasters(executeDate));
     }
 
     @Override
     @Transactional
     public Long getNumberFreeMastersByDate(Date startDayDate) {
-        log.debug("Method getNumberFreeMastersByDate");
-        log.trace("Parameter startDayDate: {}", startDayDate);
+        log.debug("[getNumberFreeMastersByDate]");
+        log.trace("[startDayDate: {}]", startDayDate);
         return masterDao.getNumberFreeMasters(startDayDate);
     }
 
     @Override
     @Transactional
     public void deleteMaster(Long masterId) {
-        log.debug("Method deleteMaster");
-        log.trace("Parameter masterId: {}", masterId);
+        log.debug("[Method deleteMaster");
+        log.trace("[masterId: {}]", masterId);
         Master master = masterDao.findById(masterId);
         if (master.getDeleteStatus()) {
             throw new BusinessException("Error, master has already been deleted");
@@ -75,7 +75,8 @@ public class MasterServiceImpl implements MasterService {
     @Override
     @Transactional
     public List<MasterDto> getSortMasters(MasterSortParameter sortParameter) {
-        log.debug("Method getMasterByAlphabet");
+        log.debug("[getMasterByAlphabet]");
+        log.trace("[sortParameter: {}]", sortParameter);
         List<Master> masters = new ArrayList<>();
         if (sortParameter == MasterSortParameter.NAME) {
             masters = masterDao.getMasterSortByAlphabet();
@@ -88,7 +89,7 @@ public class MasterServiceImpl implements MasterService {
     @Override
     @Transactional
     public void checkMasters() {
-        log.debug("Method getNumberMasters");
+        log.debug("[getNumberMasters]");
         if (masterDao.getNumberMasters() == 0) {
             throw new BusinessException("Error, there are no masters");
         }
@@ -97,8 +98,8 @@ public class MasterServiceImpl implements MasterService {
     @Override
     @Transactional
     public List<OrderDto> getMasterOrders(Long masterId) {
-        log.debug("Method getMasterOrders");
-        log.trace("Parameter masterId: {}", masterId);
+        log.debug("[getMasterOrders]");
+        log.trace("[masterId: {}]", masterId);
         return OrderMapper.getOrderDto(
             masterDao.getMasterOrders(masterDao.findById(masterId)));
     }

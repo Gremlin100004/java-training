@@ -26,8 +26,8 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
 
     @Override
     public List<Place> getFreePlaces(Date executeDate) {
-        log.debug("Method getFreePlaces");
-        log.trace("Parameter executeDate: {}", executeDate);
+        log.debug("[getFreePlaces]");
+        log.trace("[executeDate: {}]", executeDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Place> criteriaQuery = criteriaBuilder.createQuery(Place.class);
         Root<Place> placeRoot = criteriaQuery.from(Place.class);
@@ -48,8 +48,8 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
 
     @Override
     public Long getNumberFreePlaces(Date executeDate) {
-        log.debug("Method getFreePlaces");
-        log.trace("Parameter executeDate: {}", executeDate);
+        log.debug("[getFreePlaces]");
+        log.trace("[executeDate: {}]", executeDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Place> placeRoot = criteriaQuery.from(Place.class);
@@ -65,7 +65,7 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
 
     @Override
     public Long getNumberPlaces() {
-        log.debug("Method getNumberPlaces");
+        log.debug("[getNumberPlaces]");
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Place> placeRoot = criteriaQuery.from(Place.class);

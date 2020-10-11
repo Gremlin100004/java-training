@@ -27,10 +27,10 @@ public class MasterClientImpl implements MasterClient {
     private static final String ADD_MASTER_PATH = "masters";
     private static final String CHECK_MASTERS_PATH = "masters/check";
     private static final String DELETE_MASTER_PATH = "masters/";
-    private static final String GET_SORT_MASTERS = "masters/sort?sortParameter=";
-    private static final String GET_FREE_MASTERS_PATH = "masters/free?stringExecuteDate=";
-    private static final String GET_MASTER_ORDERS_START_PATH = "orders/";
-    private static final String GET_MASTER_ORDERS_END_PATH = "/master/orders";
+    private static final String GET_SORT_MASTERS = "masters?sortParameter=";
+    private static final String GET_FREE_MASTERS_PATH = "masters?stringExecuteDate=";
+    private static final String GET_MASTER_ORDERS_START_PATH = "masters/";
+    private static final String GET_MASTER_ORDERS_END_PATH = "/orders";
     private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
     private static final String MASTER_ADD_SUCCESS_MESSAGE = "Master added successfully";
     private static final String MASTER_DELETE_SUCCESS_MESSAGE = "The master has been deleted successfully";
@@ -41,7 +41,7 @@ public class MasterClientImpl implements MasterClient {
 
     @Override
     public List<MasterDto> getMasters() {
-        log.debug("Method getMasters");
+        log.debug("[getMasters]");
         try {
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(GET_MASTERS_PATH, MasterDto[].class);
             MasterDto[] arrayMasterDto = response.getBody();
@@ -57,8 +57,8 @@ public class MasterClientImpl implements MasterClient {
 
     @Override
     public String addMaster(String name) {
-        log.debug("Method addMaster");
-        log.trace("Parameter name: {}", name);
+        log.debug("[addMaster]");
+        log.trace("[name: {}]", name);
         try {
             MasterDto masterDto = new MasterDto();
             masterDto.setName(name);
@@ -76,7 +76,7 @@ public class MasterClientImpl implements MasterClient {
 
     @Override
     public String checkMasters() {
-        log.debug("Method checkMasters");
+        log.debug("[checkMasters]");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 CHECK_MASTERS_PATH, ClientMessageDto.class);
@@ -93,8 +93,8 @@ public class MasterClientImpl implements MasterClient {
 
     @Override
     public String deleteMaster(Long idMaster) {
-        log.debug("Method deleteMaster");
-        log.trace("Parameter idMaster: {}", idMaster);
+        log.debug("[deleteMaster]");
+        log.trace("[idMaster: {}]", idMaster);
         try {
             restTemplate.delete(DELETE_MASTER_PATH + idMaster, MasterDto.class);
             return MASTER_DELETE_SUCCESS_MESSAGE;
@@ -106,7 +106,8 @@ public class MasterClientImpl implements MasterClient {
 
     @Override
     public String getSortMasters(String sortParameter) {
-        log.debug("Method getMasterByAlphabet");
+        log.debug("[getSortMasters]");
+        log.trace("[sortParameter: {}]", sortParameter);
         try {
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
                 GET_SORT_MASTERS + sortParameter, MasterDto[].class);
@@ -123,7 +124,8 @@ public class MasterClientImpl implements MasterClient {
 
     @Override
     public List<MasterDto> getFreeMasters(String stringExecuteDate) {
-        log.debug("Method getFreeMasters");
+        log.debug("[getFreeMasters]");
+        log.trace("[stringExecuteDate: {}]", stringExecuteDate);
         try {
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
                 GET_FREE_MASTERS_PATH + stringExecuteDate, MasterDto[].class);
@@ -140,8 +142,8 @@ public class MasterClientImpl implements MasterClient {
 
     @Override
     public String getMasterOrders(Long masterId) {
-        log.debug("Method getMasterOrders");
-        log.trace("Parameter masterId: {}", masterId);
+        log.debug("[getMasterOrders]");
+        log.trace("[masterId: {}]", masterId);
         try {
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
                     GET_MASTER_ORDERS_START_PATH + masterId + GET_MASTER_ORDERS_END_PATH, OrderDto[].class);

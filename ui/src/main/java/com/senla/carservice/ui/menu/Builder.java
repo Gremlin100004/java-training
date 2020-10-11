@@ -490,7 +490,7 @@ public class Builder {
     }
 
     private void deleteOrder() {
-        log.info("deleteOrder");
+        log.info("[deleteOrder]");
         List<OrderDto> ordersDto = orderClient.getOrders();
         Printer.printInfo(StringOrder.getStringFromOrder(ordersDto));
         Printer.printInfo(STOP_DELETING_MENU_ITEM);
@@ -510,7 +510,7 @@ public class Builder {
     }
 
     private void deleteMaster() {
-        log.info("deleteMaster");
+        log.info("[deleteMaster]");
         try {
             List<MasterDto> mastersDto = masterClient.getMasters();
             Printer.printInfo(StringMaster.getStringFromMasters(mastersDto));
@@ -527,7 +527,7 @@ public class Builder {
     }
 
     private void deletePlace() {
-        log.info("deletePlace");
+        log.info("[deletePlace]");
         try {
             List<PlaceDto> placesDto = placeClient.getPlaces();
             Printer.printInfo(StringPlaces.getStringFromPlaces(placesDto));
@@ -543,7 +543,7 @@ public class Builder {
     }
 
     private void completeOrder() {
-        log.info("completeOrder");
+        log.info("[completeOrder]");
         List<OrderDto> ordersDto = orderClient.getOrders();
         Printer.printInfo(StringOrder.getStringFromOrder(ordersDto));
         Printer.printInfo(PREVIOUS_MENU_MENU_ITEM);
@@ -563,7 +563,7 @@ public class Builder {
     }
 
     private void cancelOrder() {
-        log.info("cancelOrder");
+        log.info("[cancelOrder]");
         List<OrderDto> ordersDto = orderClient.getOrders();
         Printer.printInfo(StringOrder.getStringFromOrder(ordersDto));
         Printer.printInfo(PREVIOUS_MENU_MENU_ITEM);
@@ -583,7 +583,7 @@ public class Builder {
     }
 
     private void addOrder() {
-        log.info("addOrder");
+        log.info("[addOrder]");
         OrderDto orderDto = new OrderDto();
         if (isCheckMasters() || isCheckPlaces()) {
             return;
@@ -599,8 +599,8 @@ public class Builder {
     }
 
     private void addCarToOrder(OrderDto orderDto) {
-        log.debug("addCarToOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
+        log.debug("[addCarToOrder]");
+        log.trace("[orderDto: {}]", orderDto);
         String automaker = ScannerUtil.getStringUser(ORDER_AUTOMAKER_INPUT_HEADER, false);
         String model = ScannerUtil.getStringUser(ORDER_MODEL_INPUT_HEADER, false);
         String registrationNumber = ScannerUtil.getStringUser(
@@ -611,8 +611,8 @@ public class Builder {
     }
 
     private void addOrderDeadline(OrderDto orderDto) {
-        log.debug("addOrderDeadline");
-        log.trace("Parameter orderDto: {}", orderDto);
+        log.debug("[addOrderDeadline]");
+        log.trace("[orderDto: {}]", orderDto);
         String leadTime = "";
         String executionStartTime = "";
         String message = "";
@@ -630,8 +630,8 @@ public class Builder {
     }
 
     private boolean addMastersOrder(OrderDto orderDto) {
-        log.debug("addMastersOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
+        log.debug("[addMastersOrder]");
+        log.trace("[orderDto: {}]", orderDto);
         try {
             List<MasterDto> freeMasters = masterClient.getFreeMasters(orderDto.getExecutionStartTime());
             Printer.printInfo(StringMaster.getStringFromMasters(freeMasters));
@@ -660,8 +660,8 @@ public class Builder {
     }
 
     private MasterDto addMasters(List<MasterDto> mastersDto) {
-        log.debug("addMasters");
-        log.trace("Parameter mastersDto: {}", mastersDto);
+        log.debug("[addMasters]");
+        log.trace("[mastersDto: {}]", mastersDto);
         Integer index = null;
         while (index == null) {
             index = ScannerUtil.getIntUser(MASTER_ADD_INDEX_HEADER) - INDEX_OFFSET;
@@ -679,8 +679,8 @@ public class Builder {
     }
 
     private boolean addPlaceOrder(OrderDto orderDto) {
-        log.debug("addPlaceOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
+        log.debug("[addPlaceOrder]");
+        log.trace("[orderDto: {}]", orderDto);
         try {
             List<PlaceDto> placesDto = placeClient.getFreePlacesByDate(orderDto.getExecutionStartTime());
             Printer.printInfo(StringPlaces.getStringFromPlaces(placesDto));
@@ -702,7 +702,7 @@ public class Builder {
     }
 
     private boolean isCheckOrders() {
-        log.debug("isCheckOrders");
+        log.debug("[isCheckOrders]");
         String message = orderClient.checkOrders();
         boolean status = message.equals(VERIFICATION_SUCCESS_SERVER_MESSAGE);
         if (!status) {
@@ -712,7 +712,7 @@ public class Builder {
     }
 
     private boolean isCheckMasters() {
-        log.debug("isCheckMasters");
+        log.debug("[isCheckMasters]");
         String message = masterClient.checkMasters();
         boolean status = message.equals(VERIFICATION_SUCCESS_SERVER_MESSAGE);
         if (!status) {
@@ -722,7 +722,7 @@ public class Builder {
     }
 
     private boolean isCheckPlaces() {
-        log.debug("isCheckPlaces");
+        log.debug("[isCheckPlaces]");
         String message = placeClient.checkPlaces();
         boolean status = message.equals(VERIFICATION_SUCCESS_SERVER_MESSAGE);
         if (!status) {

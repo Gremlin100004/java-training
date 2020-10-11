@@ -25,7 +25,6 @@ public class PlaceClientImpl implements PlaceClient {
     private static final String CHECK_PLACES_PATH = "places/check";
     private static final String GET_PLACES_PATH = "places";
     private static final String DELETE_PLACE_PATH = "places/";
-    private static final String GET_FREE_PLACES_BY_DATE_PATH = "places/freeByDate";
     private static final String REQUEST_PARAMETER_STRING_EXECUTION_DATE = "stringExecuteDate";
     private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
     private static final String PLACE_ADD_SUCCESS_MESSAGE = "Place added successfully";
@@ -37,8 +36,8 @@ public class PlaceClientImpl implements PlaceClient {
 
     @Override
     public String addPlace(int numberPlace) {
-        log.debug("Method getOrderMasters");
-        log.trace("Parameter numberPlace: {}", numberPlace);
+        log.debug("[getOrderMasters]");
+        log.trace("[numberPlace: {}]", numberPlace);
         try {
             PlaceDto placeDto = new PlaceDto();
             placeDto.setNumber(numberPlace);
@@ -56,7 +55,7 @@ public class PlaceClientImpl implements PlaceClient {
 
     @Override
     public String checkPlaces() {
-        log.debug("Method checkPlaces");
+        log.debug("[checkPlaces]");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 CHECK_PLACES_PATH, ClientMessageDto.class);
@@ -73,7 +72,7 @@ public class PlaceClientImpl implements PlaceClient {
 
     @Override
     public List<PlaceDto> getPlaces() {
-        log.debug("Method getPlaces");
+        log.debug("[getPlaces]");
         try {
             ResponseEntity<PlaceDto[]> response = restTemplate.getForEntity(GET_PLACES_PATH, PlaceDto[].class);
             PlaceDto[] arrayPlaceDto = response.getBody();
@@ -89,8 +88,8 @@ public class PlaceClientImpl implements PlaceClient {
 
     @Override
     public String deletePlace(Long idPlace) {
-        log.debug("Method deletePlace");
-        log.trace("Parameter idPlace: {}", idPlace);
+        log.debug("[deletePlace]");
+        log.trace("[idPlace: {}]", idPlace);
         try {
             restTemplate.delete(DELETE_PLACE_PATH + idPlace, PlaceDto.class);
             return PLACE_DELETE_SUCCESS_MESSAGE;
@@ -102,10 +101,10 @@ public class PlaceClientImpl implements PlaceClient {
 
     @Override
     public List<PlaceDto> getFreePlacesByDate(String stringExecuteDate) {
-        log.debug("Method getFreePlacesByDate");
-        log.trace("Parameter stringExecuteDate: {}", stringExecuteDate);
+        log.debug("[getFreePlacesByDate]");
+        log.trace("[stringExecuteDate: {}]", stringExecuteDate);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_FREE_PLACES_BY_DATE_PATH)
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_PLACES_PATH)
                 .queryParam(REQUEST_PARAMETER_STRING_EXECUTION_DATE, stringExecuteDate);
             ResponseEntity<PlaceDto[]> response = restTemplate.getForEntity(builder.toUriString(), PlaceDto[].class);
             PlaceDto[] arrayPlacesDto = response.getBody();

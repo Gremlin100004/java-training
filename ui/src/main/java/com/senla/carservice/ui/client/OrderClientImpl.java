@@ -36,8 +36,7 @@ public class OrderClientImpl implements OrderClient {
     private static final String CANCEL_ORDER_END_PATH = "/cancel";
     private static final String DELETE_ORDER_PATH = "orders/";
     private static final String SHIFT_LEAD_TIME_PATH = "orders/shiftLeadTime";
-    private static final String GET_SORT_ORDERS_PATH = "orders/sort?sortParameter=";
-    private static final String GET_SORT_ORDERS_BY_PERIOD_PARAMETER_SORT_PATH = "orders/sort?sortParameter=";
+    private static final String GET_SORT_ORDERS_PATH = "orders?sortParameter=";
     private static final String PARAMETER_START_TIME = "&startPeriod=";
     private static final String PARAMETER_END_TIME = "&endPeriod=";
     private static final String GET_ORDER_MASTERS_START_PATH = "orders/";
@@ -47,6 +46,7 @@ public class OrderClientImpl implements OrderClient {
     private static final String REQUEST_PARAMETER_STRING_LEAD_TIME = "stringLeadTime";
     private static final String VERIFICATION_SUCCESS_MESSAGE = "verification was successfully";
     private static final String ORDER_TRANSFERRED_SUCCESS_MESSAGE = "The order has been transferred to execution status";
+    private static final String ADD_ORDER_SUCCESS_MESSAGE = "Order added successfully";
     private static final String ORDER_COMPLETE_SUCCESS_MESSAGE = "The order has been completed successfully";
     private static final String ORDER_CANCEL_SUCCESS_MESSAGE = "The order has been canceled successfully";
     private static final String ORDER_DELETE_SUCCESS_MESSAGE = "The order has been deleted";
@@ -58,8 +58,8 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public String addOrder(OrderDto orderDto) {
-        log.debug("Method addOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
+        log.debug("[addOrder]");
+        log.trace("[orderDto: {}]", orderDto);
         try {
             ResponseEntity<OrderDto> response = restTemplate.postForEntity(
                 ADD_ORDER_PATH, orderDto, OrderDto.class);
@@ -67,7 +67,7 @@ public class OrderClientImpl implements OrderClient {
             if (receivedOrderDto == null) {
                 return WARNING_SERVER_MESSAGE;
             }
-            return "Order added successfully";
+            return ADD_ORDER_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
@@ -76,8 +76,8 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public String checkOrderDeadlines(String stringExecutionStartTime, String stringLeadTime) {
-        log.debug("Method addOrder");
-        log.trace("Parameter stringExecutionStartTime: {}, stringLeadTime: {}", stringExecutionStartTime, stringLeadTime);
+        log.debug("[addOrder]");
+        log.trace("[stringExecutionStartTime: {}] [stringLeadTime: {}]", stringExecutionStartTime, stringLeadTime);
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(CHECK_ORDER_DEADLINES_PATH)
                 .queryParam(REQUEST_PARAMETER_STRING_EXECUTION_START_TIME, stringExecutionStartTime)
@@ -97,7 +97,7 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public String checkOrders() {
-        log.debug("Method checkOrders");
+        log.debug("[checkOrders]");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 CHECK_ORDERS_PATH, ClientMessageDto.class);
@@ -114,7 +114,7 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public List<OrderDto> getOrders() {
-        log.debug("Method getOrders");
+        log.debug("[getOrders]");
         try {
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(GET_ORDERS_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
@@ -130,8 +130,8 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public String completeOrder(Long idOrder) {
-        log.debug("Method completeOrder");
-        log.trace("Parameter idOrder: {}", idOrder);
+        log.debug("[completeOrder]");
+        log.trace("[idOrder: {}]", idOrder);
         try {
             restTemplate.put(COMPLETE_ORDER_START_PATH + idOrder + COMPLETE_ORDER_END_PATH, OrderDto.class);
             return ORDER_TRANSFERRED_SUCCESS_MESSAGE;
@@ -143,8 +143,8 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public String closeOrder(Long idOrder) {
-        log.debug("Method closeOrder");
-        log.trace("Parameter idOrder: {}", idOrder);
+        log.debug("[closeOrder]");
+        log.trace("[idOrder: {}]", idOrder);
         try {
             restTemplate.put(CLOSE_ORDER_START_PATH + idOrder + CLOSE_ORDER_END_PATH, OrderDto.class);
             return ORDER_COMPLETE_SUCCESS_MESSAGE;
@@ -156,8 +156,8 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public String cancelOrder(Long idOrder) {
-        log.debug("Method cancelOrder");
-        log.trace("Parameter idOrder: {}", idOrder);
+        log.debug("[cancelOrder]");
+        log.trace("[idOrder: {}]", idOrder);
         try {
             restTemplate.put(CANCEL_ORDER_START_PATH + idOrder + CANCEL_ORDER_END_PATH, OrderDto.class);
             return ORDER_CANCEL_SUCCESS_MESSAGE;
@@ -169,8 +169,8 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public String deleteOrder(Long idOrder) {
-        log.debug("Method deleteOrder");
-        log.trace("Parameter idOrder: {}", idOrder);
+        log.debug("[deleteOrder]");
+        log.trace("[idOrder: {}]", idOrder);
         try {
             restTemplate.delete(DELETE_ORDER_PATH + idOrder, OrderDto.class);
             return ORDER_DELETE_SUCCESS_MESSAGE;
@@ -182,8 +182,8 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public String shiftLeadTime(OrderDto orderDto) {
-        log.debug("Method shiftLeadTime");
-        log.trace("Parameter orderDto: {}", orderDto);
+        log.debug("[shiftLeadTime]");
+        log.trace("[orderDto: {}]", orderDto);
         try {
             restTemplate.put(SHIFT_LEAD_TIME_PATH, orderDto, OrderDto.class);
             return ORDER_CHANGE_TIME_SUCCESS_MESSAGE;
@@ -195,8 +195,8 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public String getSortOrders(String sortParameter) {
-        log.debug("Method getOrdersSortByFilingDate");
-        log.trace("Parameter sortParameter: {}", sortParameter);
+        log.debug("[getOrdersSortByFilingDate]");
+        log.trace("[sortParameter: {}]", sortParameter);
         try {
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
                 GET_SORT_ORDERS_PATH + sortParameter, OrderDto[].class);
@@ -213,11 +213,11 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public String getSortOrdersByPeriod(String sortParameter, String startPeriod, String endPeriod) {
-        log.debug("Method getOrdersSortByFilingDate");
-        log.trace("Parameter sortParameter: {}", sortParameter);
+        log.debug("[getOrdersSortByFilingDate]");
+        log.trace("[sortParameter: {}]", sortParameter);
         try {
             ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
-                GET_SORT_ORDERS_BY_PERIOD_PARAMETER_SORT_PATH + sortParameter + PARAMETER_START_TIME + startPeriod +
+                GET_SORT_ORDERS_PATH + sortParameter + PARAMETER_START_TIME + startPeriod +
                 PARAMETER_END_TIME + endPeriod, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
@@ -232,8 +232,8 @@ public class OrderClientImpl implements OrderClient {
 
     @Override
     public String getOrderMasters(Long orderId) {
-        log.debug("Method getOrderMasters");
-        log.trace("Parameter orderId: {}", orderId);
+        log.debug("[getOrderMasters]");
+        log.trace("[orderId: {}]", orderId);
         try {
             ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
                 GET_ORDER_MASTERS_START_PATH + orderId + GET_ORDER_MASTERS_END_PATH, MasterDto[].class);

@@ -44,15 +44,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public List<OrderDto> getOrders() {
-        log.debug("Method getOrders");
+        log.debug("[getOrders]");
         return OrderMapper.getOrderDto(orderDao.getAllRecords());
     }
 
     @Override
     @Transactional
     public OrderDto addOrder(OrderDto orderDto) {
-        log.debug("Method addOrder");
-        log.trace("Parameter orderDto: {}", orderDto);
+        log.debug("[addOrder]");
+        log.trace("[orderDto: {}]", orderDto);
         return OrderMapper.getOrderDto(
             orderDao.saveRecord(OrderMapper.getOrder(orderDto, masterDao, placeDao)));
     }
@@ -60,8 +60,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void checkOrderDeadlines(Date executionStartTime, Date leadTime) {
-        log.debug("Method checkOrderDeadlines");
-        log.trace("Parameters executionStartTime: {}, leadTime: {}", executionStartTime, leadTime);
+        log.debug("[checkOrderDeadlines]");
+        log.trace("[executionStartTime: {}][leadTime: {}]", executionStartTime, leadTime);
         DateUtil.checkDateTime(executionStartTime, leadTime, false);
         long numberFreeMasters = masterDao.getNumberFreeMasters(executionStartTime);
         long numberFreePlace = placeDao.getNumberFreePlaces(executionStartTime);
@@ -76,8 +76,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void completeOrder(Long orderId) {
-        log.debug("Method completeOrder");
-        log.trace("Parameter orderId: {}", orderId);
+        log.debug("[completeOrder]");
+        log.trace("[orderId: {}]", orderId);
         Order order = orderDao.findById(orderId);
         checkStatusOrder(order);
         order.setStatus(StatusOrder.PERFORM);
@@ -91,8 +91,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void cancelOrder(Long orderId) {
-        log.debug("Method cancelOrder");
-        log.trace("Parameter orderId: {}", orderId);
+        log.debug("[cancelOrder]");
+        log.trace("[orderId: {}]", orderId);
         Order order = orderDao.findById(orderId);
         checkStatusOrder(order);
         order.setLeadTime(new Date());
@@ -109,8 +109,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void closeOrder(Long orderId) {
-        log.debug("Method closeOrder");
-        log.trace("Parameter orderId: {}", orderId);
+        log.debug("[closeOrder]");
+        log.trace("[orderId: {}]", orderId);
         Order order = orderDao.findById(orderId);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(new Date());
@@ -127,8 +127,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void deleteOrder(Long orderId) {
-        log.debug("Method deleteOrder");
-        log.trace("Parameter orderId: {}", orderId);
+        log.debug("[deleteOrder]");
+        log.trace("[orderId: {}}", orderId);
         if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
@@ -141,8 +141,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void shiftLeadTime(OrderDto orderDto) {
-        log.debug("Method shiftLeadTime");
-        log.trace("Parameter orderDto: {}", orderDto);
+        log.debug("[shiftLeadTime]");
+        log.trace("[orderDto: {}]", orderDto);
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
@@ -161,8 +161,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public List<OrderDto> getSortOrders(OrderSortParameter sortParameter) {
-        log.debug("Method getSortOrders");
-        log.trace("Parameter sortParameter: {}", sortParameter);
+        log.debug("[getSortOrders]");
+        log.trace("[sortParameter: {}]", sortParameter);
         List<Order> orders = new ArrayList<>();
         if (sortParameter.equals(OrderSortParameter.BY_FILING_DATE)) {
             orders = orderDao.getOrdersSortByFilingDate();
@@ -188,8 +188,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public List<OrderDto> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, OrderSortParameter sortParameter) {
-        log.debug("Method getSortOrdersByPeriod");
-        log.trace("Parameters startPeriodDate: {}, endPeriodDate: {}, sortParameter: {}",
+        log.debug("[getSortOrdersByPeriod]");
+        log.trace("[startPeriodDate: {}][endPeriodDate: {}][sortParameter: {}]",
             startPeriodDate, endPeriodDate, sortParameter);
         List<Order> orders = new ArrayList<>();
         DateUtil.checkDateTime(startPeriodDate, endPeriodDate, true);
@@ -218,8 +218,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public List<MasterDto> getOrderMasters(Long orderId) {
-        log.debug("Method getOrderMasters");
-        log.trace("Parameter orderId: {}", orderId);
+        log.debug("[getOrderMasters]");
+        log.trace("[orderId: {}]", orderId);
         return MasterMapper.getMasterDto(
             orderDao.getOrderMasters(orderDao.findById(orderId)));
     }
@@ -227,15 +227,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void checkOrders() {
-        log.debug("Method getNumberOrders");
+        log.debug("[getNumberOrders]");
         if (orderDao.getNumberOrders() == 0) {
             throw new BusinessException("Error, there are no orders");
         }
     }
 
     private void checkStatusOrder(Order order) {
-        log.debug("Method checkStatusOrder");
-        log.trace("Parameter order: {}", order);
+        log.debug("[checkStatusOrder]");
+        log.trace("[order: {}]", order);
         if (order.isDeleteStatus()) {
             throw new BusinessException("Error, the order has been deleted");
         }
@@ -251,8 +251,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void checkStatusOrderShiftTime(Order order) {
-        log.debug("Method checkStatusOrderShiftTime");
-        log.trace("Parameter order: {}", order);
+        log.debug("[checkStatusOrderShiftTime]");
+        log.trace("[order: {}]", order);
         if (order.isDeleteStatus()) {
             throw new BusinessException("Error, the order has been deleted");
         }
@@ -264,8 +264,8 @@ public class OrderServiceImpl implements OrderService {
         }
     }
     private void checkStatusOrderToDelete(Order order) {
-        log.debug("Method checkStatusOrderToDelete");
-        log.trace("Parameter order: {}", order);
+        log.debug("[checkStatusOrderToDelete");
+        log.trace("[order: {}]", order);
         if (order.isDeleteStatus()) {
             throw new BusinessException("Error, the order has been deleted");
         }

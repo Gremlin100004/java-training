@@ -29,8 +29,8 @@ public class CarOfficeClientImpl implements CarOfficeClient {
 
     @Override
     public String getFreePlacesMastersByDate(String date) {
-        log.debug("Method getFreePlacesMastersByDate");
-        log.trace("Parameter date: {}", date);
+        log.debug("[getFreePlacesMastersByDate]");
+        log.trace("[date: {}]", date);
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_FREE_PLACES_MASTERS_BY_DATE_PATH)
                     .queryParam("date", date);
@@ -49,7 +49,7 @@ public class CarOfficeClientImpl implements CarOfficeClient {
 
     @Override
     public String getNearestFreeDate() {
-        log.debug("Method getNearestFreeDate");
+        log.debug("[getNearestFreeDate]");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 GET_NEAREST_FREE_DATE_PATH, ClientMessageDto.class);
@@ -66,7 +66,7 @@ public class CarOfficeClientImpl implements CarOfficeClient {
 
     @Override
     public String exportEntities() {
-        log.debug("Method exportEntities");
+        log.debug("[exportEntities]");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 EXPORT_ENTITIES_PATH, ClientMessageDto.class);
@@ -83,7 +83,7 @@ public class CarOfficeClientImpl implements CarOfficeClient {
 
     @Override
     public String importEntities() {
-        log.debug("Method importEntities");
+        log.debug("[importEntities]");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
                 IMPORT_ENTITIES_PATH, ClientMessageDto.class);

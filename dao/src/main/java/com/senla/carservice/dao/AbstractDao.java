@@ -29,16 +29,16 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public T saveRecord(T entity) {
-        log.debug("Method saveRecord");
-        log.trace("Parameter entity: {}", entity);
+        log.debug("[saveRecord]");
+        log.trace("[entity: {}]", entity);
         entityManager.persist(entity);
         return entity;
     }
 
     @Override
     public T findById(PK id) {
-        log.debug("Method findById");
-        log.trace("Parameter type: {}, id: {}", type, id);
+        log.debug("[findById]");
+        log.trace("[type: {}, id: {}]", type, id);
         T entity = entityManager.find(type, id);
         if (entity == null) {
             throw new DaoException("Error get record by id");
@@ -48,8 +48,8 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public List<T> getAllRecords() {
-        log.debug("Method getAllRecords");
-        log.trace("Parameter type: {}", type);
+        log.debug("[getAllRecords]");
+        log.trace("[type: {}]", type);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(type);
         Root<T> root = criteriaQuery.from(type);
@@ -64,15 +64,15 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public void updateRecord(T entity) {
-        log.debug("Method updateRecord");
-        log.trace("Parameter entity: {}", entity);
+        log.debug("[updateRecord]");
+        log.trace("[entity: {}]", entity);
         entityManager.merge(entity);
     }
 
     @Override
     public void updateAllRecords(List<T> entities) {
-        log.debug("Method updateAllRecords");
-        log.trace("Parameter entities: {}", entities);
+        log.debug("[updateAllRecords]");
+        log.trace("[entities: {}]", entities);
         for (T entity : entities) {
             entityManager.merge(entity);
         }
@@ -80,8 +80,8 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public void deleteRecord(PK id) {
-        log.debug("Method deleteRecord");
-        log.trace("Parameter id: {}", id);
+        log.debug("[deleteRecord]");
+        log.trace("[id: {}]", id);
         entityManager.remove(id);
     }
 

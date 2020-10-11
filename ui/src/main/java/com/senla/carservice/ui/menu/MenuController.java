@@ -17,7 +17,7 @@ public class MenuController {
     private Builder builder;
 
     public void run() {
-        log.info("run");
+        log.info("[run]");
         builder.buildMenu();
         navigator.addCurrentMenu(builder.getRootMenu());
         int answer = 1;

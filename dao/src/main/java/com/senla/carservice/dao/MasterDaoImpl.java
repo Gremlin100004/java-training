@@ -27,8 +27,8 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
 
     @Override
     public List<Master> getFreeMasters(Date executeDate) {
-        log.debug("Method getFreeMasters");
-        log.trace("Parameter date: {}", executeDate);
+        log.debug("[getFreeMasters]");
+        log.trace("[date: {}]", executeDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -49,8 +49,8 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
 
     @Override
     public Long getNumberFreeMasters(Date executeDate) {
-        log.debug("Method getNumberBusyMasters");
-        log.trace("Parameter executeDate: {}", executeDate);
+        log.debug("[getNumberBusyMasters]");
+        log.trace("[executeDate: {}]", executeDate);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -66,7 +66,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
 
     @Override
     public List<Master> getMasterSortByAlphabet() {
-        log.debug("Method SQL SORT BY ALPHABET:");
+        log.debug("[getMasterSortByAlphabet]");
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -82,7 +82,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
 
     @Override
     public List<Master> getMasterSortByBusy() {
-        log.debug("Method getMasterSortByBusy");
+        log.debug("[getMasterSortByBusy]");
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -98,7 +98,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
 
     @Override
     public Long getNumberMasters() {
-        log.debug("Method getNumberMasters");
+        log.debug("[getNumberMasters]");
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Master> masterRoot = criteriaQuery.from(Master.class);
@@ -108,8 +108,8 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
 
     @Override
     public List<Order> getMasterOrders(Master master) {
-        log.debug("Method getMasterOrders");
-        log.trace("Parameter master: {}", master);
+        log.debug("[getMasterOrders]");
+        log.trace("[master: {}]", master);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = criteriaQuery.from(Order.class);

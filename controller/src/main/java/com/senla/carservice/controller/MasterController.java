@@ -1,11 +1,12 @@
 package com.senla.carservice.controller;
 
+import com.senla.carservice.controller.exception.ControllerException;
+import com.senla.carservice.controller.util.EnumUtil;
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.MasterService;
 import com.senla.carservice.service.enumaration.MasterSortParameter;
-import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,23 @@ import java.util.List;
 public class MasterController {
     @Autowired
     private MasterService masterService;
+
     @GetMapping
-    public List<MasterDto> getMasters() {
-        return masterService.getMasters();
+    public List<MasterDto> getMasters(@RequestParam(required = false) String sortParameter,
+            @RequestParam (required = false) String stringExecuteDate) {
+        if (sortParameter == null && stringExecuteDate == null) {
+            return masterService.getMasters();
+        } else if (stringExecuteDate == null) {
+            if (EnumUtil.isValidEnum(MasterSortParameter.values(), sortParameter)) {
+                return masterService.getSortMasters(MasterSortParameter.valueOf(sortParameter));
+            } else {
+                throw new ControllerException("Wrong sort parameter");
+            }
+        } else if (sortParameter == null) {
+            return masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate.replace('%', ' '), true));
+        } else {
+            throw new ControllerException("Wrong request parameters");
+        }
     }
 
     @PostMapping()
@@ -48,22 +63,8 @@ public class MasterController {
         return new ClientMessageDto(" -master has been deleted successfully!");
     }
 
-    @GetMapping("sort")
-    public List<MasterDto> getSortMasters(@RequestParam String sortParameter) {
-        try {
-            return masterService.getSortMasters(MasterSortParameter.valueOf(sortParameter));
-        } catch (IllegalArgumentException exception) {
-            throw new BusinessException("Wrong sortParameter");
-        }
-    }
-
-    @GetMapping("free")
-    public List<MasterDto> getFreeMasters(@RequestParam String stringExecuteDate) {
-        return masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate.replace('%', ' '), true));
-    }
-
-    @GetMapping("{id}/master/orders")
-    public List<OrderDto> getMasterOrders(@RequestParam Long masterId) {
+    @GetMapping("{id}/orders")
+    public List<OrderDto> getMasterOrders(@PathVariable("id") Long masterId) {
         return masterService.getMasterOrders(masterId);
     }
 
