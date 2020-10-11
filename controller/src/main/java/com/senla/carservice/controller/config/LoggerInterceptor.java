@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.apache.commons.io.IOUtils;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,19 +18,10 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
     @SneakyThrows
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-//        String requestBody= IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-        String requestBody= "";
-//        request = requestCacheWrapperObject;
-//        requestCacheWrapperObject.getParameterMap();
-//        String strBody;
-//        try {
-//            strBody = IOUtils.toString(requestCacheWrapperObject.getInputStream());
-//        } catch (IOException e) {
-//            strBody = null;
-//            e.printStackTrace();
-//        }
-        log.info("[preHandle][headers: {}][method: {}]{}{} [body: {}]", request.getHeaderNames().asIterator(), request.getMethod(),
-                 request.getRequestURI(), getParameters(request), requestBody);
+        CachedBodyHttpServletRequest cachedBodyHttpServletRequest = new CachedBodyHttpServletRequest(request);
+        String requestBody= IOUtils.toString(cachedBodyHttpServletRequest.getInputStream(), StandardCharsets.UTF_8);
+        log.info("[preHandle][headers: {}][method: {}]{}{} [body: {}]", cachedBodyHttpServletRequest.getHeaderNames(), cachedBodyHttpServletRequest.getMethod(),
+                 cachedBodyHttpServletRequest.getRequestURI(), getParameters(request), requestBody);
         return true;
     }
 

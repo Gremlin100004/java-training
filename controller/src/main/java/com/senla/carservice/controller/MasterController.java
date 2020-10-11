@@ -48,6 +48,7 @@ public class MasterController {
 
     @PostMapping()
     public MasterDto addMaster(@RequestBody MasterDto masterDto) {
+
         return masterService.addMaster(masterDto);
     }
 
