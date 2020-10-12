@@ -1,6 +1,6 @@
 package com.senla.carservice.controller.config;
 
-import lombok.SneakyThrows;
+import com.senla.carservice.controller.exception.ControllerException;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
@@ -10,21 +10,28 @@ import java.io.InputStream;
 
 public class CachedBodyServletInputStream extends ServletInputStream {
 
-    private InputStream cachedBodyInputStream;
+    private final InputStream cachedBodyInputStream;
 
     public CachedBodyServletInputStream(byte[] cachedBody) {
         this.cachedBodyInputStream = new ByteArrayInputStream(cachedBody);
     }
 
     @Override
-    public int read() throws IOException {
-        return cachedBodyInputStream.read();
+    public int read() {
+        try {
+            return cachedBodyInputStream.read();
+        } catch (IOException exception) {
+            throw new ControllerException("Error request");
+        }
     }
 
-    @SneakyThrows
     @Override
     public boolean isFinished() {
-        return cachedBodyInputStream.available() == 0;
+        try {
+            return cachedBodyInputStream.available() == 0;
+        } catch (IOException exception) {
+            throw new ControllerException("Error request");
+        }
     }
 
     @Override
@@ -35,4 +42,5 @@ public class CachedBodyServletInputStream extends ServletInputStream {
     @Override
     public void setReadListener(final ReadListener readListener) {
     }
+
 }
