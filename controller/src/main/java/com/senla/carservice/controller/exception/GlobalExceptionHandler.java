@@ -21,6 +21,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ClientMessageDto> handleBusinessException(BusinessException businessException) {
         return new ResponseEntity<>(new ClientMessageDto(businessException.getMessage()), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(ControllerException.class)
+    protected ResponseEntity<ClientMessageDto> handleControllerException(ControllerException controllerException) {
+        return new ResponseEntity<>(new ClientMessageDto(controllerException.getMessage()), HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(DateException.class)
     protected ResponseEntity<ClientMessageDto> handleDateException(DateException dateException) {
         return new ResponseEntity<>(new ClientMessageDto(dateException.getMessage()), HttpStatus.BAD_REQUEST);
