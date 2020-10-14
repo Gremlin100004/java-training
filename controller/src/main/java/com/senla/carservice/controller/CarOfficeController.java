@@ -8,9 +8,11 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
@@ -28,6 +30,7 @@ public class CarOfficeController {
     private PlaceService placeService;
 
     @GetMapping("numberOfFreePlaces")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto getFreePlacesMastersByDate(@RequestParam String date) {
         Date dateFree = DateUtil.getDatesFromString(date, false);
         Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
@@ -37,17 +40,20 @@ public class CarOfficeController {
                                  numberFreeMasters);
     }
     @GetMapping("nearestFreeDate")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto getNearestFreeDate() {
         return new ClientMessageDto("Nearest free date: " + DateUtil.getStringFromDate(carOfficeService.getNearestFreeDate(), false));
     }
 
     @GetMapping("export")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto exportEntities() {
         carOfficeService.exportEntities();
         return new ClientMessageDto("Export completed successfully!");
     }
 
     @GetMapping("import")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto importEntities() {
         carOfficeService.importEntities();
         return new ClientMessageDto("Imported completed successfully!");

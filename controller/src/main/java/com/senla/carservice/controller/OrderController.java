@@ -11,6 +11,7 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
@@ -33,11 +35,13 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public OrderDto addOrder(@RequestBody OrderDto orderDto) {
         return orderService.addOrder(orderDto);
     }
 
     @GetMapping("check/dates")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto checkOrderDeadlines(@RequestParam String stringExecutionStartTime, @RequestParam String stringLeadTime) {
         Date executionStartTime = DateUtil.getDatesFromString(stringExecutionStartTime.replace('%', ' '), true);
         Date leadTime = DateUtil.getDatesFromString(stringLeadTime.replace('%', ' '), true);
@@ -45,12 +49,14 @@ public class OrderController {
         return new ClientMessageDto("dates are right");
     }
     @GetMapping("check")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto checkOrders() {
         orderService.checkOrders();
         return new ClientMessageDto("verification was successfully");
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> getOrders(@RequestParam(required = false) String sortParameter,
            @RequestParam (required = false) String startPeriod, @RequestParam (required = false) String endPeriod) {
         if (sortParameter == null && startPeriod == null && endPeriod == null) {
@@ -72,36 +78,42 @@ public class OrderController {
     }
 
     @PutMapping("{id}/complete")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto completeOrder(@PathVariable("id") Long orderId) {
         orderService.completeOrder(orderId);
         return new ClientMessageDto("The order has been transferred to execution status successfully");
     }
 
     @PutMapping("{id}/close")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto closeOrder(@PathVariable("id") Long orderId) {
         orderService.closeOrder(orderId);
         return new ClientMessageDto("The order has been completed successfully");
     }
 
     @PutMapping("{id}/cancel")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto cancelOrder(@PathVariable("id") Long orderId) {
         orderService.cancelOrder(orderId);
         return new ClientMessageDto("The order has been canceled successfully");
     }
 
     @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deleteOrder(@PathVariable("id") Long orderId) {
         orderService.deleteOrder(orderId);
         return new ClientMessageDto("The order has been deleted successfully");
     }
 
     @PutMapping("shiftLeadTime")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto shiftLeadTime(@RequestBody OrderDto orderDto) {
         orderService.shiftLeadTime(orderDto);
         return new ClientMessageDto("The order lead time has been changed successfully");
     }
 
     @GetMapping("{id}/masters")
+    @ResponseStatus(HttpStatus.OK)
     public List<MasterDto> getOrderMasters(@PathVariable("id") Long orderId) {
         return orderService.getOrderMasters(orderId);
     }

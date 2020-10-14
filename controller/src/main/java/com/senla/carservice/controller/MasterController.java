@@ -10,6 +10,7 @@ import com.senla.carservice.service.enumaration.MasterSortParameter;
 import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -29,6 +31,7 @@ public class MasterController {
     private MasterService masterService;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<MasterDto> getMasters(@RequestParam(required = false) String sortParameter,
             @RequestParam (required = false) String stringExecuteDate) {
         if (sortParameter == null && stringExecuteDate == null) {
@@ -47,24 +50,28 @@ public class MasterController {
     }
 
     @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     public MasterDto addMaster(@RequestBody MasterDto masterDto) {
 
         return masterService.addMaster(masterDto);
     }
 
     @GetMapping("check")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto checkMasters() {
         masterService.checkMasters();
         return new ClientMessageDto("verification was successfully");
     }
 
     @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deleteMaster(@PathVariable("id") Long masterId) {
         masterService.deleteMaster(masterId);
         return new ClientMessageDto(" -master has been deleted successfully!");
     }
 
     @GetMapping("{id}/orders")
+    @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> getMasterOrders(@PathVariable("id") Long masterId) {
         return masterService.getMasterOrders(masterId);
     }
