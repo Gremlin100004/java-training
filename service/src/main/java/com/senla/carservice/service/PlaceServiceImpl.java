@@ -2,9 +2,11 @@ package com.senla.carservice.service;
 
 import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.domain.Place;
+import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.service.exception.BusinessException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.senla.carservice.service.util.PlaceMapper;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,9 +16,10 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@NoArgsConstructor
+@Slf4j
 public class PlaceServiceImpl implements PlaceService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlaceServiceImpl.class);
     @Autowired
     private PlaceDao placeDao;
     @Value("${com.senla.carservice.service.PlaceServiceImpl.isBlockAddPlace:false}")
@@ -24,41 +27,40 @@ public class PlaceServiceImpl implements PlaceService {
     @Value("${com.senla.carservice.service.PlaceServiceImpl.isBlockDeletePlace:false}")
     private Boolean isBlockDeletePlace;
 
-    public PlaceServiceImpl() {
+    @Override
+    @Transactional
+    public List<PlaceDto> getPlaces() {
+        log.debug("[getPlaces]");
+        return PlaceMapper.getPlaceDto(placeDao.getAllRecords());
     }
 
     @Override
     @Transactional
-    public List<Place> getPlaces() {
-        LOGGER.debug("Method getPlaces");
-        return placeDao.getAllRecords();
-    }
-
-    @Override
-    @Transactional
-    public void addPlace(Integer number) {
-        LOGGER.debug("Method addPlace");
-        LOGGER.debug("Parameter number: {}", number);
+    public PlaceDto addPlace(PlaceDto placeDto) {
+        log.debug("[addPlace]");
+        log.trace("[placeDto: {}]", placeDto);
         if (isBlockAddPlace) {
             throw new BusinessException("Permission denied");
         }
-        placeDao.saveRecord(new Place(number));
+        Place place = new Place();
+        place.setNumber(placeDto.getNumber());
+        return PlaceMapper.getPlaceDto(placeDao.saveRecord(place));
     }
 
     @Override
     @Transactional
-    public void deletePlace(Long idPlace) {
-        LOGGER.debug("Method deletePlace");
-        LOGGER.debug("Parameter idPlace: {}", idPlace);
+    public void deletePlace(Long orderId) {
+        log.debug("[deletePlace]");
+        log.trace("[orderId: {}]", orderId);
         if (isBlockDeletePlace) {
             throw new BusinessException("Permission denied");
         }
-        Place place = placeDao.findById(idPlace);
-        if (place.getBusy()) {
+        Place place = placeDao.findById(orderId);
+        if (place.getIsBusy()) {
             throw new BusinessException("Place is busy");
         }
         if (place.getDeleteStatus()) {
-            throw new BusinessException("error, place has already been deleted");
+            throw new BusinessException("Error, place has already been deleted");
         }
         place.setDeleteStatus(true);
         placeDao.updateRecord(place);
@@ -67,23 +69,26 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     @Transactional
     public Long getNumberFreePlaceByDate(Date startDayDate) {
-        LOGGER.debug("Method getNumberFreePlaceByDate");
-        LOGGER.debug("Parameter startDayDate: {}", startDayDate);
+        log.debug("[getNumberFreePlaceByDate]");
+        log.trace("[startDayDate: {}]", startDayDate);
         return placeDao.getNumberFreePlaces(startDayDate);
     }
 
     @Override
     @Transactional
-    public List<Place> getFreePlaceByDate(Date executeDate) {
-        LOGGER.debug("Method getFreePlaceByDate");
-        LOGGER.debug("Parameter executeDate: {}", executeDate);
-        return placeDao.getFreePlaces(executeDate);
+    public List<PlaceDto> getFreePlaceByDate(Date executeDate) {
+        log.debug("[getFreePlaceByDate]");
+        log.trace("[executeDate: {}]", executeDate);
+        return PlaceMapper.getPlaceDto(placeDao.getFreePlaces(executeDate));
     }
 
     @Override
     @Transactional
-    public Long getNumberPlace() {
-        LOGGER.debug("Method getNumberMasters");
-        return placeDao.getNumberPlaces();
+    public void checkPlaces() {
+        log.debug("[getNumberMasters]");
+        if (placeDao.getNumberPlaces() == 0) {
+            throw new  BusinessException("Error, there are no places");
+        }
     }
+
 }

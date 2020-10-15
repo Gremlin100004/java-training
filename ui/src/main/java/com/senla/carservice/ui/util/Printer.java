@@ -8,4 +8,5 @@ public final class Printer {
     public static void printInfo(String line) {
         System.out.println(line);
     }
+
 }

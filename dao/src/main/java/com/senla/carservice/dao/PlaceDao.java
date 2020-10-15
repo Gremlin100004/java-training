@@ -12,4 +12,5 @@ public interface PlaceDao extends GenericDao<Place, Long> {
     Long getNumberPlaces();
 
     Long getNumberFreePlaces(Date executeDate);
+
 }

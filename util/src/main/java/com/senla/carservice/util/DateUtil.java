@@ -1,29 +1,27 @@
 package com.senla.carservice.util;
 
 import com.senla.carservice.util.exception.DateException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+@Slf4j
 public final class DateUtil {
 
     private static final int START_DAY_HOUR = 0;
     private static final int START_DAY_MINUTE = 0;
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd kk:mm");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-    private static final Logger LOGGER = LoggerFactory.getLogger(DateUtil.class);
 
     private DateUtil() {
     }
 
     public static Date addDays(Date date, int days) {
-        LOGGER.debug("Method addDays");
-        LOGGER.trace("Parameter date: {}", date);
-        LOGGER.trace("Parameter days: {}", days);
+        log.debug("[addDays]");
+        log.trace("[date: {}] [days: {}]", date, days);
         if (date == null) {
             throw new DateException("date is null");
         }
@@ -34,10 +32,8 @@ public final class DateUtil {
     }
 
     public static Date addHourMinutes(Date date, int hour, int minute) {
-        LOGGER.debug("Method addHourMinutes");
-        LOGGER.trace("Parameter date: {}", date);
-        LOGGER.trace("Parameter hour: {}", hour);
-        LOGGER.trace("Parameter minute: {}", minute);
+        log.debug("[addHourMinutes]");
+        log.trace("[date: {}] [hour: {}] [minute: {}]", date, hour, minute);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -50,26 +46,28 @@ public final class DateUtil {
     }
 
     public static Date getDatesFromString(String stringDate, boolean isTime) {
-        LOGGER.debug("Method getDatesFromString");
-        LOGGER.trace("Parameter stringDate: {}", stringDate);
-        LOGGER.trace("Parameter isTime: {}", isTime);
+        log.debug("[getDatesFromString]");
+        log.trace("[stringDate: {}] [isTime: {}]", stringDate, isTime);
         try {
             return isTime ? DATE_TIME_FORMAT.parse(stringDate) : DATE_FORMAT.parse(stringDate);
         } catch (ParseException e) {
-            return null;
+            if (isTime) {
+                throw new DateException("Error date format, should be \"yyyy-MM-dd hh:mm\"");
+            } else {
+                throw new DateException("Error date format, should be \"dd.MM.yyyy\"");
+            }
         }
     }
 
     public static String getStringFromDate(Date date, boolean isTime) {
-        LOGGER.debug("Method getStringFromDate");
-        LOGGER.trace("Parameter date: {}", date);
-        LOGGER.trace("Parameter isTime: {}", isTime);
+        log.debug("[getStringFromDate]");
+        log.trace("[date: {}] [isTime: {}]", date, isTime);
         return isTime ? DATE_TIME_FORMAT.format(date.getTime()) : DATE_FORMAT.format(date.getTime());
     }
 
     public static Date bringStartOfDayDate(Date date) {
-        LOGGER.debug("Method bringStartOfDayDate");
-        LOGGER.trace("Parameter date: {}", date);
+        log.debug("[bringStartOfDayDate]");
+        log.trace("[date: {}]", date);
         if (addHourMinutes(date, START_DAY_HOUR, START_DAY_MINUTE).before(new Date())) {
             return addHourMinutes(new Date(), START_DAY_HOUR, START_DAY_MINUTE);
         } else {
@@ -78,18 +76,18 @@ public final class DateUtil {
     }
 
     public static void checkDateTime(Date executionStartTime, Date leadTime, Boolean periodTime) {
-        LOGGER.debug("Method checkDateTime");
-        LOGGER.trace("Parameter executionStartTime: {}", executionStartTime);
-        LOGGER.trace("Parameter leadTime: {}", leadTime);
-        LOGGER.trace("Parameter periodTime: {}", periodTime);
+        log.debug("[checkDateTime]");
+        log.trace("[executionStartTime: {}] [leadTime: {}] [periodTime: {}]", executionStartTime, leadTime,
+                  periodTime);
         if (executionStartTime == null || leadTime == null) {
             throw new DateException("Error date format, should be \"yyyy-MM-dd hh:mm\"");
         }
         if (executionStartTime.after(leadTime)) {
-            throw new DateException("The execution start time is greater than lead time");
+            throw new DateException("Error, the execution start time is greater than lead time");
         }
         if (executionStartTime.before(new Date()) && !periodTime) {
-            throw new DateException("The execution start time is less than current Date");
+            throw new DateException("Error, the execution start time is less than current Date");
         }
     }
+
 }

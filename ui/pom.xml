@@ -13,8 +13,18 @@
     <dependencies>
         <dependency>
             <groupId>com.senla.carservice</groupId>
-            <artifactId>controller</artifactId>
+            <artifactId>dto</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.senla.carservice</groupId>
+            <artifactId>util</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
         </dependency>
     </dependencies>
 </project>

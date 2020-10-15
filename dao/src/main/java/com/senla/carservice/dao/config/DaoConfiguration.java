@@ -1,7 +1,9 @@
 package com.senla.carservice.dao.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -17,14 +19,17 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 public class DaoConfiguration {
 
-    private static final String DATA_SOURCE_PACKAGE = "com.senla.carservice.domain";
-    private static final String CONNECTION_URL = "jdbc:mysql://localhost:3306/hrinkov_car_service";
+    private static final String DATA_SOURCE_PACKAGE = "carservice.datasource.package";
+    private static final String CONNECTION_URL = "hibernate.connection.url";
+    private static final String DRIVER_DATABASE = "hibernate.connection.driver_class";
+    @Autowired
+    private Environment environment;
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
-        em.setPackagesToScan(DATA_SOURCE_PACKAGE);
+        em.setPackagesToScan(environment.getRequiredProperty(DATA_SOURCE_PACKAGE));
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         return em;
@@ -33,7 +38,8 @@ public class DaoConfiguration {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl(CONNECTION_URL);
+        dataSource.setDriverClassName(environment.getRequiredProperty(DRIVER_DATABASE));
+        dataSource.setUrl(environment.getRequiredProperty(CONNECTION_URL));
         return dataSource;
     }
 
@@ -48,4 +54,5 @@ public class DaoConfiguration {
     public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
+
 }

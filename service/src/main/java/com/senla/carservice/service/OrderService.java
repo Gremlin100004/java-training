@@ -1,44 +1,35 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.domain.Master;
-import com.senla.carservice.domain.Order;
-import com.senla.carservice.service.enumaration.SortParameter;
+import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.dto.OrderDto;
+import com.senla.carservice.service.enumaration.OrderSortParameter;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 public interface OrderService {
 
-    List<Order> getOrders();
+    List<OrderDto> getOrders();
 
-    void addOrder(String automaker, String model, String registrationNumber);
+    OrderDto addOrder(OrderDto orderDto);
 
-    void addOrderDeadlines(Date executionStartTime, Date leadTime);
+    void checkOrderDeadlines(Date executionStartTime, Date leadTime);
 
-    void addOrderMasters(Long idMaster);
+    void completeOrder(Long orderId);
 
-    void addOrderPlace(Long idPlace);
+    void cancelOrder(Long orderId);
 
-    void addOrderPrice(BigDecimal price);
+    void closeOrder(Long orderId);
 
-    void completeOrder(Long idOrder);
+    void deleteOrder(Long orderId);
 
-    void cancelOrder(Long idOrder);
+    void shiftLeadTime(OrderDto orderDto);
 
-    void closeOrder(Long idOrder);
+    List<OrderDto> getSortOrders(OrderSortParameter sortParameter);
 
-    void deleteOrder(Long idOrder);
+    List<OrderDto> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, OrderSortParameter sortParameter);
 
-    void shiftLeadTime(Long idOrder, Date executionStartTime, Date leadTime);
+    List<MasterDto> getOrderMasters(Long orderId);
 
-    List<Order> getSortOrders(SortParameter sortParameter);
-
-    List<Order> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter);
-
-    List<Order> getMasterOrders(Long idMaster);
-
-    List<Master> getOrderMasters(Long idOrder);
-
-    Long getNumberOrders();
+    void checkOrders();
 }

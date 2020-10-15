@@ -7,7 +7,7 @@ public interface GenericDao <T, PK extends Serializable> {
 
     void setType(Class<T> type);
 
-    void saveRecord(T object);
+    T saveRecord(T object);
 
     T findById(PK id);
 
@@ -18,4 +18,5 @@ public interface GenericDao <T, PK extends Serializable> {
     void updateAllRecords(List<T> objects);
 
     void deleteRecord(PK id);
+
 }

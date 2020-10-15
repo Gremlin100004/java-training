@@ -7,25 +7,29 @@ import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.domain.enumaration.StatusOrder;
-import com.senla.carservice.service.enumaration.SortParameter;
+import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.dto.OrderDto;
+import com.senla.carservice.service.enumaration.OrderSortParameter;
 import com.senla.carservice.service.exception.BusinessException;
+import com.senla.carservice.service.util.MasterMapper;
+import com.senla.carservice.service.util.OrderMapper;
 import com.senla.carservice.util.DateUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
+@NoArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
     @Autowired
     private OrderDao orderDao;
     @Autowired
@@ -37,113 +41,59 @@ public class OrderServiceImpl implements OrderService {
     @Value("${com.senla.carservice.service.OrderServiceImpl.isBlockDeleteOrder:false}")
     private Boolean isBlockDeleteOrder;
 
-    public OrderServiceImpl() {
+    @Override
+    @Transactional
+    public List<OrderDto> getOrders() {
+        log.debug("[getOrders]");
+        return OrderMapper.getOrderDto(orderDao.getAllRecords());
     }
 
     @Override
     @Transactional
-    public List<Order> getOrders() {
-        LOGGER.debug("Method getOrders");
-        return orderDao.getAllRecords();
+    public OrderDto addOrder(OrderDto orderDto) {
+        log.debug("[addOrder]");
+        log.trace("[orderDto: {}]", orderDto);
+        return OrderMapper.getOrderDto(
+            orderDao.saveRecord(OrderMapper.getOrder(orderDto, masterDao, placeDao)));
     }
 
     @Override
     @Transactional
-    public void addOrder(String automaker, String model, String registrationNumber) {
-        LOGGER.debug("Method addOrder");
-        LOGGER.debug("Parameter automaker: {}", automaker);
-        LOGGER.debug("Parameter model: {}", model);
-        LOGGER.debug("Parameter registrationNumber: {}", registrationNumber);
-        checkMasters();
-        checkPlaces();
-        Order order = new Order(automaker, model, registrationNumber);
-        Place place = placeDao.findById(1L);
-        order.setPlace(place);
-        orderDao.saveRecord(order);
-    }
-
-    @Override
-    @Transactional
-    public void addOrderDeadlines(Date executionStartTime, Date leadTime) {
-        LOGGER.debug("Method addOrderDeadlines");
-        LOGGER.debug("Parameter executionStartTime: {}", executionStartTime);
-        LOGGER.debug("Parameter leadTime: {}", leadTime);
+    public void checkOrderDeadlines(Date executionStartTime, Date leadTime) {
+        log.debug("[checkOrderDeadlines]");
+        log.trace("[executionStartTime: {}][leadTime: {}]", executionStartTime, leadTime);
         DateUtil.checkDateTime(executionStartTime, leadTime, false);
-        Order currentOrder = orderDao.getLastOrder();
         long numberFreeMasters = masterDao.getNumberFreeMasters(executionStartTime);
         long numberFreePlace = placeDao.getNumberFreePlaces(executionStartTime);
         if (numberFreeMasters == 0) {
-            throw new BusinessException("The number of masters is zero");
+            throw new BusinessException("Error, the number of masters is zero");
         }
         if (numberFreePlace == 0) {
-            throw new BusinessException("The number of places is zero");
+            throw new BusinessException("Error, the number of places is zero");
         }
-        currentOrder.setExecutionStartTime(executionStartTime);
-        currentOrder.setLeadTime(leadTime);
-        orderDao.updateRecord(currentOrder);
     }
 
     @Override
     @Transactional
-    public void addOrderMasters(Long idMaster) {
-        LOGGER.debug("Method addOrderMasters");
-        LOGGER.debug("Parameter idMaster: {}", idMaster);
-        Order currentOrder = orderDao.getLastOrder();
-        Master master = masterDao.findById(idMaster);
-        master.setNumberOrders(master.getNumberOrders() + 1);
-        if (master.getDeleteStatus()) {
-            throw new BusinessException("Master has been deleted");
-        }
-        for (Master orderMaster : currentOrder.getMasters()) {
-            if (orderMaster.equals(master)) {
-                throw new BusinessException("This master already exists");
-            }
-        }
-        currentOrder.getMasters().add(master);
-        orderDao.updateRecord(currentOrder);
-    }
-
-    @Override
-    @Transactional
-    public void addOrderPlace(Long idPlace) {
-        LOGGER.debug("Method addOrderPlace");
-        LOGGER.debug("Parameter idPlace: {}", idPlace);
-        Order currentOrder = orderDao.getLastOrder();
-        currentOrder.setPlace(placeDao.findById(idPlace));
-        orderDao.updateRecord(currentOrder);
-    }
-
-    @Override
-    @Transactional
-    public void addOrderPrice(BigDecimal price) {
-        LOGGER.debug("Method addOrderPrice");
-        LOGGER.debug("Parameter price: {}", price);
-        Order currentOrder = orderDao.getLastOrder();
-        currentOrder.setPrice(price);
-        orderDao.updateRecord(currentOrder);
-    }
-
-    @Override
-    @Transactional
-    public void completeOrder(Long idOrder) {
-        LOGGER.debug("Method completeOrder");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
-        Order order = orderDao.findById(idOrder);
+    public void completeOrder(Long orderId) {
+        log.debug("[completeOrder]");
+        log.trace("[orderId: {}]", orderId);
+        Order order = orderDao.findById(orderId);
         checkStatusOrder(order);
         order.setStatus(StatusOrder.PERFORM);
         order.setExecutionStartTime(new Date());
         Place place = order.getPlace();
-        place.setBusy(true);
+        place.setIsBusy(true);
         placeDao.updateRecord(place);
         orderDao.updateRecord(order);
     }
 
     @Override
     @Transactional
-    public void cancelOrder(Long idOrder) {
-        LOGGER.debug("Method cancelOrder");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
-        Order order = orderDao.findById(idOrder);
+    public void cancelOrder(Long orderId) {
+        log.debug("[cancelOrder]");
+        log.trace("[orderId: {}]", orderId);
+        Order order = orderDao.findById(orderId);
         checkStatusOrder(order);
         order.setLeadTime(new Date());
         order.setStatus(StatusOrder.CANCELED);
@@ -152,22 +102,22 @@ public class OrderServiceImpl implements OrderService {
         masterDao.updateAllRecords(masters);
         orderDao.updateRecord(order);
         Place place = order.getPlace();
-        place.setBusy(false);
+        place.setIsBusy(false);
         placeDao.updateRecord(place);
     }
 
     @Override
     @Transactional
-    public void closeOrder(Long idOrder) {
-        LOGGER.debug("Method closeOrder");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
-        Order order = orderDao.findById(idOrder);
+    public void closeOrder(Long orderId) {
+        log.debug("[closeOrder]");
+        log.trace("[orderId: {}]", orderId);
+        Order order = orderDao.findById(orderId);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(new Date());
         order.setStatus(StatusOrder.COMPLETED);
         orderDao.updateRecord(order);
         Place place = order.getPlace();
-        place.setBusy(false);
+        place.setIsBusy(false);
         placeDao.updateRecord(place);
         List<Master> masters = orderDao.getOrderMasters(order);
         masters.forEach(master -> master.setNumberOrders(master.getNumberOrders() - 1));
@@ -176,13 +126,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void deleteOrder(Long idOrder) {
-        LOGGER.debug("Method deleteOrder");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
+    public void deleteOrder(Long orderId) {
+        log.debug("[deleteOrder]");
+        log.trace("[orderId: {}}", orderId);
         if (isBlockDeleteOrder) {
             throw new BusinessException("Permission denied");
         }
-        Order order = orderDao.findById(idOrder);
+        Order order = orderDao.findById(orderId);
         checkStatusOrderToDelete(order);
         order.setDeleteStatus(true);
         orderDao.updateRecord(order);
@@ -190,16 +140,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void shiftLeadTime(Long idOrder, Date executionStartTime, Date leadTime) {
-        LOGGER.debug("Method shiftLeadTime");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
-        LOGGER.debug("Parameter executionStartTime: {}", executionStartTime);
-        LOGGER.debug("Parameter leadTime: {}", leadTime);
+    public void shiftLeadTime(OrderDto orderDto) {
+        log.debug("[shiftLeadTime]");
+        log.trace("[orderDto: {}]", orderDto);
         if (isBlockShiftTime) {
             throw new BusinessException("Permission denied");
         }
+        Date executionStartTime = DateUtil.getDatesFromString(orderDto.getExecutionStartTime(), true);
+        Date leadTime = DateUtil.getDatesFromString(orderDto.getLeadTime(), true);
         DateUtil.checkDateTime(executionStartTime, leadTime, false);
-        Order order = orderDao.findById(idOrder);
+        Order order = orderDao.findById(orderDto.getId());
+        order.setExecutionStartTime(executionStartTime);
+        order.setLeadTime(leadTime);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(leadTime);
         order.setExecutionStartTime(executionStartTime);
@@ -208,138 +160,121 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public List<Order> getSortOrders(SortParameter sortParameter) {
-        LOGGER.debug("Method getSortOrders");
-        LOGGER.debug("Parameter sortParameter: {}", sortParameter);
+    public List<OrderDto> getSortOrders(OrderSortParameter sortParameter) {
+        log.debug("[getSortOrders]");
+        log.trace("[sortParameter: {}]", sortParameter);
         List<Order> orders = new ArrayList<>();
-        if (sortParameter.equals(SortParameter.SORT_BY_FILING_DATE)) {
+        if (sortParameter.equals(OrderSortParameter.BY_FILING_DATE)) {
             orders = orderDao.getOrdersSortByFilingDate();
-        } else if (sortParameter.equals(SortParameter.SORT_BY_EXECUTION_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.BY_EXECUTION_DATE)) {
             orders = orderDao.getOrdersSortByExecutionDate();
-        } else if (sortParameter.equals(SortParameter.BY_PLANNED_START_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.BY_PLANNED_START_DATE)) {
             orders = orderDao.getOrdersSortByPlannedStartDate();
-        } else if (sortParameter.equals(SortParameter.SORT_BY_PRICE)) {
+        } else if (sortParameter.equals(OrderSortParameter.BY_PRICE)) {
             orders = orderDao.getOrdersSortByPrice();
-        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_FILING_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.EXECUTE_ORDERS_BY_FILING_DATE)) {
             orders = orderDao.getExecuteOrderSortByFilingDate();
-        } else if (sortParameter.equals(SortParameter.EXECUTE_ORDER_SORT_BY_EXECUTION_DATE)) {
-            orders = orderDao.getExecuteOrderSortExecutionDate();
+        } else if (sortParameter.equals(OrderSortParameter.EXECUTE_ORDERS_BY_EXECUTION_DATE)) {
+            orders = orderDao.getExecuteOrderSortByExecutionDate();
+        } else if (sortParameter.equals(OrderSortParameter.EXECUTE_ORDERS_BY_PRICE)) {
+            orders = orderDao.getExecuteOrderSortByPrice();
         }
         if (orders.isEmpty()) {
-            throw new BusinessException("There are no orders");
+            throw new BusinessException("Error, there are no orders");
         }
-        return orders;
+        return OrderMapper.getOrderDto(orders);
     }
 
     @Override
     @Transactional
-    public List<Order> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, SortParameter sortParameter) {
-        LOGGER.debug("Method getSortOrdersByPeriod");
-        LOGGER.debug("Parameter startPeriodDate: {}", startPeriodDate);
-        LOGGER.debug("Parameter endPeriodDate: {}", endPeriodDate);
-        LOGGER.debug("Parameter sortParameter: {}", sortParameter);
+    public List<OrderDto> getSortOrdersByPeriod(Date startPeriodDate, Date endPeriodDate, OrderSortParameter sortParameter) {
+        log.debug("[getSortOrdersByPeriod]");
+        log.trace("[startPeriodDate: {}][endPeriodDate: {}][sortParameter: {}]",
+            startPeriodDate, endPeriodDate, sortParameter);
         List<Order> orders = new ArrayList<>();
         DateUtil.checkDateTime(startPeriodDate, endPeriodDate, true);
-        if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_FILING_DATE)) {
+        if (sortParameter.equals(OrderSortParameter.COMPLETED_ORDERS_BY_FILING_DATE)) {
             orders = orderDao.getCompletedOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.COMPLETED_ORDERS_BY_EXECUTION_DATE)) {
             orders = orderDao.getCompletedOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.COMPLETED_ORDERS_SORT_BY_PRICE)) {
+        } else if (sortParameter.equals(OrderSortParameter.COMPLETED_ORDERS_BY_PRICE)) {
             orders = orderDao.getCompletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_FILING_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.CANCELED_ORDERS_BY_FILING_DATE)) {
             orders = orderDao.getCanceledOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.CANCELED_ORDERS_BY_EXECUTION_DATE)) {
             orders = orderDao.getCanceledOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.CANCELED_ORDERS_SORT_BY_PRICE)) {
+        } else if (sortParameter.equals(OrderSortParameter.CANCELED_ORDERS_BY_PRICE)) {
             orders = orderDao.getCanceledOrdersSortByPrice(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_FILING_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.DELETED_ORDERS_BY_FILING_DATE)) {
             orders = orderDao.getDeletedOrdersSortByFilingDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_EXECUTION_DATE)) {
+        } else if (sortParameter.equals(OrderSortParameter.DELETED_ORDERS_BY_EXECUTION_DATE)) {
             orders = orderDao.getDeletedOrdersSortByExecutionDate(startPeriodDate, endPeriodDate);
-        } else if (sortParameter.equals(SortParameter.DELETED_ORDERS_SORT_BY_PRICE)) {
+        } else if (sortParameter.equals(OrderSortParameter.DELETED_ORDERS_BY_PRICE)) {
             orders = orderDao.getDeletedOrdersSortByPrice(startPeriodDate, endPeriodDate);
         }
-        return orders;
+        return OrderMapper.getOrderDto(orders);
     }
 
     @Override
     @Transactional
-    public List<Order> getMasterOrders(Long idMaster) {
-        LOGGER.debug("Method getMasterOrders");
-        LOGGER.debug("Parameter idMaster: {}", idMaster);
-        return orderDao.getMasterOrders(masterDao.findById(idMaster));
+    public List<MasterDto> getOrderMasters(Long orderId) {
+        log.debug("[getOrderMasters]");
+        log.trace("[orderId: {}]", orderId);
+        return MasterMapper.getMasterDto(
+            orderDao.getOrderMasters(orderDao.findById(orderId)));
     }
 
     @Override
     @Transactional
-    public List<Master> getOrderMasters(Long idOrder) {
-        LOGGER.debug("Method getOrderMasters");
-        LOGGER.debug("Parameter idOrder: {}", idOrder);
-        return orderDao.getOrderMasters(orderDao.findById(idOrder));
-    }
-
-    @Override
-    @Transactional
-    public Long getNumberOrders() {
-        LOGGER.debug("Method getNumberOrders");
-        return orderDao.getNumberOrders();
-    }
-
-    private void checkMasters() {
-        LOGGER.debug("Method checkMasters");
-        if (masterDao.getNumberMasters() == 0) {
-            throw new BusinessException("There are no masters");
-        }
-    }
-
-    private void checkPlaces() {
-        LOGGER.debug("Method checkPlaces");
-        if (placeDao.getNumberPlaces() == 0) {
-            throw new BusinessException("There are no places");
+    public void checkOrders() {
+        log.debug("[getNumberOrders]");
+        if (orderDao.getNumberOrders() == 0) {
+            throw new BusinessException("Error, there are no orders");
         }
     }
 
     private void checkStatusOrder(Order order) {
-        LOGGER.debug("Method checkStatusOrder");
-        LOGGER.debug("Parameter order: {}", order);
+        log.debug("[checkStatusOrder]");
+        log.trace("[order: {}]", order);
         if (order.isDeleteStatus()) {
-            throw new BusinessException("The order has been deleted");
+            throw new BusinessException("Error, the order has been deleted");
         }
         if (order.getStatus() == StatusOrder.COMPLETED) {
-            throw new BusinessException("The order has been completed");
+            throw new BusinessException("Error, the order has been completed");
         }
         if (order.getStatus() == StatusOrder.PERFORM) {
-            throw new BusinessException("Order is being executed");
+            throw new BusinessException("Error, order is being executed");
         }
         if (order.getStatus() == StatusOrder.CANCELED) {
-            throw new BusinessException("The order has been canceled");
+            throw new BusinessException("Error, the order has been canceled");
         }
     }
 
     private void checkStatusOrderShiftTime(Order order) {
-        LOGGER.debug("Method checkStatusOrderShiftTime");
-        LOGGER.debug("Parameter order: {}", order);
+        log.debug("[checkStatusOrderShiftTime]");
+        log.trace("[order: {}]", order);
         if (order.isDeleteStatus()) {
-            throw new BusinessException("The order has been deleted");
+            throw new BusinessException("Error, the order has been deleted");
         }
         if (order.getStatus() == StatusOrder.COMPLETED) {
-            throw new BusinessException("The order has been completed");
+            throw new BusinessException("Error, the order has been completed");
         }
         if (order.getStatus() == StatusOrder.CANCELED) {
-            throw new BusinessException("The order has been canceled");
+            throw new BusinessException("Error, the order has been canceled");
         }
     }
     private void checkStatusOrderToDelete(Order order) {
-        LOGGER.debug("Method checkStatusOrderToDelete");
-        LOGGER.debug("Parameter order: {}", order);
+        log.debug("[checkStatusOrderToDelete");
+        log.trace("[order: {}]", order);
         if (order.isDeleteStatus()) {
-            throw new BusinessException("The order has been deleted");
+            throw new BusinessException("Error, the order has been deleted");
         }
         if (order.getStatus() == StatusOrder.WAIT) {
-            throw new BusinessException("The order has been waiting");
+            throw new BusinessException("Error, the order has been waiting");
         }
         if (order.getStatus() == StatusOrder.PERFORM) {
-            throw new BusinessException("The order has been canceled");
+            throw new BusinessException("Error, the order has been canceled");
         }
     }
+
 }

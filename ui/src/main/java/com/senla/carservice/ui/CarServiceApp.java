@@ -6,7 +6,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
-@ComponentScan("com.senla.carservice")
+@ComponentScan("com.senla.carservice.ui")
 @PropertySource("classpath:application.properties")
 public class CarServiceApp {
 
@@ -15,4 +15,5 @@ public class CarServiceApp {
         MenuController menuController = applicationContext.getBean(MenuController.class);
         menuController.run();
     }
+
 }

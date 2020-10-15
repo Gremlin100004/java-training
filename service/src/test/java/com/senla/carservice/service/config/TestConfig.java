@@ -6,31 +6,18 @@ import com.senla.carservice.csv.CsvPlace;
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.dao.OrderDao;
 import com.senla.carservice.dao.PlaceDao;
-import com.senla.carservice.service.CarOfficeService;
-import com.senla.carservice.service.CarOfficeServiceImpl;
-import com.senla.carservice.service.MasterService;
-import com.senla.carservice.service.MasterServiceImpl;
-import com.senla.carservice.service.OrderService;
-import com.senla.carservice.service.OrderServiceImpl;
-import com.senla.carservice.service.PlaceService;
-import com.senla.carservice.service.PlaceServiceImpl;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
+@ComponentScan("com.senla.carservice.service")
 public class TestConfig {
-    @Bean
-    MasterService masterService() {
-        return new MasterServiceImpl();
-    }
 
     @Bean
     MasterDao masterDao() {
         return Mockito.mock(MasterDao.class);
-    }
-
-    @Bean
-    OrderService orderService() {
-        return new OrderServiceImpl();
     }
 
     @Bean
@@ -41,11 +28,6 @@ public class TestConfig {
     @Bean
     PlaceDao placeDao() {
         return Mockito.mock(PlaceDao.class);
-    }
-
-    @Bean
-    CarOfficeService carOfficeService() {
-        return new CarOfficeServiceImpl();
     }
 
     @Bean
@@ -61,10 +43,5 @@ public class TestConfig {
     @Bean
     CsvMaster csvMaster() {
         return Mockito.mock(CsvMaster.class);
-    }
-
-    @Bean
-    PlaceService placeService() {
-        return new PlaceServiceImpl();
     }
 }

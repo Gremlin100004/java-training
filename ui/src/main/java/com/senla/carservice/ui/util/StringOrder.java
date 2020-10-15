@@ -1,13 +1,12 @@
-package com.senla.carservice.controller.util;
+package com.senla.carservice.ui.util;
 
-import com.senla.carservice.domain.Order;
-import com.senla.carservice.util.DateUtil;
+import com.senla.carservice.dto.OrderDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class StringOrder {
 
@@ -38,9 +37,9 @@ public class StringOrder {
     private static final int INDEX_ADDITION = 1;
     private static final Logger LOGGER = LoggerFactory.getLogger(StringOrder.class);
 
-    public static String getStringFromOrder(List<Order> orders) {
+    public static String getStringFromOrder(List<OrderDto> ordersDto) {
         LOGGER.debug("Method getStringFromOrder");
-        LOGGER.trace("Parameter orders: {}", orders);
+        LOGGER.trace("Parameter orders: {}", ordersDto);
         String line = START_OF_LINE_DELIMITER + String.join(SYMBOL_FOR_JOIN_METHOD, Collections.nCopies(LINE_LENGTH, LINE_SEPARATOR)) +
                       END_OF_LINE;
         StringBuilder stringBuilder = new StringBuilder(line);
@@ -63,46 +62,31 @@ public class StringOrder {
                                                                               LENGTH_SPACE_TENTH_COLUMN))
             .append(SPLIT_COLUMNS + END_OF_LINE);
         stringBuilder.append(line);
-        for (int i = 0; i < orders.size(); i++) {
+        IntStream.range(0, ordersDto.size()).forEach(i -> {
             stringBuilder.append(SPLIT_COLUMNS)
-                .append(StringUtil.fillStringSpace(String.valueOf(i + INDEX_ADDITION),
-                                                   LENGTH_SPACE_FIRST_COLUMN));
+                .append(StringUtil.fillStringSpace(String.valueOf(i + INDEX_ADDITION), LENGTH_SPACE_FIRST_COLUMN));
             stringBuilder.append(SPLIT_COLUMNS)
-                .append(StringUtil.fillStringSpace(orders.get(i).getAutomaker(), LENGTH_SPACE_SECOND_COLUMN));
+                .append(StringUtil.fillStringSpace(ordersDto.get(i).getAutomaker(), LENGTH_SPACE_SECOND_COLUMN));
             stringBuilder.append(SPLIT_COLUMNS)
-                .append(StringUtil.fillStringSpace(orders.get(i).getModel(), LENGTH_SPACE_THIRD_COLUMN));
+                .append(StringUtil.fillStringSpace(ordersDto.get(i).getModel(), LENGTH_SPACE_THIRD_COLUMN));
             stringBuilder.append(SPLIT_COLUMNS)
-                .append(StringUtil
-                            .fillStringSpace(orders.get(i).getRegistrationNumber(), LENGTH_SPACE_FORTH));
-            stringBuilder.append(SPLIT_COLUMNS)
-                .append(StringUtil.fillStringSpace(DateUtil.getStringFromDate(orders.get(i).getCreationTime(), true),
-                                                   LENGTH_SPACE_TIME));
-            stringBuilder.append(SPLIT_COLUMNS)
-                .append(StringUtil
-                            .fillStringSpace(DateUtil.getStringFromDate(orders.get(i).getExecutionStartTime(), true),
-                                             LENGTH_SPACE_TIME));
-            stringBuilder.append(SPLIT_COLUMNS)
-                .append(StringUtil.fillStringSpace(DateUtil.getStringFromDate(orders.get(i).getLeadTime(), true),
-                                                   LENGTH_SPACE_TIME));
-            stringBuilder.append(SPLIT_COLUMNS)
-                .append(StringUtil.fillStringSpace(String.valueOf(orders.get(i).getPrice()),
-                                                   LENGTH_SPACE_EIGHTH_COLUMN));
-            stringBuilder.append(SPLIT_COLUMNS)
-                .append(StringUtil.fillStringSpace(String.valueOf(orders.get(i).getStatus()),
-                                                   LENGTH_SPACE_NINTH_COLUMN));
-            stringBuilder.append(SPLIT_COLUMNS)
-                .append(
-                    StringUtil.fillStringSpace(String.valueOf(orders.get(i).isDeleteStatus()),
-                                               LENGTH_SPACE_TENTH_COLUMN))
+                .append(StringUtil.fillStringSpace(ordersDto.get(i).getRegistrationNumber(), LENGTH_SPACE_FORTH));
+            stringBuilder.append(SPLIT_COLUMNS).append(StringUtil.fillStringSpace(
+                ordersDto.get(i).getCreationTime(), LENGTH_SPACE_TIME));
+            stringBuilder.append(SPLIT_COLUMNS).append(StringUtil.fillStringSpace(
+                ordersDto.get(i).getExecutionStartTime(), LENGTH_SPACE_TIME));
+            stringBuilder.append(SPLIT_COLUMNS).append(StringUtil.fillStringSpace(
+                ordersDto.get(i).getLeadTime(), LENGTH_SPACE_TIME));
+            stringBuilder.append(SPLIT_COLUMNS).append(
+                StringUtil.fillStringSpace(String.valueOf(ordersDto.get(i).getPrice()), LENGTH_SPACE_EIGHTH_COLUMN));
+            stringBuilder.append(SPLIT_COLUMNS).append(
+                StringUtil.fillStringSpace(String.valueOf(ordersDto.get(i).getStatus()), LENGTH_SPACE_NINTH_COLUMN));
+            stringBuilder.append(SPLIT_COLUMNS).append(
+                StringUtil.fillStringSpace(String.valueOf(ordersDto.get(i).isDeleteStatus()), LENGTH_SPACE_TENTH_COLUMN))
                 .append(SPLIT_COLUMNS + END_OF_LINE);
-        }
+        });
         stringBuilder.append(line);
         return stringBuilder.toString();
     }
 
-    public static List<String> getListId(List<Order> orders) {
-        return orders.stream()
-            .map(order -> String.valueOf(order.getId()))
-            .collect(Collectors.toList());
-    }
 }

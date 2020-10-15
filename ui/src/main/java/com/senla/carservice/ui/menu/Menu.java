@@ -1,9 +1,14 @@
 package com.senla.carservice.ui.menu;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
+@Setter
 public class Menu {
 
     private static final String EXIT_MENU = "0. Exit program\n---------------";
@@ -15,27 +20,8 @@ public class Menu {
     private String name;
     private List<MenuItem> menuItems = new ArrayList<>();
 
-    public Menu() {
-    }
-
-    public Menu(String name) {
+    public Menu(final String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<MenuItem> getMenuItems() {
-        return menuItems;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setMenuItems(List<MenuItem> menuItems) {
-        this.menuItems = menuItems;
     }
 
     @Override
@@ -53,4 +39,5 @@ public class Menu {
         stringBuilder.append(EXIT_MENU);
         return stringBuilder.toString();
     }
+
 }

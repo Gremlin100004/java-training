@@ -27,7 +27,6 @@
     <suppress checks="StaticVariableName" files="java$"/>
     <suppress checks="JavadocStyle" files="java$"/>
     <suppress checks="EmptyForIteratorPad" files="java$"/>
-    <suppress checks="TodoComment" files="java$"/>
     <suppress checks="EmptyStatement" files="java$"/>
     <suppress checks="EmptyBlock" files="java$"/>
     <suppress checks="InnerAssignment" files="java$"/>
@@ -38,4 +37,5 @@
     <suppress checks="FileLength" files="properties$"/>
     <suppress checks="FileTabCharacter" files="properties$"/>
     <suppress checks="Translation" files="properties$"/>
+    <suppress checks="RegexpMultiline" files="java$"/>
 </suppressions>

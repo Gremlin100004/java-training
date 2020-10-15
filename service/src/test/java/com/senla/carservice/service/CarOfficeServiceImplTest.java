@@ -62,8 +62,11 @@ class CarOfficeServiceImplTest {
     @Test
     void CarOfficeServiceImpl_getNearestFreeDate() {
         Date leadTimeOrder = new Date();
-        Order order = new Order(PARAMETER_AUTOMAKER, PARAMETER_MODEL, PARAMETER_MODEL);
+        Order order = new Order();
         order.setId(ID_ORDER);
+        order.setAutomaker(PARAMETER_AUTOMAKER);
+        order.setModel(PARAMETER_MODEL);
+        order.setRegistrationNumber(PARAMETER_MODEL);
         order.setLeadTime(leadTimeOrder);
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
@@ -86,7 +89,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_getNearestFreeDate_businessException_numberMasters() {
+    void CarOfficeServiceImpl_getNearestFreeDate_zeroNumberMasters() {
         Mockito.doReturn(WRONG_NUMBER_MASTERS).when(masterDao).getNumberMasters();
         
         Assertions.assertThrows(BusinessException.class, () -> carOfficeService.getNearestFreeDate());
@@ -99,7 +102,7 @@ class CarOfficeServiceImplTest {
         Mockito.reset(masterDao);
     }
     @Test
-    void CarOfficeServiceImpl_getNearestFreeDate_businessException_numberPlaces() {
+    void CarOfficeServiceImpl_getNearestFreeDate_zeroNumberPlaces() {
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
         Mockito.doReturn(WRONG_NUMBER_PLACES).when(placeDao).getNumberPlaces();
         
@@ -115,7 +118,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_getNearestFreeDate_businessException_numberOrders() {
+    void CarOfficeServiceImpl_getNearestFreeDate_zeroNumberOrders() {
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
         Mockito.doReturn(WRONG_NUMBER_ORDERS).when(orderDao).getNumberOrders();
@@ -133,7 +136,7 @@ class CarOfficeServiceImplTest {
     }
     
     @Test
-    void CarOfficeServiceImpl_getNearestFreeDate_orderDao_getLastOrder_daoException() {
+    void CarOfficeServiceImpl_getNearestFreeDate_orderDao_getLastOrder_nullOrder() {
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
         Mockito.doReturn(RIGHT_NUMBER_ORDERS).when(orderDao).getNumberOrders();
@@ -182,7 +185,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_importEntities_orderDao_getAllRecords_daoException() {
+    void CarOfficeServiceImpl_importEntities_orderDao_getAllRecords_emptyRecords() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -202,7 +205,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_importEntities_csvMaster_importMasters_csvException() {
+    void CarOfficeServiceImpl_importEntities_csvMaster_wrongStructureCsvFile() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -224,7 +227,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_importEntities_csvPlace_importPlaces_csvException() {
+    void CarOfficeServiceImpl_importEntities_csvPlace_importPlaces_wrongStructureCsvFile() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -249,7 +252,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_importEntities_masterDao_getAllRecords_daoException() {
+    void CarOfficeServiceImpl_importEntities_masterDao_getAllRecords_emptyRecords() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -276,7 +279,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_importEntities_placeDao_getAllRecords_daoException() {
+    void CarOfficeServiceImpl_importEntities_placeDao_getAllRecords_emptyRecords() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -304,7 +307,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_importEntities_csvOrder_importOrder_csvException() {
+    void CarOfficeServiceImpl_importEntities_csvOrder_importOrder_wrongStructureCsvFile() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -358,7 +361,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_exportEntities_orderDao_getAllRecords_daoException() {
+    void CarOfficeServiceImpl_exportEntities_orderDao_getAllRecords_emptyRecords() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -375,7 +378,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_exportEntities_masterDao_getAllRecords_daoException() {
+    void CarOfficeServiceImpl_exportEntities_masterDao_getAllRecords_emptyRecords() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -394,7 +397,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_exportEntities_placeDao_getAllRecords_daoException() {
+    void CarOfficeServiceImpl_exportEntities_placeDao_getAllRecords_emptyRecords() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -415,7 +418,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_exportEntities_csvOrder_exportOrder_csvException() {
+    void CarOfficeServiceImpl_exportEntities_csvOrder_exportOrder_emptyRecords() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -438,7 +441,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_exportEntities_csvMaster_exportMasters_csvException() {
+    void CarOfficeServiceImpl_exportEntities_csvMaster_exportMasters_emptyRecords() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -462,7 +465,7 @@ class CarOfficeServiceImplTest {
     }
 
     @Test
-    void CarOfficeServiceImpl_exportEntities_csvPlace_exportPlaces_csvException() {
+    void CarOfficeServiceImpl_exportEntities_csvPlace_exportPlaces_emptyRecords() {
         List<Order> orders = getTestOrders();
         List<Master> masters = getTestMasters();
         List<Place> places = getTestPlaces();
@@ -487,20 +490,25 @@ class CarOfficeServiceImplTest {
     }
 
     private Master getTestMaster() {
-        Master master = new Master(PARAMETER_NAME);
+        Master master = new Master();
+        master.setName(PARAMETER_NAME);
         master.setId(ID_MASTER);
         return master;
     }
 
     private Order getTestOrder() {
-        Order order = new Order(PARAMETER_AUTOMAKER, PARAMETER_MODEL, PARAMETER_REGISTRATION_NUMBER);
+        Order order = new Order();
         order.setId(ID_ORDER);
+        order.setAutomaker(PARAMETER_AUTOMAKER);
+        order.setModel(PARAMETER_MODEL);
+        order.setRegistrationNumber(PARAMETER_REGISTRATION_NUMBER);
         return order;
     }
 
     private Place getTestPlace() {
-        Place place = new Place(NUMBER_PLACE);
+        Place place = new Place();
         place.setId(ID_PLACE);
+        place.setNumber(NUMBER_PLACE);
         return place;
     }
 

@@ -1,25 +1,28 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.domain.Master;
+import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.dto.OrderDto;
+import com.senla.carservice.service.enumaration.MasterSortParameter;
 
 import java.util.Date;
 import java.util.List;
 
 public interface MasterService {
 
-    List<Master> getMasters();
+    List<MasterDto> getMasters();
 
-    void addMaster(String name);
+    MasterDto addMaster(MasterDto masterDto);
 
-    List<Master> getFreeMastersByDate(Date executeDate);
+    List<MasterDto> getFreeMastersByDate(Date executeDate);
 
     Long getNumberFreeMastersByDate(Date startDate);
 
-    void deleteMaster(Long idMaster);
+    void deleteMaster(Long masterId);
 
-    List<Master> getMasterByAlphabet();
+    List<MasterDto> getSortMasters(MasterSortParameter sortParameter);
 
-    List<Master> getMasterByBusy();
+    List<OrderDto> getMasterOrders(Long masterId);
 
-    Long getNumberMasters();
+    void checkMasters();
+
 }

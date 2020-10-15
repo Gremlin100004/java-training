@@ -1,36 +1,108 @@
 package com.senla.carservice.ui.menu;
 
+import com.senla.carservice.dto.MasterDto;
+import com.senla.carservice.dto.OrderDto;
+import com.senla.carservice.dto.PlaceDto;
+import com.senla.carservice.ui.client.CarOfficeClient;
+import com.senla.carservice.ui.client.MasterClient;
+import com.senla.carservice.ui.client.OrderClient;
+import com.senla.carservice.ui.client.PlaceClient;
+import com.senla.carservice.ui.exception.BusinessException;
+import com.senla.carservice.ui.util.StringMaster;
+import com.senla.carservice.ui.util.StringOrder;
+import com.senla.carservice.ui.util.StringPlaces;
+import com.senla.carservice.util.DateUtil;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.senla.carservice.controller.CarOfficeController;
-import com.senla.carservice.controller.MasterController;
-import com.senla.carservice.controller.OrderController;
-import com.senla.carservice.controller.PlaceController;
 import com.senla.carservice.ui.util.Printer;
 import com.senla.carservice.ui.util.ScannerUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
+@NoArgsConstructor
+@Slf4j
 public class Builder {
 
     private static final int INDEX_OFFSET = 1;
-    private static final int MAX_INDEX = 999;
+    private static final String DATE_INPUT_HEADER = "Enter the date in format dd.mm.yyyy, example:\"10.10.2010\"";
+    private static final String NAME_INPUT_HEADER = "Enter the name of master";
+    private static final String NUMBER_PLACE_INPUT_HEADER = "Enter the number of place";
+    private static final String ORDER_SUCCESS_SERVER_MESSAGE = "The order has been completed successfully";
+    private static final String ORDER_CLOSE_INDEX_HEADER = "Enter the index number of the order to close:";
+    private static final String WARNING_ORDER_MESSAGE = "There is no such order";
+    private static final String ORDER_TIME_CHANGE_SUCCESS_SERVER_MESSAGE = "The order lead time has been changed " +
+        "successfully";
+    private static final String ORDER_SHIFT_TIME_INDEX_HEADER = "Enter the index number of the order to shift time:";
+    private static final String PLANING_TIME_START_INPUT_HEADER = "Enter the planing time start to execute the order in " +
+        "format \"yyyy-mm-dd hh:mm\", example:\"2010-10-10 10:00\"";
+    private static final String LEAD_TIME_INPUT_HEADER = "Enter the lead time the order in format \"yyyy-mm-dd hh:mm\", " +
+        "example:\"2010-10-10 10:00\"";
+    private static final String MASTER_INDEX_INPUT_HEADER = "Enter the index number of the master to view orders:";
+    private static final String WARNING_MASTER_MESSAGE = "There is no such master";
+    private static final String ORDER_INDEX_FOR_VIEW_MASTERS_INPUT_HEADER = "Enter the index number of the order " +
+        "to view masters:";
+    private static final String START_DATE_INPUT_HEADER = "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
+        " example:\"2010-10-10 10:00\"";
+    private static final String END_DATE_INPUT_HEADER = "Enter the end date of period in format yyyy-mm-dd hh:mm," +
+        " example:\"2010-10-10 10:00\"";
+    private static final String STOP_DELETING_MENU_ITEM = "0. Stop deleting";
+    private static final String ORDER_DELETE_SUCCESS_SERVER_MESSAGE = "The order has been deleted successfully";
+    private static final String ORDER_DELETE_INDEX_HEADER = "Enter the index number of the order to delete:";
+    private static final String MASTER_DELETE_INDEX_HEADER = "Enter the index number of the master to delete:";
+    private static final String PLACE_DELETE_INDEX_HEADER = "Enter the index number of the place to delete:";
+    private static final String WARNING_PLACE_MESSAGE = "There is no such place";
+    private static final String PREVIOUS_MENU_MENU_ITEM = "0. Previous menu";
+    private static final String TRANSFERRED_TO_EXECUTION_STATUS_SUCCESS_SERVER_MESSAGE = "The order has been transferred" +
+        " to execution status successfully";
+    private static final String ORDER_CHANGE_STATUS_INDEX_HEADER = "Enter the index number of the order to change status:";
+    private static final String ORDER_CANCEL_SUCCESS_SERVER_MESSAGE = "The order has been canceled successfully";
+    private static final String ORDER_CANCEL_INDEX_HEADER = "Enter the index number of the order to cancel:";
+    private static final String ORDER_PRICE_INPUT_HEADER = "Enter the price:";
+    private static final String ORDER_AUTOMAKER_INPUT_HEADER = "Enter the automaker of car:";
+    private static final String ORDER_MODEL_INPUT_HEADER = "Enter the model of car:";
+    private static final String ORDER_REGISTRATION_NUMBER_INPUT_HEADER = "Enter the registration number of car, " +
+        "example: 1111 AB-7";
+    private static final String VERIFICATION_SUCCESS_SERVER_MESSAGE = "verification was successfully";
+    private static final String STOP_ADDING_MENU_ITEM = "0. Stop adding";
+    private static final String WARNING_COUNT_MASTER_MESSAGE = "You must add at least one master!!!";
+    private static final String WARNING_EXIST_MASTER_MESSAGE = "This master already exists";
+    private static final String MASTER_ADD_INDEX_HEADER = "Enter the index number of the master to add:";
+    private static final String WARNING_DELETE_MASTER_MESSAGE = "Master has been deleted";
+    private static final String PLACE_ADD_INDEX_HEADER = "Enter the index number of the place to add in order:";
+    private static final String PARAMETER_SORT_MASTERS_BY_NAME = "NAME";
+    private static final String PARAMETER_SORT_MASTERS_BY_BUSY = "BUSY_STATUS";
+    private static final String PARAMETER_SORT_ORDERS_BY_FILING_DATE = "BY_FILING_DATE";
+    private static final String PARAMETER_SORT_ORDERS_BY_EXECUTION_DATE = "BY_EXECUTION_DATE";
+    private static final String PARAMETER_SORT_ORDERS_BY_PLANNED_START_DATE = "BY_PLANNED_START_DATE";
+    private static final String PARAMETER_SORT_ORDERS_BY_PRICE = "BY_PRICE";
+    private static final String PARAMETER_SORT_EXECUTE_ORDERS_BY_FILING_DATE = "EXECUTE_ORDERS_BY_FILING_DATE";
+    private static final String PARAMETER_SORT_EXECUTE_ORDERS_BY_EXECUTION_DATE = "EXECUTE_ORDERS_BY_EXECUTION_DATE";
+    private static final String PARAMETER_SORT_EXECUTE_ORDERS_BY_PRICE = "EXECUTE_ORDERS_BY_PRICE";
+    private static final String PARAMETER_SORT_COMPLETED_ORDERS_BY_FILING_DATE = "COMPLETED_ORDERS_BY_FILING_DATE";
+    private static final String PARAMETER_SORT_COMPLETED_ORDERS_BY_EXECUTION_DATE = "COMPLETED_ORDERS_BY_EXECUTION_DATE";
+    private static final String PARAMETER_SORT_COMPLETED_ORDERS_BY_PRICE = "COMPLETED_ORDERS_BY_PRICE";
+    private static final String PARAMETER_SORT_CANCELED_ORDERS_BY_FILING_DATE = "CANCELED_ORDERS_BY_FILING_DATE";
+    private static final String PARAMETER_SORT_CANCELED_ORDERS_BY_EXECUTION_DATE = "CANCELED_ORDERS_BY_EXECUTION_DATE";
+    private static final String PARAMETER_SORT_CANCELED_ORDERS_BY_PRICE = "CANCELED_ORDERS_BY_PRICE";
+    private static final String PARAMETER_SORT_DELETED_ORDERS_BY_FILING_DATE = "DELETED_ORDERS_BY_FILING_DATE";
+    private static final String PARAMETER_SORT_DELETED_ORDERS_BY_EXECUTION_DATE = "DELETED_ORDERS_BY_EXECUTION_DATE";
+    private static final String PARAMETER_SORT_DELETED_ORDERS_BY_PRICE = "DELETED_ORDERS_BY_PRICE";
+
     private Menu rootMenu;
     @Autowired
-    private CarOfficeController carOfficeController;
+    private CarOfficeClient carOfficeClient;
     @Autowired
-    private MasterController masterController;
+    private MasterClient masterClient;
     @Autowired
-    private OrderController orderController;
+    private OrderClient orderClient;
     @Autowired
-    private PlaceController placeController;
-
-    public Builder() {
-    }
+    private PlaceClient placeClient;
 
     public void buildMenu() {
         this.rootMenu = new Menu(MenuTittle.CAR_SERVICE_MENU.getValue());
@@ -48,11 +120,11 @@ public class Builder {
         createItemMastersMenu(mastersMenu);
         createItemPlacesMenu(placesMenu);
         createItemOrderMenu(new ArrayList<>(Arrays.asList(ordersMenu, listOrderMenu,
-                                                          executedOrderMenu, periodOrderMenu)));
+            executedOrderMenu, periodOrderMenu)));
         createItemListOrderMenu(listOrderMenu, ordersMenu);
         createItemExecutedOrderMenu(executedOrderMenu, ordersMenu);
         createItemPeriodOrderMenu(new ArrayList<>(Arrays.asList(periodOrderMenu, completedOrderMenu,
-                                                                deletedOrderMenu, canceledOrderMenu, ordersMenu)));
+            deletedOrderMenu, canceledOrderMenu, ordersMenu)));
         createItemCompletedOrderMenu(completedOrderMenu, periodOrderMenu);
         createItemDeletedOrderMenu(deletedOrderMenu, periodOrderMenu);
         createItemCanceledOrderMenu(canceledOrderMenu, periodOrderMenu);
@@ -65,81 +137,83 @@ public class Builder {
     private void setMenuItemRootMenu(Menu mastersMenu, Menu ordersMenu, Menu placesMenu) {
         this.rootMenu.getMenuItems().add(
             new MenuItem(MenuTittle.MASTERS.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), mastersMenu));
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), mastersMenu));
         this.rootMenu.getMenuItems().add(
             new MenuItem(MenuTittle.ORDERS.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), ordersMenu));
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), ordersMenu));
         this.rootMenu.getMenuItems().add(
             new MenuItem(MenuTittle.PLACES.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), placesMenu));
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), placesMenu));
         this.rootMenu.getMenuItems().add(
             new MenuItem(MenuTittle.GET_THE_NUMBER_OF_AVAILABLE_SEATS_AT_THE_CAR_SERVICE.getValue(), () -> {
-                String date =
-                    ScannerUtil.getStringDateUser("Enter the date in format dd.mm.yyyy, example:\"10.10.2010\"", false);
-                Printer.printInfo(carOfficeController.getFreePlacesMastersByDate(date));
+                String date = ScannerUtil.getStringDateUser(DATE_INPUT_HEADER, false);
+                Printer.printInfo(carOfficeClient.getFreePlacesMastersByDate(date));
             }, this.rootMenu));
     }
 
     private void setMenuItemRootMenuPart() {
         this.rootMenu.getMenuItems().add(new MenuItem(MenuTittle.GET_THE_CLOSEST_FREE_DATE.getValue(),
-                                                      () -> Printer.printInfo(carOfficeController.getNearestFreeDate()),
-                                                      this.rootMenu));
+                () -> Printer.printInfo(carOfficeClient.getNearestFreeDate()), this.rootMenu));
         this.rootMenu.getMenuItems().add(
             new MenuItem(MenuTittle.EXPORT_OF_ALL_ENTITIES.getValue(),
-                         () -> Printer.printInfo(carOfficeController.exportEntities()), this.rootMenu));
+                () -> Printer.printInfo(carOfficeClient.exportEntities()), this.rootMenu));
         this.rootMenu.getMenuItems().add(
             new MenuItem(MenuTittle.IMPORT_OF_ALL_ENTITIES.getValue(),
-                         () -> Printer.printInfo(carOfficeController.importEntities()), this.rootMenu));
+                () -> Printer.printInfo(carOfficeClient.importEntities()), this.rootMenu));
     }
 
     private void createItemMastersMenu(Menu mastersMenu) {
         mastersMenu.setMenuItems(new ArrayList<>(Arrays.asList(
             new MenuItem(MenuTittle.ADD_MASTER.getValue(), () -> Printer
-                .printInfo(masterController.addMaster(ScannerUtil.getStringUser("Enter the name of master", false))),
+                .printInfo(masterClient.addMaster(ScannerUtil.getStringUser(NAME_INPUT_HEADER, false))),
                          mastersMenu), new MenuItem(MenuTittle.DELETE_MASTER.getValue(), () -> {
-                if (isCheckMaster()) {
+                if (isCheckMasters()) {
                     return;
                 }
                 deleteMaster();
             }, mastersMenu),
             new MenuItem(MenuTittle.SHOW_A_LIST_OF_MASTERS_SORTED_ALPHABETICALLY.getValue(),
-                         () -> Printer.printInfo(masterController.getMasterByAlphabet()), mastersMenu),
+                () -> Printer.printInfo(masterClient.getSortMasters(PARAMETER_SORT_MASTERS_BY_NAME)), mastersMenu),
             new MenuItem(MenuTittle.SHOW_LIST_OF_MASTERS_SORTED_BY_BUSY.getValue(),
-                         () -> Printer.printInfo(masterController.getMasterByBusy()), mastersMenu),
-            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(), () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()),
-                         this.rootMenu))));
+                () -> Printer.printInfo(masterClient.getSortMasters(PARAMETER_SORT_MASTERS_BY_BUSY)), mastersMenu),
+            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), this.rootMenu))));
     }
 
     private void createItemPlacesMenu(Menu placesMenu) {
         placesMenu.getMenuItems().add(
-            new MenuItem(MenuTittle.SHOW_LIST_OF_PLACES.getValue(),
-                         () -> Printer.printInfo(placeController.getPlaces()), placesMenu));
+            new MenuItem(MenuTittle.SHOW_LIST_OF_PLACES.getValue(), () -> {
+                try {
+                    Printer.printInfo(StringPlaces.getStringFromPlaces(placeClient.getPlaces()));
+                } catch (BusinessException exception) {
+                 Printer.printInfo(exception.getMessage());
+                }
+            }, placesMenu));
         placesMenu.getMenuItems().add(
             new MenuItem(MenuTittle.ADD_PLACE.getValue(), () ->
-                Printer.printInfo(placeController.addPlace(ScannerUtil.getIntUser("Enter the number of place"))),
+                Printer.printInfo(placeClient.addPlace(ScannerUtil.getIntUser(NUMBER_PLACE_INPUT_HEADER))),
                          placesMenu));
         placesMenu.getMenuItems().add(new MenuItem(MenuTittle.DELETE_PLACE.getValue(), () -> {
-            if (isCheckPlace()) {
+            if (isCheckPlaces()) {
                 return;
             }
             deletePlace();
         }, placesMenu));
         placesMenu.getMenuItems().add(
             new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), this.rootMenu));
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), this.rootMenu));
     }
 
     private void createItemOrderMenu(List<Menu> menus) {
         menus.get(0).setMenuItems(new ArrayList<>(Arrays.asList(
             new MenuItem(MenuTittle.LIST_OF_ORDERS.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(1)),
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(1)),
             new MenuItem(MenuTittle.LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(2)),
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(2)),
             new MenuItem(MenuTittle.LIST_OF_ORDERS_FOR_A_PERIOD_OF_TIME.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(3)),
-            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(), () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()),
-                         this.rootMenu)
-                                                               )));
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(3)),
+            new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), this.rootMenu))));
     }
 
     private void createItemListOrderMenu(Menu listOrderMenu, Menu ordersMenu) {
@@ -155,14 +229,14 @@ public class Builder {
     private void addItemListOrderMenuPartOne(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SHOW_ORDERS.getValue(), () -> {
-                if (isCheckOrder()) {
+                if (isCheckOrders()) {
                     return;
                 }
-                Printer.printInfo(orderController.getOrders().get(0));
+                Printer.printInfo(StringOrder.getStringFromOrder(orderClient.getOrders()));
             }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.ADD_ORDER.getValue(), this::addOrder, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.DELETE_THE_ORDER.getValue(), () -> {
-            if (isCheckOrder()) {
+            if (isCheckOrders()) {
                 return;
             }
             deleteOrder();
@@ -171,29 +245,27 @@ public class Builder {
 
     private void addItemListOrderMenuPartTwo(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.CLOSE_THE_ORDER.getValue(), () -> {
-            if (isCheckOrder()) {
+            if (isCheckOrders()) {
                 return;
             }
-            List<String> listData = orderController.getOrders();
-            Printer.printInfo(listData.get(0));
-            listData.remove(0);
-            List<Long> listId = getIdFromListString(listData);
+            List<OrderDto> ordersDto = orderClient.getOrders();
+            Printer.printInfo(StringOrder.getStringFromOrder(ordersDto));
             int index;
             String message = "";
-            while (!message.equals(" -the order has been completed.")) {
-                index = ScannerUtil.getIntUser("Enter the index number of the order to close:") - INDEX_OFFSET;
+            while (!message.equals(ORDER_SUCCESS_SERVER_MESSAGE)) {
+                index = ScannerUtil.getIntUser(ORDER_CLOSE_INDEX_HEADER) - INDEX_OFFSET;
                 if (index + INDEX_OFFSET == 0) {
                     return;
-                } else if (index >= listId.size()) {
-                    Printer.printInfo("There is no such order");
+                } else if (index >= ordersDto.size()) {
+                    Printer.printInfo(WARNING_ORDER_MESSAGE);
                     continue;
                 }
-                message = orderController.closeOrder(listId.get(index));
+                message = orderClient.closeOrder(ordersDto.get(index).getId());
                 Printer.printInfo(message);
             }
         }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.CANCEL_THE_ORDER.getValue(), () -> {
-            if (isCheckOrder()) {
+            if (isCheckOrders()) {
                 return;
             }
             cancelOrder();
@@ -203,36 +275,34 @@ public class Builder {
     private void addItemListOrderMenuPartThree(Menu listOrderMenu) {
         listOrderMenu.getMenuItems()
             .add(new MenuItem(MenuTittle.TRANSFER_THE_ORDER_TO_EXECUTION_STATUS.getValue(), () -> {
-                if (isCheckOrder()) {
+                if (isCheckOrders()) {
                     return;
                 }
                 completeOrder();
             }, listOrderMenu));
         listOrderMenu.getMenuItems().add(new MenuItem(MenuTittle.SHIFT_THE_LEAD_TIME.getValue(), () -> {
-            if (isCheckOrder()) {
+            if (isCheckOrders()) {
                 return;
             }
-            List<String> listData = orderController.getOrders();
-            Printer.printInfo(listData.get(0));
-            listData.remove(0);
-            List<Long> listId = getIdFromListString(listData);
+            List<OrderDto> ordersDto = orderClient.getOrders();
+            Printer.printInfo(StringOrder.getStringFromOrder(ordersDto));
             String message = "";
-            while (!message.equals(" -the order lead time has been changed.")) {
-                int index = ScannerUtil.getIntUser("Enter the index number of the order to shift time:") -
+
+            while (!message.equals(ORDER_TIME_CHANGE_SUCCESS_SERVER_MESSAGE)) {
+                int index = ScannerUtil.getIntUser(ORDER_SHIFT_TIME_INDEX_HEADER) -
                             INDEX_OFFSET;
                 if (index + INDEX_OFFSET == 0) {
                     return;
-                } else if (index >= listId.size()) {
-                    Printer.printInfo("There is no such order");
+                } else if (index >= ordersDto.size()) {
+                    Printer.printInfo(WARNING_ORDER_MESSAGE);
                     continue;
                 }
-                message = orderController.shiftLeadTime(
-                    listId.get(index), ScannerUtil.getStringDateUser(
-                        "Enter the planing time start to execute the order in format " +
-                        "\"yyyy-mm-dd hh:mm\", example:\"2010-10-10 10:00\"", true),
-                    ScannerUtil.getStringDateUser(
-                        "Enter the lead time the order in format" + " \"yyyy-mm-dd hh:mm\"," +
-                        " example:\"2010-10-10 10:00\"", true));
+                OrderDto orderDto = ordersDto.get(index);
+                String executionStartTime = ScannerUtil.getStringDateUser(PLANING_TIME_START_INPUT_HEADER, true);
+                String leadTime = ScannerUtil.getStringDateUser(LEAD_TIME_INPUT_HEADER, true);
+                orderDto.setExecutionStartTime(executionStartTime);
+                orderDto.setLeadTime(leadTime);
+                message = orderClient.shiftLeadTime(orderDto);
                 Printer.printInfo(message);
             }
         }, listOrderMenu));
@@ -241,35 +311,41 @@ public class Builder {
     private void addItemListOrderMenuPartFour(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_FILING_DATE.getValue(),
-                         () -> Printer.printInfo(orderController.getOrdersSortByFilingDate()), listOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrders(PARAMETER_SORT_ORDERS_BY_FILING_DATE)),
+                     listOrderMenu));
         listOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_EXECUTION_DATE.getValue(),
-                         () -> Printer.printInfo(orderController.getOrdersSortByExecutionDate()), listOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrders(PARAMETER_SORT_ORDERS_BY_EXECUTION_DATE)),
+                     listOrderMenu));
         listOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_PLANNED_START_DATE.getValue(),
-                         () -> Printer.printInfo(orderController.getOrdersSortByPlannedStartDate()), listOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrders(PARAMETER_SORT_ORDERS_BY_PLANNED_START_DATE)),
+                     listOrderMenu));
         listOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SHOW_ORDERS_SORT_BY_PRICE.getValue(),
-                         () -> Printer.printInfo(orderController.getOrdersSortByPrice()), listOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrders(PARAMETER_SORT_ORDERS_BY_PRICE)),
+                     listOrderMenu));
     }
 
     private void addItemListOrderMenuPartFive(Menu listOrderMenu) {
         listOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.GET_ORDERS_EXECUTED_CONCRETE_MASTER.getValue(), () -> {
                 int index;
-                if (isCheckMaster()) {
+                if (isCheckMasters()) {
                     return;
                 }
-                List<String> listData = masterController.getMasters();
-                Printer.printInfo(listData.get(0));
-                listData.remove(0);
-                List<Long> listId = getIdFromListString(listData);
-                index = ScannerUtil.getIntUser("Enter the index number of the master to view orders:") -
-                        INDEX_OFFSET;
-                if (index >= listId.size() || index < 0) {
-                    Printer.printInfo("There is no such master");
-                } else {
-                    Printer.printInfo(orderController.getMasterOrders(listId.get(index)));
+                try {
+                    List<MasterDto> mastersDto = masterClient.getMasters();
+                    Printer.printInfo(StringMaster.getStringFromMasters(mastersDto));
+                    index = ScannerUtil.getIntUser(MASTER_INDEX_INPUT_HEADER) -
+                            INDEX_OFFSET;
+                    if (index >= mastersDto.size() || index < 0) {
+                        Printer.printInfo(WARNING_MASTER_MESSAGE);
+                    } else {
+                        Printer.printInfo(masterClient.getMasterOrders(mastersDto.get(index).getId()));
+                    }
+                } catch (BusinessException exception) {
+                    Printer.printInfo(exception.getMessage());
                 }
             }, listOrderMenu));
     }
@@ -278,19 +354,17 @@ public class Builder {
         listOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.GET_A_MASTER_PERFORMING_A_SPECIFIC_ORDER.getValue(), () -> {
                 int index;
-                if (isCheckOrder()) {
+                if (isCheckOrders()) {
                     return;
                 }
-                List<String> listData = orderController.getOrders();
-                Printer.printInfo(listData.get(0));
-                listData.remove(0);
-                List<Long> listId = getIdFromListString(listData);
-                index = ScannerUtil.getIntUser("Enter the index number of the order to view masters:") -
+                List<OrderDto> ordersDto = orderClient.getOrders();
+                Printer.printInfo(StringOrder.getStringFromOrder(ordersDto));
+                index = ScannerUtil.getIntUser(ORDER_INDEX_FOR_VIEW_MASTERS_INPUT_HEADER) -
                         INDEX_OFFSET;
-                if (index >= listId.size() || index < 0) {
-                    Printer.printInfo("There is no such order");
+                if (index >= ordersDto.size() || index < 0) {
+                    Printer.printInfo(WARNING_ORDER_MESSAGE);
                 } else {
-                    Printer.printInfo(orderController.getOrderMasters(listId.get(index)));
+                    Printer.printInfo(orderClient.getOrderMasters(ordersDto.get(index).getId()));
                 }
             }, listOrderMenu));
     }
@@ -298,31 +372,34 @@ public class Builder {
     private void addItemListOrderMenuPartSeven(Menu listOrderMenu, Menu ordersMenu) {
         listOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), ordersMenu));
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), ordersMenu));
     }
 
     private void createItemExecutedOrderMenu(Menu executedOrderMenu, Menu ordersMenu) {
         executedOrderMenu.setMenuItems(new ArrayList<>(Arrays.asList(
             new MenuItem(MenuTittle.GET_LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME_SORT_BY_FILING_DATE.getValue(),
-                         () -> Printer.printInfo(orderController.getExecuteOrderFilingDate()), executedOrderMenu),
+                () -> Printer.printInfo(orderClient.getSortOrders(PARAMETER_SORT_EXECUTE_ORDERS_BY_FILING_DATE)),
+                    executedOrderMenu),
             new MenuItem(MenuTittle.GET_LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME_SORT_BY_EXECUTION_DATE.getValue(),
-                         () -> Printer.printInfo(orderController.getExecuteOrderExecutionDate()), executedOrderMenu),
+                () -> Printer.printInfo(orderClient.getSortOrders(PARAMETER_SORT_EXECUTE_ORDERS_BY_EXECUTION_DATE)),
+                    executedOrderMenu),
             new MenuItem(MenuTittle.GET_LIST_OF_ORDERS_EXECUTED_AT_A_GIVEN_TIME_SORT_BY_PRICE.getValue(),
-                         () -> Printer.printInfo(orderController.getExecuteOrderExecutionDate()), executedOrderMenu),
+                () -> Printer.printInfo(orderClient.getSortOrders(PARAMETER_SORT_EXECUTE_ORDERS_BY_PRICE)),
+                    executedOrderMenu),
             new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), ordersMenu))));
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), ordersMenu))));
     }
 
     private void createItemPeriodOrderMenu(List<Menu> menus) {
         menus.get(0).setMenuItems(new ArrayList<>(Arrays.asList(
             new MenuItem(MenuTittle.COMPLETED_ORDERS.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(1)),
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(1)),
             new MenuItem(MenuTittle.DELETED_ORDERS.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(2)),
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(2)),
             new MenuItem(MenuTittle.CANCELED_ORDERS.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(3)),
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(3)),
             new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(4)))));
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), menus.get(4)))));
     }
 
     private void createItemCompletedOrderMenu(Menu completedOrderMenu, Menu periodOrderMenu) {
@@ -333,37 +410,25 @@ public class Builder {
     private void addItemCompletedOrderPartOne(Menu completedOrderMenu) {
         completedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_FILING_DATE.getValue(),
-                         () -> Printer.printInfo(orderController.getCompletedOrdersFilingDate(
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true),
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true))), completedOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrdersByPeriod(PARAMETER_SORT_COMPLETED_ORDERS_BY_FILING_DATE,
+                    ScannerUtil.getStringDateUser(START_DATE_INPUT_HEADER, true),
+                    ScannerUtil.getStringDateUser(END_DATE_INPUT_HEADER, true))), completedOrderMenu));
         completedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.getValue(),
-                         () -> Printer.printInfo(orderController.getCompletedOrdersExecutionDate(
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true),
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true))), completedOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrdersByPeriod(PARAMETER_SORT_COMPLETED_ORDERS_BY_EXECUTION_DATE,
+                    ScannerUtil.getStringDateUser(START_DATE_INPUT_HEADER, true),
+                    ScannerUtil.getStringDateUser(END_DATE_INPUT_HEADER, true))), completedOrderMenu));
     }
 
     private void addItemCompletedOrderPartTwo(Menu completedOrderMenu, Menu periodOrderMenu) {
         completedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_PRICE.getValue(),
-                         () -> Printer.printInfo(orderController.getCompletedOrdersPrice(
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true),
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true))), completedOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrdersByPeriod(PARAMETER_SORT_COMPLETED_ORDERS_BY_PRICE,
+                    ScannerUtil.getStringDateUser(START_DATE_INPUT_HEADER, true),
+                    ScannerUtil.getStringDateUser(END_DATE_INPUT_HEADER, true))), completedOrderMenu));
         completedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
     }
 
     private void createItemDeletedOrderMenu(Menu deletedOrderMenu, Menu periodOrderMenu) {
@@ -374,37 +439,25 @@ public class Builder {
     private void addItemDeletedOrderPartOne(Menu deletedOrderMenu) {
         deletedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_FILING_DATE.getValue(),
-                         () -> Printer.printInfo(orderController.getDeletedOrdersFilingDate(
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true),
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true))), deletedOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrdersByPeriod(PARAMETER_SORT_DELETED_ORDERS_BY_FILING_DATE,
+                    ScannerUtil.getStringDateUser(START_DATE_INPUT_HEADER, true),
+                    ScannerUtil.getStringDateUser(END_DATE_INPUT_HEADER, true))), deletedOrderMenu));
         deletedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.getValue(),
-                         () -> Printer.printInfo(orderController.getDeletedOrdersExecutionDate(
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true),
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true))), deletedOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrdersByPeriod(PARAMETER_SORT_DELETED_ORDERS_BY_EXECUTION_DATE,
+                    ScannerUtil.getStringDateUser(START_DATE_INPUT_HEADER, true),
+                    ScannerUtil.getStringDateUser(END_DATE_INPUT_HEADER, true))), deletedOrderMenu));
     }
 
     private void addItemDeletedOrderPartTwo(Menu deletedOrderMenu, Menu periodOrderMenu) {
         deletedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_PRICE.getValue(),
-                         () -> Printer.printInfo(orderController.getDeletedOrdersPrice(
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true),
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true))), deletedOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrdersByPeriod(PARAMETER_SORT_DELETED_ORDERS_BY_PRICE,
+                    ScannerUtil.getStringDateUser(START_DATE_INPUT_HEADER, true),
+                    ScannerUtil.getStringDateUser(END_DATE_INPUT_HEADER, true))), deletedOrderMenu));
         deletedOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
     }
 
     private void createItemCanceledOrderMenu(Menu canceledOrderMenu, Menu periodOrderMenu) {
@@ -415,256 +468,267 @@ public class Builder {
     private void addItemCanceledOrderPartOne(Menu canceledOrderMenu) {
         canceledOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_FILING_DATE.getValue(),
-                         () -> Printer.printInfo(orderController.getCanceledOrdersFilingDate(
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true),
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true))), canceledOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrdersByPeriod(PARAMETER_SORT_CANCELED_ORDERS_BY_FILING_DATE,
+                    ScannerUtil.getStringDateUser(START_DATE_INPUT_HEADER, true),
+                    ScannerUtil.getStringDateUser(END_DATE_INPUT_HEADER, true))), canceledOrderMenu));
         canceledOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_EXECUTION_DATE.getValue(),
-                         () -> Printer.printInfo(orderController.getCanceledOrdersExecutionDate(
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the beginning date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true),
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format yyyy-mm-dd hh:mm," +
-                                 " example:\"2010-10-10 10:00\"", true))), canceledOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrdersByPeriod(PARAMETER_SORT_CANCELED_ORDERS_BY_EXECUTION_DATE,
+                    ScannerUtil.getStringDateUser(START_DATE_INPUT_HEADER, true),
+                    ScannerUtil.getStringDateUser(END_DATE_INPUT_HEADER, true))), canceledOrderMenu));
     }
 
     private void addItemCanceledOrderPartTwo(Menu canceledOrderMenu, Menu periodOrderMenu) {
         canceledOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.SORT_BY_PRICE.getValue(),
-                         () -> Printer.printInfo(orderController.getCanceledOrdersPrice(
-                             ScannerUtil.getStringDateUser("Enter the beginning date of period in " +
-                                                           "format dd.mm.yyyy, example:\"10.10.2010 10:00\"", true),
-                             ScannerUtil.getStringDateUser(
-                                 "Enter the end date of period in format yyyy-mm-dd hh:mm, " +
-                                 "example:\"2010-10-10 10:00\"", true))), canceledOrderMenu));
+                () -> Printer.printInfo(orderClient.getSortOrdersByPeriod(PARAMETER_SORT_CANCELED_ORDERS_BY_PRICE,
+                    ScannerUtil.getStringDateUser(START_DATE_INPUT_HEADER, true),
+                    ScannerUtil.getStringDateUser(END_DATE_INPUT_HEADER, true))), canceledOrderMenu));
         canceledOrderMenu.getMenuItems().add(
             new MenuItem(MenuTittle.PREVIOUS_MENU.getValue(),
-                         () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
+                () -> Printer.printInfo(MenuTittle.GO_TO_MENU.getValue()), periodOrderMenu));
     }
 
-
     private void deleteOrder() {
-        List<String> listData = orderController.getOrders();
-        Printer.printInfo(listData.get(0));
-        listData.remove(0);
-        List<Long> listId = getIdFromListString(listData);
+        log.info("[deleteOrder]");
+        List<OrderDto> ordersDto = orderClient.getOrders();
+        Printer.printInfo(StringOrder.getStringFromOrder(ordersDto));
+        Printer.printInfo(STOP_DELETING_MENU_ITEM);
         String message = "";
         int index;
-        while (!message.equals(" -the order has been deleted.")) {
-            index = ScannerUtil.getIntUser("Enter the index number of the order to delete:") - INDEX_OFFSET;
+        while (!message.equals(ORDER_DELETE_SUCCESS_SERVER_MESSAGE)) {
+            index = ScannerUtil.getIntUser(ORDER_DELETE_INDEX_HEADER) - INDEX_OFFSET;
             if (index + INDEX_OFFSET == 0) {
                 return;
-            } else if (index >= listId.size()) {
-                Printer.printInfo("There is no such order");
+            } else if (index >= ordersDto.size()) {
+                Printer.printInfo(WARNING_ORDER_MESSAGE);
                 continue;
             }
-            message = orderController.deleteOrder(listId.get(index));
+            message = orderClient.deleteOrder(ordersDto.get(index).getId());
             Printer.printInfo(message);
         }
     }
 
     private void deleteMaster() {
-        List<String> listData = masterController.getMasters();
-        Printer.printInfo(listData.get(0));
-        listData.remove(0);
-        List<Long> listId = getIdFromListString(listData);
-        int index = ScannerUtil.getIntUser("Enter the index number of the master to delete:") - INDEX_OFFSET;
-        if (index >= listId.size() || index < 0) {
-            Printer.printInfo("There is no such master");
-        } else {
-            Printer.printInfo(masterController.deleteMaster(listId.get(index)));
+        log.info("[deleteMaster]");
+        try {
+            List<MasterDto> mastersDto = masterClient.getMasters();
+            Printer.printInfo(StringMaster.getStringFromMasters(mastersDto));
+            int index = ScannerUtil.getIntUser(MASTER_DELETE_INDEX_HEADER) - INDEX_OFFSET;
+            if (index >= mastersDto.size() || index < 0) {
+                Printer.printInfo(WARNING_MASTER_MESSAGE);
+            } else {
+                Printer.printInfo(masterClient.deleteMaster(mastersDto.get(index).getId()));
+            }
+        } catch (BusinessException exception) {
+            log.error(exception.getMessage());
+            Printer.printInfo(exception.getMessage());
         }
     }
 
     private void deletePlace() {
-        List<String> listData = placeController.getPlacesWithId();
-        Printer.printInfo(listData.get(0));
-        listData.remove(0);
-        List<Long> listId = getIdFromListString(listData);
-        int index = ScannerUtil.getIntUser("Enter the index number of the place to delete:") - INDEX_OFFSET;
-        if (index >= listId.size() || index < 0) {
-            Printer.printInfo("There is no such place");
-        } else {
-            Printer.printInfo(placeController.deletePlace(listId.get(index)));
+        log.info("[deletePlace]");
+        try {
+            List<PlaceDto> placesDto = placeClient.getPlaces();
+            Printer.printInfo(StringPlaces.getStringFromPlaces(placesDto));
+            int index = ScannerUtil.getIntUser(PLACE_DELETE_INDEX_HEADER) - INDEX_OFFSET;
+            if (index >= placesDto.size() || index < 0) {
+                Printer.printInfo(WARNING_PLACE_MESSAGE);
+            } else {
+                Printer.printInfo(placeClient.deletePlace(placesDto.get(index).getId()));
+            }
+        } catch (BusinessException exception) {
+            Printer.printInfo(exception.getMessage());
         }
     }
 
     private void completeOrder() {
-        List<String> listData = orderController.getOrders();
-        Printer.printInfo(listData.get(0));
-        Printer.printInfo("0. Previous menu");
-        listData.remove(0);
-        List<Long> listId = getIdFromListString(listData);
+        log.info("[completeOrder]");
+        List<OrderDto> ordersDto = orderClient.getOrders();
+        Printer.printInfo(StringOrder.getStringFromOrder(ordersDto));
+        Printer.printInfo(PREVIOUS_MENU_MENU_ITEM);
         String message = "";
         int index;
-        while (!message.equals(" - the order has been transferred to execution status")) {
-            index = ScannerUtil.getIntUser("Enter the index number of the order to change status:") -
-                    INDEX_OFFSET;
+        while (!message.equals(TRANSFERRED_TO_EXECUTION_STATUS_SUCCESS_SERVER_MESSAGE)) {
+            index = ScannerUtil.getIntUser(ORDER_CHANGE_STATUS_INDEX_HEADER) - INDEX_OFFSET;
             if (index + INDEX_OFFSET == 0) {
                 return;
-            } else if (index >= listId.size()) {
-                Printer.printInfo("There is no such order");
+            } else if (index >= ordersDto.size()) {
+                Printer.printInfo(WARNING_ORDER_MESSAGE);
                 continue;
             }
-            message = orderController.completeOrder(listId.get(index));
+            message = orderClient.completeOrder(ordersDto.get(index).getId());
             Printer.printInfo(message);
         }
     }
 
     private void cancelOrder() {
-        List<String> listData = orderController.getOrders();
-        Printer.printInfo(listData.get(0));
-        Printer.printInfo("0. Previous menu");
-        listData.remove(0);
-        List<Long> listId = getIdFromListString(listData);
+        log.info("[cancelOrder]");
+        List<OrderDto> ordersDto = orderClient.getOrders();
+        Printer.printInfo(StringOrder.getStringFromOrder(ordersDto));
+        Printer.printInfo(PREVIOUS_MENU_MENU_ITEM);
         String message = "";
         int index;
-        while (!message.equals(" -the order has been canceled.")) {
-            index = ScannerUtil.getIntUser("Enter the index number of the order to cancel:") - INDEX_OFFSET;
+        while (!message.equals(ORDER_CANCEL_SUCCESS_SERVER_MESSAGE)) {
+            index = ScannerUtil.getIntUser(ORDER_CANCEL_INDEX_HEADER) - INDEX_OFFSET;
             if (index + INDEX_OFFSET == 0) {
                 return;
-            } else if (index >= listId.size()) {
-                Printer.printInfo("There is no such order");
+            } else if (index >= ordersDto.size()) {
+                Printer.printInfo(WARNING_ORDER_MESSAGE);
                 continue;
             }
-            message = orderController.cancelOrder(listId.get(index));
+            message = orderClient.cancelOrder(ordersDto.get(index).getId());
             Printer.printInfo(message);
         }
     }
 
     private void addOrder() {
-        String message = "";
-        while (!message.equals("order add successfully!")) {
-            if (isCheckMaster() || isCheckPlace()) {
-                return;
-            }
-            String automaker = ScannerUtil.getStringUser("Enter the automaker of car", false);
-            String model = ScannerUtil.getStringUser("Enter the model of car", false);
-            String registrationNumber = ScannerUtil.getStringUser(
-                "Enter the registration number of car, example: 1111 AB-7", true);
-            message = orderController.addOrder(automaker, model, registrationNumber);
-            Printer.printInfo(message);
+        log.info("[addOrder]");
+        OrderDto orderDto = new OrderDto();
+        if (isCheckMasters() || isCheckPlaces()) {
+            return;
         }
-        String executionStartTime = addOrderDeadline();
-        addMastersOrder(executionStartTime);
-        addPlaceOrder(executionStartTime);
-        Printer.printInfo(orderController.addOrderPrice(ScannerUtil.getBigDecimalUser("Enter the price")));
+        addCarToOrder(orderDto);
+        addOrderDeadline(orderDto);
+        if (addMastersOrder(orderDto) || addPlaceOrder(orderDto)) {
+            return;
+        }
+        orderDto.setPrice(ScannerUtil.getBigDecimalUser(ORDER_PRICE_INPUT_HEADER));
+        orderDto.setCreationTime(DateUtil.getStringFromDate(new Date(), true));
+        Printer.printInfo(orderClient.addOrder(orderDto));
     }
 
-    private String addOrderDeadline() {
-        String message = "";
-        String leadTime;
+    private void addCarToOrder(OrderDto orderDto) {
+        log.debug("[addCarToOrder]");
+        log.trace("[orderDto: {}]", orderDto);
+        String automaker = ScannerUtil.getStringUser(ORDER_AUTOMAKER_INPUT_HEADER, false);
+        String model = ScannerUtil.getStringUser(ORDER_MODEL_INPUT_HEADER, false);
+        String registrationNumber = ScannerUtil.getStringUser(
+            ORDER_REGISTRATION_NUMBER_INPUT_HEADER, true);
+        orderDto.setAutomaker(automaker);
+        orderDto.setModel(model);
+        orderDto.setRegistrationNumber(registrationNumber);
+    }
+
+    private void addOrderDeadline(OrderDto orderDto) {
+        log.debug("[addOrderDeadline]");
+        log.trace("[orderDto: {}]", orderDto);
+        String leadTime = "";
         String executionStartTime = "";
-        while (!message.equals("deadline add to order successfully")) {
-            executionStartTime = ScannerUtil.getStringDateUser(
-                "Enter the planing time start to execute the order in " +
-                "format \"yyyy-mm-dd hh:mm\", example:\"2010-10-10 10:00\"", true);
-            leadTime = ScannerUtil.getStringDateUser(
-                "Enter the lead time the order in format " +
-                "\"yyyy-mm-dd hh:mm\", example:\"2010-10-10 10:00\"", true);
-            message = orderController.addOrderDeadlines(executionStartTime, leadTime);
-            Printer.printInfo(message);
-        }
-        return executionStartTime;
-    }
-
-    private void addMastersOrder(String executionStartTime) {
-        List<String> listData = masterController.getFreeMasters(executionStartTime);
-        Printer.printInfo(listData.get(0));
-        Printer.printInfo("0. Stop adding");
-        listData.remove(0);
-        List<Long> listId = getIdFromListString(listData);
-        int quit = 0;
-        int index;
-        int number_masters = 0;
-        while (quit == 0) {
-            List<Integer> statusInt = addMasters(quit, number_masters, listId);
-            quit = statusInt.get(0);
-            index = statusInt.get(1);
-            number_masters = statusInt.get(2);
-            if (number_masters == 0 && index == 0) {
-                Printer.printInfo("You must add at least one master!!!");
-            }
-        }
-    }
-
-    private List<Integer> addMasters(int quit, int numberMasters, List<Long> listId) {
         String message = "";
-        int index = MAX_INDEX;
-        boolean userAnswer = false;
-        while (!message.equals("masters add successfully")) {
-            index = ScannerUtil.getIntUser("Enter the index number of the master to add:") - INDEX_OFFSET;
+        while (!message.equals(VERIFICATION_SUCCESS_SERVER_MESSAGE)) {
+            if (!message.equals("")) {
+                Printer.printInfo(message);
+            }
+            executionStartTime = ScannerUtil.getStringDateUser(PLANING_TIME_START_INPUT_HEADER, true);
+            leadTime = ScannerUtil.getStringDateUser(LEAD_TIME_INPUT_HEADER, true);
+            message = orderClient.checkOrderDeadlines(executionStartTime, leadTime);
+
+        }
+        orderDto.setExecutionStartTime(executionStartTime);
+        orderDto.setLeadTime(leadTime);
+    }
+
+    private boolean addMastersOrder(OrderDto orderDto) {
+        log.debug("[addMastersOrder]");
+        log.trace("[orderDto: {}]", orderDto);
+        try {
+            List<MasterDto> freeMasters = masterClient.getFreeMasters(orderDto.getExecutionStartTime());
+            Printer.printInfo(StringMaster.getStringFromMasters(freeMasters));
+            Printer.printInfo(STOP_ADDING_MENU_ITEM);
+            boolean quit = false;
+            List<MasterDto> mastersDto = new ArrayList<>();
+            while (!quit) {
+                MasterDto masterDto = addMasters(freeMasters);
+                if (mastersDto.isEmpty() && masterDto == null) {
+                    Printer.printInfo(WARNING_COUNT_MASTER_MESSAGE);
+                } else if (masterDto == null) {
+                    quit = true;
+                } else if (mastersDto.contains(masterDto)) {
+                    Printer.printInfo(WARNING_EXIST_MASTER_MESSAGE);
+                } else {
+                    mastersDto.add(masterDto);
+                }
+            }
+            orderDto.setMasters(mastersDto);
+            return false;
+        } catch (BusinessException exception) {
+            log.trace(exception.getMessage());
+            Printer.printInfo(exception.getMessage());
+            return true;
+        }
+    }
+
+    private MasterDto addMasters(List<MasterDto> mastersDto) {
+        log.debug("[addMasters]");
+        log.trace("[mastersDto: {}]", mastersDto);
+        Integer index = null;
+        while (index == null) {
+            index = ScannerUtil.getIntUser(MASTER_ADD_INDEX_HEADER) - INDEX_OFFSET;
             if (index + INDEX_OFFSET == 0) {
-                break;
-            } else if (index >= listId.size()) {
-                Printer.printInfo("There is no such master");
-                continue;
-            }
-            message = orderController.addOrderMasters(listId.get(index));
-            Printer.printInfo(message);
-            if (message.equals("masters add successfully")) {
-                numberMasters++;
-                userAnswer = ScannerUtil.isAnotherMaster();
-            }
-            if (userAnswer) {
-                quit++;
-                break;
+                return null;
+            } else if (index >= mastersDto.size()) {
+                Printer.printInfo(WARNING_MASTER_MESSAGE);
+                index = null;
+            } else if (mastersDto.get(index).getDeleteStatus()) {
+                Printer.printInfo(WARNING_DELETE_MASTER_MESSAGE);
+                index = null;
             }
         }
-        return new ArrayList<>(Arrays.asList(quit, index, numberMasters));
+        return mastersDto.get(index);
     }
 
-    private void addPlaceOrder(String executionStartTime) {
-        List<String> listData = placeController.getFreePlacesByDate(executionStartTime);
-        String message = "";
-        int index;
-        Printer.printInfo(listData.get(0));
-        Printer.printInfo("0. Stop adding");
-        listData.remove(0);
-        List<Long> listId = getIdFromListString(listData);
-        while (!message.equals("place add to order successfully")) {
-            index = ScannerUtil.getIntUser("Enter the index number of the place to add in order:") -
-                    INDEX_OFFSET;
-            message = orderController.addOrderPlace(listId.get(index));
-            Printer.printInfo(message);
+    private boolean addPlaceOrder(OrderDto orderDto) {
+        log.debug("[addPlaceOrder]");
+        log.trace("[orderDto: {}]", orderDto);
+        try {
+            List<PlaceDto> placesDto = placeClient.getFreePlacesByDate(orderDto.getExecutionStartTime());
+            Printer.printInfo(StringPlaces.getStringFromPlaces(placesDto));
+            Integer index = null;
+            while (index == null) {
+                index = ScannerUtil.getIntUser(PLACE_ADD_INDEX_HEADER) -
+                        INDEX_OFFSET;
+                if (index >= placesDto.size() || INDEX_OFFSET + index == 0) {
+                    index = null;
+                }
+            }
+            orderDto.setPlace(placesDto.get(index));
+            return false;
+        } catch (BusinessException exception) {
+            log.error(exception.getMessage());
+            Printer.printInfo(exception.getMessage());
+            return true;
         }
     }
 
-    private List<Long> getIdFromListString(List<String> listStringId) {
-        return listStringId.stream()
-            .map(Long::parseLong)
-            .collect(Collectors.toList());
-    }
-
-    private boolean isCheckOrder() {
-        String message = orderController.checkOrders();
-        boolean status = message.equals("verification was successfully");
+    private boolean isCheckOrders() {
+        log.debug("[isCheckOrders]");
+        String message = orderClient.checkOrders();
+        boolean status = message.equals(VERIFICATION_SUCCESS_SERVER_MESSAGE);
         if (!status) {
             Printer.printInfo(message);
         }
         return !status;
     }
 
-    private boolean isCheckMaster() {
-        String message = masterController.checkMasters();
-        boolean status = message.equals("verification was successfully");
+    private boolean isCheckMasters() {
+        log.debug("[isCheckMasters]");
+        String message = masterClient.checkMasters();
+        boolean status = message.equals(VERIFICATION_SUCCESS_SERVER_MESSAGE);
         if (!status) {
             Printer.printInfo(message);
         }
         return !status;
     }
 
-    private boolean isCheckPlace() {
-        String message = placeController.checkPlaces();
-        boolean status = message.equals("verification was successfully");
+    private boolean isCheckPlaces() {
+        log.debug("[isCheckPlaces]");
+        String message = placeClient.checkPlaces();
+        boolean status = message.equals(VERIFICATION_SUCCESS_SERVER_MESSAGE);
         if (!status) {
             Printer.printInfo(message);
         }
         return !status;
     }
+
 }

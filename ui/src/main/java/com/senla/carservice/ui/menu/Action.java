@@ -4,4 +4,5 @@ package com.senla.carservice.ui.menu;
 public interface Action {
 
     void execute();
+
 }
