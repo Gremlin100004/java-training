@@ -1,7 +1,6 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.dao.PlaceDao;
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Place;
 import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.service.config.TestConfig;
@@ -48,15 +47,6 @@ class PlaceServiceImplTest {
     }
 
     @Test
-    void PlaceServiceImpl_getPlaces_placeDao_getAllRecords_emptyList() {
-        Mockito.doThrow(DaoException.class).when(placeDao).getAllRecords();
-
-        Assertions.assertThrows(DaoException.class, () -> placeService.getPlaces());
-        Mockito.verify(placeDao, Mockito.times(1)).getAllRecords();
-        Mockito.reset(placeDao);
-    }
-
-    @Test
     void PlaceServiceImpl_addPlace() {
         Place place = getTestPlace();
         PlaceDto placeDto = getTestPlaceDto();
@@ -76,17 +66,6 @@ class PlaceServiceImplTest {
         Assertions.assertTrue(place.getDeleteStatus());
         Mockito.verify(placeDao, Mockito.times(1)).findById(ID_PLACE);
         Mockito.verify(placeDao, Mockito.times(1)).updateRecord(place);
-        Mockito.reset(placeDao);
-    }
-
-    @Test
-    void PlaceServiceImpl_deletePlace_placeDao_findById_wrongId() {
-        Place place = getTestPlace();
-        Mockito.doThrow(DaoException.class).when(placeDao).findById(ID_PLACE);
-
-        Assertions.assertThrows(DaoException.class, () -> placeService.deletePlace(ID_PLACE));
-        Mockito.verify(placeDao, Mockito.times(1)).findById(ID_PLACE);
-        Mockito.verify(placeDao, Mockito.never()).updateRecord(place);
         Mockito.reset(placeDao);
     }
 
@@ -142,16 +121,6 @@ class PlaceServiceImplTest {
         Assertions.assertEquals(RIGHT_NUMBER_PLACES, resultPlacesDto.size());
         Assertions.assertFalse(resultPlacesDto.isEmpty());
         Assertions.assertEquals(placesDto, resultPlacesDto);
-        Mockito.verify(placeDao, Mockito.times(1)).getFreePlaces(date);
-        Mockito.reset(placeDao);
-    }
-
-    @Test
-    void PlaceServiceImpl_getFreePlaceByDate_placeDao_getFreePlaces_emptyList() {
-        Date date = new Date();
-        Mockito.doThrow(DaoException.class).when(placeDao).getFreePlaces(date);
-
-        Assertions.assertThrows(DaoException.class, () -> placeService.getFreePlaceByDate(date));
         Mockito.verify(placeDao, Mockito.times(1)).getFreePlaces(date);
         Mockito.reset(placeDao);
     }

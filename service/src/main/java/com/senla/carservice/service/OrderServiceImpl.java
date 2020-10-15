@@ -150,8 +150,6 @@ public class OrderServiceImpl implements OrderService {
         Date leadTime = DateUtil.getDatesFromString(orderDto.getLeadTime(), true);
         DateUtil.checkDateTime(executionStartTime, leadTime, false);
         Order order = orderDao.findById(orderDto.getId());
-        order.setExecutionStartTime(executionStartTime);
-        order.setLeadTime(leadTime);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(leadTime);
         order.setExecutionStartTime(executionStartTime);
@@ -220,8 +218,11 @@ public class OrderServiceImpl implements OrderService {
     public List<MasterDto> getOrderMasters(Long orderId) {
         log.debug("[getOrderMasters]");
         log.trace("[orderId: {}]", orderId);
-        return MasterMapper.getMasterDto(
-            orderDao.getOrderMasters(orderDao.findById(orderId)));
+        Order order = orderDao.findById(orderId);
+        if (order == null){
+            throw new BusinessException("Error, the is no such order");
+        }
+        return MasterMapper.getMasterDto(orderDao.getOrderMasters(order));
     }
 
     @Override
@@ -236,6 +237,9 @@ public class OrderServiceImpl implements OrderService {
     private void checkStatusOrder(Order order) {
         log.debug("[checkStatusOrder]");
         log.trace("[order: {}]", order);
+        if (order == null){
+            throw new BusinessException("Error, the is no such order");
+        }
         if (order.isDeleteStatus()) {
             throw new BusinessException("Error, the order has been deleted");
         }
@@ -253,6 +257,9 @@ public class OrderServiceImpl implements OrderService {
     private void checkStatusOrderShiftTime(Order order) {
         log.debug("[checkStatusOrderShiftTime]");
         log.trace("[order: {}]", order);
+        if (order == null){
+            throw new BusinessException("Error, the is no such order");
+        }
         if (order.isDeleteStatus()) {
             throw new BusinessException("Error, the order has been deleted");
         }

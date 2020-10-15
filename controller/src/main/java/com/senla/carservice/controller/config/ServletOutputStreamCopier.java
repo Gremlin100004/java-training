@@ -24,7 +24,7 @@ public class ServletOutputStreamCopier extends ServletOutputStream {
             outputStream.write(b);
             copy.write(b);
         } catch (IOException e) {
-            throw new ControllerException("Error response");
+            throw new ControllerException("Response error");
         }
     }
 

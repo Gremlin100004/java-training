@@ -48,6 +48,7 @@ public class OrderController {
         orderService.checkOrderDeadlines(executionStartTime, leadTime);
         return new ClientMessageDto("dates are right");
     }
+    //Todo delete this method and check number in front
     @GetMapping("check")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto checkOrders() {

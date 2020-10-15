@@ -21,7 +21,7 @@ public class CachedBodyServletInputStream extends ServletInputStream {
         try {
             return cachedBodyInputStream.read();
         } catch (IOException exception) {
-            throw new ControllerException("Error request");
+            throw new ControllerException("Request error");
         }
     }
 
@@ -30,7 +30,7 @@ public class CachedBodyServletInputStream extends ServletInputStream {
         try {
             return cachedBodyInputStream.available() == 0;
         } catch (IOException exception) {
-            throw new ControllerException("Error request");
+            throw new ControllerException("Request error");
         }
     }
 

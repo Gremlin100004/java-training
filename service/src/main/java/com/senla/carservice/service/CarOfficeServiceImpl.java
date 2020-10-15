@@ -39,6 +39,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
     @Autowired
     private CsvMaster csvMaster;
 
+    //Todo return null
     @Override
     @Transactional
     public Date getNearestFreeDate() {
@@ -81,6 +82,7 @@ public class CarOfficeServiceImpl implements CarOfficeService {
         csvPlace.exportPlaces(places);
     }
 
+    //Todo return boolean
     private void checkMasters() {
         log.debug("[checkMasters]");
         if (masterDao.getNumberMasters() == 0) {

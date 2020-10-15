@@ -35,6 +35,7 @@ public class PlaceController {
         return placeService.addPlace(placeDto);
     }
 
+    //Todo delete this method and check number in front
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("check")
     public ClientMessageDto checkPlaces() {

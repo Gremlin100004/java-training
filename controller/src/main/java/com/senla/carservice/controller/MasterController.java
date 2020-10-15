@@ -49,28 +49,29 @@ public class MasterController {
         }
     }
 
-    @PostMapping()
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MasterDto addMaster(@RequestBody MasterDto masterDto) {
 
         return masterService.addMaster(masterDto);
     }
 
-    @GetMapping("check")
+    //Todo delete this method and check number in front
+    @GetMapping("/check")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto checkMasters() {
         masterService.checkMasters();
         return new ClientMessageDto("verification was successfully");
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deleteMaster(@PathVariable("id") Long masterId) {
         masterService.deleteMaster(masterId);
         return new ClientMessageDto(" -master has been deleted successfully!");
     }
 
-    @GetMapping("{id}/orders")
+    @GetMapping("/{id}/orders")
     @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> getMasterOrders(@PathVariable("id") Long masterId) {
         return masterService.getMasterOrders(masterId);

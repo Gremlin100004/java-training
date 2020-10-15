@@ -21,8 +21,9 @@ import java.util.List;
 public class LoggingFilter extends CommonsRequestLoggingFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
-            FilterChain filterChain) {
+    protected void doFilterInternal(HttpServletRequest httpServletRequest,
+                                    HttpServletResponse httpServletResponse,
+                                    FilterChain filterChain) {
         try {
             HttpServletResponseCopier responseCopier = new HttpServletResponseCopier(httpServletResponse);
             CachedBodyHttpServletRequest requestCopier = new CachedBodyHttpServletRequest(httpServletRequest);
@@ -34,7 +35,7 @@ public class LoggingFilter extends CommonsRequestLoggingFilter {
             log.info("[response][status: {}] [body: {}]", responseCopier.getStatus(),
                 new String(responseCopier.getCopy(), httpServletResponse.getCharacterEncoding()));
         } catch (IOException | ServletException e) {
-            throw new ControllerException("Error request");
+            throw new ControllerException("Request error");
         }
     }
 

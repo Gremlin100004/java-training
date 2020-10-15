@@ -1,6 +1,5 @@
 package com.senla.carservice.dao;
 
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Order_;
 import com.senla.carservice.domain.Place;
@@ -39,11 +38,7 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
         subquery.where(criteriaBuilder.greaterThanOrEqualTo(subOrderRoot.get(Order_.leadTime), executeDate));
         criteriaQuery.where(placeRoot.get(Place_.id).in(subquery).not());
         TypedQuery<Place> query = entityManager.createQuery(criteriaQuery);
-        List<Place> places = query.getResultList();
-        if (places.isEmpty()) {
-            throw new DaoException("Error getting busy places");
-        }
-        return places;
+        return query.getResultList();
     }
 
     @Override

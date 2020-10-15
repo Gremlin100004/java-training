@@ -1,6 +1,5 @@
 package com.senla.carservice.dao;
 
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.AEntity;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,11 +38,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     public T findById(PK id) {
         log.debug("[findById]");
         log.trace("[type: {}, id: {}]", type, id);
-        T entity = entityManager.find(type, id);
-        if (entity == null) {
-            throw new DaoException("Error get record by id");
-        }
-        return entity;
+        return entityManager.find(type, id);
     }
 
     @Override
@@ -55,11 +50,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
         Root<T> root = criteriaQuery.from(type);
         criteriaQuery.select(root);
         TypedQuery<T> query = entityManager.createQuery(criteriaQuery);
-        List<T> entities = query.getResultList();
-        if (entities.isEmpty()) {
-            throw new DaoException("Error getting entities");
-        }
-        return entities;
+        return query.getResultList();
     }
 
     @Override

@@ -21,7 +21,7 @@ public class CachingRequestBodyFilter extends GenericFilterBean {
             ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) servletRequest);
             chain.doFilter(wrappedRequest, servletResponse);
         } catch (IOException | ServletException e) {
-            throw new ControllerException("Error request");
+            throw new ControllerException("Request error");
         }
     }
 

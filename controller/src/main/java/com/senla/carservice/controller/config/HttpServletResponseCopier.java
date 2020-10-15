@@ -22,7 +22,7 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
     @Override
     public ServletOutputStream getOutputStream() {
         if (writer != null) {
-            throw new ControllerException("Error response");
+            throw new ControllerException("Response error");
         }
 
         if (outputStream == null) {
@@ -30,7 +30,7 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
                 outputStream = getResponse().getOutputStream();
                 copier = new ServletOutputStreamCopier(outputStream);
             } catch (IOException e) {
-                throw new ControllerException("Error response");
+                throw new ControllerException("Response error");
             }
         }
         return copier;
@@ -39,14 +39,14 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
     @Override
     public PrintWriter getWriter() {
         if (outputStream != null) {
-            throw new ControllerException("Error response");
+            throw new ControllerException("Response error");
         }
         if (writer == null) {
             try {
                 copier = new ServletOutputStreamCopier(getResponse().getOutputStream());
                 writer = new PrintWriter(new OutputStreamWriter(copier, getResponse().getCharacterEncoding()), true);
             } catch (IOException e) {
-                throw new ControllerException("Error response");
+                throw new ControllerException("Response error");
             }
         }
         return writer;
@@ -60,7 +60,7 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
             try {
                 copier.flush();
             } catch (IOException e) {
-                throw new ControllerException("Error response");
+                throw new ControllerException("Response error");
             }
         }
     }
