@@ -11,6 +11,8 @@ public interface PlaceClient {
 
     String deletePlace(Long idPlace);
 
+    Long getNumberPlace();
+
     Long getNumberFreePlace(String stringExecuteDate);
 
     List<PlaceDto> getFreePlacesByDate(String stringExecuteDate);

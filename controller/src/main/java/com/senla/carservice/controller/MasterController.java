@@ -51,13 +51,17 @@ public class MasterController {
         }
     }
 
-    @GetMapping("/numberFreeMasters")
+    @GetMapping("/numberMasters")
     @ResponseStatus(HttpStatus.OK)
-    public LongDto getNumberFreeMasters(@RequestParam String date) {
-        Date dateFree = DateUtil.getDatesFromString(date, false);
-        Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
+    public LongDto getNumberMasters(@RequestParam(required = false) String date) {
         LongDto longDto = new LongDto();
-        longDto.setNumber(masterService.getNumberFreeMastersByDate(startDayDate));
+        if (date == null){
+            longDto.setNumber(masterService.getNumberMasters());
+        } else {
+            Date dateFree = DateUtil.getDatesFromString(date, false);
+            Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
+            longDto.setNumber(masterService.getNumberFreeMastersByDate(startDayDate));
+        }
         return longDto;
     }
 

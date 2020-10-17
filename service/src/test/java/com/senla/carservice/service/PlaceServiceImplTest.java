@@ -110,6 +110,15 @@ class PlaceServiceImplTest {
     }
 
     @Test
+    void PlaceServiceImpl_getNumberPlace() {
+        Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
+
+        Assertions.assertEquals(RIGHT_NUMBER_PLACES, placeService.getNumberPlace());
+        Mockito.verify(placeDao, Mockito.times(1)).getNumberPlaces();
+        Mockito.reset(placeDao);
+    }
+
+    @Test
     void PlaceServiceImpl_getNumberFreePlaceByDate() {
         Date date = new Date();
         Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberFreePlaces(date);

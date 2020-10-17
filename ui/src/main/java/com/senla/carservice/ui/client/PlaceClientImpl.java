@@ -23,7 +23,8 @@ public class PlaceClientImpl implements PlaceClient {
     private static final String ADD_PLACE_PATH = "places";
     private static final String GET_PLACES_PATH = "places";
     private static final String GET_FREE_PLACES_PATH = "places/?stringExecuteDate=";
-    private static final String GET_NUMBER_FREE_PLACES_PATH = "places/numberFreePlaces?date=";
+    private static final String GET_NUMBER_FREE_PLACES_PATH = "places/numberPlaces?date=";
+    private static final String GET_NUMBER_PLACES_PATH = "places/numberPlaces";
     private static final String DELETE_PLACE_PATH = "places/";
     private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
     private static final String PLACE_ADD_SUCCESS_MESSAGE = "Place added successfully";
@@ -82,8 +83,25 @@ public class PlaceClientImpl implements PlaceClient {
     }
 
     @Override
+    public Long getNumberPlace() {
+        log.debug("[getNumberPlace]");
+        try {
+            ResponseEntity<LongDto> response = restTemplate.getForEntity(GET_NUMBER_PLACES_PATH, LongDto.class);
+            LongDto longDto = response.getBody();
+            if (longDto == null) {
+                throw new BusinessException("Error, there are no number");
+            }
+            return longDto.getNumber();
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            log.error(exception.getResponseBodyAsString());
+            throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
+        }
+    }
+
+    @Override
     public Long getNumberFreePlace(String date) {
         log.debug("[getNumberFreePlace]");
+        log.debug("[date: {}]", date);
         try {
             ResponseEntity<LongDto> response = restTemplate.getForEntity(
                 GET_NUMBER_FREE_PLACES_PATH + date, LongDto.class);

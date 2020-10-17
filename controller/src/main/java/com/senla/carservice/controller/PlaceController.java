@@ -47,13 +47,17 @@ public class PlaceController {
         }
     }
 
-    @GetMapping("/numberFreePlaces")
+    @GetMapping("/numberPlaces")
     @ResponseStatus(HttpStatus.OK)
-    public LongDto getNumberFreePlaces(@RequestParam String date) {
-        Date dateFree = DateUtil.getDatesFromString(date, false);
-        Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
+    public LongDto getNumberFreePlaces(@RequestParam(required = false) String date) {
         LongDto longDto = new LongDto();
-        longDto.setNumber(placeService.getNumberFreePlaceByDate(startDayDate));
+        if (date == null){
+            longDto.setNumber(placeService.getNumberPlace());
+        } else {
+            Date dateFree = DateUtil.getDatesFromString(date, false);
+            Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
+            longDto.setNumber(placeService.getNumberFreePlaceByDate(startDayDate));
+        }
         return longDto;
     }
 

@@ -74,6 +74,13 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     @Transactional
+    public Long getNumberPlace() {
+        log.debug("[getNumberPlace]");
+        return placeDao.getNumberPlaces();
+    }
+
+    @Override
+    @Transactional
     public Long getNumberFreePlaceByDate(Date startDayDate) {
         log.debug("[getNumberFreePlaceByDate]");
         log.trace("[startDayDate: {}]", startDayDate);

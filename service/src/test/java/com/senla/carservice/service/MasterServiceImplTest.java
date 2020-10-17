@@ -95,6 +95,15 @@ class MasterServiceImplTest {
     }
 
     @Test
+    void MasterServiceImpl_getNumberMasters() {
+        Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
+
+        Assertions.assertEquals(RIGHT_NUMBER_MASTERS, masterService.getNumberMasters());
+        Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
+        Mockito.reset(masterDao);
+    }
+
+    @Test
     void MasterServiceImpl_deleteMaster() {
         Master master = getTestMaster();
         Mockito.doReturn(master).when(masterDao).findById(ID_MASTER);

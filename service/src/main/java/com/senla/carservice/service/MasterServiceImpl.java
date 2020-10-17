@@ -61,6 +61,13 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
+    public Long getNumberMasters() {
+        log.debug("[getNumberMasters]");
+        return masterDao.getNumberMasters();
+    }
+
+    @Override
+    @Transactional
     public void deleteMaster(Long masterId) {
         log.debug("[Method deleteMaster");
         log.trace("[masterId: {}]", masterId);

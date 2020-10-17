@@ -22,7 +22,8 @@ import java.util.List;
 @Slf4j
 public class MasterClientImpl implements MasterClient {
     private static final String GET_MASTERS_PATH = "masters";
-    private static final String GET_NUMBER_FREE_MASTERS_PATH = "masters/numberFreeMasters?date=";
+    private static final String GET_NUMBER_MASTERS_PATH = "masters/numberMasters";
+    private static final String GET_NUMBER_FREE_MASTERS_PATH = "masters/numberMasters?date=";
     private static final String ADD_MASTER_PATH = "masters";
     private static final String DELETE_MASTER_PATH = "masters/";
     private static final String GET_SORT_MASTERS = "masters?sortParameter=";
@@ -104,11 +105,28 @@ public class MasterClientImpl implements MasterClient {
     }
 
     @Override
+    public Long getNumberMasters() {
+        log.debug("[getNumberMasters]");
+        try {
+            ResponseEntity<LongDto> response = restTemplate.getForEntity(GET_NUMBER_MASTERS_PATH, LongDto.class);
+            LongDto longDto = response.getBody();
+            if (longDto == null) {
+                throw new BusinessException("Error, there are no number");
+            }
+            return longDto.getNumber();
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            log.error(exception.getResponseBodyAsString());
+            throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
+        }
+    }
+
+    @Override
     public Long getNumberFreeMasters(String date) {
         log.debug("[getNumberFreePlace]");
+        log.debug("[date: {}]", date);
         try {
-            ResponseEntity<LongDto> response = restTemplate.getForEntity(GET_NUMBER_FREE_MASTERS_PATH + date,
-                LongDto.class);
+            ResponseEntity<LongDto> response = restTemplate.getForEntity(
+                GET_NUMBER_FREE_MASTERS_PATH + date, LongDto.class);
             LongDto longDto = response.getBody();
             if (longDto == null) {
                 throw new BusinessException("Error, there are no number");

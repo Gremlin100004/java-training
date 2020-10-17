@@ -14,6 +14,8 @@ public interface MasterClient {
 
     List<MasterDto> getSortMasters(String sortParameter);
 
+    Long getNumberMasters();
+
     Long getNumberFreeMasters(String date);
 
     List<MasterDto> getFreeMasters(String stringExecuteDate);
