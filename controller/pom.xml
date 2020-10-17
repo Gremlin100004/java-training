@@ -23,6 +23,9 @@
             </plugin>
         </plugins>
     </build>
+    <properties>
+        <spring-security.version>5.4.1</spring-security.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>com.senla.carservice</groupId>
@@ -33,6 +36,21 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring-security.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
