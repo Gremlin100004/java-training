@@ -12,6 +12,7 @@ public class ServletOutputStreamCopier extends ServletOutputStream {
 
     private final OutputStream outputStream;
     private final ByteArrayOutputStream copy;
+    private WriteListener listener;
 
     public ServletOutputStreamCopier(OutputStream outputStream) {
         this.outputStream = outputStream;
@@ -39,5 +40,13 @@ public class ServletOutputStreamCopier extends ServletOutputStream {
 
     @Override
     public void setWriteListener(final WriteListener writeListener) {
+        if (writeListener == null) {
+            throw new ControllerException("Response error");
+        }
+        if (listener != null) {
+            throw new ControllerException("Response error");
+        }
+        listener = writeListener;
     }
+
 }
