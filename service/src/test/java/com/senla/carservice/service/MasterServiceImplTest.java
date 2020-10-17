@@ -26,7 +26,6 @@ import java.util.List;
 class MasterServiceImplTest {
 
     private static final Long RIGHT_NUMBER_MASTERS = 2L;
-    private static final Long WRONG_NUMBER_MASTERS = 0L;
     private static final Long ID_MASTER = 1L;
     private static final Long ID_OTHER_MASTER = 2L;
     private static final String PARAMETER_NAME = "test name";
@@ -146,24 +145,6 @@ class MasterServiceImplTest {
         Assertions.assertFalse(resultMastersDto.isEmpty());
         Assertions.assertEquals(mastersDto, resultMastersDto);
         Mockito.verify(masterDao, Mockito.times(1)).getMasterSortByBusy();
-        Mockito.reset(masterDao);
-    }
-
-    @Test
-    void MasterServiceImpl_getNumberMasters() {
-        Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
-
-        Assertions.assertDoesNotThrow(() -> masterService.checkMasters());
-        Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
-        Mockito.reset(masterDao);
-    }
-
-    @Test
-    void MasterServiceImpl_getNumberMasters_masterDao_getNumberMasters_zeroNumberMasters_getNumberMasters_masterDao_getNumberMasters_zeroNumberMasters() {
-        Mockito.doReturn(WRONG_NUMBER_MASTERS).when(masterDao).getNumberMasters();
-
-        Assertions.assertThrows(BusinessException.class, () -> masterService.checkMasters());
-        Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
         Mockito.reset(masterDao);
     }
 

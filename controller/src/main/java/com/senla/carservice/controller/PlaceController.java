@@ -1,6 +1,7 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.dto.ClientMessageDto;
+import com.senla.carservice.dto.LongDto;
 import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.service.PlaceService;
 import com.senla.carservice.util.DateUtil;
@@ -35,14 +36,6 @@ public class PlaceController {
         return placeService.addPlace(placeDto);
     }
 
-    //Todo delete this method and check number in front
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("check")
-    public ClientMessageDto checkPlaces() {
-        placeService.checkPlaces();
-        return new ClientMessageDto("verification was successfully");
-    }
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<PlaceDto> getPlaces(@RequestParam(required = false) String stringExecuteDate) {
@@ -54,7 +47,17 @@ public class PlaceController {
         }
     }
 
-    @DeleteMapping("{id}")
+    @GetMapping("/numberFreePlaces")
+    @ResponseStatus(HttpStatus.OK)
+    public LongDto getNumberFreePlaces(@RequestParam String date) {
+        Date dateFree = DateUtil.getDatesFromString(date, false);
+        Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
+        LongDto longDto = new LongDto();
+        longDto.setNumber(placeService.getNumberFreePlaceByDate(startDayDate));
+        return longDto;
+    }
+
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deletePlace(@PathVariable("id") Long orderId) {
         placeService.deletePlace(orderId);

@@ -3,6 +3,7 @@ package com.senla.carservice.controller;
 import com.senla.carservice.controller.exception.ControllerException;
 import com.senla.carservice.controller.util.EnumUtil;
 import com.senla.carservice.dto.ClientMessageDto;
+import com.senla.carservice.dto.DateDto;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.OrderService;
@@ -40,20 +41,12 @@ public class OrderController {
         return orderService.addOrder(orderDto);
     }
 
-    @GetMapping("check/dates")
+    @GetMapping("/freeDate")
     @ResponseStatus(HttpStatus.OK)
-    public ClientMessageDto checkOrderDeadlines(@RequestParam String stringExecutionStartTime, @RequestParam String stringLeadTime) {
-        Date executionStartTime = DateUtil.getDatesFromString(stringExecutionStartTime.replace('%', ' '), true);
-        Date leadTime = DateUtil.getDatesFromString(stringLeadTime.replace('%', ' '), true);
-        orderService.checkOrderDeadlines(executionStartTime, leadTime);
-        return new ClientMessageDto("dates are right");
-    }
-    //Todo delete this method and check number in front
-    @GetMapping("check")
-    @ResponseStatus(HttpStatus.OK)
-    public ClientMessageDto checkOrders() {
-        orderService.checkOrders();
-        return new ClientMessageDto("verification was successfully");
+    public DateDto getNearestFreeDate() {
+        DateDto dateDto = new DateDto();
+        dateDto.setDate(orderService.getNearestFreeDate());
+        return dateDto;
     }
 
     @GetMapping
@@ -78,45 +71,59 @@ public class OrderController {
         }
     }
 
-    @PutMapping("{id}/complete")
+    @PutMapping("/{id}/complete")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto completeOrder(@PathVariable("id") Long orderId) {
         orderService.completeOrder(orderId);
         return new ClientMessageDto("The order has been transferred to execution status successfully");
     }
 
-    @PutMapping("{id}/close")
+    @PutMapping("/{id}/close")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto closeOrder(@PathVariable("id") Long orderId) {
         orderService.closeOrder(orderId);
         return new ClientMessageDto("The order has been completed successfully");
     }
 
-    @PutMapping("{id}/cancel")
+    @PutMapping("/{id}/cancel")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto cancelOrder(@PathVariable("id") Long orderId) {
         orderService.cancelOrder(orderId);
         return new ClientMessageDto("The order has been canceled successfully");
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deleteOrder(@PathVariable("id") Long orderId) {
         orderService.deleteOrder(orderId);
         return new ClientMessageDto("The order has been deleted successfully");
     }
 
-    @PutMapping("shiftLeadTime")
+    @PutMapping("/shiftLeadTime")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto shiftLeadTime(@RequestBody OrderDto orderDto) {
         orderService.shiftLeadTime(orderDto);
         return new ClientMessageDto("The order lead time has been changed successfully");
     }
 
-    @GetMapping("{id}/masters")
+    @GetMapping("/{id}/masters")
     @ResponseStatus(HttpStatus.OK)
     public List<MasterDto> getOrderMasters(@PathVariable("id") Long orderId) {
         return orderService.getOrderMasters(orderId);
+    }
+
+    @PostMapping("/csv/export")
+    @ResponseStatus(HttpStatus.OK)
+    public ClientMessageDto exportEntities() {
+        orderService.exportEntities();
+        return new ClientMessageDto("Export completed successfully!");
+    }
+
+    @PostMapping("/csv/import")
+    @ResponseStatus(HttpStatus.OK)
+    public ClientMessageDto importEntities() {
+        orderService.importEntities();
+        return new ClientMessageDto("Imported completed successfully!");
     }
 
 }

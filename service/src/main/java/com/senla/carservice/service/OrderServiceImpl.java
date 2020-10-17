@@ -1,5 +1,8 @@
 package com.senla.carservice.service;
 
+import com.senla.carservice.csv.CsvMaster;
+import com.senla.carservice.csv.CsvOrder;
+import com.senla.carservice.csv.CsvPlace;
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.dao.OrderDao;
 import com.senla.carservice.dao.PlaceDao;
@@ -29,13 +32,19 @@ import java.util.List;
 @NoArgsConstructor
 @Slf4j
 public class OrderServiceImpl implements OrderService {
-
+    private static final int NUMBER_DAY = 1;
     @Autowired
     private OrderDao orderDao;
     @Autowired
     private PlaceDao placeDao;
     @Autowired
     private MasterDao masterDao;
+    @Autowired
+    private CsvPlace csvPlace;
+    @Autowired
+    private CsvOrder csvOrder;
+    @Autowired
+    private CsvMaster csvMaster;
     @Value("${com.senla.carservice.service.OrderServiceImpl.isBlockShiftTime:false}")
     private Boolean isBlockShiftTime;
     @Value("${com.senla.carservice.service.OrderServiceImpl.isBlockDeleteOrder:false}")
@@ -55,22 +64,6 @@ public class OrderServiceImpl implements OrderService {
         log.trace("[orderDto: {}]", orderDto);
         return OrderMapper.getOrderDto(
             orderDao.saveRecord(OrderMapper.getOrder(orderDto, masterDao, placeDao)));
-    }
-
-    @Override
-    @Transactional
-    public void checkOrderDeadlines(Date executionStartTime, Date leadTime) {
-        log.debug("[checkOrderDeadlines]");
-        log.trace("[executionStartTime: {}][leadTime: {}]", executionStartTime, leadTime);
-        DateUtil.checkDateTime(executionStartTime, leadTime, false);
-        long numberFreeMasters = masterDao.getNumberFreeMasters(executionStartTime);
-        long numberFreePlace = placeDao.getNumberFreePlaces(executionStartTime);
-        if (numberFreeMasters == 0) {
-            throw new BusinessException("Error, the number of masters is zero");
-        }
-        if (numberFreePlace == 0) {
-            throw new BusinessException("Error, the number of places is zero");
-        }
     }
 
     @Override
@@ -219,7 +212,7 @@ public class OrderServiceImpl implements OrderService {
         log.debug("[getOrderMasters]");
         log.trace("[orderId: {}]", orderId);
         Order order = orderDao.findById(orderId);
-        if (order == null){
+        if (order == null) {
             throw new BusinessException("Error, the is no such order");
         }
         return MasterMapper.getMasterDto(orderDao.getOrderMasters(order));
@@ -227,17 +220,65 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void checkOrders() {
-        log.debug("[getNumberOrders]");
-        if (orderDao.getNumberOrders() == 0) {
-            throw new BusinessException("Error, there are no orders");
+    public Date getNearestFreeDate() {
+        log.debug("[getNearestFreeDate]");
+        if (isMastersEmpty() || isPlacesEmpty() || isOrdersEmpty()) {
+            return null;
         }
+        Date leadTimeOrder = orderDao.getLastOrder().getLeadTime();
+        Date dayDate = new Date();
+        for (Date currentDay = new Date(); leadTimeOrder.before(currentDay);
+             currentDay = DateUtil.addDays(currentDay, NUMBER_DAY)) {
+            if (masterDao.getNumberFreeMasters(currentDay) == 0 || placeDao.getNumberFreePlaces(currentDay) == 0) {
+                dayDate = currentDay;
+                currentDay = DateUtil.bringStartOfDayDate(currentDay);
+            } else {
+                break;
+            }
+        }
+        return dayDate;
+    }
+
+    @Override
+    @Transactional
+    public void importEntities() {
+        log.debug("[importEntities]");
+        masterDao.updateAllRecords(csvMaster.importMasters(orderDao.getAllRecords()));
+        placeDao.updateAllRecords(csvPlace.importPlaces());
+        orderDao.updateAllRecords(csvOrder.importOrder(masterDao.getAllRecords(), placeDao.getAllRecords()));
+    }
+
+    @Override
+    @Transactional
+    public void exportEntities() {
+        log.debug("[exportEntities]");
+        List<Order> orders = orderDao.getAllRecords();
+        List<Master> masters = masterDao.getAllRecords();
+        List<Place> places = placeDao.getAllRecords();
+        csvOrder.exportOrder(orders);
+        csvMaster.exportMasters(masters);
+        csvPlace.exportPlaces(places);
+    }
+
+    private boolean isMastersEmpty() {
+        log.debug("[checkMasters]");
+        return masterDao.getNumberMasters() == 0;
+    }
+
+    private boolean isPlacesEmpty() {
+        log.debug("[checkPlaces]");
+        return placeDao.getNumberPlaces() == 0;
+    }
+
+    private boolean isOrdersEmpty() {
+        log.debug("[checkOrders]");
+        return orderDao.getNumberOrders() == 0;
     }
 
     private void checkStatusOrder(Order order) {
         log.debug("[checkStatusOrder]");
         log.trace("[order: {}]", order);
-        if (order == null){
+        if (order == null) {
             throw new BusinessException("Error, the is no such order");
         }
         if (order.isDeleteStatus()) {
@@ -257,7 +298,7 @@ public class OrderServiceImpl implements OrderService {
     private void checkStatusOrderShiftTime(Order order) {
         log.debug("[checkStatusOrderShiftTime]");
         log.trace("[order: {}]", order);
-        if (order == null){
+        if (order == null) {
             throw new BusinessException("Error, the is no such order");
         }
         if (order.isDeleteStatus()) {

@@ -88,15 +88,6 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
-    public void checkMasters() {
-        log.debug("[getNumberMasters]");
-        if (masterDao.getNumberMasters() == 0) {
-            throw new BusinessException("Error, there are no masters");
-        }
-    }
-
-    @Override
-    @Transactional
     public List<OrderDto> getMasterOrders(Long masterId) {
         log.debug("[getMasterOrders]");
         log.trace("[masterId: {}]", masterId);

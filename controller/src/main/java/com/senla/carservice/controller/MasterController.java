@@ -3,6 +3,7 @@ package com.senla.carservice.controller;
 import com.senla.carservice.controller.exception.ControllerException;
 import com.senla.carservice.controller.util.EnumUtil;
 import com.senla.carservice.dto.ClientMessageDto;
+import com.senla.carservice.dto.LongDto;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.MasterService;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -49,19 +51,21 @@ public class MasterController {
         }
     }
 
+    @GetMapping("/numberFreeMasters")
+    @ResponseStatus(HttpStatus.OK)
+    public LongDto getNumberFreeMasters(@RequestParam String date) {
+        Date dateFree = DateUtil.getDatesFromString(date, false);
+        Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
+        LongDto longDto = new LongDto();
+        longDto.setNumber(masterService.getNumberFreeMastersByDate(startDayDate));
+        return longDto;
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MasterDto addMaster(@RequestBody MasterDto masterDto) {
 
         return masterService.addMaster(masterDto);
-    }
-
-    //Todo delete this method and check number in front
-    @GetMapping("/check")
-    @ResponseStatus(HttpStatus.OK)
-    public ClientMessageDto checkMasters() {
-        masterService.checkMasters();
-        return new ClientMessageDto("verification was successfully");
     }
 
     @DeleteMapping("/{id}")

@@ -6,6 +6,7 @@ import com.senla.carservice.dto.ClientMessageDto;
 import org.springframework.web.client.HttpClientErrorException;
 
 public class ExceptionUtil {
+    private final static String ERROR_MESSAGE = "Server message error";
 
     public static String getMessage(HttpClientErrorException exception, ObjectMapper objectMapper) {
         ClientMessageDto clientMessageDto;
@@ -13,7 +14,7 @@ public class ExceptionUtil {
             clientMessageDto = objectMapper.readValue(exception.getResponseBodyAsString(), ClientMessageDto.class);
             return clientMessageDto.getMessage();
         } catch (JsonProcessingException e) {
-            return "Server message error";
+            return ERROR_MESSAGE;
         }
     }
 

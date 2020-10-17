@@ -23,6 +23,4 @@ public interface MasterService {
 
     List<OrderDto> getMasterOrders(Long masterId);
 
-    void checkMasters();
-
 }

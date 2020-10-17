@@ -1,13 +1,11 @@
 package com.senla.carservice.ui.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.senla.carservice.dto.ClientMessageDto;
+import com.senla.carservice.dto.LongDto;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.ui.exception.BusinessException;
 import com.senla.carservice.ui.util.ExceptionUtil;
-import com.senla.carservice.ui.util.StringMaster;
-import com.senla.carservice.ui.util.StringOrder;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +22,8 @@ import java.util.List;
 @Slf4j
 public class MasterClientImpl implements MasterClient {
     private static final String GET_MASTERS_PATH = "masters";
+    private static final String GET_NUMBER_FREE_MASTERS_PATH = "masters/numberFreeMasters?date=";
     private static final String ADD_MASTER_PATH = "masters";
-    private static final String CHECK_MASTERS_PATH = "masters/check";
     private static final String DELETE_MASTER_PATH = "masters/";
     private static final String GET_SORT_MASTERS = "masters?sortParameter=";
     private static final String GET_FREE_MASTERS_PATH = "masters?stringExecuteDate=";
@@ -75,23 +73,6 @@ public class MasterClientImpl implements MasterClient {
     }
 
     @Override
-    public String checkMasters() {
-        log.debug("[checkMasters]");
-        try {
-            ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
-                CHECK_MASTERS_PATH, ClientMessageDto.class);
-            ClientMessageDto clientMessageDto = response.getBody();
-            if (clientMessageDto == null) {
-                return WARNING_SERVER_MESSAGE;
-            }
-            return clientMessageDto.getMessage();
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
-            log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessage(exception, objectMapper);
-        }
-    }
-
-    @Override
     public String deleteMaster(Long idMaster) {
         log.debug("[deleteMaster]");
         log.trace("[idMaster: {}]", idMaster);
@@ -105,7 +86,7 @@ public class MasterClientImpl implements MasterClient {
     }
 
     @Override
-    public String getSortMasters(String sortParameter) {
+    public List<MasterDto> getSortMasters(String sortParameter) {
         log.debug("[getSortMasters]");
         log.trace("[sortParameter: {}]", sortParameter);
         try {
@@ -113,12 +94,29 @@ public class MasterClientImpl implements MasterClient {
                 GET_SORT_MASTERS + sortParameter, MasterDto[].class);
             MasterDto[] arrayMastersDto = response.getBody();
             if (arrayMastersDto == null) {
-                return WARNING_SERVER_MESSAGE;
+                throw new BusinessException("Error, there are no masters");
             }
-            return StringMaster.getStringFromMasters(Arrays.asList(arrayMastersDto));
+            return Arrays.asList(arrayMastersDto);
         } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessage(exception, objectMapper);
+            throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
+        }
+    }
+
+    @Override
+    public Long getNumberFreeMasters(String date) {
+        log.debug("[getNumberFreePlace]");
+        try {
+            ResponseEntity<LongDto> response = restTemplate.getForEntity(GET_NUMBER_FREE_MASTERS_PATH + date,
+                LongDto.class);
+            LongDto longDto = response.getBody();
+            if (longDto == null) {
+                throw new BusinessException("Error, there are no number");
+            }
+            return longDto.getNumber();
+        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            log.error(exception.getResponseBodyAsString());
+            throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }
     }
 
@@ -141,7 +139,7 @@ public class MasterClientImpl implements MasterClient {
     }
 
     @Override
-    public String getMasterOrders(Long masterId) {
+    public List<OrderDto> getMasterOrders(Long masterId) {
         log.debug("[getMasterOrders]");
         log.trace("[masterId: {}]", masterId);
         try {
@@ -149,13 +147,12 @@ public class MasterClientImpl implements MasterClient {
                     GET_MASTER_ORDERS_START_PATH + masterId + GET_MASTER_ORDERS_END_PATH, OrderDto[].class);
             OrderDto[] arrayOrdersDto = response.getBody();
             if (arrayOrdersDto == null) {
-                return WARNING_SERVER_MESSAGE;
+                throw new BusinessException(WARNING_SERVER_MESSAGE);
             }
-            List<OrderDto> ordersDto = Arrays.asList(arrayOrdersDto);
-            return StringOrder.getStringFromOrder(ordersDto);
+            return Arrays.asList(arrayOrdersDto);
         } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
             log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessage(exception, objectMapper);
+            throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }
     }
 

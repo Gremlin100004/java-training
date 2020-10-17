@@ -22,7 +22,6 @@ import java.util.List;
 @ContextConfiguration(classes = TestConfig.class)
 class PlaceServiceImplTest {
     private static final Long RIGHT_NUMBER_PLACES = 2L;
-    private static final Long WRONG_NUMBER_PLACES = 0L;
     private static final Long ID_PLACE = 1L;
     private static final Long ID_OTHER_PLACE = 2L;
     private static final int NUMBER_PLACE = 1;
@@ -51,9 +50,22 @@ class PlaceServiceImplTest {
         Place place = getTestPlace();
         PlaceDto placeDto = getTestPlaceDto();
         Mockito.doReturn(place).when(placeDao).saveRecord(ArgumentMatchers.any(Place.class));
+        Mockito.doReturn(null).when(placeDao).findByNumber(NUMBER_PLACE);
 
         Assertions.assertDoesNotThrow(() -> placeService.addPlace(placeDto));
         Mockito.verify(placeDao, Mockito.times(1)).saveRecord(ArgumentMatchers.any(Place.class));
+        Mockito.reset(placeDao);
+    }
+
+    @Test
+    void PlaceServiceImpl_addPlace_placeDao_findByNumber_existPlaceWithNumber() {
+        Place place = getTestPlace();
+        PlaceDto placeDto = getTestPlaceDto();
+        Mockito.doReturn(place).when(placeDao).saveRecord(ArgumentMatchers.any(Place.class));
+        Mockito.doReturn(place).when(placeDao).findByNumber(NUMBER_PLACE);
+
+        Assertions.assertThrows(BusinessException.class, () -> placeService.addPlace(placeDto));
+        Mockito.verify(placeDao, Mockito.never()).saveRecord(ArgumentMatchers.any(Place.class));
         Mockito.reset(placeDao);
     }
 
@@ -122,24 +134,6 @@ class PlaceServiceImplTest {
         Assertions.assertFalse(resultPlacesDto.isEmpty());
         Assertions.assertEquals(placesDto, resultPlacesDto);
         Mockito.verify(placeDao, Mockito.times(1)).getFreePlaces(date);
-        Mockito.reset(placeDao);
-    }
-
-    @Test
-    void PlaceServiceImpl_getNumberPlace() {
-        Mockito.doReturn(RIGHT_NUMBER_PLACES).when(placeDao).getNumberPlaces();
-
-        Assertions.assertDoesNotThrow(() -> placeService.checkPlaces());
-        Mockito.verify(placeDao, Mockito.times(1)).getNumberPlaces();
-        Mockito.reset(placeDao);
-    }
-
-    @Test
-    void PlaceServiceImpl_getNumberPlace_placeDao_getNumberPlaces_zeroNumberPlaces() {
-        Mockito.doReturn(WRONG_NUMBER_PLACES).when(placeDao).getNumberPlaces();
-
-        Assertions.assertThrows(BusinessException.class, () -> placeService.checkPlaces());
-        Mockito.verify(placeDao, Mockito.times(1)).getNumberPlaces();
         Mockito.reset(placeDao);
     }
 
