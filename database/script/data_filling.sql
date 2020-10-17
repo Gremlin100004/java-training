@@ -66,4 +66,28 @@ INSERT INTO orders_masters VALUES
 (9, 17), (9, 18), (10, 19), (10, 20),
 (11, 21), (11, 22), (12, 1), (12, 2);
 
+ALTER TABLE privileges AUTO_INCREMENT = 1;
+
+INSERT INTO privileges VALUES
+(NULL, 'CREATE_PRIVILEGE'),
+(NULL, 'READ_PRIVILEGE'),
+(NULL, 'UPDATE_PRIVILEGE'),
+(NULL, 'DELETE_PRIVILEGE');
+
+ALTER TABLE roles AUTO_INCREMENT = 1;
+
+INSERT INTO roles VALUES
+(NULL, 'ROLE_ADMIN'),
+(NULL, 'ROLE_USER'),
+(NULL, 'ROLE_GUEST');
+
+ALTER TABLE users AUTO_INCREMENT = 1;
+
+INSERT INTO users VALUES
+(NULL, 'admin-999@testmail.com', '87be027a514de1da9c958da92cb2db51e212d3ab26c4bd9e6d65109ec84c', 1);
+
+INSERT INTO roles_privileges VALUES
+(1, 1), (1, 2), (1, 3), (1, 4),
+(2, 1), (2, 3), (3, 2);
+
 COMMIT;
