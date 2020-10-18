@@ -12,7 +12,7 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,8 +33,7 @@ public class MasterController {
     @Autowired
     private MasterService masterService;
 
-//    @PreAuthorize("hasPermission('READ_PRIVILEGE')")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<MasterDto> getMasters(@RequestParam(required = false) String sortParameter,
@@ -54,6 +53,7 @@ public class MasterController {
         }
     }
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/numberMasters")
     @ResponseStatus(HttpStatus.OK)
     public LongDto getNumberMasters(@RequestParam(required = false) String date) {
@@ -68,6 +68,7 @@ public class MasterController {
         return longDto;
     }
 
+    @Secured({"ROLE_ADMIN"})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MasterDto addMaster(@RequestBody MasterDto masterDto) {
@@ -75,6 +76,7 @@ public class MasterController {
         return masterService.addMaster(masterDto);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deleteMaster(@PathVariable("id") Long masterId) {
@@ -82,6 +84,7 @@ public class MasterController {
         return new ClientMessageDto("Master has been deleted successfully");
     }
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/{id}/orders")
     @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> getMasterOrders(@PathVariable("id") Long masterId) {

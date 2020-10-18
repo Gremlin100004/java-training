@@ -33,4 +33,5 @@ public class UserDaoImpl extends AbstractDao<SystemUser, Long> implements UserDa
             return null;
         }
     }
+
 }

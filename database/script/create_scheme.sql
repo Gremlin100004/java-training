@@ -60,11 +60,6 @@ order_id INT NOT NULL,
 master_id INT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS roles_privileges(
-role_id INT NOT NULL,
-privilege_id INT NOT NULL
-);
-
 ALTER TABLE orders
 ADD CONSTRAINT fk_orders
 FOREIGN KEY (place_id)
@@ -80,16 +75,6 @@ ADD CONSTRAINT fk_orders_masters_masters
 FOREIGN KEY (master_id)
 REFERENCES masters (id) ON DELETE CASCADE;
 
-ALTER TABLE roles_privileges
-ADD CONSTRAINT fk_orders_roles_roles
-FOREIGN KEY (role_id)
-REFERENCES roles (id) ON DELETE CASCADE;
-
-ALTER TABLE roles_privileges
-ADD CONSTRAINT fk_orders_roles_privileges
-FOREIGN KEY (privilege_id)
-REFERENCES privileges (id) ON DELETE CASCADE;
-
 ALTER TABLE users
 ADD CONSTRAINT fk_users
 FOREIGN KEY (role_id)
@@ -103,9 +88,6 @@ ON places (id);
 
 CREATE UNIQUE INDEX orders_id_idx
 ON orders (id);
-
-CREATE UNIQUE INDEX privileges_id_idx
-ON privileges (id);
 
 CREATE UNIQUE INDEX roles_id_idx
 ON roles (id);

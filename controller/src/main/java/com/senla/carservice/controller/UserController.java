@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,18 +27,26 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Secured({"ROLE_ADMIN"})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getUsers(){
         return userService.getSystemUsers();
     }
 
-    @PostMapping
+    @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto addUser(@RequestBody UserDto userDto) {
         return userService.addUser(userDto);
     }
 
+    @PostMapping("/authorization")
+    @ResponseStatus(HttpStatus.OK)
+    public ClientMessageDto logIn(@RequestBody UserDto userDto) {
+        return new ClientMessageDto(userService.logIn(userDto));
+    }
+
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deletePlace(@PathVariable("id") Long orderId) {

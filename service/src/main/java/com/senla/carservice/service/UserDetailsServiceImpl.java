@@ -24,10 +24,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UserDao userDao;
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        log.debug("[loadUserByUsername]");
         SystemUser systemUser = userDao.findByEmail(email);
         if (systemUser == null) {
-            throw new BusinessException("User with email: " + email + " not found");
+            throw new BusinessException("This email does not exist");
         } else {
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority(systemUser.getRole().getName().toString());
             return new User(email, systemUser.getPassword(), List.of(authority));

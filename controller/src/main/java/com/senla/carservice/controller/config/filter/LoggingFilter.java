@@ -1,16 +1,16 @@
-package com.senla.carservice.controller.config;
+package com.senla.carservice.controller.config.filter;
 
+import com.senla.carservice.controller.config.CachedBodyHttpServletRequest;
+import com.senla.carservice.controller.config.HttpServletResponseCopier;
 import com.senla.carservice.controller.exception.ControllerException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.springframework.web.filter.CommonsRequestLoggingFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @WebFilter(filterName = "LoggingFilter", urlPatterns = "/*")
 @Slf4j
-public class LoggingFilter extends CommonsRequestLoggingFilter {
+public class LoggingFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
@@ -34,7 +34,8 @@ public class LoggingFilter extends CommonsRequestLoggingFilter {
                 requestCopier.getRequestURI(), getParameters(httpServletRequest), requestBody);
             log.info("[response][status: {}] [body: {}]", responseCopier.getStatus(),
                 new String(responseCopier.getCopy(), httpServletResponse.getCharacterEncoding()));
-        } catch (IOException | ServletException e) {
+        } catch (Exception exception) {
+            log.error("[{}]", exception.getMessage());
             throw new ControllerException("Request error");
         }
     }

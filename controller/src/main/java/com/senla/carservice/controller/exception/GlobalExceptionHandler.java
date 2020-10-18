@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -52,12 +54,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ClientMessageDto(dateException.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
+    protected ResponseEntity<ClientMessageDto> handleAuthenticationException(AuthenticationCredentialsNotFoundException authenticationCredentialsNotFoundException) {
+        log.debug("[handleAuthenticationException]");
+        log.error("[{}]", authenticationCredentialsNotFoundException.getMessage());
+        return new ResponseEntity<>(new ClientMessageDto("Error, you are not logged in"), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<ClientMessageDto> handleAccessDeniedException(AccessDeniedException accessDeniedException) {
+        log.debug("[handleAccessDeniedException]");
+        log.error("[{}]", accessDeniedException.getMessage());
+        return new ResponseEntity<>(new ClientMessageDto("Error, you do not have access rights"), HttpStatus.BAD_REQUEST);
+    }
+
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException exception,
                                                                          HttpHeaders headers,
                                                                          HttpStatus status,
                                                                          WebRequest request) {
-        log.debug("[handleBusinessException]");
+        log.debug("[handleHttpRequestMethodNotSupported]");
         log.error("[{}]", exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), status);
     }
@@ -67,7 +83,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                      HttpHeaders headers,
                                                                      HttpStatus status,
                                                                      WebRequest request) {
-        log.debug("[handleBusinessException]");
+        log.debug("[handleHttpMediaTypeNotSupported]");
         log.error("[{}]", exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), status);
     }
@@ -77,7 +93,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                       HttpHeaders headers,
                                                                       HttpStatus status,
                                                                       WebRequest request) {
-        log.debug("[handleBusinessException]");
+        log.debug("[handleHttpMediaTypeNotAcceptable]");
         log.error("[{}]", exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), status);
     }
@@ -87,7 +103,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                HttpHeaders headers,
                                                                HttpStatus status,
                                                                WebRequest request) {
-        log.debug("[handleBusinessException]");
+        log.debug("[handleMissingPathVariable]");
         log.error("[{}]", exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), status);
     }
@@ -97,7 +113,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                           HttpHeaders headers,
                                                                           HttpStatus status,
                                                                           WebRequest request) {
-        log.debug("[handleBusinessException]");
+        log.debug("[handleMissingServletRequestParameter]");
         log.error("[{}]", exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), status);
     }
@@ -107,7 +123,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                           HttpHeaders headers,
                                                                           HttpStatus status,
                                                                           WebRequest request) {
-        log.debug("[handleBusinessException]");
+        log.debug("[handleServletRequestBindingException]");
         log.error("[{}]", exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), status);
     }
@@ -117,7 +133,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatus status,
                                                                   WebRequest request) {
-        log.debug("[handleBusinessException]");
+        log.debug("[handleConversionNotSupported]");
         log.error("[{}]", exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), status);
     }
@@ -127,7 +143,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                         HttpHeaders headers,
                                                         HttpStatus status,
                                                         WebRequest request) {
-        log.debug("[handleBusinessException]");
+        log.debug("[handleTypeMismatch]");
         log.error("[{}]", exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), status);
     }
@@ -137,7 +153,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatus status,
                                                                   WebRequest request) {
-        log.debug("[handleBusinessException]");
+        log.debug("[handleHttpMessageNotReadable]");
         log.error("[{}]", exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), status);
     }

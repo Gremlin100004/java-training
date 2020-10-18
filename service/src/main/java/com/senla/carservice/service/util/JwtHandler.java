@@ -1,8 +1,10 @@
-package com.senla.carservice.controller.config;
+package com.senla.carservice.service.util;
 
+import com.senla.carservice.service.exception.BusinessException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-public class JwtUtil {
+@Slf4j
+public class JwtHandler {
     @Value("${com.senla.carservice.JwtUtil.secret-key}")
     private String secretKey;
 
@@ -21,40 +24,46 @@ public class JwtUtil {
     private Integer expiration;
 
     public String extractUsername(String token) {
+        log.debug("[extractUsername]");
         return extractClaim(token, Claims::getSubject);
     }
 
     public Date extractExpiration(String token) {
+        log.debug("[extractExpiration]");
         return extractClaim(token, Claims::getExpiration);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
+        log.debug("[extractClaim]");
+        Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+    public Claims extractAllClaims(String token) {
+        log.debug("[extractClaim]");
+        try {
+            return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+        } catch (Exception exception) {
+            log.error("[{}]", exception.getMessage());
+            throw new BusinessException("Wrong authorization");
+        }
     }
 
-    private Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
     public String generateToken(UserDetails userDetails) {
-        final Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
-    }
-
-    private String createToken(final Map<String, Object> claims, final String subject) {
-        //ToDo fix deprecate method
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + expiration))
+        log.debug("[generateToken]");
+        Map<String, Object> claims = new HashMap<>();
+        return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername()).setIssuedAt(
+            new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + expiration))
             .signWith(SignatureAlgorithm.HS256, secretKey).compact();
     }
 
-    public Boolean validateToken(final String token, final UserDetails userDetails) {
-        final String username = extractUsername(token);
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        log.debug("[validateToken]");
+        String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }

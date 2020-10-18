@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,12 +36,14 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderDto addOrder(@RequestBody OrderDto orderDto) {
         return orderService.addOrder(orderDto);
     }
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/freeDate")
     @ResponseStatus(HttpStatus.OK)
     public DateDto getNearestFreeDate() {
@@ -49,6 +52,7 @@ public class OrderController {
         return dateDto;
     }
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> getOrders(@RequestParam(required = false) String sortParameter,
@@ -71,6 +75,7 @@ public class OrderController {
         }
     }
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @PutMapping("/{id}/complete")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto completeOrder(@PathVariable("id") Long orderId) {
@@ -78,6 +83,7 @@ public class OrderController {
         return new ClientMessageDto("The order has been transferred to execution status successfully");
     }
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @PutMapping("/{id}/close")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto closeOrder(@PathVariable("id") Long orderId) {
@@ -85,6 +91,7 @@ public class OrderController {
         return new ClientMessageDto("The order has been completed successfully");
     }
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @PutMapping("/{id}/cancel")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto cancelOrder(@PathVariable("id") Long orderId) {
@@ -92,6 +99,7 @@ public class OrderController {
         return new ClientMessageDto("The order has been canceled successfully");
     }
 
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deleteOrder(@PathVariable("id") Long orderId) {
@@ -99,6 +107,7 @@ public class OrderController {
         return new ClientMessageDto("The order has been deleted successfully");
     }
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @PutMapping("/shiftLeadTime")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto shiftLeadTime(@RequestBody OrderDto orderDto) {
@@ -106,12 +115,14 @@ public class OrderController {
         return new ClientMessageDto("The order lead time has been changed successfully");
     }
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/{id}/masters")
     @ResponseStatus(HttpStatus.OK)
     public List<MasterDto> getOrderMasters(@PathVariable("id") Long orderId) {
         return orderService.getOrderMasters(orderId);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @PostMapping("/csv/export")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto exportEntities() {
@@ -119,6 +130,7 @@ public class OrderController {
         return new ClientMessageDto("Export completed successfully!");
     }
 
+    @Secured({"ROLE_ADMIN"})
     @PostMapping("/csv/import")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto importEntities() {

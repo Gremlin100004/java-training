@@ -7,7 +7,6 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -16,14 +15,14 @@ import javax.persistence.Table;
 @Table(name = "users")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "role")
 @NoArgsConstructor
 public class SystemUser extends AEntity {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
     @Column(name = "password", nullable = false, unique = true)
     private String password;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "role_id")
     private Role role;
 
