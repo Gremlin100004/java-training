@@ -13,6 +13,7 @@
     <properties>
         <hibernate.version>5.4.2.Final</hibernate.version>
         <log4j.version>2.13.3</log4j.version>
+        <spring-security.version>5.4.1</spring-security.version>
     </properties>
     <dependencies>
         <dependency>
@@ -55,6 +56,21 @@
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
             <version>0.9.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring-security.version}</version>
         </dependency>
     </dependencies>
 </project>

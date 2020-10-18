@@ -90,6 +90,11 @@ ADD CONSTRAINT fk_orders_roles_privileges
 FOREIGN KEY (privilege_id)
 REFERENCES privileges (id) ON DELETE CASCADE;
 
+ALTER TABLE users
+ADD CONSTRAINT fk_users
+FOREIGN KEY (role_id)
+REFERENCES roles (id) ON DELETE CASCADE;
+
 CREATE UNIQUE INDEX masters_id_idx
 ON masters (id);
 

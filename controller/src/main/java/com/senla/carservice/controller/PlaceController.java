@@ -51,7 +51,7 @@ public class PlaceController {
     @ResponseStatus(HttpStatus.OK)
     public LongDto getNumberFreePlaces(@RequestParam(required = false) String date) {
         LongDto longDto = new LongDto();
-        if (date == null){
+        if (date == null) {
             longDto.setNumber(placeService.getNumberPlace());
         } else {
             Date dateFree = DateUtil.getDatesFromString(date, false);

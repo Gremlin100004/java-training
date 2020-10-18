@@ -12,6 +12,7 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,8 @@ public class MasterController {
     @Autowired
     private MasterService masterService;
 
+//    @PreAuthorize("hasPermission('READ_PRIVILEGE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<MasterDto> getMasters(@RequestParam(required = false) String sortParameter,
@@ -55,7 +58,7 @@ public class MasterController {
     @ResponseStatus(HttpStatus.OK)
     public LongDto getNumberMasters(@RequestParam(required = false) String date) {
         LongDto longDto = new LongDto();
-        if (date == null){
+        if (date == null) {
             longDto.setNumber(masterService.getNumberMasters());
         } else {
             Date dateFree = DateUtil.getDatesFromString(date, false);

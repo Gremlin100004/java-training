@@ -78,8 +78,7 @@ ALTER TABLE roles AUTO_INCREMENT = 1;
 
 INSERT INTO roles VALUES
 (NULL, 'ROLE_ADMIN'),
-(NULL, 'ROLE_USER'),
-(NULL, 'ROLE_GUEST');
+(NULL, 'ROLE_USER');
 
 ALTER TABLE users AUTO_INCREMENT = 1;
 
@@ -88,6 +87,6 @@ INSERT INTO users VALUES
 
 INSERT INTO roles_privileges VALUES
 (1, 1), (1, 2), (1, 3), (1, 4),
-(2, 1), (2, 3), (3, 2);
+(2, 1), (2, 3);
 
 COMMIT;

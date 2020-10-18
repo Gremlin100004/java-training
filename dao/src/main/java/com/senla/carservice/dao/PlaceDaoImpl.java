@@ -55,6 +55,7 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
             entityManager.createQuery(criteriaQuery).getSingleResult();
             return entityManager.createQuery(criteriaQuery).getSingleResult();
         } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
             return null;
         }
     }
