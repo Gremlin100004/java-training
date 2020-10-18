@@ -14,9 +14,10 @@ public class UserMapper {
             .collect(Collectors.toList());
     }
 
-    public static UserDto getUserDto(SystemUser users){
+    public static UserDto getUserDto(SystemUser user){
         UserDto userDto = new UserDto();
-        userDto.setEmail(users.getEmail());
+        userDto.setId(user.getId());
+        userDto.setEmail(user.getEmail());
         return userDto;
     }
 

@@ -16,7 +16,6 @@ import javax.persistence.Table;
 @ToString
 @NoArgsConstructor
 public class Place extends AEntity {
-
     @Column(name = "number")
     private Integer number;
     @Column(name = "is_busy")

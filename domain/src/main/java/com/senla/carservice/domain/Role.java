@@ -22,7 +22,7 @@ import java.util.Set;
 @Table(name = "roles")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "privileges")
 @NoArgsConstructor
 public class Role extends AEntity {
     @Enumerated(EnumType.STRING)

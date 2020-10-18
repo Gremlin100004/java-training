@@ -18,7 +18,6 @@ public interface MasterService {
 
     Long getNumberFreeMastersByDate(Date startDate);
 
-    @Transactional
     Long getNumberMasters();
 
     void deleteMaster(Long masterId);

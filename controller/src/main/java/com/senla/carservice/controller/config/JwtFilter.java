@@ -1,10 +1,12 @@
 package com.senla.carservice.controller.config;
 
-import com.senla.carservice.service.UserDetailsServiceImpl;
+import com.senla.carservice.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
@@ -19,8 +21,9 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends CommonsRequestLoggingFilter {
-
-    private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
     private JwtUtil jwtUtil;
     private static final Integer LENGTHS_BEARER_TOKEN = 7;
 
@@ -42,7 +45,7 @@ public class JwtFilter extends CommonsRequestLoggingFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            final UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtUtil.validateToken(jwt, userDetails)) {
 

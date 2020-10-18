@@ -65,6 +65,6 @@ public class PlaceController {
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deletePlace(@PathVariable("id") Long orderId) {
         placeService.deletePlace(orderId);
-        return new ClientMessageDto("Delete place in service successfully");
+        return new ClientMessageDto("Place has been deleted successfully");
     }
 }

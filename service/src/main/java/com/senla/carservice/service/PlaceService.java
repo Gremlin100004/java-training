@@ -14,7 +14,6 @@ public interface PlaceService {
 
     void deletePlace(Long orderId);
 
-    @Transactional
     Long getNumberPlace();
 
     Long getNumberFreePlaceByDate(Date startDate);

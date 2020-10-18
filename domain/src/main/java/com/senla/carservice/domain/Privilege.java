@@ -19,7 +19,7 @@ import java.util.Set;
 @Table(name = "privileges")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "roles")
 @NoArgsConstructor
 public class Privilege extends AEntity {
     @Enumerated(EnumType.STRING)

@@ -79,7 +79,7 @@ public class MasterController {
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deleteMaster(@PathVariable("id") Long masterId) {
         masterService.deleteMaster(masterId);
-        return new ClientMessageDto(" -master has been deleted successfully!");
+        return new ClientMessageDto("Master has been deleted successfully");
     }
 
     @GetMapping("/{id}/orders")

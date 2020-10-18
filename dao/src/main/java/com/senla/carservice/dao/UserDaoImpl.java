@@ -13,6 +13,10 @@ import javax.persistence.criteria.Root;
 @Repository
 @Slf4j
 public class UserDaoImpl extends AbstractDao<SystemUser, Long> implements UserDao {
+    public UserDaoImpl() {
+        setType(SystemUser.class);
+    }
+
     @Override
     public SystemUser findByEmail(String email) {
         log.debug("[findByEmail]");
