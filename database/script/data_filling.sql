@@ -75,6 +75,6 @@ INSERT INTO roles VALUES
 ALTER TABLE users AUTO_INCREMENT = 1;
 
 INSERT INTO users VALUES
-(NULL, 'admin-999@testmail.com', '87be027a514de1da9c958da92cb2db51e212d3ab26c4bd9e6d65109ec84c', 1);
+(NULL, 'admin-999@testmail.com', '$2a$10$ehU.2fP2fFtcFB9Fti8u2unzBrCIzQRvUei8r/ppUzxlBxSP86eH2', 1);
 
 COMMIT;

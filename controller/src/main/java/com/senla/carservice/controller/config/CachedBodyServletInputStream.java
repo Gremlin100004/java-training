@@ -11,6 +11,7 @@ import java.io.InputStream;
 public class CachedBodyServletInputStream extends ServletInputStream {
 
     private final InputStream cachedBodyInputStream;
+    private ReadListener listener;
 
     public CachedBodyServletInputStream(byte[] cachedBody) {
         this.cachedBodyInputStream = new ByteArrayInputStream(cachedBody);
@@ -41,7 +42,13 @@ public class CachedBodyServletInputStream extends ServletInputStream {
 
     @Override
     public void setReadListener(final ReadListener readListener) {
-
+        if (readListener == null) {
+            throw new ControllerException("Response error");
+        }
+        if (listener != null) {
+            throw new ControllerException("Response error");
+        }
+        listener = readListener;
     }
 
 }
