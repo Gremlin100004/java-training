@@ -16,7 +16,7 @@ import java.util.function.Function;
 @Service
 @Slf4j
 public class JwtUtil {
-    
+
     public static String generateToken(UserDetails userDetails, String secretKey, Integer expiration) {
         log.debug("[generateToken]");
         Map<String, Object> claims = new HashMap<>();

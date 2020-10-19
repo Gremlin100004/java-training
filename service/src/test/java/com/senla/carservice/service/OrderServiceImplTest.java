@@ -1123,4 +1123,5 @@ class OrderServiceImplTest {
         masterDtoTwo.setId(ID_OTHER_MASTER);
         return Arrays.asList(masterDtoOne, masterDtoTwo);
     }
+
 }

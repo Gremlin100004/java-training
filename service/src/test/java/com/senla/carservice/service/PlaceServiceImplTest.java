@@ -61,7 +61,6 @@ class PlaceServiceImplTest {
     void PlaceServiceImpl_addPlace_placeDao_findByNumber_existPlaceWithNumber() {
         Place place = getTestPlace();
         PlaceDto placeDto = getTestPlaceDto();
-        Mockito.doReturn(place).when(placeDao).saveRecord(ArgumentMatchers.any(Place.class));
         Mockito.doReturn(place).when(placeDao).findByNumber(NUMBER_PLACE);
 
         Assertions.assertThrows(BusinessException.class, () -> placeService.addPlace(placeDto));
@@ -175,4 +174,5 @@ class PlaceServiceImplTest {
         placeDtoTwo.setId(ID_OTHER_PLACE);
         return Arrays.asList(placeDtoOne, placeDtoTwo);
     }
+
 }
