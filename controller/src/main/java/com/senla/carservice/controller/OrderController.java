@@ -1,7 +1,6 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.controller.exception.ControllerException;
-import com.senla.carservice.controller.util.EnumUtil;
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.DateDto;
 import com.senla.carservice.dto.MasterDto;
@@ -55,21 +54,16 @@ public class OrderController {
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderDto> getOrders(@RequestParam(required = false) String sortParameter,
+    public List<OrderDto> getOrders(@RequestParam(required = false) OrderSortParameter sortParameter,
            @RequestParam (required = false) String startPeriod, @RequestParam (required = false) String endPeriod) {
         if (sortParameter == null && startPeriod == null && endPeriod == null) {
             return orderService.getOrders();
         } else if (startPeriod == null && endPeriod == null) {
-            if (EnumUtil.isValidEnum(OrderSortParameter.values(), sortParameter)) {
-                return orderService.getSortOrders(OrderSortParameter.valueOf(sortParameter));
-            } else {
-                throw new ControllerException("Wrong sort parameter");
-            }
+            return orderService.getSortOrders(sortParameter);
         } else if (sortParameter != null && startPeriod != null && endPeriod != null) {
-            OrderSortParameter orderSortParameter = OrderSortParameter.valueOf(sortParameter);
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod.replace('%', ' '), true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod.replace('%', ' '), true);
-            return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate, orderSortParameter);
+            return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate, sortParameter);
         } else {
             throw new ControllerException("Wrong request parameters");
         }

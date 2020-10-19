@@ -30,7 +30,7 @@ public class UserController {
     @Secured({"ROLE_ADMIN"})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDto> getUsers(){
+    public List<UserDto> getUsers() {
         return userService.getSystemUsers();
     }
 

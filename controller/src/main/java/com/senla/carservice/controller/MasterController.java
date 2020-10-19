@@ -1,7 +1,6 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.controller.exception.ControllerException;
-import com.senla.carservice.controller.util.EnumUtil;
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.dto.LongDto;
 import com.senla.carservice.dto.MasterDto;
@@ -36,16 +35,12 @@ public class MasterController {
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<MasterDto> getMasters(@RequestParam(required = false) String sortParameter,
+    public List<MasterDto> getMasters(@RequestParam(required = false) MasterSortParameter sortParameter,
             @RequestParam (required = false) String stringExecuteDate) {
         if (sortParameter == null && stringExecuteDate == null) {
             return masterService.getMasters();
         } else if (stringExecuteDate == null) {
-            if (EnumUtil.isValidEnum(MasterSortParameter.values(), sortParameter)) {
-                return masterService.getSortMasters(MasterSortParameter.valueOf(sortParameter));
-            } else {
-                throw new ControllerException("Wrong sort parameter");
-            }
+            return masterService.getSortMasters(sortParameter);
         } else if (sortParameter == null) {
             return masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate.replace('%', ' '), true));
         } else {

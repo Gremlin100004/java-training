@@ -5,12 +5,12 @@ import com.senla.carservice.dao.UserDao;
 import com.senla.carservice.domain.SystemUser;
 import com.senla.carservice.dto.UserDto;
 import com.senla.carservice.service.exception.BusinessException;
-import com.senla.carservice.service.util.JwtHandler;
+import com.senla.carservice.service.util.JwtUtil;
 import com.senla.carservice.service.util.UserMapper;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +23,6 @@ import java.util.List;
 
 @Service
 @NoArgsConstructor
-@AllArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
     private static final Long ID_ROLE_USER = 2L;
@@ -35,8 +34,10 @@ public class UserServiceImpl implements UserService {
     private BCryptPasswordEncoder cryptPasswordEncoder;
     @Autowired
     private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtHandler jwtHandler;
+    @Value("${com.senla.carservice.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
+    @Value("${com.senla.carservice.controller.JwtUtil.expiration:3600000}")
+    private Integer expiration;
 
     @Override
     @Transactional
@@ -57,7 +58,7 @@ public class UserServiceImpl implements UserService {
         List<SimpleGrantedAuthority> authorities = List.of(
             new SimpleGrantedAuthority(systemUser.getRole().getName().toString()));
         User user = new User(userDto.getEmail(), userDto.getPassword(), authorities);
-        return jwtHandler.generateToken(user);
+        return JwtUtil.generateToken(user, secretKey, expiration);
     }
 
     @Override
