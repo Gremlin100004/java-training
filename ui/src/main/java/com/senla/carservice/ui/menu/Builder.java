@@ -817,14 +817,12 @@ public class Builder {
 
     private boolean isCheckMasters() {
         log.debug("[isCheckMasters]");
-        List<MasterDto> masters = masterClient.getMasters();
-        return masters.isEmpty();
+        return masterClient.getNumberMasters() == 0;
     }
 
     private boolean isCheckPlaces() {
         log.debug("[isCheckPlaces]");
-        List<PlaceDto> places = placeClient.getPlaces();
-        return places.isEmpty();
+        return placeClient.getNumberPlace() == 0;
     }
 
 }

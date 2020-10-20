@@ -10,12 +10,15 @@ import com.senla.carservice.ui.util.ExceptionUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -51,20 +54,23 @@ public class OrderClientImpl implements OrderClient {
     private RestTemplate restTemplate;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private HttpHeaders httpHeaders;
 
     @Override
     public String addOrder(OrderDto orderDto) {
         log.debug("[addOrder]");
         log.trace("[orderDto: {}]", orderDto);
         try {
-            ResponseEntity<OrderDto> response = restTemplate.postForEntity(
-                ADD_ORDER_PATH, orderDto, OrderDto.class);
+            ParameterizedTypeReference<OrderDto> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<OrderDto> response = restTemplate.exchange(
+                ADD_ORDER_PATH, HttpMethod.POST, new HttpEntity<>(httpHeaders), beanType, orderDto);
             OrderDto receivedOrderDto = response.getBody();
             if (receivedOrderDto == null) {
                 return WARNING_SERVER_MESSAGE;
             }
             return ADD_ORDER_SUCCESS_MESSAGE;
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
         }
@@ -74,13 +80,15 @@ public class OrderClientImpl implements OrderClient {
     public List<OrderDto> getOrders() {
         log.debug("[getOrders]");
         try {
-            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(GET_ORDERS_PATH, OrderDto[].class);
-            OrderDto[] arrayOrdersDto = response.getBody();
-            if (arrayOrdersDto == null) {
-                throw new BusinessException(WARNING_SERVER_MESSAGE);
+            ParameterizedTypeReference<List<OrderDto>> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<List<OrderDto>> response = restTemplate.exchange(
+                GET_ORDERS_PATH, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+            List<OrderDto> listOrdersDto = response.getBody();
+            if (listOrdersDto == null) {
+                throw new BusinessException("Error, there are no orders");
             }
-            return Arrays.asList(arrayOrdersDto);
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            return listOrdersDto;
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }
@@ -91,9 +99,12 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[completeOrder]");
         log.trace("[idOrder: {}]", idOrder);
         try {
-            restTemplate.put(COMPLETE_ORDER_START_PATH + idOrder + COMPLETE_ORDER_END_PATH, OrderDto.class);
+            ParameterizedTypeReference<OrderDto> beanType = new ParameterizedTypeReference<>() { };
+            restTemplate.exchange(
+                COMPLETE_ORDER_START_PATH + idOrder + COMPLETE_ORDER_END_PATH, HttpMethod.PUT,
+                new HttpEntity<>(httpHeaders), beanType);
             return ORDER_TRANSFERRED_SUCCESS_MESSAGE;
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
         }
@@ -104,9 +115,12 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[closeOrder]");
         log.trace("[idOrder: {}]", idOrder);
         try {
-            restTemplate.put(CLOSE_ORDER_START_PATH + idOrder + CLOSE_ORDER_END_PATH, OrderDto.class);
+            ParameterizedTypeReference<OrderDto> beanType = new ParameterizedTypeReference<>() { };
+            restTemplate.exchange(
+                CLOSE_ORDER_START_PATH + idOrder + CLOSE_ORDER_END_PATH, HttpMethod.PUT, new HttpEntity<>(
+                    httpHeaders), beanType);
             return ORDER_COMPLETE_SUCCESS_MESSAGE;
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
         }
@@ -117,9 +131,12 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[cancelOrder]");
         log.trace("[idOrder: {}]", idOrder);
         try {
-            restTemplate.put(CANCEL_ORDER_START_PATH + idOrder + CANCEL_ORDER_END_PATH, OrderDto.class);
+            ParameterizedTypeReference<OrderDto> beanType = new ParameterizedTypeReference<>() { };
+            restTemplate.exchange(
+                CANCEL_ORDER_START_PATH + idOrder + CANCEL_ORDER_END_PATH, HttpMethod.PUT, new HttpEntity<>(
+                    httpHeaders), beanType);
             return ORDER_CANCEL_SUCCESS_MESSAGE;
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
         }
@@ -130,9 +147,11 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[deleteOrder]");
         log.trace("[idOrder: {}]", idOrder);
         try {
-            restTemplate.delete(DELETE_ORDER_PATH + idOrder, OrderDto.class);
+            ParameterizedTypeReference<OrderDto> beanType = new ParameterizedTypeReference<>() { };
+            restTemplate.exchange(
+                DELETE_ORDER_PATH + idOrder, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), beanType);
             return ORDER_DELETE_SUCCESS_MESSAGE;
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
         }
@@ -143,9 +162,15 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[shiftLeadTime]");
         log.trace("[orderDto: {}]", orderDto);
         try {
-            restTemplate.put(SHIFT_LEAD_TIME_PATH, orderDto, OrderDto.class);
-            return ORDER_CHANGE_TIME_SUCCESS_MESSAGE;
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            ParameterizedTypeReference<ClientMessageDto> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
+                SHIFT_LEAD_TIME_PATH, HttpMethod.PUT, new HttpEntity<>(httpHeaders), beanType, orderDto);
+            ClientMessageDto clientMessageDto = response.getBody();
+            if (clientMessageDto == null) {
+                return WARNING_SERVER_MESSAGE;
+            }
+            return clientMessageDto.getMessage();
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
         }
@@ -156,14 +181,15 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[getOrdersSortByFilingDate]");
         log.trace("[sortParameter: {}]", sortParameter);
         try {
-            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
-                GET_SORT_ORDERS_PATH + sortParameter, OrderDto[].class);
-            OrderDto[] arrayOrdersDto = response.getBody();
-            if (arrayOrdersDto == null) {
-                throw new BusinessException(WARNING_SERVER_MESSAGE);
+            ParameterizedTypeReference<List<OrderDto>> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<List<OrderDto>> response = restTemplate.exchange(
+                GET_SORT_ORDERS_PATH + sortParameter, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+            List<OrderDto> listOrdersDto = response.getBody();
+            if (listOrdersDto == null) {
+                throw new BusinessException("Error, there are no orders");
             }
-            return Arrays.asList(arrayOrdersDto);
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            return listOrdersDto;
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }
@@ -174,15 +200,16 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[getOrdersSortByFilingDate]");
         log.trace("[sortParameter: {}]", sortParameter);
         try {
-            ResponseEntity<OrderDto[]> response = restTemplate.getForEntity(
+            ParameterizedTypeReference<List<OrderDto>> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<List<OrderDto>> response = restTemplate.exchange(
                 GET_SORT_ORDERS_PATH + sortParameter + PARAMETER_START_TIME + startPeriod +
-                PARAMETER_END_TIME + endPeriod, OrderDto[].class);
-            OrderDto[] arrayOrdersDto = response.getBody();
-            if (arrayOrdersDto == null) {
-                throw new BusinessException(WARNING_SERVER_MESSAGE);
+                PARAMETER_END_TIME + endPeriod, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+            List<OrderDto> listOrdersDto = response.getBody();
+            if (listOrdersDto == null) {
+                throw new BusinessException("Error, there are no orders");
             }
-            return Arrays.asList(arrayOrdersDto);
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            return listOrdersDto;
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }
@@ -193,14 +220,16 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[getOrderMasters]");
         log.trace("[orderId: {}]", orderId);
         try {
-            ResponseEntity<MasterDto[]> response = restTemplate.getForEntity(
-                GET_ORDER_MASTERS_START_PATH + orderId + GET_ORDER_MASTERS_END_PATH, MasterDto[].class);
-            MasterDto[] arrayMasterDto = response.getBody();
-            if (arrayMasterDto == null) {
-                throw new BusinessException(WARNING_SERVER_MESSAGE);
+            ParameterizedTypeReference<List<MasterDto>> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<List<MasterDto>> response = restTemplate.exchange(
+                GET_ORDER_MASTERS_START_PATH + orderId + GET_ORDER_MASTERS_END_PATH, HttpMethod.GET,
+                new HttpEntity<>(httpHeaders), beanType);
+            List<MasterDto> listMastersDto = response.getBody();
+            if (listMastersDto == null) {
+                throw new BusinessException("Error, there are no masters");
             }
-            return Arrays.asList(arrayMasterDto);
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            return listMastersDto;
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }
@@ -210,14 +239,11 @@ public class OrderClientImpl implements OrderClient {
     public DateDto getNearestFreeDate() {
         log.debug("[getNearestFreeDate]");
         try {
-            ResponseEntity<DateDto> response = restTemplate.getForEntity(
-                GET_NEAREST_FREE_DATE_PATH, DateDto.class);
-            DateDto dateDto = response.getBody();
-            if (dateDto == null) {
-                throw new BusinessException(WARNING_SERVER_MESSAGE);
-            }
-            return dateDto;
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            ParameterizedTypeReference<DateDto> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<DateDto> response = restTemplate.exchange(
+                GET_NEAREST_FREE_DATE_PATH, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+            return response.getBody();
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }
@@ -227,14 +253,15 @@ public class OrderClientImpl implements OrderClient {
     public String exportEntities() {
         log.debug("[exportEntities]");
         try {
-            ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
-                EXPORT_ENTITIES_PATH, ClientMessageDto.class);
+            ParameterizedTypeReference<ClientMessageDto> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
+                EXPORT_ENTITIES_PATH, HttpMethod.POST, new HttpEntity<>(httpHeaders), beanType);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
             }
             return clientMessageDto.getMessage();
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
         }
@@ -244,14 +271,15 @@ public class OrderClientImpl implements OrderClient {
     public String importEntities() {
         log.debug("[importEntities]");
         try {
-            ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
-                IMPORT_ENTITIES_PATH, ClientMessageDto.class);
+            ParameterizedTypeReference<ClientMessageDto> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
+                IMPORT_ENTITIES_PATH, HttpMethod.POST, new HttpEntity<>(httpHeaders), beanType);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
             }
             return clientMessageDto.getMessage();
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
         }
