@@ -46,9 +46,8 @@ public class PlaceClientImpl implements PlaceClient {
         try {
             PlaceDto placeDto = new PlaceDto();
             placeDto.setNumber(numberPlace);
-            ParameterizedTypeReference<PlaceDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<PlaceDto> response = restTemplate.exchange(
-                ADD_PLACE_PATH, HttpMethod.POST, new HttpEntity<>(httpHeaders), beanType, placeDto);
+                ADD_PLACE_PATH, HttpMethod.POST, new HttpEntity<>(placeDto, httpHeaders),  PlaceDto.class);
             PlaceDto receivedPlaceDto = response.getBody();
             if (receivedPlaceDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -83,9 +82,8 @@ public class PlaceClientImpl implements PlaceClient {
         log.debug("[deletePlace]");
         log.trace("[idPlace: {}]", idPlace);
         try {
-            ParameterizedTypeReference<ClientMessageDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
-                DELETE_PLACE_PATH + idPlace, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), beanType);
+                DELETE_PLACE_PATH + idPlace, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;

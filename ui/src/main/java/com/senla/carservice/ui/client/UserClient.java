@@ -11,5 +11,7 @@ public interface UserClient {
 
     String logIn(UserDto userDto);
 
-    String deletePlace(Long idUser);
+    String logout();
+
+    String deleteUser(Long idUser);
 }

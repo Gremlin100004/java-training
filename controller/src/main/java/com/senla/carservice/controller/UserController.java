@@ -40,7 +40,7 @@ public class UserController {
         return userService.addUser(userDto);
     }
 
-    @PostMapping("/authorization")
+    @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto logIn(@RequestBody UserDto userDto) {
         return new ClientMessageDto(userService.logIn(userDto));

@@ -41,12 +41,7 @@ public class OrderClientImpl implements OrderClient {
     private static final String GET_ORDER_MASTERS_START_PATH = "orders/";
     private static final String GET_ORDER_MASTERS_END_PATH = "/masters";
     private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
-    private static final String ORDER_TRANSFERRED_SUCCESS_MESSAGE = "The order has been transferred to execution status";
     private static final String ADD_ORDER_SUCCESS_MESSAGE = "Order added successfully";
-    private static final String ORDER_COMPLETE_SUCCESS_MESSAGE = "The order has been completed successfully";
-    private static final String ORDER_CANCEL_SUCCESS_MESSAGE = "The order has been canceled successfully";
-    private static final String ORDER_DELETE_SUCCESS_MESSAGE = "The order has been deleted";
-    private static final String ORDER_CHANGE_TIME_SUCCESS_MESSAGE = "The order lead time has been changed successfully";
     private static final String GET_NEAREST_FREE_DATE_PATH = "orders/freeDate";
     private static final String EXPORT_ENTITIES_PATH = "orders/csv/export";
     private static final String IMPORT_ENTITIES_PATH = "orders/csv/import";
@@ -62,9 +57,8 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[addOrder]");
         log.trace("[orderDto: {}]", orderDto);
         try {
-            ParameterizedTypeReference<OrderDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<OrderDto> response = restTemplate.exchange(
-                ADD_ORDER_PATH, HttpMethod.POST, new HttpEntity<>(httpHeaders), beanType, orderDto);
+                ADD_ORDER_PATH, HttpMethod.POST, new HttpEntity<>(orderDto, httpHeaders), OrderDto.class);
             OrderDto receivedOrderDto = response.getBody();
             if (receivedOrderDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -99,11 +93,14 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[completeOrder]");
         log.trace("[idOrder: {}]", idOrder);
         try {
-            ParameterizedTypeReference<OrderDto> beanType = new ParameterizedTypeReference<>() { };
-            restTemplate.exchange(
+            ResponseEntity<ClientMessageDto> responseEntity = restTemplate.exchange(
                 COMPLETE_ORDER_START_PATH + idOrder + COMPLETE_ORDER_END_PATH, HttpMethod.PUT,
-                new HttpEntity<>(httpHeaders), beanType);
-            return ORDER_TRANSFERRED_SUCCESS_MESSAGE;
+                new HttpEntity<>(httpHeaders), ClientMessageDto.class);
+            ClientMessageDto clientMessageDto = responseEntity.getBody();
+            if (clientMessageDto == null) {
+                return WARNING_SERVER_MESSAGE;
+            }
+            return clientMessageDto.getMessage();
         } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
@@ -115,11 +112,14 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[closeOrder]");
         log.trace("[idOrder: {}]", idOrder);
         try {
-            ParameterizedTypeReference<OrderDto> beanType = new ParameterizedTypeReference<>() { };
-            restTemplate.exchange(
+            ResponseEntity<ClientMessageDto> responseEntity = restTemplate.exchange(
                 CLOSE_ORDER_START_PATH + idOrder + CLOSE_ORDER_END_PATH, HttpMethod.PUT, new HttpEntity<>(
-                    httpHeaders), beanType);
-            return ORDER_COMPLETE_SUCCESS_MESSAGE;
+                    httpHeaders), ClientMessageDto.class);
+            ClientMessageDto clientMessageDto = responseEntity.getBody();
+            if (clientMessageDto == null) {
+                return WARNING_SERVER_MESSAGE;
+            }
+            return clientMessageDto.getMessage();
         } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
@@ -131,11 +131,14 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[cancelOrder]");
         log.trace("[idOrder: {}]", idOrder);
         try {
-            ParameterizedTypeReference<OrderDto> beanType = new ParameterizedTypeReference<>() { };
-            restTemplate.exchange(
+            ResponseEntity<ClientMessageDto> responseEntity = restTemplate.exchange(
                 CANCEL_ORDER_START_PATH + idOrder + CANCEL_ORDER_END_PATH, HttpMethod.PUT, new HttpEntity<>(
-                    httpHeaders), beanType);
-            return ORDER_CANCEL_SUCCESS_MESSAGE;
+                    httpHeaders), ClientMessageDto.class);
+            ClientMessageDto clientMessageDto = responseEntity.getBody();
+            if (clientMessageDto == null) {
+                return WARNING_SERVER_MESSAGE;
+            }
+            return clientMessageDto.getMessage();
         } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
@@ -147,10 +150,13 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[deleteOrder]");
         log.trace("[idOrder: {}]", idOrder);
         try {
-            ParameterizedTypeReference<OrderDto> beanType = new ParameterizedTypeReference<>() { };
-            restTemplate.exchange(
-                DELETE_ORDER_PATH + idOrder, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), beanType);
-            return ORDER_DELETE_SUCCESS_MESSAGE;
+            ResponseEntity<ClientMessageDto> responseEntity = restTemplate.exchange(
+                DELETE_ORDER_PATH + idOrder, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), ClientMessageDto.class);
+            ClientMessageDto clientMessageDto = responseEntity.getBody();
+            if (clientMessageDto == null) {
+                return WARNING_SERVER_MESSAGE;
+            }
+            return clientMessageDto.getMessage();
         } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
@@ -162,9 +168,8 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[shiftLeadTime]");
         log.trace("[orderDto: {}]", orderDto);
         try {
-            ParameterizedTypeReference<ClientMessageDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
-                SHIFT_LEAD_TIME_PATH, HttpMethod.PUT, new HttpEntity<>(httpHeaders), beanType, orderDto);
+                SHIFT_LEAD_TIME_PATH, HttpMethod.PUT, new HttpEntity<>(orderDto, httpHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -253,9 +258,8 @@ public class OrderClientImpl implements OrderClient {
     public String exportEntities() {
         log.debug("[exportEntities]");
         try {
-            ParameterizedTypeReference<ClientMessageDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
-                EXPORT_ENTITIES_PATH, HttpMethod.POST, new HttpEntity<>(httpHeaders), beanType);
+                EXPORT_ENTITIES_PATH, HttpMethod.POST, new HttpEntity<>(httpHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;

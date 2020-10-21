@@ -55,7 +55,13 @@ public enum MenuTittle {
         "Get list of orders executed at a given time sort by price"),
     SORT_BY_FILING_DATE("Sort by filing date"),
     SORT_BY_EXECUTION_DATE("Sort by execution date"),
-    SORT_BY_PRICE("Sort by price");
+    SORT_BY_PRICE("Sort by price"),
+    SECURITY("Security"),
+    SHOW_USERS("Show users"),
+    LOGIN("Login"),
+    LOGOUT("Logout"),
+    REGISTER("Register"),
+    DELETE_USER("Delete user");
 
     private final String value;
 

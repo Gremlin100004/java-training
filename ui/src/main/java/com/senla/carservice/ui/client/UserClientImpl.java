@@ -25,12 +25,13 @@ import java.util.List;
 public class UserClientImpl implements UserClient {
     private static final String GET_USERS_PATH = "users";
     private static final String REGISTRATION_USERS_PATH = "users/registration";
-    private static final String AUTHORIZATION_USERS_PATH = "users/authorization";
+    private static final String AUTHORIZATION_USERS_PATH = "users/login";
     private static final String DELETE_USERS_PATH = "users/";
     private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
     private static final String ADD_USER_SUCCESS_MESSAGE = "User registered successfully";
-    private static final String AUTHORIZATION_USER_SUCCESS_MESSAGE = "Welcome user: ";
-    private static final String USER_DELETE_SUCCESS_MESSAGE = "The user has been deleted successfully";
+    private static final String USER_LOGOUT_SUCCESS_MESSAGE = "Logged out successfully";
+    private static final String USER_LOGOUT_ERROR_MESSAGE = "Error, you are not logged in";
+    private static final String USER_LOGIN_SUCCESS_MESSAGE = "Logged in successfully";
     private static final String HEADER_NAME_AUTHORIZATION = "Authorization";
     private static final String TOKEN_TYPE = "Bearer ";
     @Autowired
@@ -83,7 +84,7 @@ public class UserClientImpl implements UserClient {
             }
             httpHeaders.keySet().clear();
             httpHeaders.add(HEADER_NAME_AUTHORIZATION, TOKEN_TYPE + clientMessageDto.getMessage());
-            return AUTHORIZATION_USER_SUCCESS_MESSAGE + userDto.getEmail();
+            return USER_LOGIN_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
@@ -91,13 +92,27 @@ public class UserClientImpl implements UserClient {
     }
 
     @Override
-    public String deletePlace(Long idUser) {
+    public String logout() {
+        log.debug("[logout]");
+        if (httpHeaders.keySet().isEmpty()) {
+            return USER_LOGOUT_ERROR_MESSAGE;
+        }
+        httpHeaders.keySet().clear();
+        return USER_LOGOUT_SUCCESS_MESSAGE;
+    }
+
+    @Override
+    public String deleteUser(Long idUser) {
         log.debug("[logIn]");
         log.trace("[idUser: {}]", idUser);
         try {
-            restTemplate.exchange(
-                DELETE_USERS_PATH + idUser, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), UserDto.class);
-            return USER_DELETE_SUCCESS_MESSAGE;
+            ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
+                DELETE_USERS_PATH + idUser, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), ClientMessageDto.class);
+            ClientMessageDto clientMessageDto = response.getBody();
+            if (clientMessageDto == null) {
+                return WARNING_SERVER_MESSAGE;
+            }
+            return clientMessageDto.getMessage();
         } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));

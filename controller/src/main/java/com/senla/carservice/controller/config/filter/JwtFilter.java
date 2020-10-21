@@ -25,7 +25,7 @@ import java.io.IOException;
 @NoArgsConstructor
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
-    private static final Integer LENGTHS_BEARER_TOKEN = 7;
+    private static final Integer LENGTHS_TYPE_TOKEN = 7;
     private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
     @Autowired
     private UserDetailsService userDetailsService;
@@ -45,7 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String jwt = null;
         try {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                jwt = authorizationHeader.substring(LENGTHS_BEARER_TOKEN);
+                jwt = authorizationHeader.substring(LENGTHS_TYPE_TOKEN);
                 username = JwtUtil.extractUsername(jwt, secretKey);
             }
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

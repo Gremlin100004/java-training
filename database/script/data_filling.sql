@@ -74,6 +74,8 @@ INSERT INTO roles VALUES
 
 ALTER TABLE users AUTO_INCREMENT = 1;
 
+-- email: admin-999@testmail.com
+-- password: test
 INSERT INTO users VALUES
 (NULL, 'admin-999@testmail.com', '$2a$10$ehU.2fP2fFtcFB9Fti8u2unzBrCIzQRvUei8r/ppUzxlBxSP86eH2', 1);
 

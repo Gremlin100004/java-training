@@ -80,15 +80,10 @@ public final class ScannerUtil {
         return scanner.nextBigDecimal();
     }
 
-    public static boolean isAnotherMaster() {
-        String answer = "";
-        while (!answer.equals("y") && !answer.equals("n")) {
-            answer = getStringUser("Add another master to the order? y/n");
-            if (!answer.equals("y") && !answer.equals("n")) {
-                Printer.printInfo("You have entered wrong answer!");
-            }
-        }
-        return answer.equals("n");
+    public static String getStringPassword(String textForUser) {
+        Scanner scanner = new Scanner(System.in);
+        Printer.printInfo(textForUser);
+        return scanner.nextLine();
     }
 
 }

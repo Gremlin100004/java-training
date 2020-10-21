@@ -68,13 +68,8 @@ public class MasterClientImpl implements MasterClient {
         try {
             MasterDto masterDto = new MasterDto();
             masterDto.setName(name);
-            ParameterizedTypeReference<MasterDto> beanType = new ParameterizedTypeReference<>() { };
-            ResponseEntity<MasterDto> response = restTemplate.exchange(
-                ADD_MASTER_PATH, HttpMethod.POST, new HttpEntity<>(httpHeaders), beanType, masterDto);
-            MasterDto receivedMasterDto = response.getBody();
-            if (receivedMasterDto == null) {
-                return WARNING_SERVER_MESSAGE;
-            }
+            restTemplate.exchange(
+                ADD_MASTER_PATH, HttpMethod.POST, new HttpEntity<>(masterDto, httpHeaders), MasterDto.class);
             return MASTER_ADD_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
@@ -87,9 +82,8 @@ public class MasterClientImpl implements MasterClient {
         log.debug("[deleteMaster]");
         log.trace("[idMaster: {}]", idMaster);
         try {
-            ParameterizedTypeReference<ClientMessageDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
-                DELETE_MASTER_PATH + idMaster, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), beanType);
+                DELETE_MASTER_PATH + idMaster, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
