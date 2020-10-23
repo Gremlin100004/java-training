@@ -1,15 +1,13 @@
 package com.senla.carservice.ui.client;
 
+import com.senla.carservice.dto.DateDto;
+import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 
 import java.util.List;
 
 public interface OrderClient {
     String addOrder(OrderDto orderDto);
-
-    String checkOrderDeadlines(String stringExecutionStartTime, String stringLeadTime);
-
-    String checkOrders();
 
     List<OrderDto> getOrders();
 
@@ -23,10 +21,16 @@ public interface OrderClient {
 
     String shiftLeadTime(OrderDto orderDto);
 
-    String getSortOrders(String sortParameter);
+    List<OrderDto> getSortOrders(String sortParameter);
 
-    String getSortOrdersByPeriod(String sortParameter, String startPeriod, String endPeriod);
+    List<OrderDto> getSortOrdersByPeriod(String sortParameter, String startPeriod, String endPeriod);
 
-    String getOrderMasters(Long orderId);
+    List<MasterDto> getOrderMasters(Long orderId);
+
+    DateDto getNearestFreeDate();
+
+    String exportEntities();
+
+    String importEntities();
 
 }

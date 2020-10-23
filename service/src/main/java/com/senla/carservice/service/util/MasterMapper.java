@@ -20,10 +20,10 @@ public class MasterMapper {
 
     public static Master getMaster(MasterDto masterDto, MasterDao masterDao) {
         Master master;
-        if (masterDto.getId() != null) {
-            master = masterDao.findById(masterDto.getId());
-        } else {
+        if (masterDto.getId() == null) {
             master = new Master();
+        } else {
+            master = masterDao.findById(masterDto.getId());
         }
         master.setName(masterDto.getName());
         master.setNumberOrders(masterDto.getNumberOrders());

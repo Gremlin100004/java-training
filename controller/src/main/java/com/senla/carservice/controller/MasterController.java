@@ -1,8 +1,8 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.controller.exception.ControllerException;
-import com.senla.carservice.controller.util.EnumUtil;
 import com.senla.carservice.dto.ClientMessageDto;
+import com.senla.carservice.dto.LongDto;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.MasterService;
@@ -11,6 +11,7 @@ import com.senla.carservice.util.DateUtil;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -30,18 +32,15 @@ public class MasterController {
     @Autowired
     private MasterService masterService;
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<MasterDto> getMasters(@RequestParam(required = false) String sortParameter,
+    public List<MasterDto> getMasters(@RequestParam(required = false) MasterSortParameter sortParameter,
             @RequestParam (required = false) String stringExecuteDate) {
         if (sortParameter == null && stringExecuteDate == null) {
             return masterService.getMasters();
         } else if (stringExecuteDate == null) {
-            if (EnumUtil.isValidEnum(MasterSortParameter.values(), sortParameter)) {
-                return masterService.getSortMasters(MasterSortParameter.valueOf(sortParameter));
-            } else {
-                throw new ControllerException("Wrong sort parameter");
-            }
+            return masterService.getSortMasters(sortParameter);
         } else if (sortParameter == null) {
             return masterService.getFreeMastersByDate(DateUtil.getDatesFromString(stringExecuteDate.replace('%', ' '), true));
         } else {
@@ -49,28 +48,39 @@ public class MasterController {
         }
     }
 
-    @PostMapping()
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @GetMapping("/numberMasters")
+    @ResponseStatus(HttpStatus.OK)
+    public LongDto getNumberMasters(@RequestParam(required = false) String date) {
+        LongDto longDto = new LongDto();
+        if (date == null) {
+            longDto.setNumber(masterService.getNumberMasters());
+        } else {
+            Date dateFree = DateUtil.getDatesFromString(date, false);
+            Date startDayDate = DateUtil.bringStartOfDayDate(dateFree);
+            longDto.setNumber(masterService.getNumberFreeMastersByDate(startDayDate));
+        }
+        return longDto;
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MasterDto addMaster(@RequestBody MasterDto masterDto) {
 
         return masterService.addMaster(masterDto);
     }
 
-    @GetMapping("check")
-    @ResponseStatus(HttpStatus.OK)
-    public ClientMessageDto checkMasters() {
-        masterService.checkMasters();
-        return new ClientMessageDto("verification was successfully");
-    }
-
-    @DeleteMapping("{id}")
+    @Secured({"ROLE_ADMIN"})
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deleteMaster(@PathVariable("id") Long masterId) {
         masterService.deleteMaster(masterId);
-        return new ClientMessageDto(" -master has been deleted successfully!");
+        return new ClientMessageDto("Master has been deleted successfully");
     }
 
-    @GetMapping("{id}/orders")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @GetMapping("/{id}/orders")
     @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> getMasterOrders(@PathVariable("id") Long masterId) {
         return masterService.getMasterOrders(masterId);

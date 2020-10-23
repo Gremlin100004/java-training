@@ -61,6 +61,13 @@ public class MasterServiceImpl implements MasterService {
 
     @Override
     @Transactional
+    public Long getNumberMasters() {
+        log.debug("[getNumberMasters]");
+        return masterDao.getNumberMasters();
+    }
+
+    @Override
+    @Transactional
     public void deleteMaster(Long masterId) {
         log.debug("[Method deleteMaster");
         log.trace("[masterId: {}]", masterId);
@@ -84,15 +91,6 @@ public class MasterServiceImpl implements MasterService {
             masters = masterDao.getMasterSortByBusy();
         }
         return MasterMapper.getMasterDto(masters);
-    }
-
-    @Override
-    @Transactional
-    public void checkMasters() {
-        log.debug("[getNumberMasters]");
-        if (masterDao.getNumberMasters() == 0) {
-            throw new BusinessException("Error, there are no masters");
-        }
     }
 
     @Override

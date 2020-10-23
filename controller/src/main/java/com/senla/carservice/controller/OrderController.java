@@ -1,8 +1,8 @@
 package com.senla.carservice.controller;
 
 import com.senla.carservice.controller.exception.ControllerException;
-import com.senla.carservice.controller.util.EnumUtil;
 import com.senla.carservice.dto.ClientMessageDto;
+import com.senla.carservice.dto.DateDto;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.OrderService;
@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,88 +35,101 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderDto addOrder(@RequestBody OrderDto orderDto) {
         return orderService.addOrder(orderDto);
     }
 
-    @GetMapping("check/dates")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @GetMapping("/freeDate")
     @ResponseStatus(HttpStatus.OK)
-    public ClientMessageDto checkOrderDeadlines(@RequestParam String stringExecutionStartTime, @RequestParam String stringLeadTime) {
-        Date executionStartTime = DateUtil.getDatesFromString(stringExecutionStartTime.replace('%', ' '), true);
-        Date leadTime = DateUtil.getDatesFromString(stringLeadTime.replace('%', ' '), true);
-        orderService.checkOrderDeadlines(executionStartTime, leadTime);
-        return new ClientMessageDto("dates are right");
-    }
-    @GetMapping("check")
-    @ResponseStatus(HttpStatus.OK)
-    public ClientMessageDto checkOrders() {
-        orderService.checkOrders();
-        return new ClientMessageDto("verification was successfully");
+    public DateDto getNearestFreeDate() {
+        DateDto dateDto = new DateDto();
+        dateDto.setDate(orderService.getNearestFreeDate());
+        return dateDto;
     }
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderDto> getOrders(@RequestParam(required = false) String sortParameter,
+    public List<OrderDto> getOrders(@RequestParam(required = false) OrderSortParameter sortParameter,
            @RequestParam (required = false) String startPeriod, @RequestParam (required = false) String endPeriod) {
         if (sortParameter == null && startPeriod == null && endPeriod == null) {
             return orderService.getOrders();
         } else if (startPeriod == null && endPeriod == null) {
-            if (EnumUtil.isValidEnum(OrderSortParameter.values(), sortParameter)) {
-                return orderService.getSortOrders(OrderSortParameter.valueOf(sortParameter));
-            } else {
-                throw new ControllerException("Wrong sort parameter");
-            }
+            return orderService.getSortOrders(sortParameter);
         } else if (sortParameter != null && startPeriod != null && endPeriod != null) {
-            OrderSortParameter orderSortParameter = OrderSortParameter.valueOf(sortParameter);
             Date startPeriodDate = DateUtil.getDatesFromString(startPeriod.replace('%', ' '), true);
             Date endPeriodDate = DateUtil.getDatesFromString(endPeriod.replace('%', ' '), true);
-            return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate, orderSortParameter);
+            return orderService.getSortOrdersByPeriod(startPeriodDate, endPeriodDate, sortParameter);
         } else {
             throw new ControllerException("Wrong request parameters");
         }
     }
 
-    @PutMapping("{id}/complete")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @PutMapping("/{id}/complete")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto completeOrder(@PathVariable("id") Long orderId) {
         orderService.completeOrder(orderId);
         return new ClientMessageDto("The order has been transferred to execution status successfully");
     }
 
-    @PutMapping("{id}/close")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @PutMapping("/{id}/close")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto closeOrder(@PathVariable("id") Long orderId) {
         orderService.closeOrder(orderId);
         return new ClientMessageDto("The order has been completed successfully");
     }
 
-    @PutMapping("{id}/cancel")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @PutMapping("/{id}/cancel")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto cancelOrder(@PathVariable("id") Long orderId) {
         orderService.cancelOrder(orderId);
         return new ClientMessageDto("The order has been canceled successfully");
     }
 
-    @DeleteMapping("{id}")
+    @Secured({"ROLE_ADMIN"})
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deleteOrder(@PathVariable("id") Long orderId) {
         orderService.deleteOrder(orderId);
         return new ClientMessageDto("The order has been deleted successfully");
     }
 
-    @PutMapping("shiftLeadTime")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @PutMapping("/shiftLeadTime")
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto shiftLeadTime(@RequestBody OrderDto orderDto) {
         orderService.shiftLeadTime(orderDto);
         return new ClientMessageDto("The order lead time has been changed successfully");
     }
 
-    @GetMapping("{id}/masters")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    @GetMapping("/{id}/masters")
     @ResponseStatus(HttpStatus.OK)
     public List<MasterDto> getOrderMasters(@PathVariable("id") Long orderId) {
         return orderService.getOrderMasters(orderId);
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @PostMapping("/csv/export")
+    @ResponseStatus(HttpStatus.OK)
+    public ClientMessageDto exportEntities() {
+        orderService.exportEntities();
+        return new ClientMessageDto("Export completed successfully!");
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @PostMapping("/csv/import")
+    @ResponseStatus(HttpStatus.OK)
+    public ClientMessageDto importEntities() {
+        orderService.importEntities();
+        return new ClientMessageDto("Imported completed successfully!");
     }
 
 }

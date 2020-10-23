@@ -13,8 +13,6 @@ public interface OrderService {
 
     OrderDto addOrder(OrderDto orderDto);
 
-    void checkOrderDeadlines(Date executionStartTime, Date leadTime);
-
     void completeOrder(Long orderId);
 
     void cancelOrder(Long orderId);
@@ -31,5 +29,10 @@ public interface OrderService {
 
     List<MasterDto> getOrderMasters(Long orderId);
 
-    void checkOrders();
+    Date getNearestFreeDate();
+
+    void importEntities();
+
+    void exportEntities();
+
 }

@@ -1,6 +1,5 @@
 package com.senla.carservice.dao;
 
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Order_;
 import com.senla.carservice.domain.Place;
@@ -8,6 +7,7 @@ import com.senla.carservice.domain.Place_;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -39,11 +39,25 @@ public class PlaceDaoImpl extends AbstractDao<Place, Long> implements PlaceDao {
         subquery.where(criteriaBuilder.greaterThanOrEqualTo(subOrderRoot.get(Order_.leadTime), executeDate));
         criteriaQuery.where(placeRoot.get(Place_.id).in(subquery).not());
         TypedQuery<Place> query = entityManager.createQuery(criteriaQuery);
-        List<Place> places = query.getResultList();
-        if (places.isEmpty()) {
-            throw new DaoException("Error getting busy places");
+        return query.getResultList();
+    }
+
+    @Override
+    public Place findByNumber(int number) {
+        log.debug("[findByNumber]");
+        log.trace("[number: {}]", number);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Place> criteriaQuery = criteriaBuilder.createQuery(Place.class);
+            Root<Place> placeRoot = criteriaQuery.from(Place.class);
+            criteriaQuery.select(placeRoot);
+            criteriaQuery.where(criteriaBuilder.equal(placeRoot.get(Place_.number), number));
+            entityManager.createQuery(criteriaQuery).getSingleResult();
+            return entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
+            return null;
         }
-        return places;
     }
 
     @Override

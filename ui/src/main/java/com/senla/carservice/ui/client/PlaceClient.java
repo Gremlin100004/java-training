@@ -7,11 +7,13 @@ import java.util.List;
 public interface PlaceClient {
     String addPlace(int numberPlace);
 
-    String checkPlaces();
-
     List<PlaceDto> getPlaces();
 
     String deletePlace(Long idPlace);
+
+    Long getNumberPlace();
+
+    Long getNumberFreePlace(String stringExecuteDate);
 
     List<PlaceDto> getFreePlacesByDate(String stringExecuteDate);
 

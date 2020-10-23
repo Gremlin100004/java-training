@@ -8,7 +8,7 @@ public final class Checker {
     }
 
     public static boolean isSymbolsString(String text) {
-        return !Pattern.compile("^[a-zA-Z_]").matcher(text).find();
+        return !Pattern.compile("^[a-zA-Z_@]").matcher(text).find();
     }
 
     public static boolean isSymbolsStringNumber(String text) {

@@ -66,4 +66,17 @@ INSERT INTO orders_masters VALUES
 (9, 17), (9, 18), (10, 19), (10, 20),
 (11, 21), (11, 22), (12, 1), (12, 2);
 
+ALTER TABLE roles AUTO_INCREMENT = 1;
+
+INSERT INTO roles VALUES
+(NULL, 'ROLE_ADMIN'),
+(NULL, 'ROLE_USER');
+
+ALTER TABLE users AUTO_INCREMENT = 1;
+
+-- email: admin-999@testmail.com
+-- password: test
+INSERT INTO users VALUES
+(NULL, 'admin-999@testmail.com', '$2a$10$ehU.2fP2fFtcFB9Fti8u2unzBrCIzQRvUei8r/ppUzxlBxSP86eH2', 1);
+
 COMMIT;

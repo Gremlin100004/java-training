@@ -2,19 +2,22 @@ package com.senla.carservice.ui.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senla.carservice.dto.ClientMessageDto;
+import com.senla.carservice.dto.LongDto;
 import com.senla.carservice.dto.PlaceDto;
 import com.senla.carservice.ui.exception.BusinessException;
 import com.senla.carservice.ui.util.ExceptionUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -22,17 +25,19 @@ import java.util.List;
 @Slf4j
 public class PlaceClientImpl implements PlaceClient {
     private static final String ADD_PLACE_PATH = "places";
-    private static final String CHECK_PLACES_PATH = "places/check";
     private static final String GET_PLACES_PATH = "places";
+    private static final String GET_FREE_PLACES_PATH = "places/?stringExecuteDate=";
+    private static final String GET_NUMBER_FREE_PLACES_PATH = "places/numberPlaces?date=";
+    private static final String GET_NUMBER_PLACES_PATH = "places/numberPlaces";
     private static final String DELETE_PLACE_PATH = "places/";
-    private static final String REQUEST_PARAMETER_STRING_EXECUTION_DATE = "stringExecuteDate";
     private static final String WARNING_SERVER_MESSAGE = "There are no message from server";
     private static final String PLACE_ADD_SUCCESS_MESSAGE = "Place added successfully";
-    private static final String PLACE_DELETE_SUCCESS_MESSAGE = "The place has been deleted successfully";
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private HttpHeaders httpHeaders;
 
     @Override
     public String addPlace(int numberPlace) {
@@ -41,30 +46,14 @@ public class PlaceClientImpl implements PlaceClient {
         try {
             PlaceDto placeDto = new PlaceDto();
             placeDto.setNumber(numberPlace);
-            ResponseEntity<PlaceDto> response = restTemplate.postForEntity(ADD_PLACE_PATH, placeDto, PlaceDto.class);
+            ResponseEntity<PlaceDto> response = restTemplate.exchange(
+                ADD_PLACE_PATH, HttpMethod.POST, new HttpEntity<>(placeDto, httpHeaders),  PlaceDto.class);
             PlaceDto receivedPlaceDto = response.getBody();
             if (receivedPlaceDto == null) {
                 return WARNING_SERVER_MESSAGE;
             }
             return PLACE_ADD_SUCCESS_MESSAGE;
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
-            log.error(exception.getResponseBodyAsString());
-            return ExceptionUtil.getMessage(exception, objectMapper);
-        }
-    }
-
-    @Override
-    public String checkPlaces() {
-        log.debug("[checkPlaces]");
-        try {
-            ResponseEntity<ClientMessageDto> response = restTemplate.getForEntity(
-                CHECK_PLACES_PATH, ClientMessageDto.class);
-            ClientMessageDto clientMessageDto = response.getBody();
-            if (clientMessageDto == null) {
-                return WARNING_SERVER_MESSAGE;
-            }
-            return clientMessageDto.getMessage();
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
         }
@@ -74,13 +63,15 @@ public class PlaceClientImpl implements PlaceClient {
     public List<PlaceDto> getPlaces() {
         log.debug("[getPlaces]");
         try {
-            ResponseEntity<PlaceDto[]> response = restTemplate.getForEntity(GET_PLACES_PATH, PlaceDto[].class);
-            PlaceDto[] arrayPlaceDto = response.getBody();
-            if (arrayPlaceDto == null) {
+            ParameterizedTypeReference<List<PlaceDto>> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<List<PlaceDto>> response = restTemplate.exchange(
+                GET_PLACES_PATH, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+            List<PlaceDto> listPlaceDto = response.getBody();
+            if (listPlaceDto == null) {
                 throw new BusinessException("Error, there are no places");
             }
-            return Arrays.asList(arrayPlaceDto);
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            return listPlaceDto;
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }
@@ -91,11 +82,53 @@ public class PlaceClientImpl implements PlaceClient {
         log.debug("[deletePlace]");
         log.trace("[idPlace: {}]", idPlace);
         try {
-            restTemplate.delete(DELETE_PLACE_PATH + idPlace, PlaceDto.class);
-            return PLACE_DELETE_SUCCESS_MESSAGE;
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
+                DELETE_PLACE_PATH + idPlace, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), ClientMessageDto.class);
+            ClientMessageDto clientMessageDto = response.getBody();
+            if (clientMessageDto == null) {
+                return WARNING_SERVER_MESSAGE;
+            }
+            return clientMessageDto.getMessage();
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             return ExceptionUtil.getMessage(exception, objectMapper);
+        }
+    }
+
+    @Override
+    public Long getNumberPlace() {
+        log.debug("[getNumberPlace]");
+        try {
+            ParameterizedTypeReference<LongDto> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<LongDto> response = restTemplate.exchange(
+                GET_NUMBER_PLACES_PATH, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+            LongDto numberPlace = response.getBody();
+            if (numberPlace == null) {
+                throw new BusinessException("Error, there are no number");
+            }
+            return numberPlace.getNumber();
+        } catch (HttpClientErrorException exception) {
+            log.error(exception.getResponseBodyAsString());
+            throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
+        }
+    }
+
+    @Override
+    public Long getNumberFreePlace(String date) {
+        log.debug("[getNumberFreePlace]");
+        log.debug("[date: {}]", date);
+        try {
+            ParameterizedTypeReference<LongDto> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<LongDto> response = restTemplate.exchange(
+                GET_NUMBER_FREE_PLACES_PATH + date, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+            LongDto numberPlace = response.getBody();
+            if (numberPlace == null) {
+                throw new BusinessException("Error, there are no number");
+            }
+            return numberPlace.getNumber();
+        } catch (HttpClientErrorException exception) {
+            log.error(exception.getResponseBodyAsString());
+            throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }
     }
 
@@ -104,15 +137,15 @@ public class PlaceClientImpl implements PlaceClient {
         log.debug("[getFreePlacesByDate]");
         log.trace("[stringExecuteDate: {}]", stringExecuteDate);
         try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GET_PLACES_PATH)
-                .queryParam(REQUEST_PARAMETER_STRING_EXECUTION_DATE, stringExecuteDate);
-            ResponseEntity<PlaceDto[]> response = restTemplate.getForEntity(builder.toUriString(), PlaceDto[].class);
-            PlaceDto[] arrayPlacesDto = response.getBody();
-            if (arrayPlacesDto == null) {
+            ParameterizedTypeReference<List<PlaceDto>> beanType = new ParameterizedTypeReference<>() { };
+            ResponseEntity<List<PlaceDto>> response = restTemplate.exchange(
+                GET_FREE_PLACES_PATH + stringExecuteDate, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+            List<PlaceDto> listPlaceDto = response.getBody();
+            if (listPlaceDto == null) {
                 throw new BusinessException("Error, there are no places");
             }
-            return Arrays.asList(arrayPlacesDto);
-        } catch (HttpClientErrorException.BadRequest | HttpClientErrorException.NotFound exception) {
+            return listPlaceDto;
+        } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
             throw new BusinessException(ExceptionUtil.getMessage(exception, objectMapper));
         }

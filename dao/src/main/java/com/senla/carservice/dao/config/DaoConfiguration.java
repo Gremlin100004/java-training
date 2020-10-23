@@ -18,7 +18,6 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 public class DaoConfiguration {
-
     private static final String DATA_SOURCE_PACKAGE = "carservice.datasource.package";
     private static final String CONNECTION_URL = "hibernate.connection.url";
     private static final String DRIVER_DATABASE = "hibernate.connection.driver_class";

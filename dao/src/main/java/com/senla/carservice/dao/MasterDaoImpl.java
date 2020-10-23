@@ -1,6 +1,5 @@
 package com.senla.carservice.dao;
 
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Master_;
 import com.senla.carservice.domain.Order;
@@ -40,11 +39,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         subquery.where(criteriaBuilder.greaterThanOrEqualTo(masterOrderJoin.get(Order_.leadTime), executeDate));
         criteriaQuery.where(masterRoot.get(Master_.id).in(subquery).not());
         TypedQuery<Master> query = entityManager.createQuery(criteriaQuery);
-        List<Master> masters = query.getResultList();
-        if (masters.isEmpty()) {
-            throw new DaoException("Error getting free masters");
-        }
-        return masters;
+        return query.getResultList();
     }
 
     @Override
@@ -73,11 +68,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         criteriaQuery.select(masterRoot).distinct(true);
         criteriaQuery.orderBy(criteriaBuilder.asc(masterRoot.get(Master_.name)));
         TypedQuery<Master> typedQuery = entityManager.createQuery(criteriaQuery);
-        List<Master> masters = typedQuery.getResultList();
-        if (masters.isEmpty()) {
-            throw new DaoException("Error getting masters");
-        }
-        return masters;
+        return typedQuery.getResultList();
     }
 
     @Override
@@ -89,11 +80,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         criteriaQuery.select(masterRoot).distinct(true);
         criteriaQuery.orderBy(criteriaBuilder.desc(masterRoot.get(Master_.numberOrders)));
         TypedQuery<Master> typedQuery = entityManager.createQuery(criteriaQuery);
-        List<Master> masters = typedQuery.getResultList();
-        if (masters.isEmpty()) {
-            throw new DaoException("Error getting masters");
-        }
-        return masters;
+        return typedQuery.getResultList();
     }
 
     @Override
@@ -117,11 +104,7 @@ public class MasterDaoImpl extends AbstractDao<Master, Long> implements MasterDa
         criteriaQuery.select(orderRoot).distinct(true);
         criteriaQuery.where(criteriaBuilder.equal(masterOrderJoin.get(Master_.id), master.getId()));
         TypedQuery<Order> typedQuery = entityManager.createQuery(criteriaQuery);
-        List<Order> orders = typedQuery.getResultList();
-        if (orders.isEmpty()) {
-            throw new DaoException("Error getting master orders");
-        }
-        return orders;
+        return typedQuery.getResultList();
     }
 
 }

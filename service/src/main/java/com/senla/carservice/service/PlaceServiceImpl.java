@@ -19,7 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 @Slf4j
 public class PlaceServiceImpl implements PlaceService {
-
     @Autowired
     private PlaceDao placeDao;
     @Value("${com.senla.carservice.service.PlaceServiceImpl.isBlockAddPlace:false}")
@@ -43,8 +42,15 @@ public class PlaceServiceImpl implements PlaceService {
             throw new BusinessException("Permission denied");
         }
         Place place = new Place();
-        place.setNumber(placeDto.getNumber());
-        return PlaceMapper.getPlaceDto(placeDao.saveRecord(place));
+        int number = placeDto.getNumber();
+        Place checkPlace = placeDao.findByNumber(number);
+        if (checkPlace == null) {
+            place.setNumber(number);
+            return PlaceMapper.getPlaceDto(placeDao.saveRecord(place));
+        } else {
+            throw new BusinessException("This number exists");
+        }
+
     }
 
     @Override
@@ -68,6 +74,13 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     @Transactional
+    public Long getNumberPlace() {
+        log.debug("[getNumberPlace]");
+        return placeDao.getNumberPlaces();
+    }
+
+    @Override
+    @Transactional
     public Long getNumberFreePlaceByDate(Date startDayDate) {
         log.debug("[getNumberFreePlaceByDate]");
         log.trace("[startDayDate: {}]", startDayDate);
@@ -80,15 +93,6 @@ public class PlaceServiceImpl implements PlaceService {
         log.debug("[getFreePlaceByDate]");
         log.trace("[executeDate: {}]", executeDate);
         return PlaceMapper.getPlaceDto(placeDao.getFreePlaces(executeDate));
-    }
-
-    @Override
-    @Transactional
-    public void checkPlaces() {
-        log.debug("[getNumberMasters]");
-        if (placeDao.getNumberPlaces() == 0) {
-            throw new  BusinessException("Error, there are no places");
-        }
     }
 
 }

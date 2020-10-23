@@ -22,7 +22,7 @@ public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
             InputStream requestInputStream = request.getInputStream();
             this.cachedBody = StreamUtils.copyToByteArray(requestInputStream);
         } catch (IOException e) {
-            throw new ControllerException("Error request");
+            throw new ControllerException("Request error");
         }
     }
 

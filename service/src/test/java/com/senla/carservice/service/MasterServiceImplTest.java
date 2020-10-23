@@ -1,7 +1,6 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.dao.MasterDao;
-import com.senla.carservice.dao.exception.DaoException;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.dto.MasterDto;
@@ -27,7 +26,6 @@ import java.util.List;
 class MasterServiceImplTest {
 
     private static final Long RIGHT_NUMBER_MASTERS = 2L;
-    private static final Long WRONG_NUMBER_MASTERS = 0L;
     private static final Long ID_MASTER = 1L;
     private static final Long ID_OTHER_MASTER = 2L;
     private static final String PARAMETER_NAME = "test name";
@@ -53,15 +51,6 @@ class MasterServiceImplTest {
         Assertions.assertEquals(RIGHT_NUMBER_MASTERS, resultMastersDto.size());
         Assertions.assertFalse(resultMastersDto.isEmpty());
         Assertions.assertEquals(mastersDto, resultMastersDto);
-        Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
-        Mockito.reset(masterDao);
-    }
-
-    @Test
-    void MasterServiceImpl_getMasters_masterDao_getAllRecords_emptyRecords() {
-        Mockito.doThrow(DaoException.class).when(masterDao).getAllRecords();
-
-        Assertions.assertThrows(DaoException.class, () -> masterService.getMasters());
         Mockito.verify(masterDao, Mockito.times(1)).getAllRecords();
         Mockito.reset(masterDao);
     }
@@ -94,16 +83,6 @@ class MasterServiceImplTest {
     }
 
     @Test
-    void MasterServiceImpl_getFreeMastersByDate_masterDao_getFreeMasters_emptyList() {
-        Date date = new Date();
-        Mockito.doThrow(DaoException.class).when(masterDao).getFreeMasters(date);
-
-        Assertions.assertThrows(DaoException.class, () -> masterService.getFreeMastersByDate(date));
-        Mockito.verify(masterDao, Mockito.times(1)).getFreeMasters(date);
-        Mockito.reset(masterDao);
-    }
-
-    @Test
     void MasterServiceImpl_getNumberFreeMastersByDate() {
         Date date = new Date();
         Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberFreeMasters(date);
@@ -116,6 +95,15 @@ class MasterServiceImplTest {
     }
 
     @Test
+    void MasterServiceImpl_getNumberMasters() {
+        Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
+
+        Assertions.assertEquals(RIGHT_NUMBER_MASTERS, masterService.getNumberMasters());
+        Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
+        Mockito.reset(masterDao);
+    }
+
+    @Test
     void MasterServiceImpl_deleteMaster() {
         Master master = getTestMaster();
         Mockito.doReturn(master).when(masterDao).findById(ID_MASTER);
@@ -124,17 +112,6 @@ class MasterServiceImplTest {
         Assertions.assertTrue(master.getDeleteStatus());
         Mockito.verify(masterDao, Mockito.times(1)).findById(ID_MASTER);
         Mockito.verify(masterDao, Mockito.times(1)).updateRecord(master);
-        Mockito.reset(masterDao);
-    }
-
-    @Test
-    void MasterServiceImpl_deleteMaster_masterDao_findById_wrongId() {
-        Master master = getTestMaster();
-        Mockito.doThrow(DaoException.class).when(masterDao).findById(ID_MASTER);
-
-        Assertions.assertThrows(DaoException.class, () -> masterService.deleteMaster(ID_MASTER));
-        Mockito.verify(masterDao, Mockito.times(1)).findById(ID_MASTER);
-        Mockito.verify(masterDao, Mockito.never()).updateRecord(master);
         Mockito.reset(masterDao);
     }
 
@@ -166,15 +143,6 @@ class MasterServiceImplTest {
     }
 
     @Test
-    void MasterServiceImpl_getMasterByAlphabet_masterDao_getMasterSortByAlphabet_emptyList() {
-        Mockito.doThrow(DaoException.class).when(masterDao).getMasterSortByAlphabet();
-
-        Assertions.assertThrows(DaoException.class, () -> masterService.getSortMasters(MasterSortParameter.NAME));
-        Mockito.verify(masterDao, Mockito.times(1)).getMasterSortByAlphabet();
-        Mockito.reset(masterDao);
-    }
-
-    @Test
     void MasterServiceImpl_getSortMasters_masterDao_getMasterSortByBusy() {
         List<Master> masters = getTestMasters();
         List<MasterDto> mastersDto = getTestMastersDto();
@@ -186,33 +154,6 @@ class MasterServiceImplTest {
         Assertions.assertFalse(resultMastersDto.isEmpty());
         Assertions.assertEquals(mastersDto, resultMastersDto);
         Mockito.verify(masterDao, Mockito.times(1)).getMasterSortByBusy();
-        Mockito.reset(masterDao);
-    }
-
-    @Test
-    void MasterServiceImpl_getMasterByAlphabet_masterDao_getMasterSortByBusy_emptyList() {
-        Mockito.doThrow(DaoException.class).when(masterDao).getMasterSortByBusy();
-
-        Assertions.assertThrows(DaoException.class, () -> masterService.getSortMasters(MasterSortParameter.BUSY_STATUS));
-        Mockito.verify(masterDao, Mockito.times(1)).getMasterSortByBusy();
-        Mockito.reset(masterDao);
-    }
-
-    @Test
-    void MasterServiceImpl_getNumberMasters() {
-        Mockito.doReturn(RIGHT_NUMBER_MASTERS).when(masterDao).getNumberMasters();
-
-        Assertions.assertDoesNotThrow(() -> masterService.checkMasters());
-        Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
-        Mockito.reset(masterDao);
-    }
-
-    @Test
-    void MasterServiceImpl_getNumberMasters_masterDao_getNumberMasters_zeroNumberMasters_getNumberMasters_masterDao_getNumberMasters_zeroNumberMasters() {
-        Mockito.doReturn(WRONG_NUMBER_MASTERS).when(masterDao).getNumberMasters();
-
-        Assertions.assertThrows(BusinessException.class, () -> masterService.checkMasters());
-        Mockito.verify(masterDao, Mockito.times(1)).getNumberMasters();
         Mockito.reset(masterDao);
     }
 
@@ -230,29 +171,6 @@ class MasterServiceImplTest {
         Assertions.assertEquals(RIGHT_NUMBER_ORDERS, resultOrdersDto.size());
         Assertions.assertFalse(resultOrdersDto.isEmpty());
         Assertions.assertEquals(ordersDto, resultOrdersDto);
-        Mockito.verify(masterDao, Mockito.times(1)).findById(ID_MASTER);
-        Mockito.verify(masterDao, Mockito.times(1)).getMasterOrders(master);
-        Mockito.reset(masterDao);
-    }
-
-    @Test
-    void MasterServiceImpl_getMasterOrders_masterDao_findById_wrongId() {
-        Master master = getTestMaster();
-        Mockito.doThrow(DaoException.class).when(masterDao).findById(ID_MASTER);
-
-        Assertions.assertThrows(DaoException.class, () -> masterService.getMasterOrders(ID_MASTER));
-        Mockito.verify(masterDao, Mockito.times(1)).findById(ID_MASTER);
-        Mockito.verify(masterDao, Mockito.never()).getMasterOrders(master);
-        Mockito.reset(masterDao);
-    }
-
-    @Test
-    void MasterServiceImpl_getMasterOrders_masterDao_getMasterOrders_emptyMasterListOrders() {
-        Master master = getTestMaster();
-        Mockito.doReturn(master).when(masterDao).findById(ID_MASTER);
-        Mockito.doThrow(DaoException.class).when(masterDao).getMasterOrders(master);
-
-        Assertions.assertThrows(DaoException.class, () -> masterService.getMasterOrders(ID_MASTER));
         Mockito.verify(masterDao, Mockito.times(1)).findById(ID_MASTER);
         Mockito.verify(masterDao, Mockito.times(1)).getMasterOrders(master);
         Mockito.reset(masterDao);
@@ -320,4 +238,5 @@ class MasterServiceImplTest {
         order.setLeadTime(new Date());
         return order;
     }
+
 }

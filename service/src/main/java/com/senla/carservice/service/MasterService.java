@@ -17,12 +17,12 @@ public interface MasterService {
 
     Long getNumberFreeMastersByDate(Date startDate);
 
+    Long getNumberMasters();
+
     void deleteMaster(Long masterId);
 
     List<MasterDto> getSortMasters(MasterSortParameter sortParameter);
 
     List<OrderDto> getMasterOrders(Long masterId);
-
-    void checkMasters();
 
 }

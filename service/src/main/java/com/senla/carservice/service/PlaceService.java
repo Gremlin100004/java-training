@@ -13,10 +13,10 @@ public interface PlaceService {
 
     void deletePlace(Long orderId);
 
+    Long getNumberPlace();
+
     Long getNumberFreePlaceByDate(Date startDate);
 
     List<PlaceDto> getFreePlaceByDate(Date executeDate);
-
-    void checkPlaces();
 
 }

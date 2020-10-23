@@ -35,6 +35,20 @@ place_id INT NOT NULL,
 PRIMARY KEY pk_orders (id)
 );
 
+CREATE TABLE IF NOT EXISTS roles(
+id INT NOT NULL AUTO_INCREMENT,
+name VARCHAR(50) NOT NULL UNIQUE,
+PRIMARY KEY pk_roles (id)
+);
+
+CREATE TABLE IF NOT EXISTS users(
+id INT NOT NULL AUTO_INCREMENT,
+email VARCHAR(50) NOT NULL UNIQUE,
+password VARCHAR(60) NOT NULL UNIQUE,
+role_id INT NOT NULL,
+PRIMARY KEY pk_users (id)
+);
+
 CREATE TABLE IF NOT EXISTS orders_masters(
 order_id INT NOT NULL,
 master_id INT NOT NULL
@@ -55,11 +69,24 @@ ADD CONSTRAINT fk_orders_masters_masters
 FOREIGN KEY (master_id)
 REFERENCES masters (id) ON DELETE CASCADE;
 
+ALTER TABLE users
+ADD CONSTRAINT fk_users
+FOREIGN KEY (role_id)
+REFERENCES roles (id) ON DELETE CASCADE;
+
 CREATE UNIQUE INDEX masters_id_idx
 ON masters (id);
+
 CREATE UNIQUE INDEX places_id_idx
 ON places (id);
+
 CREATE UNIQUE INDEX orders_id_idx
 ON orders (id);
+
+CREATE UNIQUE INDEX roles_id_idx
+ON roles (id);
+
+CREATE UNIQUE INDEX users_id_idx
+ON users (id);
 
 COMMIT;
