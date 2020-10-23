@@ -28,6 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) {
         try {
+            // все копипастят имя переменной HttpSecurity http, но никто не задумывается, что на самом деле
+            // это HttpSecurity httpSecurity
             http
                 .csrf().disable()
                 .authorizeRequests()
@@ -43,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         } catch (Exception exception) {
             throw new ControllerException("Server error");
         }
+        // обычно это все делается в одном столбике
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
@@ -51,6 +54,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         try {
             return authenticationManager();
         } catch (Exception exception) {
+            // такой выброс исключения - антипаттерн, мы не знаем, что произошло (ошибка игнорируется),
+            // а месседж нового исключения неинформативен
+            // есть впечатление, что тебе было просто лень что-то придумывать
             throw new ControllerException("Server error");
         }
     }

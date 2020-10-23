@@ -25,6 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
+    // ID_ROLE_USER - переводится как "пользователь идентификатора роли"
     private static final Long ID_ROLE_USER = 2L;
     @Autowired
     private UserDao userDao;
@@ -71,6 +72,10 @@ public class UserServiceImpl implements UserService {
         }
         userDto.setPassword(cryptPasswordEncoder.encode(userDto.getPassword()));
         systemUser = UserMapper.getSystemUser(userDto);
+        // это плохой подход - хранить айдишку роли, ты мог найти роль по ее названию, а название хранится
+        // в енаме
+        // но вообще не нужно было усложнять - роли надо было сделать енамом и не хранить в отдельной таблице
+        // не ошибка, что ты сделал так, просто на будущее - если нет требований, делай проще
         systemUser.setRole(roleDao.findById(ID_ROLE_USER));
         return UserMapper.getUserDto(userDao.saveRecord(systemUser));
     }

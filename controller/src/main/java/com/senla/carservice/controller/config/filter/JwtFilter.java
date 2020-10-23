@@ -26,6 +26,7 @@ import java.io.IOException;
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
     private static final Integer LENGTHS_TYPE_TOKEN = 7;
+    // в спринге есть константы хэдеров, их можно использовать
     private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
     @Autowired
     private UserDetailsService userDetailsService;
@@ -40,11 +41,13 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
         HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
         log.debug("[doFilterInternal]");
+        // в спринге есть константы хэдеров, их можно использовать
         String authorizationHeader = request.getHeader("Authorization");
         String username = null;
         String jwt = null;
         try {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                // лучше бы вынес в константу префикс "Bearer ", а вместо 7 считал бы длину константы-префикса
                 jwt = authorizationHeader.substring(LENGTHS_TYPE_TOKEN);
                 username = JwtUtil.extractUsername(jwt, secretKey);
             }
@@ -60,9 +63,11 @@ public class JwtFilter extends OncePerRequestFilter {
             }
             chain.doFilter(request, response);
         } catch (Exception exception) {
+            // log.error(exception.getMessage());
             log.error("[{}]", exception.getMessage());
             try {
                 response.setContentType(CONTENT_TYPE);
+                // в спринге есть константы статусов
                 response.setStatus(400);
                 response.getWriter().write(objectMapper.writeValueAsString(new ClientMessageDto("Request error")));
             } catch (IOException e) {

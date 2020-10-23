@@ -13,6 +13,7 @@ import java.util.Set;
 @Setter
 @ToString
 @NoArgsConstructor
+// где это используется?
 public class PrivilegeDto extends GeneralDto {
     private NamePrivilege name;
     private Set<Role> roles;

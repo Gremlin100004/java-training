@@ -41,6 +41,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    // без аннотации @ResponseStatus(HttpStatus.OK) статус тоже будет ОК
     @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto logIn(@RequestBody UserDto userDto) {
         return new ClientMessageDto(userService.logIn(userDto));
@@ -49,6 +50,7 @@ public class UserController {
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    // название метода вводит в заблуждение
     public ClientMessageDto deletePlace(@PathVariable("id") Long orderId) {
         userService.deleteUser(orderId);
         return new ClientMessageDto("User has been deleted successfully");
