@@ -38,9 +38,7 @@ public class PlaceController {
         return placeService.addPlace(placeDto);
     }
 
-    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public List<PlaceDto> getPlaces(@RequestParam(required = false) String stringExecuteDate) {
         if (stringExecuteDate == null) {
             return placeService.getPlaces();
@@ -50,9 +48,7 @@ public class PlaceController {
         }
     }
 
-    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/numberPlaces")
-    @ResponseStatus(HttpStatus.OK)
     public LongDto getNumberFreePlaces(@RequestParam(required = false) String date) {
         LongDto longDto = new LongDto();
         if (date == null) {
@@ -67,7 +63,6 @@ public class PlaceController {
 
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deletePlace(@PathVariable("id") Long orderId) {
         placeService.deletePlace(orderId);
         return new ClientMessageDto("Place has been deleted successfully");

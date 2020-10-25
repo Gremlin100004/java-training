@@ -9,7 +9,7 @@ import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.domain.enumaration.StatusOrder;
+import com.senla.carservice.domain.enumaration.OrderStatus;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.enumaration.OrderSortParameter;
@@ -73,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
         log.trace("[orderId: {}]", orderId);
         Order order = orderDao.findById(orderId);
         checkStatusOrder(order);
-        order.setStatus(StatusOrder.PERFORM);
+        order.setStatus(OrderStatus.PERFORM);
         order.setExecutionStartTime(new Date());
         Place place = order.getPlace();
         place.setIsBusy(true);
@@ -89,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderDao.findById(orderId);
         checkStatusOrder(order);
         order.setLeadTime(new Date());
-        order.setStatus(StatusOrder.CANCELED);
+        order.setStatus(OrderStatus.CANCELED);
         List<Master> masters = orderDao.getOrderMasters(order);
         masters.forEach(master -> master.setNumberOrders(master.getNumberOrders() - 1));
         masterDao.updateAllRecords(masters);
@@ -107,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderDao.findById(orderId);
         checkStatusOrderShiftTime(order);
         order.setLeadTime(new Date());
-        order.setStatus(StatusOrder.COMPLETED);
+        order.setStatus(OrderStatus.COMPLETED);
         orderDao.updateRecord(order);
         Place place = order.getPlace();
         place.setIsBusy(false);
@@ -284,13 +284,13 @@ public class OrderServiceImpl implements OrderService {
         if (order.isDeleteStatus()) {
             throw new BusinessException("Error, the order has been deleted");
         }
-        if (order.getStatus() == StatusOrder.COMPLETED) {
+        if (order.getStatus() == OrderStatus.COMPLETED) {
             throw new BusinessException("Error, the order has been completed");
         }
-        if (order.getStatus() == StatusOrder.PERFORM) {
+        if (order.getStatus() == OrderStatus.PERFORM) {
             throw new BusinessException("Error, order is being executed");
         }
-        if (order.getStatus() == StatusOrder.CANCELED) {
+        if (order.getStatus() == OrderStatus.CANCELED) {
             throw new BusinessException("Error, the order has been canceled");
         }
     }
@@ -304,10 +304,10 @@ public class OrderServiceImpl implements OrderService {
         if (order.isDeleteStatus()) {
             throw new BusinessException("Error, the order has been deleted");
         }
-        if (order.getStatus() == StatusOrder.COMPLETED) {
+        if (order.getStatus() == OrderStatus.COMPLETED) {
             throw new BusinessException("Error, the order has been completed");
         }
-        if (order.getStatus() == StatusOrder.CANCELED) {
+        if (order.getStatus() == OrderStatus.CANCELED) {
             throw new BusinessException("Error, the order has been canceled");
         }
     }
@@ -317,10 +317,10 @@ public class OrderServiceImpl implements OrderService {
         if (order.isDeleteStatus()) {
             throw new BusinessException("Error, the order has been deleted");
         }
-        if (order.getStatus() == StatusOrder.WAIT) {
+        if (order.getStatus() == OrderStatus.WAIT) {
             throw new BusinessException("Error, the order has been waiting");
         }
-        if (order.getStatus() == StatusOrder.PERFORM) {
+        if (order.getStatus() == OrderStatus.PERFORM) {
             throw new BusinessException("Error, the order has been canceled");
         }
     }

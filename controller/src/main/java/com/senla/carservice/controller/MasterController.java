@@ -32,9 +32,7 @@ public class MasterController {
     @Autowired
     private MasterService masterService;
 
-    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public List<MasterDto> getMasters(@RequestParam(required = false) MasterSortParameter sortParameter,
             @RequestParam (required = false) String stringExecuteDate) {
         if (sortParameter == null && stringExecuteDate == null) {
@@ -48,9 +46,7 @@ public class MasterController {
         }
     }
 
-    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/numberMasters")
-    @ResponseStatus(HttpStatus.OK)
     public LongDto getNumberMasters(@RequestParam(required = false) String date) {
         LongDto longDto = new LongDto();
         if (date == null) {
@@ -73,15 +69,12 @@ public class MasterController {
 
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto deleteMaster(@PathVariable("id") Long masterId) {
         masterService.deleteMaster(masterId);
         return new ClientMessageDto("Master has been deleted successfully");
     }
 
-    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping("/{id}/orders")
-    @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> getMasterOrders(@PathVariable("id") Long masterId) {
         return masterService.getMasterOrders(masterId);
     }

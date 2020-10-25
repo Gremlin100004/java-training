@@ -1,7 +1,7 @@
 package com.senla.carservice.csv.util;
 
 import com.senla.carservice.csv.exception.CsvException;
-import com.senla.carservice.domain.enumaration.StatusOrder;
+import com.senla.carservice.domain.enumaration.OrderStatus;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,11 +43,11 @@ public final class ParameterUtil {
         return value;
     }
 
-    public static StatusOrder getValueStatus(String value) {
+    public static OrderStatus getValueStatus(String value) {
         log.debug("Method getValueStatus");
         log.trace("Parameter value: {}", value);
         try {
-            return StatusOrder.valueOf(value);
+            return OrderStatus.valueOf(value);
         } catch (NumberFormatException e) {
             log.error(e.getMessage());
             throw new CsvException("wrong structure csv file");

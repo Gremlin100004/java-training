@@ -1,6 +1,7 @@
 package com.senla.carservice.controller.config;
 
 import com.senla.carservice.controller.exception.ControllerException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
 
 import javax.servlet.ServletInputStream;
@@ -12,27 +13,32 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+@Slf4j
 public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
 
     private final byte[] cachedBody;
 
     public CachedBodyHttpServletRequest(HttpServletRequest request) {
         super(request);
+        log.debug("[request]");
         try {
             InputStream requestInputStream = request.getInputStream();
             this.cachedBody = StreamUtils.copyToByteArray(requestInputStream);
-        } catch (IOException e) {
-            throw new ControllerException("Request error");
+        } catch (IOException exception) {
+            log.error("[{}]", exception.getMessage());
+            throw new ControllerException("HttpServletRequest copy error");
         }
     }
 
     @Override
     public ServletInputStream getInputStream() {
+        log.debug("[getInputStream]");
         return new CachedBodyServletInputStream(this.cachedBody);
     }
 
     @Override
     public BufferedReader getReader() {
+        log.debug("[getReader]");
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(this.cachedBody);
         return new BufferedReader(new InputStreamReader(byteArrayInputStream));
     }

@@ -19,6 +19,13 @@ import java.util.List;
 @WebFilter(filterName = "LoggingFilter", urlPatterns = "/*")
 @Slf4j
 public class LoggingFilter extends OncePerRequestFilter {
+    private static final String COMBINING_PARAMETERS = "&";
+    private static final String PARAMETER_SYMBOL = "?";
+    private static final String VALUE_PARAMETER_SYMBOL = "=";
+    private static final String HTTP_HEADER_CLIENT_IP_ADDRESS = "X-FORWARDED-FOR";
+    private static final String PROGRAM_SYSTEM_INFORMATION_PROTOCOL = "&__psip=";
+    private static final String EMPTY_IP_ADDRESS = "";
+    private static final int NUMBER_PARAMETERS = 1;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
@@ -44,25 +51,25 @@ public class LoggingFilter extends OncePerRequestFilter {
         StringBuilder posted = new StringBuilder();
         Enumeration<?> parameterNames = request.getParameterNames();
         if (parameterNames != null) {
-            posted.append("?");
+            posted.append(PARAMETER_SYMBOL);
             while (parameterNames.hasMoreElements()) {
-                if (posted.length() > 1) {
-                    posted.append("&");
+                if (posted.length() > NUMBER_PARAMETERS) {
+                    posted.append(COMBINING_PARAMETERS);
                 }
                 String curr = (String) parameterNames.nextElement();
-                posted.append(curr).append("=");
+                posted.append(curr).append(VALUE_PARAMETER_SYMBOL);
                 posted.append(request.getParameter(curr));
             }
         }
-        String ip = request.getHeader("X-FORWARDED-FOR");
+        String ip = request.getHeader(HTTP_HEADER_CLIENT_IP_ADDRESS);
         String ipAddress = (ip == null) ? getRemoteAddress(request) : ip;
-        if (ipAddress != null && !ipAddress.equals("")) {
-            posted.append("&__psip=").append(ipAddress);
+        if (ipAddress != null && !ipAddress.equals(EMPTY_IP_ADDRESS)) {
+            posted.append(PROGRAM_SYSTEM_INFORMATION_PROTOCOL).append(ipAddress);
         }
         return posted.toString();
     }
     private String getRemoteAddress(HttpServletRequest request) {
-        String ipFromHeader = request.getHeader("X-FORWARDED-FOR");
+        String ipFromHeader = request.getHeader(HTTP_HEADER_CLIENT_IP_ADDRESS);
         if (ipFromHeader != null && ipFromHeader.length() > 0) {
             return ipFromHeader;
         }

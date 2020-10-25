@@ -6,7 +6,6 @@ import com.senla.carservice.csv.CsvPlace;
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.dao.OrderDao;
 import com.senla.carservice.dao.PlaceDao;
-import com.senla.carservice.dao.RoleDao;
 import com.senla.carservice.dao.UserDao;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -37,11 +36,6 @@ public class TestConfig {
     @Bean
     UserDao userDao() {
         return Mockito.mock(UserDao.class);
-    }
-
-    @Bean
-    RoleDao roleDao() {
-        return Mockito.mock(RoleDao.class);
     }
 
     @Bean

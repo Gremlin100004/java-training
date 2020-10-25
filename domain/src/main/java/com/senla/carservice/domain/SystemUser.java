@@ -1,5 +1,6 @@
 package com.senla.carservice.domain;
 
+import com.senla.carservice.domain.enumaration.RoleName;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,8 +8,8 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 @Entity
@@ -22,8 +23,8 @@ public class SystemUser extends AEntity {
     private String email;
     @Column(name = "password", nullable = false, unique = true)
     private String password;
-    @OneToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, unique = true)
+    private RoleName role;
 
 }

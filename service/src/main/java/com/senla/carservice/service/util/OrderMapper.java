@@ -3,7 +3,7 @@ package com.senla.carservice.service.util;
 import com.senla.carservice.dao.MasterDao;
 import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.domain.Order;
-import com.senla.carservice.domain.enumaration.StatusOrder;
+import com.senla.carservice.domain.enumaration.OrderStatus;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.util.DateUtil;
 
@@ -51,7 +51,7 @@ public class OrderMapper {
             order.setLeadTime(DateUtil.getDatesFromString(orderDto.getLeadTime(), true));
         }
         if (orderDto.getStatus() != null) {
-            order.setStatus(StatusOrder.valueOf(orderDto.getStatus()));
+            order.setStatus(OrderStatus.valueOf(orderDto.getStatus()));
         }
         order.setPrice(orderDto.getPrice());
         order.setDeleteStatus(orderDto.isDeleteStatus());

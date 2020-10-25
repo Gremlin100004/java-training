@@ -1,8 +1,8 @@
 package com.senla.carservice.service;
 
-import com.senla.carservice.dao.RoleDao;
 import com.senla.carservice.dao.UserDao;
 import com.senla.carservice.domain.SystemUser;
+import com.senla.carservice.domain.enumaration.RoleName;
 import com.senla.carservice.dto.UserDto;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.service.util.JwtUtil;
@@ -25,11 +25,8 @@ import java.util.List;
 @NoArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
-    private static final Long ID_ROLE_USER = 2L;
     @Autowired
     private UserDao userDao;
-    @Autowired
-    private RoleDao roleDao;
     @Autowired
     private BCryptPasswordEncoder cryptPasswordEncoder;
     @Autowired
@@ -56,7 +53,7 @@ public class UserServiceImpl implements UserService {
             userDto.getPassword());
         authenticationManager.authenticate(authentication);
         List<SimpleGrantedAuthority> authorities = List.of(
-            new SimpleGrantedAuthority(systemUser.getRole().getName().toString()));
+            new SimpleGrantedAuthority(systemUser.getRole().toString()));
         User user = new User(userDto.getEmail(), userDto.getPassword(), authorities);
         return JwtUtil.generateToken(user, secretKey, expiration);
     }
@@ -71,7 +68,7 @@ public class UserServiceImpl implements UserService {
         }
         userDto.setPassword(cryptPasswordEncoder.encode(userDto.getPassword()));
         systemUser = UserMapper.getSystemUser(userDto);
-        systemUser.setRole(roleDao.findById(ID_ROLE_USER));
+        systemUser.setRole(RoleName.ROLE_USER);
         return UserMapper.getUserDto(userDao.saveRecord(systemUser));
     }
 

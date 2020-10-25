@@ -1,6 +1,7 @@
 package com.senla.carservice.controller.config;
 
 import com.senla.carservice.controller.exception.ControllerException;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -8,28 +9,30 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+@Slf4j
 public class ServletOutputStreamCopier extends ServletOutputStream {
-
+    private static final Integer BUFFER_SIZE = 1024;
     private final OutputStream outputStream;
     private final ByteArrayOutputStream copy;
     private WriteListener listener;
 
     public ServletOutputStreamCopier(OutputStream outputStream) {
         this.outputStream = outputStream;
-        this.copy = new ByteArrayOutputStream(1024);
+        this.copy = new ByteArrayOutputStream(BUFFER_SIZE);
     }
 
     @Override
-    public void write(int b) {
+    public void write(int inputByte) {
         try {
-            outputStream.write(b);
-            copy.write(b);
+            outputStream.write(inputByte);
+            copy.write(inputByte);
         } catch (IOException e) {
-            throw new ControllerException("Response error");
+            throw new ControllerException("Byte write error");
         }
     }
 
     public byte[] getCopy() {
+        log.debug("[getCopy]");
         return copy.toByteArray();
     }
 
@@ -40,11 +43,12 @@ public class ServletOutputStreamCopier extends ServletOutputStream {
 
     @Override
     public void setWriteListener(final WriteListener writeListener) {
+        log.debug("[setWriteListener]");
         if (writeListener == null) {
-            throw new ControllerException("Response error");
+            throw new ControllerException("Input WriteListener is null");
         }
         if (listener != null) {
-            throw new ControllerException("Response error");
+            throw new ControllerException("WriteListener is exist");
         }
         listener = writeListener;
     }

@@ -1,10 +1,8 @@
 package com.senla.carservice.service;
 
 import com.senla.carservice.dao.UserDao;
-import com.senla.carservice.domain.Role;
 import com.senla.carservice.domain.SystemUser;
-import com.senla.carservice.domain.enumaration.NameRole;
-import com.senla.carservice.dto.UserDto;
+import com.senla.carservice.domain.enumaration.RoleName;
 import com.senla.carservice.service.config.TestConfig;
 import com.senla.carservice.service.exception.BusinessException;
 import org.junit.jupiter.api.Assertions;
@@ -17,17 +15,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Arrays;
-import java.util.List;
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class UserDetailsServiceImplTest {
     private static final String TEST_EMAIL = "test@test.com";
     private static final String TEST_PASSWORD = "test";
     private static final Long ID_USER = 1L;
-    private static final Long ID_ROLE = 1L;
-    private static final Long ID_OTHER_USER = 2L;
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
@@ -36,7 +29,7 @@ public class UserDetailsServiceImplTest {
     @Test
     void UserServiceImplTest_loadUserByUsername() {
         SystemUser systemUser = getTestUser();
-        systemUser.setRole(getTestRole());
+        systemUser.setRole(RoleName.ROLE_USER);
         Mockito.doReturn(systemUser).when(userDao).findByEmail(TEST_EMAIL);
 
         UserDetails resultUserDto = userDetailsService.loadUserByUsername(TEST_EMAIL);
@@ -61,13 +54,6 @@ public class UserDetailsServiceImplTest {
         systemUser.setPassword(TEST_PASSWORD);
         systemUser.setEmail(TEST_EMAIL);
         return systemUser;
-    }
-
-    private Role getTestRole() {
-        Role role = new Role();
-        role.setId(ID_ROLE);
-        role.setName(NameRole.ROLE_USER);
-        return role;
     }
 
 }

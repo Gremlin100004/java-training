@@ -6,8 +6,11 @@ import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.service.util.JwtUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,8 +28,7 @@ import java.io.IOException;
 @NoArgsConstructor
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
-    private static final Integer LENGTHS_TYPE_TOKEN = 7;
-    private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
+    private static final String TYPE_TOKEN = "Bearer ";
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
@@ -40,12 +42,12 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
         HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
         log.debug("[doFilterInternal]");
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         String username = null;
         String jwt = null;
         try {
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                jwt = authorizationHeader.substring(LENGTHS_TYPE_TOKEN);
+            if (authorizationHeader != null && authorizationHeader.startsWith(TYPE_TOKEN)) {
+                jwt = authorizationHeader.substring(TYPE_TOKEN.length());
                 username = JwtUtil.extractUsername(jwt, secretKey);
             }
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -62,13 +64,13 @@ public class JwtFilter extends OncePerRequestFilter {
         } catch (Exception exception) {
             log.error("[{}]", exception.getMessage());
             try {
-                response.setContentType(CONTENT_TYPE);
-                response.setStatus(400);
-                response.getWriter().write(objectMapper.writeValueAsString(new ClientMessageDto("Request error")));
-            } catch (IOException e) {
-                throw new ControllerException("Server error");
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.getWriter().write(objectMapper.writeValueAsString(new ClientMessageDto("Server error")));
+            } catch (IOException ioException) {
+                log.error("[{}]", exception.getMessage());
+                throw new ControllerException("Response error");
             }
-
         }
     }
 

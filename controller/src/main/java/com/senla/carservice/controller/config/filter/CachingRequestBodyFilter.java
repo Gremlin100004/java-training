@@ -1,6 +1,7 @@
-package com.senla.carservice.controller.config;
+package com.senla.carservice.controller.config.filter;
 
 import com.senla.carservice.controller.exception.ControllerException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -13,14 +14,17 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class CachingRequestBodyFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) {
+        log.debug("[doFilter]");
         try {
             ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) servletRequest);
             chain.doFilter(wrappedRequest, servletResponse);
-        } catch (IOException | ServletException e) {
+        } catch (IOException | ServletException exception) {
+            log.error("[{}]", exception.getMessage());
             throw new ControllerException("Request error");
         }
     }

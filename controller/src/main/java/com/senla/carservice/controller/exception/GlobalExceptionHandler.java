@@ -1,18 +1,24 @@
 package com.senla.carservice.controller.exception;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senla.carservice.dto.ClientMessageDto;
 import com.senla.carservice.service.exception.BusinessException;
 import com.senla.carservice.util.exception.DateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -29,9 +35,17 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @ControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler implements AuthenticationEntryPoint, AccessDeniedHandler {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<ClientMessageDto> handleBusinessException(BusinessException businessException) {
@@ -228,4 +242,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), status);
     }
 
+    @Override
+    public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException authException) {
+        log.debug("[commence]");
+        try {
+            httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            httpServletResponse.setStatus(org.apache.http.HttpStatus.SC_FORBIDDEN);
+            httpServletResponse.getWriter().write(objectMapper.writeValueAsString(new ClientMessageDto("Permission denied")));
+        } catch (IOException exception) {
+            log.error("[{}]", exception.getMessage());
+            throw new ControllerException("Response error");
+        }
+    }
+
+    @Override
+    public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) {
+        try {
+            httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            httpServletResponse.setStatus(org.apache.http.HttpStatus.SC_FORBIDDEN);
+            httpServletResponse.getWriter().write(objectMapper.writeValueAsString(
+                new ClientMessageDto("Authorisation error")));
+        } catch (IOException exception) {
+            log.error("[{}]", exception.getMessage());
+            throw new ControllerException("Response error");
+        }
+    }
 }

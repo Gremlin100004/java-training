@@ -1,6 +1,7 @@
 package com.senla.carservice.controller.config;
 
 import com.senla.carservice.controller.exception.ControllerException;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+@Slf4j
 public class HttpServletResponseCopier extends HttpServletResponseWrapper {
 
     private ServletOutputStream outputStream;
@@ -21,16 +23,17 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
 
     @Override
     public ServletOutputStream getOutputStream() {
+        log.debug("[getOutputStream]");
         if (writer != null) {
-            throw new ControllerException("Response error");
+            throw new ControllerException("PrintWriter is exist");
         }
-
         if (outputStream == null) {
             try {
                 outputStream = getResponse().getOutputStream();
                 copier = new ServletOutputStreamCopier(outputStream);
-            } catch (IOException e) {
-                throw new ControllerException("Response error");
+            } catch (IOException exception) {
+                log.error("[{}]", exception.getMessage());
+                throw new ControllerException("Error getting data from stream");
             }
         }
         return copier;
@@ -38,15 +41,17 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
 
     @Override
     public PrintWriter getWriter() {
+        log.debug("[getWriter]");
         if (outputStream != null) {
-            throw new ControllerException("Response error");
+            throw new ControllerException("ServletOutputStream is null");
         }
         if (writer == null) {
             try {
                 copier = new ServletOutputStreamCopier(getResponse().getOutputStream());
                 writer = new PrintWriter(new OutputStreamWriter(copier, getResponse().getCharacterEncoding()), true);
-            } catch (IOException e) {
-                throw new ControllerException("Response error");
+            } catch (IOException exception) {
+                log.error("[{}]", exception.getMessage());
+                throw new ControllerException("Error getting data from stream");
             }
         }
         return writer;
@@ -54,18 +59,21 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
 
     @Override
     public void flushBuffer() {
+        log.debug("[flushBuffer]");
         if (writer != null) {
             writer.flush();
         } else if (outputStream != null) {
             try {
                 copier.flush();
-            } catch (IOException e) {
-                throw new ControllerException("Response error");
+            } catch (IOException exception) {
+                log.error("[{}]", exception.getMessage());
+                throw new ControllerException("Error flushing");
             }
         }
     }
 
     public byte[] getCopy() {
+        log.debug("[getCopy]");
         if (copier != null) {
             return copier.getCopy();
         } else {

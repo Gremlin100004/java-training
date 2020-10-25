@@ -1,6 +1,6 @@
 package com.senla.carservice.dto;
 
-import com.senla.carservice.domain.enumaration.NameRole;
+import com.senla.carservice.domain.enumaration.RoleName;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +11,6 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 public class RoleDto extends GeneralDto {
-    private NameRole name;
+    private RoleName name;
 
 }

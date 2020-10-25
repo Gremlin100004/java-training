@@ -1,6 +1,6 @@
 package com.senla.carservice.domain;
 
-import com.senla.carservice.domain.enumaration.StatusOrder;
+import com.senla.carservice.domain.enumaration.OrderStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -48,7 +48,7 @@ public class Order extends AEntity {
     private BigDecimal price;
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private StatusOrder status = StatusOrder.WAIT;
+    private OrderStatus status = OrderStatus.WAIT;
     @Column(name = "is_deleted")
     private boolean deleteStatus = false;
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)

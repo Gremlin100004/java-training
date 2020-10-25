@@ -10,7 +10,7 @@ import com.senla.carservice.dao.PlaceDao;
 import com.senla.carservice.domain.Master;
 import com.senla.carservice.domain.Order;
 import com.senla.carservice.domain.Place;
-import com.senla.carservice.domain.enumaration.StatusOrder;
+import com.senla.carservice.domain.enumaration.OrderStatus;
 import com.senla.carservice.dto.MasterDto;
 import com.senla.carservice.dto.OrderDto;
 import com.senla.carservice.service.config.TestConfig;
@@ -103,7 +103,7 @@ class OrderServiceImplTest {
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
 
         Assertions.assertDoesNotThrow(() -> orderService.completeOrder(ID_PLACE));
-        Assertions.assertEquals(StatusOrder.PERFORM, order.getStatus());
+        Assertions.assertEquals(OrderStatus.PERFORM, order.getStatus());
         Assertions.assertEquals(true, order.getPlace().getIsBusy());
         Assertions.assertNotNull(order.getExecutionStartTime());
         Mockito.verify(orderDao, Mockito.times(1)).findById(ID_ORDER);
@@ -134,7 +134,7 @@ class OrderServiceImplTest {
         Order order = getTestOrder();
         order.setPlace(place);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
-        order.setStatus(StatusOrder.COMPLETED);
+        order.setStatus(OrderStatus.COMPLETED);
 
         Assertions.assertThrows(BusinessException.class, () -> orderService.completeOrder(ID_ORDER));
         Mockito.verify(orderDao, Mockito.times(1)).findById(ID_ORDER);
@@ -149,7 +149,7 @@ class OrderServiceImplTest {
         Order order = getTestOrder();
         order.setPlace(place);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
-        order.setStatus(StatusOrder.PERFORM);
+        order.setStatus(OrderStatus.PERFORM);
 
         Assertions.assertThrows(BusinessException.class, () -> orderService.completeOrder(ID_ORDER));
         Mockito.verify(orderDao, Mockito.times(1)).findById(ID_ORDER);
@@ -164,7 +164,7 @@ class OrderServiceImplTest {
         Order order = getTestOrder();
         order.setPlace(place);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
-        order.setStatus(StatusOrder.CANCELED);
+        order.setStatus(OrderStatus.CANCELED);
 
         Assertions.assertThrows(BusinessException.class, () -> orderService.completeOrder(ID_ORDER));
         Mockito.verify(orderDao, Mockito.times(1)).findById(ID_ORDER);
@@ -186,7 +186,7 @@ class OrderServiceImplTest {
         Mockito.doReturn(masters).when(orderDao).getOrderMasters(order);
 
         Assertions.assertDoesNotThrow(() -> orderService.cancelOrder(ID_PLACE));
-        Assertions.assertEquals(StatusOrder.CANCELED, order.getStatus());
+        Assertions.assertEquals(OrderStatus.CANCELED, order.getStatus());
         Assertions.assertEquals(false, order.getPlace().getIsBusy());
         Assertions.assertNotNull(order.getLeadTime());
         Assertions.assertEquals(UPDATE_NUMBER_ORDERS, master.getNumberOrders());
@@ -226,7 +226,7 @@ class OrderServiceImplTest {
         List<Master> masters = Collections.singletonList(master);
         Place place = getTestPlace();
         Order order = getTestOrder();
-        order.setStatus(StatusOrder.COMPLETED);
+        order.setStatus(OrderStatus.COMPLETED);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
 
         Assertions.assertThrows(BusinessException.class, () -> orderService.cancelOrder(ID_ORDER));
@@ -245,7 +245,7 @@ class OrderServiceImplTest {
         List<Master> masters = Collections.singletonList(master);
         Place place = getTestPlace();
         Order order = getTestOrder();
-        order.setStatus(StatusOrder.PERFORM);
+        order.setStatus(OrderStatus.PERFORM);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
 
         Assertions.assertThrows(BusinessException.class, () -> orderService.cancelOrder(ID_ORDER));
@@ -264,7 +264,7 @@ class OrderServiceImplTest {
         List<Master> masters = Collections.singletonList(master);
         Place place = getTestPlace();
         Order order = getTestOrder();
-        order.setStatus(StatusOrder.CANCELED);
+        order.setStatus(OrderStatus.CANCELED);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
 
         Assertions.assertThrows(BusinessException.class, () -> orderService.cancelOrder(ID_ORDER));
@@ -288,7 +288,7 @@ class OrderServiceImplTest {
         Mockito.doReturn(masters).when(orderDao).getOrderMasters(order);
 
         Assertions.assertDoesNotThrow(() -> orderService.closeOrder(ID_PLACE));
-        Assertions.assertEquals(StatusOrder.COMPLETED, order.getStatus());
+        Assertions.assertEquals(OrderStatus.COMPLETED, order.getStatus());
         Assertions.assertEquals(false, order.getPlace().getIsBusy());
         Assertions.assertNotNull(order.getLeadTime());
         Assertions.assertEquals(UPDATE_NUMBER_ORDERS, master.getNumberOrders());
@@ -330,7 +330,7 @@ class OrderServiceImplTest {
         Place place = getTestPlace();
         Order order = getTestOrder();
         order.setPlace(place);
-        order.setStatus(StatusOrder.COMPLETED);
+        order.setStatus(OrderStatus.COMPLETED);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
 
         Assertions.assertThrows(BusinessException.class, () -> orderService.closeOrder(ID_ORDER));
@@ -350,7 +350,7 @@ class OrderServiceImplTest {
         Place place = getTestPlace();
         Order order = getTestOrder();
         order.setPlace(place);
-        order.setStatus(StatusOrder.CANCELED);
+        order.setStatus(OrderStatus.CANCELED);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
 
         Assertions.assertThrows(BusinessException.class, () -> orderService.closeOrder(ID_ORDER));
@@ -365,7 +365,7 @@ class OrderServiceImplTest {
     @Test
     void OrderServiceImpl_deleteOrder() {
         Order order = getTestOrder();
-        order.setStatus(StatusOrder.CANCELED);
+        order.setStatus(OrderStatus.CANCELED);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
 
         Assertions.assertDoesNotThrow(() -> orderService.deleteOrder(ID_ORDER));
@@ -391,7 +391,7 @@ class OrderServiceImplTest {
     void OrderServiceImpl_deleteOrder_orderStatusWait() {
         Order order = getTestOrder();
         order.setDeleteStatus(false);
-        order.setStatus(StatusOrder.WAIT);
+        order.setStatus(OrderStatus.WAIT);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
 
         Assertions.assertThrows(BusinessException.class, () -> orderService.deleteOrder(ID_ORDER));
@@ -403,7 +403,7 @@ class OrderServiceImplTest {
     @Test
     void OrderServiceImpl_deleteOrder_orderStatusPerform() {
         Order order = getTestOrder();
-        order.setStatus(StatusOrder.PERFORM);
+        order.setStatus(OrderStatus.PERFORM);
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
 
         Assertions.assertThrows(BusinessException.class, () -> orderService.deleteOrder(ID_ORDER));
@@ -471,11 +471,11 @@ class OrderServiceImplTest {
         Date rightLeadTime = DateUtil.addDays(new Date(), 2);
         Order order = getTestOrder();
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
-        order.setStatus(StatusOrder.COMPLETED);
+        order.setStatus(OrderStatus.COMPLETED);
         OrderDto orderDto = getTestOrderDto();
         orderDto.setExecutionStartTime(DateUtil.getStringFromDate(rightExecutionStartTime, true));
         orderDto.setLeadTime(DateUtil.getStringFromDate(rightLeadTime, true));
-        orderDto.setStatus(String.valueOf(StatusOrder.COMPLETED));
+        orderDto.setStatus(String.valueOf(OrderStatus.COMPLETED));
 
         Assertions.assertThrows(BusinessException.class,
             () -> orderService.shiftLeadTime(orderDto));
@@ -490,11 +490,11 @@ class OrderServiceImplTest {
         Date rightLeadTime = DateUtil.addDays(new Date(), 2);
         Order order = getTestOrder();
         Mockito.doReturn(order).when(orderDao).findById(ID_ORDER);
-        order.setStatus(StatusOrder.CANCELED);
+        order.setStatus(OrderStatus.CANCELED);
         OrderDto orderDto = getTestOrderDto();
         orderDto.setExecutionStartTime(DateUtil.getStringFromDate(rightExecutionStartTime, true));
         orderDto.setLeadTime(DateUtil.getStringFromDate(rightLeadTime, true));
-        orderDto.setStatus(String.valueOf(StatusOrder.CANCELED));
+        orderDto.setStatus(String.valueOf(OrderStatus.CANCELED));
 
         Assertions.assertThrows(BusinessException.class,
             () -> orderService.shiftLeadTime(orderDto));

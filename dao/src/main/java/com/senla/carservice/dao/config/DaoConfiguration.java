@@ -1,6 +1,5 @@
 package com.senla.carservice.dao.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -21,13 +20,11 @@ public class DaoConfiguration {
     private static final String DATA_SOURCE_PACKAGE = "carservice.datasource.package";
     private static final String CONNECTION_URL = "hibernate.connection.url";
     private static final String DRIVER_DATABASE = "hibernate.connection.driver_class";
-    @Autowired
-    private Environment environment;
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(Environment environment) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(dataSource());
+        em.setDataSource(dataSource(environment));
         em.setPackagesToScan(environment.getRequiredProperty(DATA_SOURCE_PACKAGE));
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
@@ -35,7 +32,7 @@ public class DaoConfiguration {
     }
 
     @Bean
-    public DataSource dataSource() {
+    public DataSource dataSource(Environment environment) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(environment.getRequiredProperty(DRIVER_DATABASE));
         dataSource.setUrl(environment.getRequiredProperty(CONNECTION_URL));
@@ -43,9 +40,9 @@ public class DaoConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() {
+    public PlatformTransactionManager transactionManager(Environment environment) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+        transactionManager.setEntityManagerFactory(entityManagerFactory(environment).getObject());
         return transactionManager;
     }
 

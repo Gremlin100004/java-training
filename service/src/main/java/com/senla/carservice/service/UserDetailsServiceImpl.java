@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (systemUser == null) {
             throw new BusinessException("This email does not exist");
         } else {
-            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(systemUser.getRole().getName().toString());
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(systemUser.getRole().toString());
             return new User(email, systemUser.getPassword(), List.of(authority));
         }
     }

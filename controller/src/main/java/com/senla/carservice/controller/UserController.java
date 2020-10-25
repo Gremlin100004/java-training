@@ -29,7 +29,6 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getUsers() {
         return userService.getSystemUsers();
     }
@@ -41,15 +40,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    @ResponseStatus(HttpStatus.OK)
     public ClientMessageDto logIn(@RequestBody UserDto userDto) {
         return new ClientMessageDto(userService.logIn(userDto));
     }
 
     @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ClientMessageDto deletePlace(@PathVariable("id") Long orderId) {
+    public ClientMessageDto deleteUser(@PathVariable("id") Long orderId) {
         userService.deleteUser(orderId);
         return new ClientMessageDto("User has been deleted successfully");
     }

@@ -2,8 +2,9 @@ package com.senla.carservice.controller.config;
 
 import com.senla.carservice.controller.config.filter.JwtFilter;
 import com.senla.carservice.controller.exception.ControllerException;
-import com.senla.carservice.controller.exception.CustomAuthenticationEntryPoint;
+import com.senla.carservice.controller.exception.GlobalExceptionHandler;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,35 +16,42 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
 @AllArgsConstructor
+@Slf4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private static final String REGISTRATION_URL = "/users/registration";
+    private static final String LOGIN_URL = "/users/login";
     private final UserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
 
     @Override
-    protected void configure(HttpSecurity http) {
+    protected void configure(HttpSecurity httpSecurity) {
+        log.debug("[configure]");
+        log.trace("[httpSecurity: {}]", httpSecurity);
         try {
-            http
+            httpSecurity
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/users/registration").permitAll()
-                .antMatchers(HttpMethod.POST, "/users/login").permitAll()
+                .antMatchers(HttpMethod.POST, REGISTRATION_URL).permitAll()
+                .antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+                .exceptionHandling().authenticationEntryPoint(globalExceptionHandler())
                 .and()
-                .formLogin().disable();
+                .exceptionHandling().accessDeniedHandler(globalExceptionHandler())
+                .and()
+                .formLogin().disable()
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         } catch (Exception exception) {
-            throw new ControllerException("Server error");
+            log.error("[{}]", exception.getMessage());
+            throw new ControllerException("HttpSecurity configuration is wrong");
         }
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
@@ -51,26 +59,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         try {
             return authenticationManager();
         } catch (Exception exception) {
-            throw new ControllerException("Server error");
+            log.error("[{}]", exception.getMessage());
+            throw new ControllerException("The authentication of the passed authentication object is wrong");
         }
     }
+
+    @Bean
+    public GlobalExceptionHandler globalExceptionHandler() {
+        return new GlobalExceptionHandler();
+    }
+
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    AuthenticationEntryPoint authenticationEntryPoint() {
-        return new CustomAuthenticationEntryPoint();
-    }
-
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
+    protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) {
+        log.debug("[configure]");
+        log.trace("[authenticationManagerBuilder: {}]", authenticationManagerBuilder);
         try {
-            auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+            authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
         } catch (Exception exception) {
-            throw new ControllerException("Server error");
+            log.error("[{}]", exception.getMessage());
+            throw new ControllerException("AuthenticationManagerBuilder configuration is wrong");
         }
     }
 
