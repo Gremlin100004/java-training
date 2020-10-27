@@ -50,7 +50,7 @@ public class OrderClientImpl implements OrderClient {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private HttpHeaders httpHeaders;
+    private HttpHeaders httpJsonHeaders;
 
     @Override
     public String addOrder(OrderDto orderDto) {
@@ -58,7 +58,7 @@ public class OrderClientImpl implements OrderClient {
         log.trace("[orderDto: {}]", orderDto);
         try {
             ResponseEntity<OrderDto> response = restTemplate.exchange(
-                ADD_ORDER_PATH, HttpMethod.POST, new HttpEntity<>(orderDto, httpHeaders), OrderDto.class);
+                ADD_ORDER_PATH, HttpMethod.POST, new HttpEntity<>(orderDto, httpJsonHeaders), OrderDto.class);
             OrderDto receivedOrderDto = response.getBody();
             if (receivedOrderDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -76,7 +76,7 @@ public class OrderClientImpl implements OrderClient {
         try {
             ParameterizedTypeReference<List<OrderDto>> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<List<OrderDto>> response = restTemplate.exchange(
-                GET_ORDERS_PATH, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_ORDERS_PATH, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             List<OrderDto> listOrdersDto = response.getBody();
             if (listOrdersDto == null) {
                 throw new BusinessException("Error, there are no orders");
@@ -95,7 +95,7 @@ public class OrderClientImpl implements OrderClient {
         try {
             ResponseEntity<ClientMessageDto> responseEntity = restTemplate.exchange(
                 COMPLETE_ORDER_START_PATH + idOrder + COMPLETE_ORDER_END_PATH, HttpMethod.PUT,
-                new HttpEntity<>(httpHeaders), ClientMessageDto.class);
+                new HttpEntity<>(httpJsonHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = responseEntity.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -114,7 +114,7 @@ public class OrderClientImpl implements OrderClient {
         try {
             ResponseEntity<ClientMessageDto> responseEntity = restTemplate.exchange(
                 CLOSE_ORDER_START_PATH + idOrder + CLOSE_ORDER_END_PATH, HttpMethod.PUT, new HttpEntity<>(
-                    httpHeaders), ClientMessageDto.class);
+                    httpJsonHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = responseEntity.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -133,7 +133,7 @@ public class OrderClientImpl implements OrderClient {
         try {
             ResponseEntity<ClientMessageDto> responseEntity = restTemplate.exchange(
                 CANCEL_ORDER_START_PATH + idOrder + CANCEL_ORDER_END_PATH, HttpMethod.PUT, new HttpEntity<>(
-                    httpHeaders), ClientMessageDto.class);
+                    httpJsonHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = responseEntity.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -151,7 +151,7 @@ public class OrderClientImpl implements OrderClient {
         log.trace("[idOrder: {}]", idOrder);
         try {
             ResponseEntity<ClientMessageDto> responseEntity = restTemplate.exchange(
-                DELETE_ORDER_PATH + idOrder, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), ClientMessageDto.class);
+                DELETE_ORDER_PATH + idOrder, HttpMethod.DELETE, new HttpEntity<>(httpJsonHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = responseEntity.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -169,7 +169,7 @@ public class OrderClientImpl implements OrderClient {
         log.trace("[orderDto: {}]", orderDto);
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
-                SHIFT_LEAD_TIME_PATH, HttpMethod.PUT, new HttpEntity<>(orderDto, httpHeaders), ClientMessageDto.class);
+                SHIFT_LEAD_TIME_PATH, HttpMethod.PUT, new HttpEntity<>(orderDto, httpJsonHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -188,7 +188,7 @@ public class OrderClientImpl implements OrderClient {
         try {
             ParameterizedTypeReference<List<OrderDto>> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<List<OrderDto>> response = restTemplate.exchange(
-                GET_SORT_ORDERS_PATH + sortParameter, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_SORT_ORDERS_PATH + sortParameter, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             List<OrderDto> listOrdersDto = response.getBody();
             if (listOrdersDto == null) {
                 throw new BusinessException("Error, there are no orders");
@@ -208,7 +208,7 @@ public class OrderClientImpl implements OrderClient {
             ParameterizedTypeReference<List<OrderDto>> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<List<OrderDto>> response = restTemplate.exchange(
                 GET_SORT_ORDERS_PATH + sortParameter + PARAMETER_START_TIME + startPeriod +
-                PARAMETER_END_TIME + endPeriod, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                PARAMETER_END_TIME + endPeriod, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             List<OrderDto> listOrdersDto = response.getBody();
             if (listOrdersDto == null) {
                 throw new BusinessException("Error, there are no orders");
@@ -228,7 +228,7 @@ public class OrderClientImpl implements OrderClient {
             ParameterizedTypeReference<List<MasterDto>> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<List<MasterDto>> response = restTemplate.exchange(
                 GET_ORDER_MASTERS_START_PATH + orderId + GET_ORDER_MASTERS_END_PATH, HttpMethod.GET,
-                new HttpEntity<>(httpHeaders), beanType);
+                new HttpEntity<>(httpJsonHeaders), beanType);
             List<MasterDto> listMastersDto = response.getBody();
             if (listMastersDto == null) {
                 throw new BusinessException("Error, there are no masters");
@@ -246,7 +246,7 @@ public class OrderClientImpl implements OrderClient {
         try {
             ParameterizedTypeReference<DateDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<DateDto> response = restTemplate.exchange(
-                GET_NEAREST_FREE_DATE_PATH, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_NEAREST_FREE_DATE_PATH, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             return response.getBody();
         } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
@@ -259,7 +259,7 @@ public class OrderClientImpl implements OrderClient {
         log.debug("[exportEntities]");
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
-                EXPORT_ENTITIES_PATH, HttpMethod.POST, new HttpEntity<>(httpHeaders), ClientMessageDto.class);
+                EXPORT_ENTITIES_PATH, HttpMethod.POST, new HttpEntity<>(httpJsonHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -277,7 +277,7 @@ public class OrderClientImpl implements OrderClient {
         try {
             ParameterizedTypeReference<ClientMessageDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
-                IMPORT_ENTITIES_PATH, HttpMethod.POST, new HttpEntity<>(httpHeaders), beanType);
+                IMPORT_ENTITIES_PATH, HttpMethod.POST, new HttpEntity<>(httpJsonHeaders), beanType);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;

@@ -41,7 +41,7 @@ public class MasterClientImpl implements MasterClient {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private HttpHeaders httpHeaders;
+    private HttpHeaders httpJsonHeaders;
 
     @Override
     public List<MasterDto> getMasters() {
@@ -49,7 +49,7 @@ public class MasterClientImpl implements MasterClient {
         try {
             ParameterizedTypeReference<List<MasterDto>> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<List<MasterDto>> response = restTemplate.exchange(
-                GET_MASTERS_PATH, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_MASTERS_PATH, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             List<MasterDto> listMastersDto = response.getBody();
             if (listMastersDto == null) {
                 throw new BusinessException("Error, there are no masters");
@@ -69,7 +69,7 @@ public class MasterClientImpl implements MasterClient {
             MasterDto masterDto = new MasterDto();
             masterDto.setName(name);
             restTemplate.exchange(
-                ADD_MASTER_PATH, HttpMethod.POST, new HttpEntity<>(masterDto, httpHeaders), MasterDto.class);
+                ADD_MASTER_PATH, HttpMethod.POST, new HttpEntity<>(masterDto, httpJsonHeaders), MasterDto.class);
             return MASTER_ADD_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
@@ -83,7 +83,7 @@ public class MasterClientImpl implements MasterClient {
         log.trace("[idMaster: {}]", idMaster);
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
-                DELETE_MASTER_PATH + idMaster, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), ClientMessageDto.class);
+                DELETE_MASTER_PATH + idMaster, HttpMethod.DELETE, new HttpEntity<>(httpJsonHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -102,7 +102,7 @@ public class MasterClientImpl implements MasterClient {
         try {
             ParameterizedTypeReference<List<MasterDto>> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<List<MasterDto>> response = restTemplate.exchange(
-                GET_SORT_MASTERS + sortParameter, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_SORT_MASTERS + sortParameter, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             List<MasterDto> listMastersDto = response.getBody();
             if (listMastersDto == null) {
                 throw new BusinessException("Error, there are no masters");
@@ -120,7 +120,7 @@ public class MasterClientImpl implements MasterClient {
         try {
             ParameterizedTypeReference<LongDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<LongDto> response = restTemplate.exchange(
-                GET_NUMBER_MASTERS_PATH, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_NUMBER_MASTERS_PATH, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             LongDto longDto = response.getBody();
             if (longDto == null) {
                 throw new BusinessException("Error, there are no number");
@@ -139,7 +139,7 @@ public class MasterClientImpl implements MasterClient {
         try {
             ParameterizedTypeReference<LongDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<LongDto> response = restTemplate.exchange(
-                GET_NUMBER_FREE_MASTERS_PATH + date, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_NUMBER_FREE_MASTERS_PATH + date, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             LongDto longDto = response.getBody();
             if (longDto == null) {
                 throw new BusinessException("Error, there are no number");
@@ -158,7 +158,7 @@ public class MasterClientImpl implements MasterClient {
         try {
             ParameterizedTypeReference<List<MasterDto>> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<List<MasterDto>> response = restTemplate.exchange(
-                GET_FREE_MASTERS_PATH + stringExecuteDate, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_FREE_MASTERS_PATH + stringExecuteDate, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             List<MasterDto> listMastersDto = response.getBody();
             if (listMastersDto == null) {
                 throw new BusinessException("Error, there are no masters");
@@ -178,7 +178,7 @@ public class MasterClientImpl implements MasterClient {
             ParameterizedTypeReference<List<OrderDto>> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<List<OrderDto>> response = restTemplate.exchange(
                 GET_MASTER_ORDERS_START_PATH + masterId + GET_MASTER_ORDERS_END_PATH, HttpMethod.GET,
-                new HttpEntity<>(httpHeaders), beanType);
+                new HttpEntity<>(httpJsonHeaders), beanType);
             List<OrderDto> listOrdersDto = response.getBody();
             if (listOrdersDto == null) {
                 throw new BusinessException("Error, there are no orders");

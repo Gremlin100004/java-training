@@ -37,7 +37,7 @@ public class PlaceClientImpl implements PlaceClient {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private HttpHeaders httpHeaders;
+    private HttpHeaders httpJsonHeaders;
 
     @Override
     public String addPlace(int numberPlace) {
@@ -47,7 +47,7 @@ public class PlaceClientImpl implements PlaceClient {
             PlaceDto placeDto = new PlaceDto();
             placeDto.setNumber(numberPlace);
             ResponseEntity<PlaceDto> response = restTemplate.exchange(
-                ADD_PLACE_PATH, HttpMethod.POST, new HttpEntity<>(placeDto, httpHeaders),  PlaceDto.class);
+                ADD_PLACE_PATH, HttpMethod.POST, new HttpEntity<>(placeDto, httpJsonHeaders), PlaceDto.class);
             PlaceDto receivedPlaceDto = response.getBody();
             if (receivedPlaceDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -65,7 +65,7 @@ public class PlaceClientImpl implements PlaceClient {
         try {
             ParameterizedTypeReference<List<PlaceDto>> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<List<PlaceDto>> response = restTemplate.exchange(
-                GET_PLACES_PATH, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_PLACES_PATH, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             List<PlaceDto> listPlaceDto = response.getBody();
             if (listPlaceDto == null) {
                 throw new BusinessException("Error, there are no places");
@@ -83,7 +83,7 @@ public class PlaceClientImpl implements PlaceClient {
         log.trace("[idPlace: {}]", idPlace);
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
-                DELETE_PLACE_PATH + idPlace, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), ClientMessageDto.class);
+                DELETE_PLACE_PATH + idPlace, HttpMethod.DELETE, new HttpEntity<>(httpJsonHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
@@ -101,7 +101,7 @@ public class PlaceClientImpl implements PlaceClient {
         try {
             ParameterizedTypeReference<LongDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<LongDto> response = restTemplate.exchange(
-                GET_NUMBER_PLACES_PATH, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_NUMBER_PLACES_PATH, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             LongDto numberPlace = response.getBody();
             if (numberPlace == null) {
                 throw new BusinessException("Error, there are no number");
@@ -120,7 +120,7 @@ public class PlaceClientImpl implements PlaceClient {
         try {
             ParameterizedTypeReference<LongDto> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<LongDto> response = restTemplate.exchange(
-                GET_NUMBER_FREE_PLACES_PATH + date, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_NUMBER_FREE_PLACES_PATH + date, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             LongDto numberPlace = response.getBody();
             if (numberPlace == null) {
                 throw new BusinessException("Error, there are no number");
@@ -139,7 +139,7 @@ public class PlaceClientImpl implements PlaceClient {
         try {
             ParameterizedTypeReference<List<PlaceDto>> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<List<PlaceDto>> response = restTemplate.exchange(
-                GET_FREE_PLACES_PATH + stringExecuteDate, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_FREE_PLACES_PATH + stringExecuteDate, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             List<PlaceDto> listPlaceDto = response.getBody();
             if (listPlaceDto == null) {
                 throw new BusinessException("Error, there are no places");

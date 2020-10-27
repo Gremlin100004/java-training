@@ -36,7 +36,7 @@ public class RestClientConfig {
     }
 
     @Bean
-    public HttpHeaders httpHeaders() {
+    public HttpHeaders httpJsonHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         return httpHeaders;

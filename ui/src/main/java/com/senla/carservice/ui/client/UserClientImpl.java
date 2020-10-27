@@ -39,7 +39,7 @@ public class UserClientImpl implements UserClient {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private HttpHeaders httpHeaders;
+    private HttpHeaders httpJsonHeaders;
 
     @Override
     public List<UserDto> getUsers() {
@@ -47,7 +47,7 @@ public class UserClientImpl implements UserClient {
         try {
             ParameterizedTypeReference<List<UserDto>> beanType = new ParameterizedTypeReference<>() { };
             ResponseEntity<List<UserDto>> response = restTemplate.exchange(
-                GET_USERS_PATH, HttpMethod.GET, new HttpEntity<>(httpHeaders), beanType);
+                GET_USERS_PATH, HttpMethod.GET, new HttpEntity<>(httpJsonHeaders), beanType);
             return response.getBody();
         } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
@@ -82,8 +82,8 @@ public class UserClientImpl implements UserClient {
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
             }
-            httpHeaders.keySet().clear();
-            httpHeaders.add(HEADER_NAME_AUTHORIZATION, TOKEN_TYPE + clientMessageDto.getMessage());
+            httpJsonHeaders.keySet().clear();
+            httpJsonHeaders.add(HEADER_NAME_AUTHORIZATION, TOKEN_TYPE + clientMessageDto.getMessage());
             return USER_LOGIN_SUCCESS_MESSAGE;
         } catch (HttpClientErrorException exception) {
             log.error(exception.getResponseBodyAsString());
@@ -94,10 +94,10 @@ public class UserClientImpl implements UserClient {
     @Override
     public String logout() {
         log.debug("[logout]");
-        if (httpHeaders.keySet().isEmpty()) {
+        if (httpJsonHeaders.keySet().isEmpty()) {
             return USER_LOGOUT_ERROR_MESSAGE;
         }
-        httpHeaders.keySet().clear();
+        httpJsonHeaders.keySet().clear();
         return USER_LOGOUT_SUCCESS_MESSAGE;
     }
 
@@ -107,7 +107,7 @@ public class UserClientImpl implements UserClient {
         log.trace("[idUser: {}]", idUser);
         try {
             ResponseEntity<ClientMessageDto> response = restTemplate.exchange(
-                DELETE_USERS_PATH + idUser, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), ClientMessageDto.class);
+                DELETE_USERS_PATH + idUser, HttpMethod.DELETE, new HttpEntity<>(httpJsonHeaders), ClientMessageDto.class);
             ClientMessageDto clientMessageDto = response.getBody();
             if (clientMessageDto == null) {
                 return WARNING_SERVER_MESSAGE;
