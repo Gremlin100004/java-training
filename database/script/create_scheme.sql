@@ -1,324 +1,328 @@
+-- Todo don't forget to delete this line
+DROP DATABASE IF EXISTS hrinkov_social_network;
 
+CREATE SCHEMA IF NOT EXISTS hrinkov_social_network DEFAULT CHARACTER SET utf8 ;
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
-
--- -----------------------------------------------------
--- Schema hrinkov_social_network
--- -----------------------------------------------------
+USE hrinkov_social_network;
 
 -- -----------------------------------------------------
--- Schema hrinkov_social_network
+-- Table `locations`
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `hrinkov_social_network` DEFAULT CHARACTER SET utf8 ;
-USE `hrinkov_social_network` ;
+CREATE TABLE IF NOT EXISTS locations (
+  id INT NOT NULL AUTO_INCREMENT,
+  country VARCHAR(45) NOT NULL UNIQUE,
+  city VARCHAR(45) NOT NULL UNIQUE,
+  PRIMARY KEY pk_locations (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`locations`
+-- Table `schools`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`locations` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `country` VARCHAR(45) NULL,
-  `city` VARCHAR(45) NULL,
-  `locationscol` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS schools (
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(80) NOT NULL UNIQUE,
+  location_id INT NOT NULL,
+  PRIMARY KEY pk_schools (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`schools`
+-- Table `universities`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`schools` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(50) NULL,
-  `year_of_ending` DATETIME NULL,
-  `locations_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_schools_locations1_idx` (`locations_id` ASC),
-  CONSTRAINT `fk_schools_locations1`
-    FOREIGN KEY (`locations_id`)
-    REFERENCES `hrinkov_social_network`.`locations` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS universities (
+  id INT NOT NULL AUTO_INCREMENT,
+  faculty VARCHAR(50) NOT NULL,
+  specialty VARCHAR(50) NOT NULL,
+  location_id INT NOT NULL,
+  PRIMARY KEY pk_universities (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`universities`
+-- Table `users`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`universities` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `faculty` VARCHAR(50) NOT NULL,
-  `specialty` VARCHAR(50) NOT NULL,
-  `year_of_ending` DATETIME NOT NULL,
-  `locations_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_schools_locations1_idx` (`locations_id` ASC),
-  CONSTRAINT `fk_schools_locations10`
-    FOREIGN KEY (`locations_id`)
-    REFERENCES `hrinkov_social_network`.`locations` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `hrinkov_social_network`.`users`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`users` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `email` VARCHAR(50) NULL,
-  `password` VARCHAR(60) NULL,
-  `role` VARCHAR(20) NULL,
-  `registration_date` DATETIME NULL,
-  `date_of_birth` DATETIME NULL,
-  `name` VARCHAR(45) NULL,
-  `surname` VARCHAR(45) NULL,
-  `telephone_number` VARCHAR(13) NULL,
-  `locations_id` INT NOT NULL,
-  `schools_id` INT NOT NULL,
-  `universities_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_users_locations1_idx` (`locations_id` ASC),
-  INDEX `fk_users_schools1_idx` (`schools_id` ASC),
-  INDEX `fk_users_universities1_idx` (`universities_id` ASC),
-  CONSTRAINT `fk_users_locations1`
-    FOREIGN KEY (`locations_id`)
-    REFERENCES `hrinkov_social_network`.`locations` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_users_schools1`
-    FOREIGN KEY (`schools_id`)
-    REFERENCES `hrinkov_social_network`.`schools` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_users_universities1`
-    FOREIGN KEY (`universities_id`)
-    REFERENCES `hrinkov_social_network`.`universities` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS users (
+  id INT NOT NULL AUTO_INCREMENT,
+  email VARCHAR(50) NOT NULL,
+  password VARCHAR(20) NOT NULL,
+  role VARCHAR(20) NOT NULL,
+  registration_date DATETIME NOT NULL,
+  date_of_birth DATETIME NULL,
+  name VARCHAR(45) NULL,
+  surname VARCHAR(45) NULL,
+  telephone_number VARCHAR(13) NULL,
+  location_id INT NULL,
+  school_id INT NULL,
+  school_graduation_year DATETIME NULL,
+  university_id INT NULL,
+  university_graduation_year DATETIME NULL,
+  PRIMARY KEY pk_users (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`public_messages`
+-- Table `public_messages`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`public_messages` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `heading` VARCHAR(100) NULL,
-  `content` VARCHAR(1000) NULL,
-  `author_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_public_messages_users1_idx` (`author_id` ASC),
-  CONSTRAINT `fk_public_messages_users1`
-    FOREIGN KEY (`author_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS public_messages (
+  id INT NOT NULL AUTO_INCREMENT,
+  creation_time DATETIME NOT NULL,
+  author_id INT NOT NULL,
+  heading VARCHAR(100) NULL,
+  content VARCHAR(1000) NULL,
+  is_deleted BOOLEAN DEFAULT false,
+  PRIMARY KEY pk_public_messages (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`comments`
+-- Table `comments`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`comments` (
-  `id` INT NOT NULL,
-  `content` VARCHAR(45) NULL,
-  `author_id` INT NOT NULL,
-  `public_messages_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_comments_users1_idx` (`author_id` ASC),
-  INDEX `fk_comments_public_messages1_idx` (`public_messages_id` ASC),
-  CONSTRAINT `fk_comments_users1`
-    FOREIGN KEY (`author_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_comments_public_messages1`
-    FOREIGN KEY (`public_messages_id`)
-    REFERENCES `hrinkov_social_network`.`public_messages` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS comments (
+  id INT NOT NULL,
+  creation_time DATETIME NOT NULL,
+  author_id INT NOT NULL,
+  public_message_id INT NOT NULL,
+  content VARCHAR(1000) NULL,
+  is_deleted BOOLEAN DEFAULT false,
+  PRIMARY KEY pk_comments (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`messages`
+-- Table `messages`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`messages` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `content` VARCHAR(45) NULL,
-  `sender_id` INT NOT NULL,
-  `recipient_id` INT NOT NULL,
-  `departure_time` DATETIME NULL,
-  `is_read` TINYINT(1) NULL DEFAULT 0,
-  PRIMARY KEY (`id`),
-  INDEX `fk_messages_users1_idx` (`sender_id` ASC),
-  INDEX `fk_messages_users2_idx` (`recipient_id` ASC),
-  CONSTRAINT `fk_messages_users1`
-    FOREIGN KEY (`sender_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_messages_users2`
-    FOREIGN KEY (`recipient_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS messages (
+  id INT NOT NULL AUTO_INCREMENT,
+  departure_time DATETIME NOT NULL,
+  sender_id INT NOT NULL,
+  recipient_id INT NOT NULL,
+  content VARCHAR(1000) NULL,
+  is_read BOOLEAN DEFAULT false,
+  is_deleted BOOLEAN DEFAULT false,
+  PRIMARY KEY pk_messages (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`friends`
+-- Table `friendship_requests`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`friends` (
-  `user_id` INT NOT NULL,
-  `friend_id` INT NOT NULL,
-  PRIMARY KEY (`user_id`, `friend_id`),
-  INDEX `fk_users_has_users_users2_idx` (`friend_id` ASC),
-  INDEX `fk_users_has_users_users1_idx` (`user_id` ASC),
-  CONSTRAINT `fk_users_has_users_users1`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_users_has_users_users2`
-    FOREIGN KEY (`friend_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS friendship_requests (
+  id INT NOT NULL,
+  user_id INT NOT NULL,
+  friend_id INT NOT NULL,
+  PRIMARY KEY pk_friendship_requests (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`friendship_requests`
+-- Table `communities`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`friendship_requests` (
-  `id` INT NOT NULL,
-  `user_id` INT NOT NULL,
-  `friend_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_friendship_requests_users1_idx` (`user_id` ASC),
-  INDEX `fk_friendship_requests_users2_idx` (`friend_id` ASC),
-  CONSTRAINT `fk_friendship_requests_users1`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_friendship_requests_users2`
-    FOREIGN KEY (`friend_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS communities (
+  id INT NOT NULL AUTO_INCREMENT,
+  creation_time DATETIME NOT NULL,
+  author_id INT NOT NULL,
+  type VARCHAR(20) NOT NULL,
+  heading VARCHAR(100) NOT NULL,
+  information VARCHAR(1000) NULL,
+  is_deleted BOOLEAN DEFAULT false,
+  PRIMARY KEY pk_communities (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`communities`
+-- Table `posts`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`communities` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `heading` VARCHAR(100) NULL,
-  `information` VARCHAR(1000) NULL,
-  `users_id` INT NOT NULL,
-  `type` VARCHAR(20) NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_communities_users1_idx` (`users_id` ASC),
-  CONSTRAINT `fk_communities_users1`
-    FOREIGN KEY (`users_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS posts (
+  id INT NOT NULL AUTO_INCREMENT,
+  heading VARCHAR(100) NULL,
+  content VARCHAR(1000) NULL,
+  author_id INT NOT NULL,
+  communities_id INT NOT NULL,
+  is_deleted BOOLEAN DEFAULT false,
+  creation_time DATETIME NOT NULL,
+  PRIMARY KEY pk_posts (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`communities_users`
+-- Table `post_comments`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`communities_users` (
-  `communities_id` INT NOT NULL,
-  `users_id` INT NOT NULL,
-  PRIMARY KEY (`communities_id`, `users_id`),
-  INDEX `fk_communities_has_users_users1_idx` (`users_id` ASC),
-  INDEX `fk_communities_has_users_communities1_idx` (`communities_id` ASC),
-  CONSTRAINT `fk_communities_has_users_communities1`
-    FOREIGN KEY (`communities_id`)
-    REFERENCES `hrinkov_social_network`.`communities` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_communities_has_users_users1`
-    FOREIGN KEY (`users_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS post_comments (
+  id INT NOT NULL,
+  creation_time DATETIME NOT NULL,
+  author_id INT NOT NULL,
+  post_id INT NOT NULL,
+  content VARCHAR(1000) NULL,
+  is_deleted BOOLEAN DEFAULT false,
+  PRIMARY KEY pk_post_comments (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`posts`
+-- Table `sun_calendars`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`posts` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `heading` VARCHAR(100) NULL,
-  `content` VARCHAR(1000) NULL,
-  `author_id` INT NOT NULL,
-  `communities_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_public_messages_users1_idx` (`author_id` ASC),
-  INDEX `fk_posts_communities1_idx` (`communities_id` ASC),
-  CONSTRAINT `fk_public_messages_users10`
-    FOREIGN KEY (`author_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_posts_communities1`
-    FOREIGN KEY (`communities_id`)
-    REFERENCES `hrinkov_social_network`.`communities` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS sun_calendars (
+  id INT NOT NULL AUTO_INCREMENT,
+  date DATETIME NOT NULL,
+  beginning_of_twilight DATETIME NOT NULL,
+  sunrise DATETIME NOT NULL,
+  highest_point DATETIME NOT NULL,
+  sunset DATETIME NOT NULL,
+  end_of_twilight DATETIME NOT NULL,
+  PRIMARY KEY pk_sun_calendars (id)
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`post_comments`
+-- Table `friends`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`post_comments` (
-  `id` INT NOT NULL,
-  `content` VARCHAR(45) NULL,
-  `author_id` INT NOT NULL,
-  `post_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_comments_users1_idx` (`author_id` ASC),
-  INDEX `fk_post_comments_posts1_idx` (`post_id` ASC),
-  CONSTRAINT `fk_comments_users10`
-    FOREIGN KEY (`author_id`)
-    REFERENCES `hrinkov_social_network`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_post_comments_posts1`
-    FOREIGN KEY (`post_id`)
-    REFERENCES `hrinkov_social_network`.`posts` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS friends (
+  user_id INT NOT NULL,
+  friend_id INT NOT NULL
+);
 
 -- -----------------------------------------------------
--- Table `hrinkov_social_network`.`sun_calendars`
+-- Table `communities_users`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hrinkov_social_network`.`sun_calendars` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `date` DATETIME NOT NULL,
-  `beginning_of_twilight` DATETIME NOT NULL,
-  `sunrise` DATETIME NOT NULL,
-  `highest_point` DATETIME NOT NULL,
-  `sunset` DATETIME NOT NULL,
-  `end_of_twilight` DATETIME NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+CREATE TABLE IF NOT EXISTS communities_users (
+  communities_id INT NOT NULL,
+  users_id INT NOT NULL
+);
 
+-- -----------------------------------------------------
+-- ADD CONSTRAINTS
+-- -----------------------------------------------------
+ALTER TABLE schools
+ADD CONSTRAINT fk_schools
+FOREIGN KEY (location_id)
+REFERENCES locations (id) ON DELETE CASCADE;
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+ALTER TABLE universities
+ADD CONSTRAINT fk_universities
+FOREIGN KEY (location_id)
+REFERENCES locations (id) ON DELETE CASCADE;
+
+ALTER TABLE users
+ADD CONSTRAINT fk_users_locations
+FOREIGN KEY (location_id)
+REFERENCES locations (id) ON DELETE CASCADE;
+
+ALTER TABLE users
+ADD CONSTRAINT fk_users_schools
+FOREIGN KEY (school_id)
+REFERENCES schools (id) ON DELETE CASCADE;
+
+ALTER TABLE users
+ADD CONSTRAINT fk_users_universities
+FOREIGN KEY (university_id)
+REFERENCES universities (id) ON DELETE CASCADE;
+
+ALTER TABLE public_messages
+ADD CONSTRAINT fk_public_messages
+FOREIGN KEY (author_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE comments
+ADD CONSTRAINT fk_comments_users
+FOREIGN KEY (author_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE comments
+ADD CONSTRAINT fk_comments_public_messages
+FOREIGN KEY (public_message_id)
+REFERENCES public_messages (id) ON DELETE CASCADE;
+
+ALTER TABLE messages
+ADD CONSTRAINT fk_messages_users_sender
+FOREIGN KEY (sender_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE messages
+ADD CONSTRAINT fk_messages_users_recipient
+FOREIGN KEY (recipient_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE friendship_requests
+ADD CONSTRAINT fk_friendship_requests_users_user
+FOREIGN KEY (user_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE friendship_requests
+ADD CONSTRAINT fk_friendship_requests_users_friend
+FOREIGN KEY (friend_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE communities
+ADD CONSTRAINT fk_communities_users
+FOREIGN KEY (author_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE posts
+ADD CONSTRAINT fk_posts_users
+FOREIGN KEY (author_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE posts
+ADD CONSTRAINT fk_posts_communities
+FOREIGN KEY (communities_id)
+REFERENCES communities (id) ON DELETE CASCADE;
+
+ALTER TABLE post_comments
+ADD CONSTRAINT fk_post_comments_users
+FOREIGN KEY (author_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE post_comments
+ADD CONSTRAINT fk_post_comments_posts
+FOREIGN KEY (post_id)
+REFERENCES posts (id) ON DELETE CASCADE;
+
+ALTER TABLE friends
+ADD CONSTRAINT fk_friends_users_user
+FOREIGN KEY (user_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE friends
+ADD CONSTRAINT fk_friends_users_friend
+FOREIGN KEY (friend_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE communities_users
+ADD CONSTRAINT fk_communities_communities
+FOREIGN KEY (communities_id)
+REFERENCES communities (id) ON DELETE CASCADE;
+
+ALTER TABLE communities_users
+ADD CONSTRAINT fk_communities_users_users
+FOREIGN KEY (users_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------
+-- CREATE INDEX
+-- -----------------------------------------------------
+CREATE UNIQUE INDEX locations_id_idx
+ON locations (id);
+
+CREATE UNIQUE INDEX schools_id_idx
+ON schools (id);
+
+CREATE UNIQUE INDEX universities_id_idx
+ON universities (id);
+
+CREATE UNIQUE INDEX users_id_idx
+ON users (id);
+
+CREATE UNIQUE INDEX public_messages_id_idx
+ON public_messages (id);
+
+CREATE UNIQUE INDEX comments_id_idx
+ON comments (id);
+
+CREATE UNIQUE INDEX messages_id_idx
+ON messages (id);
+
+CREATE UNIQUE INDEX friendship_requests_id_idx
+ON friendship_requests (id);
+
+CREATE UNIQUE INDEX communities_id_idx
+ON communities (id);
+
+CREATE UNIQUE INDEX posts_id_idx
+ON posts (id);
+
+CREATE UNIQUE INDEX post_comments_id_idx
+ON post_comments (id);
+
+CREATE UNIQUE INDEX sun_calendars_id_idx
+ON sun_calendars (id);
+
+COMMIT;
