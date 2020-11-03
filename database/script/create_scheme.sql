@@ -10,7 +10,6 @@ USE hrinkov_social_network;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS locations (
   id INT NOT NULL AUTO_INCREMENT,
-  country VARCHAR(45) NOT NULL UNIQUE,
   city VARCHAR(45) NOT NULL UNIQUE,
   PRIMARY KEY pk_locations (id)
 );
@@ -30,8 +29,7 @@ CREATE TABLE IF NOT EXISTS schools (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS universities (
   id INT NOT NULL AUTO_INCREMENT,
-  faculty VARCHAR(50) NOT NULL,
-  specialty VARCHAR(50) NOT NULL,
+  name VARCHAR(80) NOT NULL UNIQUE,
   location_id INT NOT NULL,
   PRIMARY KEY pk_universities (id)
 );
