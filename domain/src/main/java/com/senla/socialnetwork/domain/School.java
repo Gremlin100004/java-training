@@ -1,0 +1,28 @@
+package com.senla.socialnetwork.domain;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "schools")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+public class School extends AEntity {
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id")
+    private Location location;
+
+}

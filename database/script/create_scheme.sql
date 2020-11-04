@@ -108,10 +108,8 @@ CREATE TABLE IF NOT EXISTS private_messages (
 -- Table `friendship_requests`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS friendship_requests (
-  id INT NOT NULL,
   user_profiles_id INT NOT NULL,
-  friend_id INT NOT NULL,
-  PRIMARY KEY pk_friendship_requests (id)
+  friend_id INT NOT NULL
 );
 
 -- -----------------------------------------------------
@@ -163,13 +161,6 @@ CREATE TABLE IF NOT EXISTS friends (
   friend_id INT NOT NULL
 );
 
--- -----------------------------------------------------
--- Table `communities_users`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS community_user_profile (
-  communities_id INT NOT NULL,
-  user_profiles_id INT NOT NULL
-);
 -- Todo cash table for weather
 -- -----------------------------------------------------
 -- ADD CONSTRAINTS
@@ -274,16 +265,6 @@ ADD CONSTRAINT fk_friends_users_friend
 FOREIGN KEY (friend_id)
 REFERENCES user_profiles (id) ON DELETE CASCADE;
 
-ALTER TABLE community_user_profile
-ADD CONSTRAINT fk_community_user_communities
-FOREIGN KEY (communities_id)
-REFERENCES communities (id) ON DELETE CASCADE;
-
-ALTER TABLE community_user_profile
-ADD CONSTRAINT fk_community_user_users
-FOREIGN KEY (user_profiles_id)
-REFERENCES user_profiles (id) ON DELETE CASCADE;
-
 -- -----------------------------------------------------
 -- CREATE INDEX
 -- -----------------------------------------------------
@@ -307,9 +288,6 @@ ON public_message_comments (id);
 
 CREATE UNIQUE INDEX private_messages_id_idx
 ON private_messages (id);
-
-CREATE UNIQUE INDEX friendship_requests_id_idx
-ON friendship_requests (id);
 
 CREATE UNIQUE INDEX communities_id_idx
 ON communities (id);

@@ -121,7 +121,4 @@ INSERT INTO post_comments VALUES
 INSERT INTO friends VALUES
 (1, 2), (1, 3);
 
-INSERT INTO community_user_profile VALUES
-(1, 1);
-
 COMMIT;
