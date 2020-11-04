@@ -10,6 +10,7 @@ USE hrinkov_social_network;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS locations (
   id INT NOT NULL AUTO_INCREMENT,
+  country VARCHAR(45) NOT NULL,
   city VARCHAR(45) NOT NULL UNIQUE,
   PRIMARY KEY pk_locations (id)
 );
@@ -70,23 +71,23 @@ CREATE TABLE IF NOT EXISTS public_messages (
   id INT NOT NULL AUTO_INCREMENT,
   creation_date DATETIME NOT NULL,
   author_id INT NOT NULL,
-  tittle VARCHAR(100) NULL,
-  content VARCHAR(1000) NULL,
+  tittle VARCHAR(1000) NULL,
+  content VARCHAR(8000) NULL,
   is_deleted BOOLEAN DEFAULT false,
   PRIMARY KEY pk_public_messages (id)
 );
 
 -- -----------------------------------------------------
--- Table `comments`
+-- Table `public_message_comments`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS comments (
-  id INT NOT NULL,
+CREATE TABLE IF NOT EXISTS public_message_comments (
+  id INT NOT NULL AUTO_INCREMENT,
   creation_date DATETIME NOT NULL,
   author_id INT NOT NULL,
   public_message_id INT NOT NULL,
-  content VARCHAR(1000) NULL,
+  content VARCHAR(8000) NULL,
   is_deleted BOOLEAN DEFAULT false,
-  PRIMARY KEY pk_comments (id)
+  PRIMARY KEY pk_public_message_comments (id)
 );
 
 -- -----------------------------------------------------
@@ -97,7 +98,7 @@ CREATE TABLE IF NOT EXISTS private_messages (
   departure_date DATETIME NOT NULL,
   sender_id INT NOT NULL,
   recipient_id INT NOT NULL,
-  content VARCHAR(1000) NULL,
+  content VARCHAR(8000) NULL,
   is_read BOOLEAN DEFAULT false,
   is_deleted BOOLEAN DEFAULT false,
   PRIMARY KEY pk_messages (id)
@@ -132,12 +133,12 @@ CREATE TABLE IF NOT EXISTS communities (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS posts (
   id INT NOT NULL AUTO_INCREMENT,
-  tittle VARCHAR(100) NULL,
-  content VARCHAR(1000) NULL,
+  creation_date DATETIME NOT NULL,
+  tittle VARCHAR(1000) NULL,
+  content VARCHAR(8000) NULL,
   author_id INT NOT NULL,
   communities_id INT NOT NULL,
   is_deleted BOOLEAN DEFAULT false,
-  creation_date DATETIME NOT NULL,
   PRIMARY KEY pk_posts (id)
 );
 
@@ -145,7 +146,7 @@ CREATE TABLE IF NOT EXISTS posts (
 -- Table `post_comments`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS post_comments (
-  id INT NOT NULL,
+  id INT NOT NULL AUTO_INCREMENT,
   creation_date DATETIME NOT NULL,
   author_id INT NOT NULL,
   post_id INT NOT NULL,
@@ -208,13 +209,13 @@ ADD CONSTRAINT fk_public_messages
 FOREIGN KEY (author_id)
 REFERENCES user_profiles (id) ON DELETE CASCADE;
 
-ALTER TABLE comments
-ADD CONSTRAINT fk_comments_users
+ALTER TABLE public_message_comments
+ADD CONSTRAINT fk_public_message_comments_users
 FOREIGN KEY (author_id)
 REFERENCES user_profiles (id) ON DELETE CASCADE;
 
-ALTER TABLE comments
-ADD CONSTRAINT fk_comments_public_messages
+ALTER TABLE public_message_comments
+ADD CONSTRAINT fk_public_message_comments_public_messages
 FOREIGN KEY (public_message_id)
 REFERENCES public_messages (id) ON DELETE CASCADE;
 
@@ -301,8 +302,8 @@ ON users (id);
 CREATE UNIQUE INDEX public_messages_id_idx
 ON public_messages (id);
 
-CREATE UNIQUE INDEX comments_id_idx
-ON comments (id);
+CREATE UNIQUE INDEX public_message_comments_id_idx
+ON public_message_comments (id);
 
 CREATE UNIQUE INDEX private_messages_id_idx
 ON private_messages (id);
