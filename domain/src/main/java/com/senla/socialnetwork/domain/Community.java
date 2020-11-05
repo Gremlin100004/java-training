@@ -23,7 +23,7 @@ import java.util.List;
 @Table(name = "communities")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"author", "posts"})
 @NoArgsConstructor
 public class Community extends AEntity {
     @Column(name = "creation_date", nullable = false)
@@ -40,7 +40,7 @@ public class Community extends AEntity {
     private String information;
     @Column(name = "is_deleted")
     private boolean isDeleted;
-    @OneToMany(mappedBy = "posts")
+    @OneToMany(mappedBy = "community")
     private List<Post> posts = new ArrayList<>();
 
 }

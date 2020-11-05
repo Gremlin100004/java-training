@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Table(name = "universities")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "location")
 @NoArgsConstructor
 public class University extends AEntity {
     @Column(name = "name", nullable = false, unique = true)
@@ -24,4 +24,5 @@ public class University extends AEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
     private Location location;
+
 }

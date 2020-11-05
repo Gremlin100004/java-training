@@ -17,7 +17,7 @@ import java.util.Date;
 @Table(name = "public_message_comments")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"author", "publicMessage"})
 @NoArgsConstructor
 public class PublicMessageComment extends AEntity {
     @Column(name = "creation_date", nullable = false)
@@ -29,7 +29,7 @@ public class PublicMessageComment extends AEntity {
     @JoinColumn(name = "public_message_id", nullable = false)
     private PublicMessage publicMessage;
     @Column(name = "content")
-    private Date content;
+    private String content;
     @Column(name = "is_deleted")
     private boolean isDeleted;
 

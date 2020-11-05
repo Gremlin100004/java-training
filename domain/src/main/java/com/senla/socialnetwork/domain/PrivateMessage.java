@@ -17,7 +17,7 @@ import java.util.Date;
 @Table(name = "private_messages")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"sender", "recipient"})
 @NoArgsConstructor
 public class PrivateMessage extends AEntity {
     @Column(name = "departure_date", nullable = false)
@@ -29,7 +29,7 @@ public class PrivateMessage extends AEntity {
     @JoinColumn(name = "recipient_id", nullable = false)
     private UserProfile recipient;
     @Column(name = "content")
-    private Date content;
+    private String content;
     @Column(name = "is_read")
     private boolean isRead;
     @Column(name = "is_deleted")

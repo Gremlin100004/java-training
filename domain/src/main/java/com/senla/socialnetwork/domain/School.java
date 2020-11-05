@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Table(name = "schools")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "location")
 @NoArgsConstructor
 public class School extends AEntity {
     @Column(name = "name", nullable = false, unique = true)

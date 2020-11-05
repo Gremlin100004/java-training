@@ -23,7 +23,8 @@ import java.util.List;
 @Table(name = "user_profiles")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"systemUser", "location", "school", "university", "publicMessageComments", "publicMessages",
+                     "privateMessage", "friendshipRequests", "friends", "communities", "postComments"})
 @NoArgsConstructor
 public class UserProfile extends AEntity {
     @OneToOne(fetch = FetchType.LAZY)
@@ -52,27 +53,26 @@ public class UserProfile extends AEntity {
     private Location university;
     @Column(name = "university_graduation_year")
     private Integer universityGraduationYear;
-    @OneToMany(mappedBy = "public_messages")
+    @OneToMany(mappedBy = "author")
     private List<PublicMessage> publicMessages = new ArrayList<>();
     // ToDo need this field ?
-    @OneToMany(mappedBy = "public_message_comments")
+    @OneToMany(mappedBy = "author")
     private List<PublicMessageComment> publicMessageComments = new ArrayList<>();
-    @OneToMany(mappedBy = "private_messages")
+    // ToDo need this field ?
+    @OneToMany(mappedBy = "sender")
     private List<PrivateMessage> privateMessage = new ArrayList<>();
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "friendship_requests", joinColumns = @JoinColumn(name = "user_profiles_id"),
         inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private List<UserProfile> friendshipRequests = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_profiles_id"),
         inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private List<UserProfile> friends = new ArrayList<>();
-    @OneToMany(mappedBy = "communities")
+    @OneToMany(mappedBy = "author")
     private List<Community> communities = new ArrayList<>();
     // ToDo need this field ?
-    @OneToMany(mappedBy = "posts")
-    private List<Post> posts = new ArrayList<>();
-    // ToDo need this field ?
-    @OneToMany(mappedBy = "post_comments")
+    @OneToMany(mappedBy = "author")
     private List<PostComment> postComments = new ArrayList<>();
 
 }

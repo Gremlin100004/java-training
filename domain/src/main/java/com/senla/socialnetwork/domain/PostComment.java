@@ -17,7 +17,7 @@ import java.util.Date;
 @Table(name = "post_comments")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"author", "post"})
 @NoArgsConstructor
 public class PostComment extends AEntity {
     @Column(name = "creation_date", nullable = false)
