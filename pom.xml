@@ -50,6 +50,7 @@
         <module>domain</module>
         <module>dao</module>
         <module>service</module>
+        <module>dto</module>
     </modules>
     <properties>
         <java.version>11</java.version>

@@ -105,14 +105,6 @@ CREATE TABLE IF NOT EXISTS private_messages (
 );
 
 -- -----------------------------------------------------
--- Table `friendship_requests`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS friendship_requests (
-  user_profiles_id INT NOT NULL,
-  friend_id INT NOT NULL
-);
-
--- -----------------------------------------------------
 -- Table `communities`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS communities (
@@ -154,6 +146,25 @@ CREATE TABLE IF NOT EXISTS post_comments (
 );
 
 -- -----------------------------------------------------
+-- Table `friendship_requests`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS weather_condition (
+  id INT NOT NULL AUTO_INCREMENT,
+  location_id INT NULL,
+  status VARCHAR(20) NULL,
+  registration_date DATETIME NOT NULL,
+  PRIMARY KEY pk_weather_condition (id)
+);
+
+-- -----------------------------------------------------
+-- Table `friendship_requests`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS friendship_requests (
+  user_profiles_id INT NOT NULL,
+  friend_id INT NOT NULL
+);
+
+-- -----------------------------------------------------
 -- Table `friends`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS friends (
@@ -161,7 +172,6 @@ CREATE TABLE IF NOT EXISTS friends (
   friend_id INT NOT NULL
 );
 
--- Todo cash table for weather
 -- -----------------------------------------------------
 -- ADD CONSTRAINTS
 -- -----------------------------------------------------
@@ -255,6 +265,11 @@ ADD CONSTRAINT fk_post_comments_posts
 FOREIGN KEY (post_id)
 REFERENCES posts (id) ON DELETE CASCADE;
 
+ALTER TABLE weather_condition
+ADD CONSTRAINT fk_weather_condition_locations
+FOREIGN KEY (location_id)
+REFERENCES locations (id) ON DELETE CASCADE;
+
 ALTER TABLE friends
 ADD CONSTRAINT fk_friends_users_user
 FOREIGN KEY (user_profiles_id)
@@ -297,5 +312,8 @@ ON posts (id);
 
 CREATE UNIQUE INDEX post_comments_id_idx
 ON post_comments (id);
+
+CREATE UNIQUE INDEX weather_condition_id_idx
+ON weather_condition (id);
 
 COMMIT;
