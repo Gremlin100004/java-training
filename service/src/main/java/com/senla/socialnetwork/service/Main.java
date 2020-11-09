@@ -38,9 +38,35 @@ public class Main {
 //        List<PostComment> postComments = postCommentDao.getAllRecords();
 //        System.out.println(postComments);
 
+//        String email = "user1@test.com";
+//        WeatherConditionService postCommentDao = applicationContext.getBean(WeatherConditionService.class);
+//        System.out.println(postCommentDao.getWeatherCondition(email));
+
+//        String email = "user1@test.com";
+//        PrivateMessageService privateMessageService = applicationContext.getBean(PrivateMessageService.class);
+//        System.out.println(privateMessageService.getUserProfileMessages(email, 0, 20).size());
+
+//        String email = "user1@test.com";
+//        PrivateMessageService privateMessageService = applicationContext.getBean(PrivateMessageService.class);
+//        System.out.println(privateMessageService.getDialogue(email, 3L, 0, 20).size());
+
         String email = "user1@test.com";
-        WeatherConditionService postCommentDao = applicationContext.getBean(WeatherConditionService.class);
-        System.out.println(postCommentDao.getWeatherCondition(email));
+        PrivateMessageService privateMessageService = applicationContext.getBean(PrivateMessageService.class);
+        System.out.println(privateMessageService.getUnreadMessages(email, 0, 10).size());
+
+//        String email = "user1@test.com";
+//        PublicMessageService publicMessageService = applicationContext.getBean(PublicMessageService.class);
+//        System.out.println(publicMessageService.getFriendsMessages(email, 0, 2).size());
+
+//        String email = "user1@test.com";
+//        UserProfileService userProfileDao = applicationContext.getBean(UserProfileService.class);
+//        System.out.println(userProfileDao.getUserProfileFriends(email).size());
+
+
+//        UserProfileService userProfileService = applicationContext.getBean(UserProfileService.class);
+//        userProfileService.getNearestDateOfBirth();
+//        System.out.println(userProfileService.getNearestDateOfBirth());
+
     }
 
 }

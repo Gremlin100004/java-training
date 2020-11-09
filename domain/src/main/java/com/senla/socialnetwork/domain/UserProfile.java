@@ -17,14 +17,17 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_profiles")
 @Getter
 @Setter
-@ToString(exclude = {"systemUser", "location", "school", "university", "publicMessageComments", "publicMessages",
-                     "privateMessage", "friendshipRequests", "friends", "communities", "postComments"})
+@ToString(exclude = {"systemUser", "publicMessageComments", "publicMessages", "senderPrivateMessage",
+                     "recipientPrivateMessage", "friendshipRequests", "friends", "mappedByFriends",
+                     "communities", "postComments"})
 @NoArgsConstructor
 public class UserProfile extends AEntity {
     @OneToOne(fetch = FetchType.LAZY)
@@ -40,17 +43,17 @@ public class UserProfile extends AEntity {
     private String surname;
     @Column(name = "telephone_number")
     private String telephone_number;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "location_id")
     private Location location;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "school_id")
-    private Location school;
+    private School school;
     @Column(name = "school_graduation_year")
     private Integer schoolGraduationYear;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "university_id")
-    private Location university;
+    private University university;
     @Column(name = "university_graduation_year")
     private Integer universityGraduationYear;
     @OneToMany(mappedBy = "author")
@@ -59,8 +62,11 @@ public class UserProfile extends AEntity {
     @OneToMany(mappedBy = "author")
     private List<PublicMessageComment> publicMessageComments = new ArrayList<>();
     // ToDo need this field ?
-    @OneToMany(mappedBy = "sender")
-    private List<PrivateMessage> privateMessage = new ArrayList<>();
+    @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
+    private List<PrivateMessage> senderPrivateMessage = new ArrayList<>();
+    @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY)
+    private List<PrivateMessage> recipientPrivateMessage = new ArrayList<>();
+
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "friendship_requests", joinColumns = @JoinColumn(name = "user_profiles_id"),
         inverseJoinColumns = @JoinColumn(name = "friend_id"))
@@ -68,7 +74,9 @@ public class UserProfile extends AEntity {
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_profiles_id"),
         inverseJoinColumns = @JoinColumn(name = "friend_id"))
-    private List<UserProfile> friends = new ArrayList<>();
+    private Set<UserProfile> friends = new HashSet<>();
+    @ManyToMany(mappedBy = "friends", fetch = FetchType.LAZY)
+    private Set<UserProfile> mappedByFriends = new HashSet<>();
     @OneToMany(mappedBy = "author")
     private List<Community> communities = new ArrayList<>();
     // ToDo need this field ?

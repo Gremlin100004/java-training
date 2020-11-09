@@ -5,7 +5,7 @@ import com.senla.socialnetwork.dto.WeatherConditionDto;
 
 public class WeatherConditionMapper {
 
-    public static WeatherConditionDto getMasterDto(WeatherCondition weatherCondition) {
+    public static WeatherConditionDto getWeatherConditionDto(WeatherCondition weatherCondition) {
         WeatherConditionDto weatherConditionDto = new WeatherConditionDto();
         weatherConditionDto.setStatus(weatherCondition.getStatus());
         return weatherConditionDto;

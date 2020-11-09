@@ -33,9 +33,9 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     private static final String JSON_WEATHER_KEY = "weather";
     private static final String JSON_WEATHER_CONDITION_KEY = "main";
     private static final int MILLISECONDS_IN_SECONDS = 1000;
-    @Value("${com.senla.socialnetwork.service.WeatherServiceImpl.weatherKey:key}")
+    @Value("${com.senla.socialnetwork.service.WeatherConditionServiceImpl.weatherKey:key}")
     private String weatherKey;
-    @Value("${com.senla.socialnetwork.service.WeatherServiceImpl.updateTime:2000}")
+    @Value("${com.senla.socialnetwork.service.WeatherConditionServiceImpl.updateTime:2000}")
     private Long updateTime;
     @Autowired
     private UserProfileDao userProfileDao;
@@ -62,7 +62,7 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
         } else if (getTimeWithoutUpdate(weatherCondition.getRegistrationDate().getTime()) > updateTime) {
             updateWeatherCondition(weatherCondition, location);
         }
-        return WeatherConditionMapper.getMasterDto(weatherCondition);
+        return WeatherConditionMapper.getWeatherConditionDto(weatherCondition);
     }
 
     private long getTimeWithoutUpdate(long registrationDate) {
@@ -94,6 +94,7 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
         try {
             String url = WEATHER_API_URL + LOCATION_PARAMETER + location.getCity() + PARAMETERS_SEPARATOR +
                 location.getCountry() + KEY_PARAMETER + weatherKey;
+            System.out.println(url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             String stringJson = response.getBody();
             if (stringJson == null) {

@@ -7,7 +7,6 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -21,7 +20,7 @@ import javax.persistence.Table;
 public class University extends AEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "location_id")
     private Location location;
 

@@ -60,6 +60,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
         entityManager.merge(entity);
     }
 
+    //Todo think need it?
     @Override
     public void updateAllRecords(List<T> entities) {
         log.debug("[updateAllRecords]");
