@@ -27,7 +27,7 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
     }
 
     @Override
-    public List<PrivateMessage> getByUserProfile(String email, int firstResult, int maxResults) {
+    public List<PrivateMessage> getByEmail(String email, int firstResult, int maxResults) {
         log.debug("[getByUserProfile]");
         log.trace("[email: {}]", email);
         try {
@@ -153,7 +153,8 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
             criteriaQuery.select(privateMessageRoot);
             Predicate predicateSender = criteriaBuilder.equal(senderSystemUserJoin.get(SystemUser_.email), email);
             Predicate predicateRecipient = criteriaBuilder.equal(recipientSystemUserJoin.get(SystemUser_.email), email);
-            Predicate predicateDeleted = criteriaBuilder.equal(privateMessageRoot.get(PrivateMessage_.isDeleted), false);
+            Predicate predicateDeleted = criteriaBuilder.equal(privateMessageRoot.get(
+                PrivateMessage_.isDeleted), false);
             Predicate predicatePeriod = criteriaBuilder.between(
                 privateMessageRoot.get(PrivateMessage_.departureDate), startPeriodDate, endPeriodDate);
             criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.or(criteriaBuilder.and(
@@ -164,6 +165,36 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
             typedQuery.setFirstResult(firstResult);
             typedQuery.setMaxResults(maxResults);
             return typedQuery.getResultList();
+        } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public PrivateMessage findByIdAndEmail(String email, Long messageId) {
+        log.debug("[findByIdAndEmail]");
+        log.trace("[email: {}, messageId: {}]", email, messageId);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<PrivateMessage> criteriaQuery = criteriaBuilder.createQuery(PrivateMessage.class);
+            Root<PrivateMessage> privateMessageRoot = criteriaQuery.from(PrivateMessage.class);
+            Join<PrivateMessage, UserProfile> privateMessageSenderJoin = privateMessageRoot.join(
+                PrivateMessage_.sender);
+            Join<UserProfile, SystemUser> senderSystemUserJoin = privateMessageSenderJoin.join(
+                UserProfile_.systemUser);
+            Join<PrivateMessage, UserProfile> privateMessageRecipientJoin = privateMessageRoot.join(
+                PrivateMessage_.recipient);
+            Join<UserProfile, SystemUser> recipientSystemUserJoin = privateMessageRecipientJoin.join(
+                UserProfile_.systemUser);
+            criteriaQuery.select(privateMessageRoot).distinct(true);
+            criteriaQuery.where(criteriaBuilder.or(criteriaBuilder.and(criteriaBuilder.equal(
+                senderSystemUserJoin.get(SystemUser_.email), email), criteriaBuilder.equal(
+                    privateMessageRoot.get(PrivateMessage_.id), messageId)), criteriaBuilder.and(
+                        criteriaBuilder.equal(recipientSystemUserJoin.get(
+                            SystemUser_.email), email), criteriaBuilder.equal(privateMessageRoot.get(
+                                PrivateMessage_.id), messageId))));
+            return entityManager.createQuery(criteriaQuery).getSingleResult();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
             return null;

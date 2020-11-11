@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -22,7 +23,7 @@ import java.util.Date;
 public class PublicMessageComment extends AEntity {
     @Column(name = "creation_date", nullable = false)
     private Date creationDate;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "author_id", nullable = false)
     private UserProfile author;
     @ManyToOne(fetch = FetchType.LAZY)

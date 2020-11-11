@@ -18,6 +18,7 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import java.sql.Date;
 import java.util.List;
 
@@ -219,16 +220,16 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public UserProfile getNearestBirthdayByCurrentDate() {
+    public UserProfile getNearestBirthdayByCurrentDate(String email) {
         log.debug("[getNearestBirthdayByCurrentDate]");
+        log.trace("[email: {}]", email);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             Expression<Date> currentDate = criteriaBuilder.currentDate();
             Expression<Integer> month = criteriaBuilder.function(PARAMETER_MONTH, Integer.class, currentDate);
             Expression<Integer> day = criteriaBuilder.function(PARAMETER_DAY, Integer.class, currentDate);
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
-            Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
-            criteriaQuery.select(userProfileRoot);
+            Root<UserProfile> userProfileRoot = fillCriteriaQueryFriend(criteriaQuery, criteriaBuilder, email);
             Predicate predicateEqualMonth = criteriaBuilder.equal(
                 criteriaBuilder.function(PARAMETER_MONTH, Integer.class, userProfileRoot.get(
                     UserProfile_.dateOfBirth)), month);
@@ -255,13 +256,13 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public UserProfile getNearestBirthdayFromTheBeginningOfTheYear() {
+    public UserProfile getNearestBirthdayFromTheBeginningOfTheYear(String email) {
         log.debug("[getNearestBirthdayFromTheBeginningOfTheYear]");
+        log.trace("[email: {}]", email);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
-            Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
-            criteriaQuery.select(userProfileRoot);
+            Root<UserProfile> userProfileRoot = fillCriteriaQueryFriend(criteriaQuery, criteriaBuilder, email);
             criteriaQuery.orderBy(criteriaBuilder.asc(
                 criteriaBuilder.function(PARAMETER_MONTH, Integer.class, userProfileRoot.get(
                     UserProfile_.dateOfBirth))), criteriaBuilder.asc(criteriaBuilder.function(
@@ -277,24 +278,227 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
+    public List<UserProfile> getFriendsSortByAge(String email, int firstResult, int maxResults) {
+        log.debug("[getFriendsSortByBirthday]");
+        log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
+            Root<UserProfile> userProfileRoot = fillCriteriaQueryFriend(criteriaQuery, criteriaBuilder, email);
+            criteriaQuery.orderBy(criteriaBuilder.asc(userProfileRoot.get(UserProfile_.id)));
+            TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setFirstResult(firstResult);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
+            return typedQuery.getResultList();
+        } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public List<UserProfile> getFriendsSortByNumberOfFriends(String email, int firstResult, int maxResults) {
+        log.debug("[getFriendsSortByBirthday]");
+        log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
+            Root<UserProfile> userProfileRoot = fillCriteriaQueryFriend(criteriaQuery, criteriaBuilder, email);
+//            criteriaQuery.orderBy(criteriaBuilder.asc(criteriaBuilder.count(userProfileRoot.get(UserProfile_.friends))));
+            TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setFirstResult(firstResult);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
+            return typedQuery.getResultList();
+        } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
+            return null;
+        }
+    }
+
+    @Override
     public List<UserProfile> getFriends(String email, int firstResult, int maxResults) {
         log.debug("[getFriends]");
         log.trace("[email: {}]", email);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
-            Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
-            Join<UserProfile, SystemUser> userProfileUserProfileListJoin = userProfileRoot.join(UserProfile_.systemUser);
-            criteriaQuery.select(userProfileRoot.get(UserProfile_.FRIENDS));
-            criteriaQuery.where(criteriaBuilder.equal(userProfileUserProfileListJoin.get(SystemUser_.email), email));
+            fillCriteriaQueryFriend(criteriaQuery, criteriaBuilder, email);
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public UserProfile getFriend(String email, Long userProfileId) {
+        log.debug("[getFriend]");
+        log.trace("[email: {}, userProfileId: {}]", email, userProfileId);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
+            Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
+            Root<UserProfile> userProfileRoot = subquery.from(UserProfile.class);
+            Join<UserProfile, UserProfile> userProfileUserProfileJoin = userProfileRoot.join(
+                UserProfile_.friends);
+            Join<UserProfile, SystemUser> userProfileSystemUserJoin = userProfileRoot.join(UserProfile_.systemUser);
+            subquery.select(userProfileUserProfileJoin.get(UserProfile_.id)).distinct(true);
+            subquery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
+            Subquery<Long> subqueryOther = criteriaQuery.subquery(Long.class);
+            Root<UserProfile> profileRoot = subqueryOther.from(UserProfile.class);
+            Join<UserProfile, UserProfile> userProfileUserProfileSetJoin = profileRoot.join(
+                UserProfile_.mappedByFriends);
+            Join<UserProfile, SystemUser> profileSystemUserJoin = profileRoot.join(UserProfile_.systemUser);
+            subqueryOther.select(userProfileUserProfileSetJoin.get(UserProfile_.id)).distinct(true);
+            subqueryOther.where(criteriaBuilder.equal(profileSystemUserJoin.get(SystemUser_.email), email));
+            Root<UserProfile> friendRoot = criteriaQuery.from(UserProfile.class);
+            criteriaQuery.select(friendRoot).distinct(true);
+            criteriaQuery.where(criteriaBuilder.or(criteriaBuilder.and(friendRoot.get(UserProfile_.id).in(
+                subqueryOther), criteriaBuilder.equal(friendRoot.get(
+                UserProfile_.id), userProfileId)), criteriaBuilder.and(friendRoot.get(
+                    UserProfile_.id).in(subquery), criteriaBuilder.equal(
+                        friendRoot.get(UserProfile_.id), userProfileId))));
+            return entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public List<UserProfile> getSignedFriends(String email, int firstResult, int maxResults) {
+        log.debug("[getFriends]");
+        log.trace("[email: {}]", email);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
+            Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
+            Root<UserProfile> friendsRoot = subquery.from(UserProfile.class);
+            Join<UserProfile, UserProfile> userProfileUserProfileJoin = friendsRoot.join(
+                UserProfile_.friendshipRequests);
+            Join<UserProfile, SystemUser> userProfileSystemUserJoin = friendsRoot.join(UserProfile_.systemUser);
+            subquery.select(userProfileUserProfileJoin.get(UserProfile_.id)).distinct(true);
+            subquery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
+            Subquery<Long> subqueryOther = criteriaQuery.subquery(Long.class);
+            Root<UserProfile> profileRoot = subqueryOther.from(UserProfile.class);
+            Join<UserProfile, UserProfile> userProfileUserProfileSetJoin = profileRoot.join(
+                UserProfile_.mappedByFriendshipRequests);
+            Join<UserProfile, SystemUser> profileSystemUserJoin = profileRoot.join(UserProfile_.systemUser);
+            subqueryOther.select(userProfileUserProfileSetJoin.get(UserProfile_.id)).distinct(true);
+            subqueryOther.where(criteriaBuilder.equal(profileSystemUserJoin.get(SystemUser_.email), email));
+            Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
+            criteriaQuery.select(userProfileRoot);
+            criteriaQuery.where(criteriaBuilder.or(userProfileRoot.get(
+                UserProfile_.id).in(subquery), userProfileRoot.get(UserProfile_.id).in(subqueryOther)));
+            TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setFirstResult(firstResult);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
+            return typedQuery.getResultList();
+        } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
+            return null;
+        }
+    }
+    //ToDo check this method
+    @Override
+    public UserProfile getSignedFriend(String email, Long userProfileId) {
+        log.debug("[getSignedFriend]");
+        log.trace("[email: {}, userProfileId: {}]", email, userProfileId);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
+            Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
+            Root<UserProfile> userProfileRoot = subquery.from(UserProfile.class);
+            Join<UserProfile, UserProfile> userProfileUserProfileJoin = userProfileRoot.join(
+                UserProfile_.friendshipRequests);
+            Join<UserProfile, SystemUser> userProfileSystemUserJoin = userProfileRoot.join(UserProfile_.systemUser);
+            subquery.select(userProfileUserProfileJoin.get(UserProfile_.id)).distinct(true);
+            subquery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
+            Subquery<Long> subqueryOther = criteriaQuery.subquery(Long.class);
+            Root<UserProfile> profileRoot = subqueryOther.from(UserProfile.class);
+            Join<UserProfile, UserProfile> userProfileUserProfileSetJoin = profileRoot.join(
+                UserProfile_.mappedByFriendshipRequests);
+            Join<UserProfile, SystemUser> profileSystemUserJoin = profileRoot.join(UserProfile_.systemUser);
+            subqueryOther.select(userProfileUserProfileSetJoin.get(UserProfile_.id)).distinct(true);
+            subqueryOther.where(criteriaBuilder.equal(profileSystemUserJoin.get(SystemUser_.email), email));
+            Root<UserProfile> futureFriendRoot = criteriaQuery.from(UserProfile.class);
+            criteriaQuery.select(futureFriendRoot);
+            criteriaQuery.where(criteriaBuilder.or(criteriaBuilder.and(futureFriendRoot.get(UserProfile_.id).in(
+                subqueryOther), criteriaBuilder.equal(futureFriendRoot.get(
+                    UserProfile_.id), userProfileId)), criteriaBuilder.and(futureFriendRoot.get(
+                        UserProfile_.id).in(subquery), criteriaBuilder.equal(
+                            futureFriendRoot.get(UserProfile_.id), userProfileId))));
+            return entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public UserProfile getFutureFriend(String email, Long userProfileId) {
+        log.debug("[getFriends]");
+        log.trace("[email: {}, userProfileId: {}]", email, userProfileId);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
+            Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
+            Root<UserProfile> userProfileRoot = subquery.from(UserProfile.class);
+            Join<UserProfile, UserProfile> userProfileUserProfileJoin = userProfileRoot.join(UserProfile_.friends);
+            Join<UserProfile, SystemUser> userProfileSystemUserJoin = userProfileRoot.join(UserProfile_.systemUser);
+            subquery.select(userProfileUserProfileJoin.get(UserProfile_.id)).distinct(true);
+            subquery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
+            Subquery<Long> subqueryOther = criteriaQuery.subquery(Long.class);
+            Root<UserProfile> profileRoot = subqueryOther.from(UserProfile.class);
+            Join<UserProfile, UserProfile> userProfileUserProfileSetJoin = profileRoot.join(UserProfile_.mappedByFriends);
+            Join<UserProfile, SystemUser> profileSystemUserJoin = profileRoot.join(UserProfile_.systemUser);
+            subqueryOther.select(userProfileUserProfileSetJoin.get(UserProfile_.id)).distinct(true);
+            subqueryOther.where(criteriaBuilder.equal(profileSystemUserJoin.get(SystemUser_.email), email));
+            Root<UserProfile> futureFriendRoot = criteriaQuery.from(UserProfile.class);
+            criteriaQuery.select(futureFriendRoot);
+            criteriaQuery.where(criteriaBuilder.and(futureFriendRoot.get(UserProfile_.id).in(
+                subqueryOther).not(), criteriaBuilder.equal(futureFriendRoot.get(
+                    UserProfile_.id), userProfileId), futureFriendRoot.get(UserProfile_.id).in(subquery).not()));
+           return entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
+            return null;
+        }
+    }
+
+    private Root<UserProfile> fillCriteriaQueryFriend(CriteriaQuery<UserProfile> criteriaQuery,
+                                         CriteriaBuilder criteriaBuilder,
+                                         String email) {
+        Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
+        Root<UserProfile> friendsRoot = subquery.from(UserProfile.class);
+        Join<UserProfile, UserProfile> userProfileUserProfileJoin = friendsRoot.join(
+            UserProfile_.friends);
+        Join<UserProfile, SystemUser> userProfileSystemUserJoin = friendsRoot.join(UserProfile_.systemUser);
+        subquery.select(userProfileUserProfileJoin.get(UserProfile_.id)).distinct(true);
+        subquery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
+        Subquery<Long> subqueryOther = criteriaQuery.subquery(Long.class);
+        Root<UserProfile> profileRoot = subqueryOther.from(UserProfile.class);
+        Join<UserProfile, UserProfile> userProfileUserProfileSetJoin = profileRoot.join(
+            UserProfile_.mappedByFriends);
+        Join<UserProfile, SystemUser> profileSystemUserJoin = profileRoot.join(UserProfile_.systemUser);
+        subqueryOther.select(userProfileUserProfileSetJoin.get(UserProfile_.id)).distinct(true);
+        subqueryOther.where(criteriaBuilder.equal(profileSystemUserJoin.get(SystemUser_.email), email));
+        Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
+        criteriaQuery.select(userProfileRoot);
+        criteriaQuery.where(criteriaBuilder.or(userProfileRoot.get(
+            UserProfile_.id).in(subquery), userProfileRoot.get(UserProfile_.id).in(subqueryOther)));
+        return userProfileRoot;
     }
 
 }

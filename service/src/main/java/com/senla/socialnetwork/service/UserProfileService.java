@@ -31,8 +31,23 @@ public interface UserProfileService {
                                                       int firstResult,
                                                       int maxResults);
 
-    UserProfileDto getNearestDateOfBirth();
+    UserProfileDto getNearestDateOfBirth(String email);
+
+    UserProfileDto getUserProfileFriend(String email, Long userProfileId);
 
     List<UserProfileDto> getUserProfileFriends(String email, int firstResult, int maxResults);
+
+    List<UserProfileDto> getSortedFriendsOfUserProfile(String email,
+                                                       UserProfileSortParameter sortParameter,
+                                                       int firstResult,
+                                                       int maxResults);
+
+    List<UserProfileDto> getUserProfileSignedFriends(String email, int firstResult, int maxResults);
+
+    void sendAFriendRequest(String email, Long userProfileId);
+
+    void confirmFriend(String email, Long userProfileId);
+
+    void removeUserFromFriends(String email, Long userProfileId);
 
 }

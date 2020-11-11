@@ -10,6 +10,7 @@ import com.senla.socialnetwork.dto.SchoolDto;
 import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.dto.UserProfileDto;
 import com.senla.socialnetwork.service.enumaration.UserProfileSortParameter;
+import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.LocationMapper;
 import com.senla.socialnetwork.service.util.SchoolMapper;
 import com.senla.socialnetwork.service.util.UniversityMapper;
@@ -21,13 +22,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @NoArgsConstructor
 @Slf4j
 public class UserProfileServiceImpl implements UserProfileService {
+    private static final int FIRST_RESULT = 0;
+    private static final int MAX_RESULT = 0;
     @Autowired
     private UserProfileDao userProfileDao;
     @Autowired
@@ -53,9 +55,13 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
+    // ToDo maybe this method is wrong
     public UserProfileDto addUserProfile(UserProfileDto userProfileDto) {
         log.debug("[addUserProfile]");
         log.trace("[userProfileDto: {}]", userProfileDto);
+        if (userProfileDto == null) {
+            throw new BusinessException("Error, null user profile");
+        }
         return UserProfileMapper.getUserProfileDto(userProfileDao.saveRecord(UserProfileMapper.getUserProfile(
             userProfileDto, userProfileDao, locationDao, schoolDao, universityDao)));
     }
@@ -65,7 +71,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     public void updateUserProfile(UserProfileDto userProfileDto) {
         log.debug("[updateUserProfile]");
         log.trace("[userProfileDto: {}]", userProfileDto);
-        userProfileDao.saveRecord(
+        userProfileDao.updateRecord(
             UserProfileMapper.getUserProfile(userProfileDto, userProfileDao, locationDao, schoolDao, universityDao));
     }
 
@@ -76,13 +82,15 @@ public class UserProfileServiceImpl implements UserProfileService {
                                                     int maxResults) {
         log.debug("[getUserProfiles]");
         log.trace("[sortParameter: {}]", sortParameter);
-        List<UserProfile> userProfiles = new ArrayList<>();
+        List<UserProfile> userProfiles;
         if (sortParameter.equals(UserProfileSortParameter.BY_NAME)) {
             userProfiles = userProfileDao.getUserProfilesSortByName(firstResult, maxResults);
         } else if (sortParameter.equals(UserProfileSortParameter.BY_REGISTRATION_DATE)) {
             userProfiles = userProfileDao.getUserProfilesSortByRegistrationDate(firstResult, maxResults);
         } else if (sortParameter.equals(UserProfileSortParameter.BY_NUMBER_OF_FRIENDS)) {
             userProfiles = userProfileDao.getUserProfilesSortByNumberOfFriends(firstResult, maxResults);
+        } else {
+            throw new BusinessException("Error, wrong sorting parameter");
         }
         return UserProfileMapper.getUserProfileDto(userProfiles);
     }
@@ -124,12 +132,21 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public UserProfileDto getNearestDateOfBirth() {
-        UserProfile userProfile = userProfileDao.getNearestBirthdayByCurrentDate();
+    @Transactional
+    public UserProfileDto getNearestDateOfBirth(String email) {
+        UserProfile userProfile = userProfileDao.getNearestBirthdayByCurrentDate(email);
         if (userProfile == null) {
-            userProfile = userProfileDao.getNearestBirthdayFromTheBeginningOfTheYear();
+            userProfile = userProfileDao.getNearestBirthdayFromTheBeginningOfTheYear(email);
         }
         return userProfile == null ? null : UserProfileMapper.getUserProfileDto(userProfile);
+    }
+
+    @Override
+    @Transactional
+    public UserProfileDto getUserProfileFriend(String email, Long userProfileId) {
+        log.debug("[getUserProfileMessages]");
+        log.debug("[email: {}, userProfileId: {}]", email, userProfileId);
+        return UserProfileMapper.getUserProfileDto(userProfileDao.getFriend(email, userProfileId));
     }
 
     @Override
@@ -138,6 +155,88 @@ public class UserProfileServiceImpl implements UserProfileService {
         log.debug("[getUserProfileMessages]");
         log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         return UserProfileMapper.getUserProfileDto(userProfileDao.getFriends(email, firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public List<UserProfileDto> getSortedFriendsOfUserProfile(String email,
+                                                              UserProfileSortParameter sortParameter,
+                                                              int firstResult,
+                                                              int maxResults) {
+        log.debug("[getSortedFriendsOfUserProfile]");
+        log.debug("[email: {}, email: {}, firstResult: {}, maxResults: {}]",
+            email, sortParameter, firstResult, maxResults);
+        List<UserProfile> userProfiles;
+        if (sortParameter.equals(UserProfileSortParameter.BY_BIRTHDAY)) {
+            userProfiles = userProfileDao.getFriendsSortByAge(email, firstResult, maxResults);
+        } else if (sortParameter.equals(UserProfileSortParameter.BY_NUMBER_OF_FRIENDS)) {
+            userProfiles = userProfileDao.getFriendsSortByNumberOfFriends(email, firstResult, maxResults);
+        } else {
+            throw new BusinessException("Error, wrong sorting parameter");
+        }
+        return UserProfileMapper.getUserProfileDto(userProfiles);
+    }
+
+    @Override
+    @Transactional
+    public List<UserProfileDto> getUserProfileSignedFriends(String email, int firstResult, int maxResults) {
+        log.debug("[getUserProfileMessages]");
+        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        return UserProfileMapper.getUserProfileDto(userProfileDao.getSignedFriends(email, firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public void sendAFriendRequest(String email, Long userProfileId) {
+        log.debug("[sendAFriendRequest]");
+        log.debug("[email: {}, userProfileId: {}]", email, userProfileId);
+        UserProfile ownProfile = userProfileDao.findByEmail(email);
+        UserProfile userProfile = userProfileDao.getFutureFriend(email, userProfileId);
+        if (userProfile == null) {
+            throw new BusinessException("Error, this user is not suitable");
+        }
+        List<UserProfile> signedFriends = userProfileDao.getSignedFriends(email, FIRST_RESULT, MAX_RESULT);
+        signedFriends.add(userProfile);
+        ownProfile.setFriendshipRequests(signedFriends);
+        userProfileDao.updateRecord(ownProfile);
+    }
+
+    @Override
+    @Transactional
+    public void confirmFriend(String email, Long userProfileId) {
+        log.debug("[confirmFriend]");
+        log.debug("[email: {}, userProfileId: {}]", email, userProfileId);
+        UserProfile ownProfile = userProfileDao.findByEmail(email);
+        UserProfile userProfile = userProfileDao.getSignedFriend(email, userProfileId);
+        if (userProfile == null) {
+            throw new BusinessException("Error, this user is not suitable");
+        }
+        List<UserProfile> signedFriends = userProfileDao.getSignedFriends(email, FIRST_RESULT, MAX_RESULT);
+        signedFriends.remove(userProfile);
+        ownProfile.setFriendshipRequests(signedFriends);
+        List<UserProfile> friends = userProfileDao.getFriends(email, FIRST_RESULT, MAX_RESULT);
+        friends.add(userProfile);
+        ownProfile.setFriends(friends);
+        userProfileDao.updateRecord(ownProfile);
+    }
+
+    @Override
+    @Transactional
+    public void removeUserFromFriends(String email, Long userProfileId) {
+        log.debug("[removeUserFromFriends]");
+        log.debug("[email: {}, userProfileId: {}]", email, userProfileId);
+        UserProfile ownProfile = userProfileDao.findByEmail(email);
+        UserProfile userProfile = userProfileDao.getFriend(email, userProfileId);
+        if (userProfile == null) {
+            throw new BusinessException("Error, this user is not suitable");
+        }
+        List<UserProfile> signedFriends = userProfileDao.getSignedFriends(email, FIRST_RESULT, MAX_RESULT);
+        signedFriends.remove(userProfile);
+        ownProfile.setFriendshipRequests(signedFriends);
+        List<UserProfile> friends = userProfileDao.getFriends(email, FIRST_RESULT, MAX_RESULT);
+        friends.add(userProfile);
+        ownProfile.setFriends(friends);
+        userProfileDao.updateRecord(ownProfile);
     }
 
 }

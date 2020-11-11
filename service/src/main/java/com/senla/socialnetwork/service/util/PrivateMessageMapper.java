@@ -1,6 +1,7 @@
 package com.senla.socialnetwork.service.util;
 
 import com.senla.socialnetwork.dao.LocationDao;
+import com.senla.socialnetwork.dao.PrivateMessageDao;
 import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
@@ -30,11 +31,17 @@ public class PrivateMessageMapper {
     }
 
     public static PrivateMessage getPrivateMessage(PrivateMessageDto privateMessageDto,
+                                                   PrivateMessageDao privateMessageDao,
                                                    UserProfileDao userProfileDao,
                                                    LocationDao locationDao,
                                                    SchoolDao schoolDao,
                                                    UniversityDao universityDao) {
-        PrivateMessage privateMessage = new PrivateMessage();
+        PrivateMessage privateMessage;
+        if (privateMessageDto.getId() == null) {
+            privateMessage = new PrivateMessage();
+        } else {
+            privateMessage = privateMessageDao.findById(privateMessageDto.getId());
+        }
         privateMessage.setId(privateMessageDto.getId());
         privateMessage.setDepartureDate(privateMessageDto.getDepartureDate());
         privateMessage.setSender(UserProfileMapper.getUserProfile(

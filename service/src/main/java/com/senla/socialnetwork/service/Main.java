@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.service;
 
+import com.senla.socialnetwork.dao.UserProfileDao;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -50,21 +51,40 @@ public class Main {
 //        PrivateMessageService privateMessageService = applicationContext.getBean(PrivateMessageService.class);
 //        System.out.println(privateMessageService.getDialogue(email, 3L, 0, 20).size());
 
-        String email = "user1@test.com";
-        PrivateMessageService privateMessageService = applicationContext.getBean(PrivateMessageService.class);
-        System.out.println(privateMessageService.getUnreadMessages(email, 0, 10).size());
-
 //        String email = "user1@test.com";
+//        PrivateMessageService privateMessageService = applicationContext.getBean(PrivateMessageService.class);
+//        System.out.println(privateMessageService.getUnreadMessages(email, 0, 10).size());
+
+//        String email = "user2@test.com";
 //        PublicMessageService publicMessageService = applicationContext.getBean(PublicMessageService.class);
-//        System.out.println(publicMessageService.getFriendsMessages(email, 0, 2).size());
+//        List<PublicMessageDto> publicMessages = publicMessageService.getUserProfileMessages(email, 0, 10);
+//        System.out.println("+++++++++++++++++++++++++++++++++++");
+//        publicMessages.forEach(System.out::println);
 
-//        String email = "user1@test.com";
-//        UserProfileService userProfileDao = applicationContext.getBean(UserProfileService.class);
-//        System.out.println(userProfileDao.getUserProfileFriends(email).size());
+//        String email = "user2@test.com";
+//        PublicMessageCommentDao publicMessageService = applicationContext.getBean(PublicMessageCommentDao.class);
+//        List<PublicMessageComment> publicMessages = publicMessageService.getPublicMessageComments(3L);
+//        System.out.println("+++++++++++++++++++++++++++++++++++");
+//        publicMessages.forEach(System.out::println);
+
+//        String email = "user2@test.com";
+//        PublicMessageDao publicMessageDao = applicationContext.getBean(PublicMessageDao.class);
+//        List<PublicMessage> publicMessages = publicMessageDao.getFriendsMessages(email, 0, 10);
+//        System.out.println("+++++++++++++++++++++++++++++++++++");
+//        publicMessages.forEach(System.out::println);
+
+        String email = "user1@test.com";
+        UserProfileDao userProfileDao = applicationContext.getBean(UserProfileDao.class);
+        System.out.println(userProfileDao.getUserProfilesSortByNumberOfFriends(0, 10));
 
 
 //        UserProfileService userProfileService = applicationContext.getBean(UserProfileService.class);
-//        userProfileService.getNearestDateOfBirth();
+//        userProfileService.getNearestDateOfBirth(email);
+//        System.out.println(userProfileService.getNearestDateOfBirth(email));
+
+//        String email = "user1@test.com";
+//        UserProfileService userProfileService = applicationContext.getBean(UserProfileService.class);
+//        userProfileService.sendAFriendRequest(email, 4L);
 //        System.out.println(userProfileService.getNearestDateOfBirth());
 
     }

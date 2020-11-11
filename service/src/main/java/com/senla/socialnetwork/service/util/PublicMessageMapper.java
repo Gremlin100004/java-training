@@ -1,6 +1,7 @@
 package com.senla.socialnetwork.service.util;
 
 import com.senla.socialnetwork.dao.LocationDao;
+import com.senla.socialnetwork.dao.PublicMessageDao;
 import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
@@ -14,6 +15,7 @@ public class PublicMessageMapper {
     public static PublicMessageDto getPublicMessageDto(PublicMessage publicMessage) {
         PublicMessageDto publicMessageDto = new PublicMessageDto();
         publicMessageDto.setId(publicMessage.getId());
+        publicMessageDto.setCreationDate(publicMessage.getCreationDate());
         publicMessageDto.setAuthor(UserProfileMapper.getUserProfileDto(publicMessage.getAuthor()));
         publicMessageDto.setTittle(publicMessage.getTittle());
         publicMessageDto.setContent(publicMessage.getContent());
@@ -28,12 +30,17 @@ public class PublicMessageMapper {
     }
 
     public static PublicMessage getPublicMessage(PublicMessageDto publicMessageDto,
+                                                 PublicMessageDao publicMessageDao,
                                                  UserProfileDao userProfileDao,
                                                  LocationDao locationDao,
                                                  SchoolDao schoolDao,
                                                  UniversityDao universityDao) {
-        PublicMessage publicMessage = new PublicMessage();
-        publicMessage.setId(publicMessageDto.getId());
+        PublicMessage publicMessage;
+        if (publicMessageDto.getId() == null) {
+            publicMessage = new PublicMessage();
+        } else {
+            publicMessage = publicMessageDao.findById(publicMessageDto.getId());
+        }
         publicMessage.setAuthor(UserProfileMapper.getUserProfile(
             publicMessageDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
         publicMessage.setTittle(publicMessageDto.getTittle());

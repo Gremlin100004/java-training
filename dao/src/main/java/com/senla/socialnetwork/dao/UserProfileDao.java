@@ -25,12 +25,26 @@ public interface UserProfileDao extends GenericDao<UserProfile, Long> {
 
     List<UserProfile> getUserProfilesFilteredByUniversity(University university, int firstResult, int maxResults);
 
-    List<UserProfile> getUserProfilesFilteredByAge(
-        Date startPeriodDate, Date endPeriodDate, int firstResult, int maxResults);
+    List<UserProfile> getUserProfilesFilteredByAge(Date startPeriodDate,
+                                                   Date endPeriodDate,
+                                                   int firstResult,
+                                                   int maxResults);
 
-    UserProfile getNearestBirthdayByCurrentDate();
+    UserProfile getNearestBirthdayByCurrentDate(String email);
 
-    UserProfile getNearestBirthdayFromTheBeginningOfTheYear();
+    UserProfile getNearestBirthdayFromTheBeginningOfTheYear(String email);
+
+    List<UserProfile> getFriendsSortByAge(String email, int firstResult, int maxResults);
+
+    List<UserProfile> getFriendsSortByNumberOfFriends(String email, int firstResult, int maxResults);
 
     List<UserProfile> getFriends(String email, int firstResult, int maxResults);
+
+    List<UserProfile> getSignedFriends(String email, int firstResult, int maxResults);
+
+    UserProfile getSignedFriend(String email, Long userProfileId);
+
+    UserProfile getFutureFriend(String email, Long userProfileId);
+
+    UserProfile getFriend(String email, Long userProfileId);
 }

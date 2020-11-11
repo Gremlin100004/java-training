@@ -44,7 +44,7 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
             throw new BusinessException("Error, user with this email does not exist");
         }
         return PrivateMessageMapper.getPrivateMessageDto(
-            privateMessageDao.getByUserProfile(email, firstResult, maxResults));
+            privateMessageDao.getByEmail(email, firstResult, maxResults));
     }
 
     @Override
@@ -91,7 +91,7 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
         }
         return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.saveRecord(
             PrivateMessageMapper.getPrivateMessage(
-                privateMessageDto, userProfileDao, locationDao, schoolDao, universityDao)));
+                privateMessageDto, privateMessageDao, userProfileDao, locationDao, schoolDao, universityDao)));
     }
 
     @Override
@@ -103,7 +103,7 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
             throw new BusinessException("Error, null message");
         }
         privateMessageDao.updateRecord(PrivateMessageMapper.getPrivateMessage(
-            privateMessageDto, userProfileDao, locationDao, schoolDao, universityDao));
+            privateMessageDto, privateMessageDao, userProfileDao, locationDao, schoolDao, universityDao));
     }
 
     @Override

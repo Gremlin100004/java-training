@@ -6,7 +6,7 @@ import java.sql.Date;
 import java.util.List;
 
 public interface PrivateMessageDao extends GenericDao<PrivateMessage, Long> {
-    List<PrivateMessage> getByUserProfile(String email, int firstResult, int maxResults);
+    List<PrivateMessage> getByEmail(String email, int firstResult, int maxResults);
 
     List<PrivateMessage> getDialogue(String email, Long idUser, int firstResult, int maxResults);
 
@@ -18,4 +18,5 @@ public interface PrivateMessageDao extends GenericDao<PrivateMessage, Long> {
                                                     int firstResult,
                                                     int maxResults);
 
+    PrivateMessage findByIdAndEmail(String email, Long messageId);
 }

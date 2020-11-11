@@ -17,17 +17,15 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "user_profiles")
 @Getter
 @Setter
-@ToString(exclude = {"systemUser", "publicMessageComments", "publicMessages", "senderPrivateMessage",
-                     "recipientPrivateMessage", "friendshipRequests", "friends", "mappedByFriends",
-                     "communities", "postComments"})
+@ToString(exclude = {"systemUser", "publicMessages", "senderPrivateMessage", "recipientPrivateMessage",
+                     "friendshipRequests", "friends", "mappedByFriends", "friendshipRequests",
+                     "mappedByFriendshipRequests", "communities", "postComments"})
 @NoArgsConstructor
 public class UserProfile extends AEntity {
     @OneToOne(fetch = FetchType.LAZY)
@@ -59,9 +57,6 @@ public class UserProfile extends AEntity {
     @OneToMany(mappedBy = "author")
     private List<PublicMessage> publicMessages = new ArrayList<>();
     // ToDo need this field ?
-    @OneToMany(mappedBy = "author")
-    private List<PublicMessageComment> publicMessageComments = new ArrayList<>();
-    // ToDo need this field ?
     @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
     private List<PrivateMessage> senderPrivateMessage = new ArrayList<>();
     @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY)
@@ -71,12 +66,16 @@ public class UserProfile extends AEntity {
     @JoinTable(name = "friendship_requests", joinColumns = @JoinColumn(name = "user_profiles_id"),
         inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private List<UserProfile> friendshipRequests = new ArrayList<>();
+    @ManyToMany(mappedBy = "friendshipRequests", fetch = FetchType.LAZY)
+    private List<UserProfile> mappedByFriendshipRequests = new ArrayList<>();
+
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_profiles_id"),
         inverseJoinColumns = @JoinColumn(name = "friend_id"))
-    private Set<UserProfile> friends = new HashSet<>();
+    private List<UserProfile> friends = new ArrayList<>();
     @ManyToMany(mappedBy = "friends", fetch = FetchType.LAZY)
-    private Set<UserProfile> mappedByFriends = new HashSet<>();
+    private List<UserProfile> mappedByFriends = new ArrayList<>();
+
     @OneToMany(mappedBy = "author")
     private List<Community> communities = new ArrayList<>();
     // ToDo need this field ?
