@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.service;
 
-import com.senla.socialnetwork.dao.UserProfileDao;
+import com.senla.socialnetwork.dao.CommunityDao;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -73,12 +73,12 @@ public class Main {
 //        System.out.println("+++++++++++++++++++++++++++++++++++");
 //        publicMessages.forEach(System.out::println);
 
-//        String email = "user1@test.com";
-//        UserProfileDao userProfileDao = applicationContext.getBean(UserProfileDao.class);
-//        System.out.println(userProfileDao.getUserProfilesSortByNumberOfFriends(0, 10));
+        String email = "user3@test.com";
+        CommunityDao communityDao = applicationContext.getBean(CommunityDao.class);
+        System.out.println(communityDao.getSubscribedCommunitiesByEmail(email, 0, 0));
 
-        UserProfileDao userProfileDao = applicationContext.getBean(UserProfileDao.class);
-        System.out.println(userProfileDao.test());
+//        UserProfileDao userProfileDao = applicationContext.getBean(UserProfileDao.class);
+//        System.out.println(userProfileDao.test());
 
 
 //        UserProfileService userProfileService = applicationContext.getBean(UserProfileService.class);

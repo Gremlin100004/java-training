@@ -1,5 +1,7 @@
 package com.senla.socialnetwork.dao;
 
+import com.senla.socialnetwork.domain.Community;
+import com.senla.socialnetwork.domain.Community_;
 import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.domain.School;
 import com.senla.socialnetwork.domain.SystemUser;
@@ -52,6 +54,24 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
+    public List<UserProfile> getCommunityUsers(Long communityId) {
+        log.debug("[getCommunityUsers]");
+        log.trace("[communityId: {}]", communityId);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
+            Root<Community> communityRoot = criteriaQuery.from(Community.class);
+            criteriaQuery.select(communityRoot.get(Community_.SUBSCRIBED_USERS));
+            criteriaQuery.where(criteriaBuilder.equal(communityRoot.get(Community_.id), communityId));
+            return entityManager.createQuery(criteriaQuery).getResultList();
+        } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
+            return null;
+        }
+    }
+
+    //Todo move to LocationService
+    @Override
     public Location getLocation(String email) {
         log.debug("[getLocation]");
         log.trace("[email: {}]", email);
@@ -69,8 +89,10 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
         }
     }
 
+
+
     @Override
-    public List<UserProfile> getUserProfilesSortByName(int firstResult, int maxResults) {
+    public List<UserProfile> getUserProfilesSortBySurname(int firstResult, int maxResults) {
         log.debug("[getUserProfilesSortByName]");
         log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         try {
@@ -78,7 +100,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
             criteriaQuery.select(userProfileRoot);
-            criteriaQuery.orderBy(criteriaBuilder.asc(userProfileRoot.get(UserProfile_.name)));
+            criteriaQuery.orderBy(criteriaBuilder.asc(userProfileRoot.get(UserProfile_.surname)));
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
             typedQuery.setMaxResults(maxResults);
@@ -99,27 +121,6 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
             criteriaQuery.select(userProfileRoot);
             criteriaQuery.orderBy(criteriaBuilder.desc(userProfileRoot.get(UserProfile_.registrationDate)));
-            TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
-            typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
-            return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
-    }
-
-    @Override
-    public List<UserProfile> getUserProfilesSortByNumberOfFriends(int firstResult, int maxResults) {
-        log.debug("[getUserProfilesSortByNumberOfFriends]");
-        log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
-        try {
-            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
-            Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
-            criteriaQuery.select(userProfileRoot);
-//            criteriaQuery.orderBy(
-//                criteriaBuilder.desc(criteriaBuilder.count(userProfileUserProfileListJoin.get(UserProfile_.friends))));
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
             typedQuery.setMaxResults(maxResults);
@@ -298,14 +299,14 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getFriendsSortByNumberOfFriends(String email, int firstResult, int maxResults) {
+    public List<UserProfile> getFriendsSortByName(String email, int firstResult, int maxResults) {
         log.debug("[getFriendsSortByBirthday]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = fillCriteriaQueryFriend(criteriaQuery, criteriaBuilder, email);
-//            criteriaQuery.orderBy(criteriaBuilder.asc(criteriaBuilder.count(userProfileRoot.get(UserProfile_.friends))));
+            criteriaQuery.orderBy(criteriaBuilder.asc(userProfileRoot.get(UserProfile_.name)));
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
             if (maxResults != 0) {

@@ -1,6 +1,10 @@
 package com.senla.socialnetwork.service.util;
 
-import com.senla.socialnetwork.dao.*;
+import com.senla.socialnetwork.dao.CommunityDao;
+import com.senla.socialnetwork.dao.LocationDao;
+import com.senla.socialnetwork.dao.SchoolDao;
+import com.senla.socialnetwork.dao.UniversityDao;
+import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.dto.CommunityDto;
 

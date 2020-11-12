@@ -1,6 +1,12 @@
 package com.senla.socialnetwork.service.util;
 
-import com.senla.socialnetwork.dao.*;
+import com.senla.socialnetwork.dao.CommunityDao;
+import com.senla.socialnetwork.dao.LocationDao;
+import com.senla.socialnetwork.dao.PostCommentDao;
+import com.senla.socialnetwork.dao.PostDao;
+import com.senla.socialnetwork.dao.SchoolDao;
+import com.senla.socialnetwork.dao.UniversityDao;
+import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PostComment;
 import com.senla.socialnetwork.dto.PostCommentDto;
 

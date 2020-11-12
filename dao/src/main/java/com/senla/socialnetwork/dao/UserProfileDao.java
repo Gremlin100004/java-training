@@ -11,13 +11,13 @@ import java.util.List;
 public interface UserProfileDao extends GenericDao<UserProfile, Long> {
     UserProfile findByEmail(String email);
 
+    List<UserProfile> getCommunityUsers(Long communityId);
+
     Location getLocation(String email);
 
-    List<UserProfile> getUserProfilesSortByName(int firstResult, int maxResults);
+    List<UserProfile> getUserProfilesSortBySurname(int firstResult, int maxResults);
 
     List<UserProfile> getUserProfilesSortByRegistrationDate(int firstResult, int maxResults);
-
-    List<UserProfile> getUserProfilesSortByNumberOfFriends(int firstResult, int maxResults);
 
     List<UserProfile> getUserProfilesFilteredByLocation(Location location, int firstResult, int maxResults);
 
@@ -36,7 +36,7 @@ public interface UserProfileDao extends GenericDao<UserProfile, Long> {
 
     List<UserProfile> getFriendsSortByAge(String email, int firstResult, int maxResults);
 
-    List<UserProfile> getFriendsSortByNumberOfFriends(String email, int firstResult, int maxResults);
+    List<UserProfile> getFriendsSortByName(String email, int firstResult, int maxResults);
 
     List<UserProfile> getFriends(String email, int firstResult, int maxResults);
 

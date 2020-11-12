@@ -83,12 +83,10 @@ public class UserProfileServiceImpl implements UserProfileService {
         log.debug("[getUserProfiles]");
         log.trace("[sortParameter: {}]", sortParameter);
         List<UserProfile> userProfiles;
-        if (sortParameter.equals(UserProfileSortParameter.BY_NAME)) {
-            userProfiles = userProfileDao.getUserProfilesSortByName(firstResult, maxResults);
+        if (sortParameter.equals(UserProfileSortParameter.BY_SURNAME)) {
+            userProfiles = userProfileDao.getUserProfilesSortBySurname(firstResult, maxResults);
         } else if (sortParameter.equals(UserProfileSortParameter.BY_REGISTRATION_DATE)) {
             userProfiles = userProfileDao.getUserProfilesSortByRegistrationDate(firstResult, maxResults);
-        } else if (sortParameter.equals(UserProfileSortParameter.BY_NUMBER_OF_FRIENDS)) {
-            userProfiles = userProfileDao.getUserProfilesSortByNumberOfFriends(firstResult, maxResults);
         } else {
             throw new BusinessException("Error, wrong sorting parameter");
         }
@@ -170,7 +168,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (sortParameter.equals(UserProfileSortParameter.BY_BIRTHDAY)) {
             userProfiles = userProfileDao.getFriendsSortByAge(email, firstResult, maxResults);
         } else if (sortParameter.equals(UserProfileSortParameter.BY_NUMBER_OF_FRIENDS)) {
-            userProfiles = userProfileDao.getFriendsSortByNumberOfFriends(email, firstResult, maxResults);
+            userProfiles = userProfileDao.getFriendsSortByName(email, firstResult, maxResults);
         } else {
             throw new BusinessException("Error, wrong sorting parameter");
         }
