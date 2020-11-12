@@ -56,6 +56,7 @@ public class UserProfile extends AEntity {
     private Integer universityGraduationYear;
     @OneToMany(mappedBy = "author")
     private List<PublicMessage> publicMessages = new ArrayList<>();
+
     // ToDo need this field ?
     @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
     private List<PrivateMessage> senderPrivateMessage = new ArrayList<>();
@@ -77,9 +78,11 @@ public class UserProfile extends AEntity {
     private List<UserProfile> mappedByFriends = new ArrayList<>();
 
     @OneToMany(mappedBy = "author")
-    private List<Community> communities = new ArrayList<>();
+    private List<Community> ownCommunities = new ArrayList<>();
     // ToDo need this field ?
     @OneToMany(mappedBy = "author")
     private List<PostComment> postComments = new ArrayList<>();
+    @ManyToMany(mappedBy = "subscribedUsers", fetch = FetchType.LAZY)
+    private List<UserProfile>subscribedToCommunities;
 
 }

@@ -47,4 +47,5 @@ public interface UserProfileDao extends GenericDao<UserProfile, Long> {
     UserProfile getFutureFriend(String email, Long userProfileId);
 
     UserProfile getFriend(String email, Long userProfileId);
+
 }

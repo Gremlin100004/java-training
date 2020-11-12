@@ -73,9 +73,12 @@ public class Main {
 //        System.out.println("+++++++++++++++++++++++++++++++++++");
 //        publicMessages.forEach(System.out::println);
 
-        String email = "user1@test.com";
+//        String email = "user1@test.com";
+//        UserProfileDao userProfileDao = applicationContext.getBean(UserProfileDao.class);
+//        System.out.println(userProfileDao.getUserProfilesSortByNumberOfFriends(0, 10));
+
         UserProfileDao userProfileDao = applicationContext.getBean(UserProfileDao.class);
-        System.out.println(userProfileDao.getUserProfilesSortByNumberOfFriends(0, 10));
+        System.out.println(userProfileDao.test());
 
 
 //        UserProfileService userProfileService = applicationContext.getBean(UserProfileService.class);

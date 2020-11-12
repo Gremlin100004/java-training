@@ -173,6 +173,14 @@ CREATE TABLE IF NOT EXISTS friends (
 );
 
 -- -----------------------------------------------------
+-- Table `community_user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS community_user (
+  communities_id INT NOT NULL,
+  users_id INT NOT NULL
+);
+
+-- -----------------------------------------------------
 -- ADD CONSTRAINTS
 -- -----------------------------------------------------
 ALTER TABLE schools
@@ -280,6 +288,15 @@ ADD CONSTRAINT fk_friends_users_friend
 FOREIGN KEY (friend_id)
 REFERENCES user_profiles (id) ON DELETE CASCADE;
 
+ALTER TABLE community_user
+ADD CONSTRAINT fk_community_user_communities
+FOREIGN KEY (communities_id)
+REFERENCES communities (id) ON DELETE CASCADE;
+
+ALTER TABLE community_user
+ADD CONSTRAINT fk_community_user_users
+FOREIGN KEY (users_id)
+REFERENCES users (id) ON DELETE CASCADE;
 -- -----------------------------------------------------
 -- CREATE INDEX
 -- -----------------------------------------------------

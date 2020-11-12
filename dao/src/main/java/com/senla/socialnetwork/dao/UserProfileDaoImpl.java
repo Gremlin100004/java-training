@@ -117,10 +117,9 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
-            Join<UserProfile, UserProfile> userProfileUserProfileListJoin = userProfileRoot.join(UserProfile_.friends);
             criteriaQuery.select(userProfileRoot);
-            criteriaQuery.orderBy(
-                criteriaBuilder.desc(criteriaBuilder.count(userProfileUserProfileListJoin.get(UserProfile_.friends))));
+//            criteriaQuery.orderBy(
+//                criteriaBuilder.desc(criteriaBuilder.count(userProfileUserProfileListJoin.get(UserProfile_.friends))));
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
             typedQuery.setMaxResults(maxResults);
