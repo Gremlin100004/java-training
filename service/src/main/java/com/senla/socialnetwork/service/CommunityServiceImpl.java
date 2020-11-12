@@ -2,10 +2,12 @@ package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dao.CommunityDao;
 import com.senla.socialnetwork.dao.LocationDao;
+import com.senla.socialnetwork.dao.PostDao;
 import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.Community;
+import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.CommunityDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -23,8 +25,12 @@ import java.util.List;
 @NoArgsConstructor
 @Slf4j
 public class CommunityServiceImpl implements CommunityService {
+    private static final int FIRST_RESULT = 0;
+    private static final int MAX_RESULTS = 0;
     @Autowired
     CommunityDao communityDao;
+    @Autowired
+    PostDao postDao;
     @Autowired
     UserProfileDao userProfileDao;
     @Autowired
@@ -66,6 +72,7 @@ public class CommunityServiceImpl implements CommunityService {
         return CommunityMapper.getCommunityDto(
             communityDao.getSubscribedCommunitiesByEmail(email, firstResult, maxResults));
     }
+    //Todo filtered communities by type, by create date
 
     @Override
     @Transactional
@@ -140,8 +147,12 @@ public class CommunityServiceImpl implements CommunityService {
         } else if (community.isDeleted()) {
             throw new BusinessException("Error, the message has already been deleted");
         }
+        List<Post> posts = postDao.getByCommunityId(community.getId(), FIRST_RESULT, MAX_RESULTS);
+        posts.forEach(post -> post.setDeleted(true));
         community.setDeleted(true);
         community.setSubscribedUsers(new ArrayList<>());
+        community.setPosts(posts);
         communityDao.updateRecord(community);
     }
+
 }

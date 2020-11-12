@@ -73,10 +73,13 @@ public class Main {
 //        System.out.println("+++++++++++++++++++++++++++++++++++");
 //        publicMessages.forEach(System.out::println);
 
-        String email = "user3@test.com";
-        CommunityDao communityDao = applicationContext.getBean(CommunityDao.class);
-        System.out.println(communityDao.getSubscribedCommunitiesByEmail(email, 0, 0));
+//        String email = "user3@test.com";
+//        CommunityDao communityDao = applicationContext.getBean(CommunityDao.class);
+//        System.out.println(communityDao.getSubscribedCommunitiesByEmail(email, 0, 0));
 
+        String email = "user3@test.com";
+        PostService postService = applicationContext.getBean(PostService.class);
+        System.out.println(postService.getPostsFromSubscribedCommunities(email, 0, 10));
 //        UserProfileDao userProfileDao = applicationContext.getBean(UserProfileDao.class);
 //        System.out.println(userProfileDao.test());
 

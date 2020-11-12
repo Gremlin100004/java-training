@@ -43,6 +43,6 @@ public class Community extends AEntity {
     private boolean isDeleted;
     @OneToMany(mappedBy = "community")
     private List<Post> posts = new ArrayList<>();
-    @ManyToMany(mappedBy = "subscribedToCommunities", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "communitiesSubscribedTo", fetch = FetchType.LAZY)
     private List<UserProfile>subscribedUsers;
 }

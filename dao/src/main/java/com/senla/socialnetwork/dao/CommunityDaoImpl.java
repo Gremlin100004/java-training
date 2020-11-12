@@ -100,8 +100,8 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
             Join<UserProfile, SystemUser> userProfileSystemUserJoin = userProfileRoot.join(UserProfile_.systemUser);
-            Join<UserProfile, Community> userProfileCommunityJoin = userProfileRoot.join(UserProfile_.subscribedToCommunities);
-            criteriaQuery.select(userProfileRoot.get(UserProfile_.SUBSCRIBED_TO_COMMUNITIES));
+            Join<UserProfile, Community> userProfileCommunityJoin = userProfileRoot.join(UserProfile_.communitiesSubscribedTo);
+            criteriaQuery.select(userProfileRoot.get(UserProfile_.COMMUNITIES_SUBSCRIBED_TO));
             criteriaQuery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
             criteriaQuery.orderBy(criteriaBuilder.desc(userProfileCommunityJoin.get(Community_.creationDate)));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);

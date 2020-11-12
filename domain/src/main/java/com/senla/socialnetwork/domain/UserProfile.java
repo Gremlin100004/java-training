@@ -85,6 +85,6 @@ public class UserProfile extends AEntity {
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "community_user", joinColumns = @JoinColumn(name = "users_id"),
         inverseJoinColumns = @JoinColumn(name = "communities_id"))
-    private List<Community>subscribedToCommunities;
+    private List<Community> communitiesSubscribedTo;
 
 }
