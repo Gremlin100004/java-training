@@ -4,6 +4,7 @@ import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.domain.PostComment;
 import com.senla.socialnetwork.domain.PostComment_;
 import com.senla.socialnetwork.domain.Post_;
+import com.senla.socialnetwork.domain.PublicMessageComment;
 import com.senla.socialnetwork.domain.PublicMessageComment_;
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.SystemUser_;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -59,7 +61,12 @@ public class PostCommentDaoImpl extends AbstractDao<PostComment, Long> implement
             Join<PostComment, Post> postCommentPostJoin = postCommentRoot.join(PostComment_.post);
             criteriaQuery.select(postCommentRoot);
             criteriaQuery.where(criteriaBuilder.equal(postCommentPostJoin.get(Post_.id), postId));
-            return entityManager.createQuery(criteriaQuery).getResultList();
+            TypedQuery<PostComment> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setFirstResult(firstResult);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
+            return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
             return null;

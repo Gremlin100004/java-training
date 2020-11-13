@@ -7,5 +7,5 @@ import java.util.List;
 public interface PublicMessageCommentDao extends GenericDao<PublicMessageComment, Long> {
     PublicMessageComment findByIdAndEmail(String email, Long commentId);
 
-    List<PublicMessageComment> getPublicMessageComments(Long publicMessageId);
+    List<PublicMessageComment> getPublicMessageComments(Long publicMessageId, int firstResult, int maxResults);
 }

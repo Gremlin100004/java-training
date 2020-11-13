@@ -70,27 +70,6 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
         }
     }
 
-    //Todo move to LocationService
-    @Override
-    public Location getLocation(String email) {
-        log.debug("[getLocation]");
-        log.trace("[email: {}]", email);
-        try {
-            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<Location> criteriaQuery = criteriaBuilder.createQuery(Location.class);
-            Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
-            Join<UserProfile, SystemUser> masterOrderJoin = userProfileRoot.join(UserProfile_.systemUser);
-            criteriaQuery.select(userProfileRoot.get(UserProfile_.location));
-            criteriaQuery.where(criteriaBuilder.equal(masterOrderJoin.get(SystemUser_.email), email));
-            return entityManager.createQuery(criteriaQuery).getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
-    }
-
-
-
     @Override
     public List<UserProfile> getUserProfilesSortBySurname(int firstResult, int maxResults) {
         log.debug("[getUserProfilesSortByName]");

@@ -2,12 +2,14 @@ package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dao.CommunityDao;
 import com.senla.socialnetwork.dao.LocationDao;
+import com.senla.socialnetwork.dao.PostCommentDao;
 import com.senla.socialnetwork.dao.PostDao;
 import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.domain.Post;
+import com.senla.socialnetwork.domain.PostComment;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.PostMapper;
@@ -27,6 +29,8 @@ public class PostServiceImpl implements PostService {
     private static final int MAX_RESULTS = 0;
     @Autowired
     PostDao postDao;
+    @Autowired
+    PostCommentDao postCommentDao;
     @Autowired
     CommunityDao communityDao;
     @Autowired
@@ -97,7 +101,7 @@ public class PostServiceImpl implements PostService {
             throw new BusinessException("Error, the post has already been deleted");
         }
         post.setDeleted(true);
-//        post.deleteComments
+        List<PostComment> comments = postCommentDao.getPostComments(postId, FIRST_RESULT, MAX_RESULTS);
         postDao.updateRecord(post);
     }
 

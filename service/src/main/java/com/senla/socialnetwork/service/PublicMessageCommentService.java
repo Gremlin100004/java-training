@@ -1,15 +1,13 @@
 package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 public interface PublicMessageCommentService {
-    @Transactional
-    List<PublicMessageCommentDto> Comments();
+    List<PublicMessageCommentDto> getComments();
 
-    List<PublicMessageCommentDto> getPublicMessageComments(Long publicMessageId);
+    List<PublicMessageCommentDto> getPublicMessageComments(Long publicMessageId, int firstResult, int maxResults);
 
     PublicMessageCommentDto addComment(PublicMessageCommentDto publicMessageCommentDto);
 

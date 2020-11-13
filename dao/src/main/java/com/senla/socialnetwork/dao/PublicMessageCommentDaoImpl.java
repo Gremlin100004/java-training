@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -50,7 +51,7 @@ public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageCommen
 
     //Todo pagination
     @Override
-    public List<PublicMessageComment> getPublicMessageComments(Long publicMessageId) {
+    public List<PublicMessageComment> getPublicMessageComments(Long publicMessageId, int firstResult, int maxResults) {
         log.debug("[getPublicMessageComments]");
         log.trace("[publicMessageId: {}]", publicMessageId);
         try {
@@ -62,7 +63,12 @@ public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageCommen
             criteriaQuery.select(publicMessageCommentRoot);
             criteriaQuery.where(criteriaBuilder.equal(
                 publicMessageCommentPublicMessageJoin.get(PublicMessage_.id), publicMessageId));
-            return entityManager.createQuery(criteriaQuery).getResultList();
+            TypedQuery<PublicMessageComment> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setFirstResult(firstResult);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
+            return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
             return null;

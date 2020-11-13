@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.dao.WeatherConditionDao;
 import com.senla.socialnetwork.domain.Location;
@@ -40,6 +41,8 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     @Autowired
     private UserProfileDao userProfileDao;
     @Autowired
+    private LocationDao locationDao;
+    @Autowired
     private WeatherConditionDao weatherConditionDao;
     @Autowired
     private RestTemplate restTemplate;
@@ -51,7 +54,7 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     public WeatherConditionDto getWeatherCondition(String email) {
         log.debug("[getWeatherCondition]");
         log.debug("[email: {}]", email);
-        Location location = userProfileDao.getLocation(email);
+        Location location = locationDao.getLocation(email);
         if (location == null) {
             throw new BusinessException("There is no location");
         }

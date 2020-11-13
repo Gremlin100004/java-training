@@ -7,10 +7,8 @@ import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessageComment;
-import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
-import com.senla.socialnetwork.service.util.PostCommentMapper;
 import com.senla.socialnetwork.service.util.PublicMessageCommentMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,18 +37,18 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public List<PublicMessageCommentDto> Comments() {
+    public List<PublicMessageCommentDto> getComments() {
         log.debug("[Comments]");
         return PublicMessageCommentMapper.getPublicMessageCommentDto(publicMessageCommentDao.getAllRecords());
     }
 
     @Override
     @Transactional
-    public List<PublicMessageCommentDto> getPublicMessageComments(Long publicMessageId) {
+    public List<PublicMessageCommentDto> getPublicMessageComments(Long publicMessageId, int firstResult, int maxResults) {
         log.debug("[getPublicMessageComments]");
         log.trace("[publicMessageId: {}]", publicMessageId);
         return PublicMessageCommentMapper.getPublicMessageCommentDto(
-            publicMessageCommentDao.getPublicMessageComments(publicMessageId));
+            publicMessageCommentDao.getPublicMessageComments(publicMessageId, firstResult, maxResults));
     }
 
     @Override

@@ -13,8 +13,6 @@ public interface UserProfileDao extends GenericDao<UserProfile, Long> {
 
     List<UserProfile> getCommunityUsers(Long communityId);
 
-    Location getLocation(String email);
-
     List<UserProfile> getUserProfilesSortBySurname(int firstResult, int maxResults);
 
     List<UserProfile> getUserProfilesSortByRegistrationDate(int firstResult, int maxResults);
