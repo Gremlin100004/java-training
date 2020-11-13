@@ -33,8 +33,8 @@ public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageCommen
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessageComment> criteriaQuery = criteriaBuilder.createQuery(PublicMessageComment.class);
             Root<PublicMessageComment> publicMessageCommentRoot = criteriaQuery.from(PublicMessageComment.class);
-            Join<PublicMessageComment, UserProfile>
-                publicMessageUserProfileJoin = publicMessageCommentRoot.join(PublicMessageComment_.author);
+            Join<PublicMessageComment, UserProfile> publicMessageUserProfileJoin = publicMessageCommentRoot.join(
+                PublicMessageComment_.author);
             Join<UserProfile, SystemUser> userProfileSystemUserJoin = publicMessageUserProfileJoin.join(
                 UserProfile_.systemUser);
             criteriaQuery.select(publicMessageCommentRoot);
@@ -48,6 +48,7 @@ public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageCommen
         }
     }
 
+    //Todo pagination
     @Override
     public List<PublicMessageComment> getPublicMessageComments(Long publicMessageId) {
         log.debug("[getPublicMessageComments]");
@@ -56,8 +57,8 @@ public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageCommen
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessageComment> criteriaQuery = criteriaBuilder.createQuery(PublicMessageComment.class);
             Root<PublicMessageComment> publicMessageCommentRoot = criteriaQuery.from(PublicMessageComment.class);
-            Join<PublicMessageComment, PublicMessage>
-                publicMessageCommentPublicMessageJoin = publicMessageCommentRoot.join(PublicMessageComment_.publicMessage);
+            Join<PublicMessageComment, PublicMessage> publicMessageCommentPublicMessageJoin = publicMessageCommentRoot.join(
+                PublicMessageComment_.publicMessage);
             criteriaQuery.select(publicMessageCommentRoot);
             criteriaQuery.where(criteriaBuilder.equal(
                 publicMessageCommentPublicMessageJoin.get(PublicMessage_.id), publicMessageId));

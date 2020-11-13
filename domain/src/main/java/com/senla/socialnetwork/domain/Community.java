@@ -24,7 +24,7 @@ import java.util.List;
 @Table(name = "communities")
 @Getter
 @Setter
-@ToString(exclude = {"posts", "subscribedUsers"})
+@ToString(exclude = {"posts", "subscribers"})
 @NoArgsConstructor
 public class Community extends AEntity {
     @Column(name = "creation_date", nullable = false)
@@ -44,5 +44,5 @@ public class Community extends AEntity {
     @OneToMany(mappedBy = "community")
     private List<Post> posts = new ArrayList<>();
     @ManyToMany(mappedBy = "communitiesSubscribedTo", fetch = FetchType.LAZY)
-    private List<UserProfile>subscribedUsers;
+    private List<UserProfile> subscribers;
 }

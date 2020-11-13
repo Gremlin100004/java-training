@@ -38,6 +38,8 @@ public interface UserProfileDao extends GenericDao<UserProfile, Long> {
 
     List<UserProfile> getFriendsSortByName(String email, int firstResult, int maxResults);
 
+    List<UserProfile> getFriendsSortByNumberOfFriends(String email, int firstResult, int maxResults);
+
     List<UserProfile> getFriends(String email, int firstResult, int maxResults);
 
     List<UserProfile> getSignedFriends(String email, int firstResult, int maxResults);

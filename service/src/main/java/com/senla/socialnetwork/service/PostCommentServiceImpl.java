@@ -1,0 +1,105 @@
+package com.senla.socialnetwork.service;
+
+import com.senla.socialnetwork.dao.CommunityDao;
+import com.senla.socialnetwork.dao.LocationDao;
+import com.senla.socialnetwork.dao.PostCommentDao;
+import com.senla.socialnetwork.dao.PostDao;
+import com.senla.socialnetwork.dao.SchoolDao;
+import com.senla.socialnetwork.dao.UniversityDao;
+import com.senla.socialnetwork.dao.UserProfileDao;
+import com.senla.socialnetwork.domain.PostComment;
+import com.senla.socialnetwork.dto.PostCommentDto;
+import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.util.PostCommentMapper;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@NoArgsConstructor
+@Slf4j
+public class PostCommentServiceImpl implements PostCommentService {
+    @Autowired
+    CommunityDao communityDao;
+    @Autowired
+    PostDao postDao;
+    @Autowired
+    PostCommentDao postCommentDao;
+    @Autowired
+    UserProfileDao userProfileDao;
+    @Autowired
+    LocationDao locationDao;
+    @Autowired
+    SchoolDao schoolDao;
+    @Autowired
+    UniversityDao universityDao;
+
+    @Override
+    @Transactional
+    public List<PostCommentDto> getComments() {
+        log.debug("[getComments]");
+        return PostCommentMapper.getPostCommentDto(postCommentDao.getAllRecords());
+    }
+
+    @Override
+    @Transactional
+    public List<PostCommentDto> getPostComments(Long postId, int firstResult, int maxResults) {
+        log.debug("[getPostComments]");
+        log.trace("[postId: {}, firstResult: {}, maxResults: {}]", postId, firstResult, maxResults);
+        return PostCommentMapper.getPostCommentDto(postCommentDao.getPostComments(postId, firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public PostCommentDto addComment(PostCommentDto postCommentDto) {
+        log.debug("[addComment]");
+        log.debug("[postCommentDto: {}]", postCommentDto);
+        if (postCommentDto == null) {
+            throw new BusinessException("Error, null comment");
+        }
+        return PostCommentMapper.getPostCommentDto(postCommentDao.saveRecord(PostCommentMapper.getPostComment(
+            postCommentDto, postCommentDao, postDao, communityDao, userProfileDao,
+            locationDao, schoolDao, universityDao)));
+    }
+
+    @Override
+    @Transactional
+    public void updateComment(PostCommentDto postCommentDto) {
+        log.debug("[updateComment]");
+        log.debug("[postCommentDto: {}]", postCommentDto);
+        if (postCommentDto == null) {
+            throw new BusinessException("Error, null comment");
+        }
+        postCommentDao.updateRecord(PostCommentMapper.getPostComment(
+            postCommentDto, postCommentDao, postDao, communityDao, userProfileDao,
+            locationDao, schoolDao, universityDao));
+    }
+
+    @Override
+    @Transactional
+    public void deleteCommentByUser(String email, Long commentId) {
+        log.debug("[deleteCommentByUser]");
+        log.debug("[email: {}, commentId: {}]", email, commentId);
+        PostComment postComment = postCommentDao.findByIdAndEmail(email, commentId);
+        if (postComment == null) {
+            throw new BusinessException("Error, there is no such comment");
+        } else if (postComment.isDeleted()) {
+            throw new BusinessException("Error, the comment has already been deleted");
+        }
+        postComment.setDeleted(true);
+        postCommentDao.updateRecord(postComment);
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long commentId) {
+        log.debug("[deleteComment]");
+        log.debug("[commentId: {}]", commentId);
+        postCommentDao.deleteRecord(commentId);
+    }
+
+}

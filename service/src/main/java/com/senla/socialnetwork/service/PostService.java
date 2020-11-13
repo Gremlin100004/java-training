@@ -1,7 +1,6 @@
 package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dto.PostDto;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

@@ -10,6 +10,8 @@ public interface CommunityDao extends GenericDao<Community, Long> {
 
     List<Community> getCommunitiesByType(CommunityType communityType, int firstResult, int maxResults);
 
+    List<Community> getCommunitiesSortiedByNumberOfSubscribers(int firstResult, int maxResults);
+
     List<Community> getOwnCommunitiesByEmail(String email, int firstResult, int maxResults);
 
     List<Community> getSubscribedCommunitiesByEmail(String email, int firstResult, int maxResults);

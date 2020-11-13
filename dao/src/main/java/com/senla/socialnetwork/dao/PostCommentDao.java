@@ -2,6 +2,10 @@ package com.senla.socialnetwork.dao;
 
 import com.senla.socialnetwork.domain.PostComment;
 
-public interface PostCommentDao extends GenericDao<PostComment, Long> {
+import java.util.List;
 
+public interface PostCommentDao extends GenericDao<PostComment, Long> {
+    PostComment findByIdAndEmail(String email, Long commentId);
+
+    List<PostComment> getPostComments(Long postId, int firstResult, int maxResults);
 }

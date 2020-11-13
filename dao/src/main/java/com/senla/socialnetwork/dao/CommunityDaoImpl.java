@@ -67,6 +67,26 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
     }
 
     @Override
+    public List<Community> getCommunitiesSortiedByNumberOfSubscribers(int firstResult, int maxResults) {
+        log.debug("[getCommunitiesByType]");
+        log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
+            Root<Community> communityRoot = criteriaQuery.from(Community.class);
+            criteriaQuery.select(communityRoot);
+            criteriaQuery.orderBy(criteriaBuilder.desc(criteriaBuilder.size(communityRoot.get(Community_.subscribers))));
+            TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setFirstResult(firstResult);
+            typedQuery.setMaxResults(maxResults);
+            return typedQuery.getResultList();
+        } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
+            return null;
+        }
+    }
+
+    @Override
     public List<Community> getOwnCommunitiesByEmail(String email, int firstResult, int maxResults) {
         log.debug("[getOwnCommunitiesByEmail]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);

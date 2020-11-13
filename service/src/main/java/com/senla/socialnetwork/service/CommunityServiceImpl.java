@@ -9,6 +9,7 @@ import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.domain.UserProfile;
+import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.CommunityDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.CommunityMapper;
@@ -51,9 +52,27 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public List<CommunityDto> getCommunities(int firstResult, int maxResults) {
-        log.debug("[getOwnCommunities]");
+        log.debug("[getCommunities]");
         log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(communityDao.getCommunities(firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public List<CommunityDto> getCommunitiesSortiedByNumberOfSubscribers(int firstResult, int maxResults) {
+        log.debug("[NumberOfSubscribers]");
+        log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        return CommunityMapper.getCommunityDto(
+            communityDao.getCommunitiesSortiedByNumberOfSubscribers(firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public List<CommunityDto> getCommunitiesFilteredByType(CommunityType communityType, int firstResult, int maxResults) {
+        log.debug("[getCommunityFilteredByType]");
+        log.trace("[communityType: {}, firstResult: {}, maxResults: {}]", communityType, firstResult, maxResults);
+        return CommunityMapper.getCommunityDto(
+            communityDao.getCommunitiesByType(communityType, firstResult, maxResults));
     }
 
     @Override
@@ -73,6 +92,7 @@ public class CommunityServiceImpl implements CommunityService {
             communityDao.getSubscribedCommunitiesByEmail(email, firstResult, maxResults));
     }
     //Todo filtered communities by type, by create date
+    // maybe you can join methods
 
     @Override
     @Transactional
@@ -87,7 +107,7 @@ public class CommunityServiceImpl implements CommunityService {
         }
         List<UserProfile> userProfiles = userProfileDao.getCommunityUsers(communityId);
         userProfiles.add(userProfileDao.findByEmail(email));
-        community.setSubscribedUsers(userProfiles);
+        community.setSubscribers(userProfiles);
         communityDao.updateRecord(community);
     }
 
@@ -107,7 +127,7 @@ public class CommunityServiceImpl implements CommunityService {
             throw new BusinessException("Error, this user is not subscribed to the community");
         }
         userProfiles.remove(userProfileDao.findByEmail(email));
-        community.setSubscribedUsers(userProfiles);
+        community.setSubscribers(userProfiles);
         communityDao.updateRecord(community);
     }
 
@@ -150,7 +170,7 @@ public class CommunityServiceImpl implements CommunityService {
         List<Post> posts = postDao.getByCommunityId(community.getId(), FIRST_RESULT, MAX_RESULTS);
         posts.forEach(post -> post.setDeleted(true));
         community.setDeleted(true);
-        community.setSubscribedUsers(new ArrayList<>());
+        community.setSubscribers(new ArrayList<>());
         community.setPosts(posts);
         communityDao.updateRecord(community);
     }

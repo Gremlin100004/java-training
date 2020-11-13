@@ -1,19 +1,23 @@
 package com.senla.socialnetwork.service;
 
-import com.senla.socialnetwork.dao.CommunityDao;
+import com.senla.socialnetwork.dao.UserProfileDao;
+import com.senla.socialnetwork.domain.UserProfile;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
+
+import java.util.List;
 
 @ComponentScan("com.senla.socialnetwork")
 @PropertySource("classpath:application.properties")
 public class Main {
     public static void main(String[] args) {
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Main.class);
-//        UserProfileDao userProfileDao = applicationContext.getBean(UserProfileDao.class);
-//        List<UserProfile> userProfileList = userProfileDao.getAllRecords();
-//        System.out.println(userProfileList);
+        UserProfileDao userProfileDao = applicationContext.getBean(UserProfileDao.class);
+        String email = "user1@test.com";
+        List<UserProfile> userProfileList = userProfileDao.getFriendsSortByNumberOfFriends(email, 0, 10);
+        System.out.println(userProfileList);
 //
 //        PublicMessageDao publicMessage = applicationContext.getBean(PublicMessageDao.class);
 //        List<PublicMessage> publicMessages = publicMessage.getAllRecords();
@@ -77,9 +81,9 @@ public class Main {
 //        CommunityDao communityDao = applicationContext.getBean(CommunityDao.class);
 //        System.out.println(communityDao.getSubscribedCommunitiesByEmail(email, 0, 0));
 
-        String email = "user3@test.com";
-        PostService postService = applicationContext.getBean(PostService.class);
-        System.out.println(postService.getPostsFromSubscribedCommunities(email, 0, 10));
+//        String email = "user3@test.com";
+//        CommunityService postService = applicationContext.getBean(CommunityService.class);
+//        System.out.println(postService.getCommunitiesSortiedByNumberOfSubscribers( 0, 10));
 //        UserProfileDao userProfileDao = applicationContext.getBean(UserProfileDao.class);
 //        System.out.println(userProfileDao.test());
 

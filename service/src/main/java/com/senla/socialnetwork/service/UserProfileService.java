@@ -31,7 +31,7 @@ public interface UserProfileService {
                                                       int firstResult,
                                                       int maxResults);
 
-    UserProfileDto getNearestDateOfBirth(String email);
+    UserProfileDto getFriendNearestDateOfBirth(String email);
 
     UserProfileDto getUserProfileFriend(String email, Long userProfileId);
 

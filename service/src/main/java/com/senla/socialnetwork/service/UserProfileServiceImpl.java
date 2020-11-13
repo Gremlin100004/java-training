@@ -131,7 +131,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public UserProfileDto getNearestDateOfBirth(String email) {
+    public UserProfileDto getFriendNearestDateOfBirth(String email) {
         UserProfile userProfile = userProfileDao.getNearestBirthdayByCurrentDate(email);
         if (userProfile == null) {
             userProfile = userProfileDao.getNearestBirthdayFromTheBeginningOfTheYear(email);
@@ -167,8 +167,10 @@ public class UserProfileServiceImpl implements UserProfileService {
         List<UserProfile> userProfiles;
         if (sortParameter.equals(UserProfileSortParameter.BY_BIRTHDAY)) {
             userProfiles = userProfileDao.getFriendsSortByAge(email, firstResult, maxResults);
-        } else if (sortParameter.equals(UserProfileSortParameter.BY_NUMBER_OF_FRIENDS)) {
+        } else if (sortParameter.equals(UserProfileSortParameter.BY_NAME)) {
             userProfiles = userProfileDao.getFriendsSortByName(email, firstResult, maxResults);
+        } else if (sortParameter.equals(UserProfileSortParameter.BY_NUMBER_OF_FRIENDS)) {
+            userProfiles = userProfileDao.getFriendsSortByNumberOfFriends(email, firstResult, maxResults);
         } else {
             throw new BusinessException("Error, wrong sorting parameter");
         }

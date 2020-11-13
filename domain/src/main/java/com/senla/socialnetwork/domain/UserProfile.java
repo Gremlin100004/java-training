@@ -25,7 +25,7 @@ import java.util.List;
 @Setter
 @ToString(exclude = {"systemUser", "publicMessages", "senderPrivateMessage", "recipientPrivateMessage",
                      "friendshipRequests", "friends", "mappedByFriends", "friendshipRequests",
-                     "mappedByFriendshipRequests", "ownCommunities", "subscribedToCommunities", "postComments"})
+                     "mappedByFriendshipRequests", "ownCommunities", "communitiesSubscribedTo", "postComments"})
 @NoArgsConstructor
 public class UserProfile extends AEntity {
     @OneToOne(fetch = FetchType.LAZY)
