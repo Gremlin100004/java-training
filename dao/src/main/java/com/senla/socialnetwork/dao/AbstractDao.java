@@ -42,7 +42,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     }
 
     @Override
-    public List<T> getAllRecords() {
+    public List<T> getAllRecords(int firstResult, int maxResults) {
         log.debug("[getAllRecords]");
         log.trace("[type: {}]", type);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -50,6 +50,10 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
         Root<T> root = criteriaQuery.from(type);
         criteriaQuery.select(root);
         TypedQuery<T> query = entityManager.createQuery(criteriaQuery);
+        query.setFirstResult(firstResult);
+        if (maxResults != 0) {
+            query.setMaxResults(maxResults);
+        }
         return query.getResultList();
     }
 
@@ -58,16 +62,6 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
         log.debug("[updateRecord]");
         log.trace("[entity: {}]", entity);
         entityManager.merge(entity);
-    }
-
-    //Todo think need it?
-    @Override
-    public void updateAllRecords(List<T> entities) {
-        log.debug("[updateAllRecords]");
-        log.trace("[entities: {}]", entities);
-        for (T entity : entities) {
-            entityManager.merge(entity);
-        }
     }
 
     @Override

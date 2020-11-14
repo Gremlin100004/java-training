@@ -4,7 +4,6 @@ import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.domain.PostComment;
 import com.senla.socialnetwork.domain.PostComment_;
 import com.senla.socialnetwork.domain.Post_;
-import com.senla.socialnetwork.domain.PublicMessageComment;
 import com.senla.socialnetwork.domain.PublicMessageComment_;
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.SystemUser_;
@@ -60,7 +59,9 @@ public class PostCommentDaoImpl extends AbstractDao<PostComment, Long> implement
             Root<PostComment> postCommentRoot = criteriaQuery.from(PostComment.class);
             Join<PostComment, Post> postCommentPostJoin = postCommentRoot.join(PostComment_.post);
             criteriaQuery.select(postCommentRoot);
-            criteriaQuery.where(criteriaBuilder.equal(postCommentPostJoin.get(Post_.id), postId));
+            criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(
+                postCommentPostJoin.get(Post_.id), postId), criteriaBuilder.equal(
+                    postCommentPostJoin.get(Post_.isDeleted), false)));
             TypedQuery<PostComment> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
             if (maxResults != 0) {

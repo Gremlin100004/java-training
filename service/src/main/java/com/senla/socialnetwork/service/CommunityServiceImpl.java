@@ -41,12 +41,11 @@ public class CommunityServiceImpl implements CommunityService {
     @Autowired
     UniversityDao universityDao;
 
-    //Todo maybe do it with pagination
     @Override
     @Transactional
-    public List<CommunityDto> getAllCommunities() {
+    public List<CommunityDto> getAllCommunities(int firstResult, int maxResults) {
         log.debug("[getOwnCommunities]");
-        return CommunityMapper.getCommunityDto(communityDao.getAllRecords());
+        return CommunityMapper.getCommunityDto(communityDao.getAllRecords(firstResult, maxResults));
     }
 
     @Override
@@ -91,8 +90,6 @@ public class CommunityServiceImpl implements CommunityService {
         return CommunityMapper.getCommunityDto(
             communityDao.getSubscribedCommunitiesByEmail(email, firstResult, maxResults));
     }
-    //Todo filtered communities by type, by create date
-    // maybe you can join methods
 
     @Override
     @Transactional
@@ -158,10 +155,10 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void deleteCommunityByUser(String email, Long messageId) {
+    public void deleteCommunityByUser(String email, Long communityId) {
         log.debug("[deleteMessageByUser]");
-        log.debug("[email: {}, messageId: {}]", email, messageId);
-        Community community = communityDao.findByIdAndEmail(email, messageId);
+        log.debug("[email: {}, messageId: {}]", email, communityId);
+        Community community = communityDao.findByIdAndEmail(email, communityId);
         if (community == null) {
             throw new BusinessException("Error, there is no such message");
         } else if (community.isDeleted()) {
@@ -173,6 +170,17 @@ public class CommunityServiceImpl implements CommunityService {
         community.setSubscribers(new ArrayList<>());
         community.setPosts(posts);
         communityDao.updateRecord(community);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCommunity(Long communityId) {
+        log.debug("[deleteCommunity]");
+        log.debug("[communityId: {}]", communityId);
+        if (communityDao.findById(communityId) == null) {
+            throw new BusinessException("Error, there is no such community");
+        }
+        schoolDao.deleteRecord(communityId);
     }
 
 }

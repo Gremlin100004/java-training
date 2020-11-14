@@ -41,29 +41,18 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
+    public List<UserProfileDto> getUserProfiles(int firstResult, int maxResults) {
+        log.debug("[getUserProfiles]");
+        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        return UserProfileMapper.getUserProfileDto(userProfileDao.getAllRecords(firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
     public UserProfileDto getUserProfileFiltered(String email) {
         log.debug("[getUserProfile]");
         log.trace("[email: {}]", email);
         return UserProfileMapper.getUserProfileDto(userProfileDao.findByEmail(email));
-    }
-
-    @Override
-    @Transactional
-    public List<UserProfileDto> getUserProfiles() {
-        return UserProfileMapper.getUserProfileDto(userProfileDao.getAllRecords());
-    }
-
-    @Override
-    @Transactional
-    // ToDo maybe this method is wrong
-    public UserProfileDto addUserProfile(UserProfileDto userProfileDto) {
-        log.debug("[addUserProfile]");
-        log.trace("[userProfileDto: {}]", userProfileDto);
-        if (userProfileDto == null) {
-            throw new BusinessException("Error, null user profile");
-        }
-        return UserProfileMapper.getUserProfileDto(userProfileDao.saveRecord(UserProfileMapper.getUserProfile(
-            userProfileDto, userProfileDao, locationDao, schoolDao, universityDao)));
     }
 
     @Override
@@ -237,6 +226,17 @@ public class UserProfileServiceImpl implements UserProfileService {
         friends.add(userProfile);
         ownProfile.setFriends(friends);
         userProfileDao.updateRecord(ownProfile);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUserProfile(Long userProfileId) {
+        log.debug("[deleteSchool]");
+        log.debug("[userProfileId: {}]", userProfileId);
+        if (userProfileDao.findById(userProfileId) == null) {
+            throw new BusinessException("Error, there is no such profile");
+        }
+        userProfileDao.deleteRecord(userProfileId);
     }
 
 }

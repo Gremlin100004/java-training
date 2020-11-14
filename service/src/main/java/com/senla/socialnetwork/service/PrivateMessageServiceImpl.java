@@ -36,6 +36,14 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
+    public List<PrivateMessageDto> getPrivateMessages(int firstResult, int maxResults) {
+        log.debug("[getPrivateMessages]");
+        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.getAllRecords(firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
     public List<PrivateMessageDto> getUserProfileMessages(String email, int firstResult, int maxResults) {
         log.debug("[getUserProfileMessages]");
         log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
@@ -108,10 +116,10 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public void deleteMessageByUser(Long messageId) {
+    public void deleteMessageByUser(String email, Long messageId) {
         log.debug("[deleteMessageByUser]");
-        log.debug("[messageId: {}]", messageId);
-        PrivateMessage privateMessage = privateMessageDao.findById(messageId);
+        log.debug("[email: {}, messageId: {}]", email, messageId);
+        PrivateMessage privateMessage = privateMessageDao.findByIdAndEmail(email, messageId);
         if (privateMessage == null) {
             throw new BusinessException("Error, there is no such message");
         } else if (privateMessage.isDeleted()) {
@@ -126,6 +134,9 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     public void deleteMessage(Long messageId) {
         log.debug("[deleteMessageByUser]");
         log.debug("[messageId: {}]", messageId);
+        if (privateMessageDao.findById(messageId) == null) {
+            throw new BusinessException("Error, there is no such message");
+        }
         privateMessageDao.deleteRecord(messageId);
     }
 

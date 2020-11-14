@@ -40,9 +40,9 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public List<PostCommentDto> getComments() {
+    public List<PostCommentDto> getComments(int firstResult, int maxResults) {
         log.debug("[getComments]");
-        return PostCommentMapper.getPostCommentDto(postCommentDao.getAllRecords());
+        return PostCommentMapper.getPostCommentDto(postCommentDao.getAllRecords(firstResult, maxResults));
     }
 
     @Override
@@ -99,6 +99,9 @@ public class PostCommentServiceImpl implements PostCommentService {
     public void deleteComment(Long commentId) {
         log.debug("[deleteComment]");
         log.debug("[commentId: {}]", commentId);
+        if (postCommentDao.findById(commentId) == null) {
+            throw new BusinessException("Error, there is no such comment");
+        }
         postCommentDao.deleteRecord(commentId);
     }
 

@@ -11,11 +11,9 @@ public interface GenericDao <T, PK extends Serializable> {
 
     T findById(PK id);
 
-    List<T> getAllRecords();
+    List<T> getAllRecords(int firstResult, int maxResults);
 
     void updateRecord(T object);
-
-    void updateAllRecords(List<T> objects);
 
     void deleteRecord(PK id);
 

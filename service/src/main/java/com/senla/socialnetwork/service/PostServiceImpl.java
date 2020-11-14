@@ -44,6 +44,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    public List<PostDto> getPosts(int firstResult, int maxResults) {
+        log.debug("[getPosts]");
+        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        return PostMapper.getPostDto(postDao.getAllRecords(firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
     public List<PostDto> getCommunityPosts(Long communityId, int firstResult, int maxResults) {
         log.debug("[getUserProfileMessages]");
         log.debug("[communityId: {}, firstResult: {}, maxResults: {}]", communityId, firstResult, maxResults);
@@ -69,6 +77,8 @@ public class PostServiceImpl implements PostService {
         Community community = communityDao.findByIdAndEmail(email, communityId);
         if (community == null) {
             throw new BusinessException("Error, there is no such community");
+        } else if (community.isDeleted()) {
+            throw new BusinessException("Error, the message has already been deleted");
         }
         List<Post> posts = postDao.getByCommunityId(communityId, FIRST_RESULT, MAX_RESULTS);
         posts.add(PostMapper.getPost(
@@ -91,7 +101,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void deletePost(Long postId) {
+    public void deletePostByUser(Long postId) {
         log.debug("[deleteMessageByUser]");
         log.debug("[postId: {}]", postId);
         Post post = postDao.findById(postId);
@@ -102,7 +112,20 @@ public class PostServiceImpl implements PostService {
         }
         post.setDeleted(true);
         List<PostComment> comments = postCommentDao.getPostComments(postId, FIRST_RESULT, MAX_RESULTS);
+        comments.forEach(postComment -> postComment.setDeleted(true));
+        post.setPostComments(comments);
         postDao.updateRecord(post);
+    }
+
+    @Override
+    @Transactional
+    public void deletePost(Long postId) {
+        log.debug("[deleteSchool]");
+        log.debug("[postId: {}]", postId);
+        if (postDao.findById(postId) == null) {
+            throw new BusinessException("Error, there is no such post");
+        }
+        postDao.deleteRecord(postId);
     }
 
 }

@@ -41,7 +41,9 @@ public class PublicMessageDaoImpl extends AbstractDao<PublicMessage, Long> imple
             Root<PublicMessage> publicMessageRoot = criteriaQuery.from(PublicMessage.class);
             Join<PublicMessage, UserProfile> publicMessageUserProfileJoin = publicMessageRoot.join(PublicMessage_.author);
             criteriaQuery.select(publicMessageRoot);
-            criteriaQuery.where(publicMessageUserProfileJoin.get(UserProfile_.id).in(subquery));
+            criteriaQuery.where(criteriaBuilder.and(publicMessageUserProfileJoin.get(
+                UserProfile_.id).in(subquery), criteriaBuilder.equal(publicMessageRoot.get(
+                    PublicMessage_.isDeleted), false)));
             criteriaQuery.orderBy(criteriaBuilder.asc(publicMessageRoot.get(PublicMessage_.creationDate)));
             TypedQuery<PublicMessage> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
@@ -64,7 +66,9 @@ public class PublicMessageDaoImpl extends AbstractDao<PublicMessage, Long> imple
             Join<PublicMessage, UserProfile> publicMessageUserProfileJoin = publicMessageRoot.join(PublicMessage_.author);
             Join<UserProfile, SystemUser> userProfileSystemUserJoin = publicMessageUserProfileJoin.join(UserProfile_.systemUser);
             criteriaQuery.select(publicMessageRoot);
-            criteriaQuery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
+            criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(userProfileSystemUserJoin.get(
+                SystemUser_.email), email), criteriaBuilder.equal(
+                    publicMessageRoot.get(PublicMessage_.isDeleted), false)));
             criteriaQuery.orderBy(criteriaBuilder.asc(publicMessageRoot.get(PublicMessage_.creationDate)));
             TypedQuery<PublicMessage> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);

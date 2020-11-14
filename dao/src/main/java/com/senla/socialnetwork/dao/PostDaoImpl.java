@@ -64,7 +64,8 @@ public class PostDaoImpl extends AbstractDao<Post, Long> implements PostDao {
                 Community_.posts);
             Join<UserProfile, SystemUser> userProfileSystemUserJoin = userProfileRoot.join(UserProfile_.systemUser);
             criteriaQuery.select(userProfileCommunityListJoin.get(Community_.POSTS));
-            criteriaQuery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
+            criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(userProfileSystemUserJoin.get(
+                SystemUser_.email), email), criteriaBuilder.equal(communityPostJoin.get(Post_.isDeleted), false)));
             criteriaQuery.orderBy(criteriaBuilder.desc(communityPostJoin.get(Post_.creationDate)));
             TypedQuery<Post> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);

@@ -12,11 +12,9 @@ import java.util.List;
 public interface UserProfileService {
     UserProfileDto getUserProfileFiltered(String email);
 
-    UserProfileDto addUserProfile(UserProfileDto userProfileDto);
-
     void updateUserProfile(UserProfileDto userProfileDto);
 
-    List<UserProfileDto> getUserProfiles();
+    List<UserProfileDto> getUserProfiles(int firstResult, int maxResults);
 
     List<UserProfileDto> getSortUserProfiles(UserProfileSortParameter sortParameter, int firstResult, int maxResults);
 
@@ -49,5 +47,7 @@ public interface UserProfileService {
     void confirmFriend(String email, Long userProfileId);
 
     void removeUserFromFriends(String email, Long userProfileId);
+
+    void deleteUserProfile(Long userProfileId);
 
 }

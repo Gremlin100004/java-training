@@ -25,7 +25,7 @@ import java.util.List;
 @Setter
 @ToString(exclude = {"systemUser", "publicMessages", "senderPrivateMessage", "recipientPrivateMessage",
                      "friendshipRequests", "friends", "mappedByFriends", "friendshipRequests",
-                     "mappedByFriendshipRequests", "ownCommunities", "communitiesSubscribedTo", "postComments"})
+                     "mappedByFriendshipRequests", "ownCommunities", "communitiesSubscribedTo"})
 @NoArgsConstructor
 public class UserProfile extends AEntity {
     @OneToOne(fetch = FetchType.LAZY)
@@ -56,32 +56,24 @@ public class UserProfile extends AEntity {
     private Integer universityGraduationYear;
     @OneToMany(mappedBy = "author")
     private List<PublicMessage> publicMessages = new ArrayList<>();
-
-    // ToDo need this field ?
     @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
     private List<PrivateMessage> senderPrivateMessage = new ArrayList<>();
     @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY)
     private List<PrivateMessage> recipientPrivateMessage = new ArrayList<>();
-
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "friendship_requests", joinColumns = @JoinColumn(name = "user_profiles_id"),
         inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private List<UserProfile> friendshipRequests = new ArrayList<>();
     @ManyToMany(mappedBy = "friendshipRequests", fetch = FetchType.LAZY)
     private List<UserProfile> mappedByFriendshipRequests = new ArrayList<>();
-
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "friends", joinColumns = @JoinColumn(name = "user_profiles_id"),
         inverseJoinColumns = @JoinColumn(name = "friend_id"))
     private List<UserProfile> friends = new ArrayList<>();
     @ManyToMany(mappedBy = "friends", fetch = FetchType.LAZY)
     private List<UserProfile> mappedByFriends = new ArrayList<>();
-
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private List<Community> ownCommunities = new ArrayList<>();
-    // ToDo need this field ?
-    @OneToMany(mappedBy = "author")
-    private List<PostComment> postComments = new ArrayList<>();
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "community_user", joinColumns = @JoinColumn(name = "users_id"),
         inverseJoinColumns = @JoinColumn(name = "communities_id"))

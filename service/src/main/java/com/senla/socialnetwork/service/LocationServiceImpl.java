@@ -21,9 +21,9 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     @Transactional
-    public List<LocationDto> getLocations() {
+    public List<LocationDto> getLocations(int firstResult, int maxResults) {
         log.debug("[getLocations]");
-        return LocationMapper.getLocationDto(locationDao.getAllRecords());
+        return LocationMapper.getLocationDto(locationDao.getAllRecords(firstResult, maxResults));
     }
 
     @Override
@@ -54,6 +54,9 @@ public class LocationServiceImpl implements LocationService {
     public void deleteLocation(Long locationId) {
         log.debug("[deleteLocation]");
         log.debug("[locationId: {}]", locationId);
+        if (locationDao.findById(locationId) == null) {
+            throw new BusinessException("Error, there is no such location");
+        }
         locationDao.deleteRecord(locationId);
     }
 

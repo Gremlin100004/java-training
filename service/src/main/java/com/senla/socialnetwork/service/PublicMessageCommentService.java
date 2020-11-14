@@ -5,7 +5,7 @@ import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import java.util.List;
 
 public interface PublicMessageCommentService {
-    List<PublicMessageCommentDto> getComments();
+    List<PublicMessageCommentDto> getComments(int firstResult, int maxResults);
 
     List<PublicMessageCommentDto> getPublicMessageComments(Long publicMessageId, int firstResult, int maxResults);
 

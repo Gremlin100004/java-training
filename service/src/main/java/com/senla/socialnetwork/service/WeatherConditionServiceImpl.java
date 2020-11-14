@@ -3,7 +3,6 @@ package com.senla.socialnetwork.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senla.socialnetwork.dao.LocationDao;
-import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.dao.WeatherConditionDao;
 import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.domain.WeatherCondition;
@@ -21,6 +20,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @NoArgsConstructor
@@ -39,8 +39,6 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     @Value("${com.senla.socialnetwork.service.WeatherConditionServiceImpl.updateTime:2000}")
     private Long updateTime;
     @Autowired
-    private UserProfileDao userProfileDao;
-    @Autowired
     private LocationDao locationDao;
     @Autowired
     private WeatherConditionDao weatherConditionDao;
@@ -48,6 +46,14 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     private RestTemplate restTemplate;
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Override
+    @Transactional
+    public List<WeatherConditionDto> getWeatherConditions(int firstResult, int maxResults) {
+        log.debug("[getWeatherConditions]");
+        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        return WeatherConditionMapper.getWeatherConditionDto(weatherConditionDao.getAllRecords(firstResult, maxResults));
+    }
 
     @Override
     @Transactional
@@ -116,6 +122,17 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
             log.error(exception.getResponseBodyAsString());
             return null;
         }
+    }
+
+    @Override
+    @Transactional
+    public void deleteWeatherCondition(Long weatherConditionId) {
+        log.debug("[deleteWeatherCondition]");
+        log.debug("[weatherConditionId: {}]", weatherConditionId);
+        if (weatherConditionDao.findById(weatherConditionId) == null) {
+            throw new BusinessException("Error, there is no such weather condition");
+        }
+        weatherConditionDao.deleteRecord(weatherConditionId);
     }
 
 }

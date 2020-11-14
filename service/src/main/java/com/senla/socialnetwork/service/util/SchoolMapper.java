@@ -5,6 +5,9 @@ import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.domain.School;
 import com.senla.socialnetwork.dto.SchoolDto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class SchoolMapper {
     public static SchoolDto getSchoolDto(School school) {
         SchoolDto schoolDto = new SchoolDto();
@@ -12,6 +15,12 @@ public class SchoolMapper {
         schoolDto.setName(school.getName());
         schoolDto.setLocation(LocationMapper.getLocationDto(school.getLocation()));
         return schoolDto;
+    }
+
+    public static List<SchoolDto> getSchoolDto(List<School> schools) {
+        return schools.stream()
+            .map(SchoolMapper::getSchoolDto)
+            .collect(Collectors.toList());
     }
 
     public static School getSchool(SchoolDto schoolDto, SchoolDao schoolDao, LocationDao locationDao) {

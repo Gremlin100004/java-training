@@ -49,7 +49,6 @@ public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageCommen
         }
     }
 
-    //Todo pagination
     @Override
     public List<PublicMessageComment> getPublicMessageComments(Long publicMessageId, int firstResult, int maxResults) {
         log.debug("[getPublicMessageComments]");
@@ -61,8 +60,9 @@ public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageCommen
             Join<PublicMessageComment, PublicMessage> publicMessageCommentPublicMessageJoin = publicMessageCommentRoot.join(
                 PublicMessageComment_.publicMessage);
             criteriaQuery.select(publicMessageCommentRoot);
-            criteriaQuery.where(criteriaBuilder.equal(
-                publicMessageCommentPublicMessageJoin.get(PublicMessage_.id), publicMessageId));
+            criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(
+                publicMessageCommentPublicMessageJoin.get(PublicMessage_.id), publicMessageId), criteriaBuilder.equal(
+                    publicMessageCommentRoot.get(PublicMessageComment_.isDeleted), false)));
             TypedQuery<PublicMessageComment> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
             if (maxResults != 0) {

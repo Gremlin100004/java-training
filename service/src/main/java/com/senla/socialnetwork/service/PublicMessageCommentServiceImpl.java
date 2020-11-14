@@ -37,9 +37,11 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public List<PublicMessageCommentDto> getComments() {
+    public List<PublicMessageCommentDto> getComments(int firstResult, int maxResults) {
         log.debug("[Comments]");
-        return PublicMessageCommentMapper.getPublicMessageCommentDto(publicMessageCommentDao.getAllRecords());
+        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        return PublicMessageCommentMapper.getPublicMessageCommentDto(
+            publicMessageCommentDao.getAllRecords(firstResult, maxResults));
     }
 
     @Override
@@ -98,6 +100,9 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
     public void deleteComment(Long commentId) {
         log.debug("[deleteComment]");
         log.debug("[commentId: {}]", commentId);
+        if (publicMessageCommentDao.findById(commentId) == null) {
+            throw new BusinessException("Error, there is no such comment");
+        }
         publicMessageCommentDao.deleteRecord(commentId);
     }
 }

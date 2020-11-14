@@ -5,6 +5,9 @@ import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.dto.UniversityDto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class UniversityMapper {
     public static UniversityDto getUniversityDto(University university) {
         UniversityDto universityDto = new UniversityDto();
@@ -12,6 +15,12 @@ public class UniversityMapper {
         universityDto.setName(university.getName());
         universityDto.setLocation(LocationMapper.getLocationDto(university.getLocation()));
         return universityDto;
+    }
+
+    public static List<UniversityDto> getUniversityDto(List<University> universities) {
+        return universities.stream()
+            .map(UniversityMapper::getUniversityDto)
+            .collect(Collectors.toList());
     }
 
     public static University getUniversity(UniversityDto universityDto,

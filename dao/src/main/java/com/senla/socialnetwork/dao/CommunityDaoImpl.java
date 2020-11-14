@@ -54,7 +54,9 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
             criteriaQuery.select(communityRoot);
-            criteriaQuery.where(criteriaBuilder.equal(communityRoot.get(Community_.type), communityType));
+            criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(
+                communityRoot.get(Community_.type), communityType), criteriaBuilder.equal(communityRoot.get(
+                    Community_.isDeleted), false)));
             criteriaQuery.orderBy(criteriaBuilder.desc(communityRoot.get(Community_.creationDate)));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
@@ -75,6 +77,7 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
             criteriaQuery.select(communityRoot);
+            criteriaQuery.where(criteriaBuilder.equal(communityRoot.get(Community_.isDeleted), false));
             criteriaQuery.orderBy(criteriaBuilder.desc(criteriaBuilder.size(communityRoot.get(Community_.subscribers))));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
@@ -93,14 +96,15 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
-            Root<Community> CommunityRoot = criteriaQuery.from(Community.class);
+            Root<Community> communityRoot = criteriaQuery.from(Community.class);
             Join<Community, UserProfile>
-                CommunityUserProfileJoin = CommunityRoot.join(Community_.author);
+                CommunityUserProfileJoin = communityRoot.join(Community_.author);
             Join<UserProfile, SystemUser> userProfileSystemUserJoin = CommunityUserProfileJoin.join(
                 UserProfile_.systemUser);
-            criteriaQuery.select(CommunityRoot);
-            criteriaQuery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
-            criteriaQuery.orderBy(criteriaBuilder.desc(CommunityRoot.get(Community_.creationDate)));
+            criteriaQuery.select(communityRoot);
+            criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(userProfileSystemUserJoin.get(
+                SystemUser_.email), email), criteriaBuilder.equal(communityRoot.get(Community_.isDeleted), false)));
+            criteriaQuery.orderBy(criteriaBuilder.desc(communityRoot.get(Community_.creationDate)));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
             typedQuery.setMaxResults(maxResults);
@@ -120,9 +124,12 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
             Join<UserProfile, SystemUser> userProfileSystemUserJoin = userProfileRoot.join(UserProfile_.systemUser);
-            Join<UserProfile, Community> userProfileCommunityJoin = userProfileRoot.join(UserProfile_.communitiesSubscribedTo);
+            Join<UserProfile, Community> userProfileCommunityJoin = userProfileRoot.join(
+                UserProfile_.communitiesSubscribedTo);
             criteriaQuery.select(userProfileRoot.get(UserProfile_.COMMUNITIES_SUBSCRIBED_TO));
-            criteriaQuery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
+            criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(userProfileSystemUserJoin.get(
+                SystemUser_.email), email), criteriaBuilder.equal(userProfileCommunityJoin.get(
+                    Community_.isDeleted), false)));
             criteriaQuery.orderBy(criteriaBuilder.desc(userProfileCommunityJoin.get(Community_.creationDate)));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);

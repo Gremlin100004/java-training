@@ -6,6 +6,8 @@ import java.sql.Date;
 import java.util.List;
 
 public interface PrivateMessageService {
+    List<PrivateMessageDto> getPrivateMessages(int firstResult, int maxResults);
+
     List<PrivateMessageDto> getUserProfileMessages(String email, int firstResult, int maxResults);
 
     List<PrivateMessageDto> getDialogue(String email, Long userProfileId, int firstResult, int maxResults);
@@ -22,7 +24,7 @@ public interface PrivateMessageService {
 
     void updateMessage(PrivateMessageDto privateMessageDto);
 
-    void deleteMessageByUser(Long messageId);
+    void deleteMessageByUser(String email, Long messageId);
 
     void deleteMessage(Long messageId);
 
