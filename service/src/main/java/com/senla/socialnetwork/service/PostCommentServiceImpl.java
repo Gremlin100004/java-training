@@ -47,14 +47,6 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public List<PostCommentDto> getPostComments(Long postId, int firstResult, int maxResults) {
-        log.debug("[getPostComments]");
-        log.trace("[postId: {}, firstResult: {}, maxResults: {}]", postId, firstResult, maxResults);
-        return PostCommentMapper.getPostCommentDto(postCommentDao.getPostComments(postId, firstResult, maxResults));
-    }
-
-    @Override
-    @Transactional
     public PostCommentDto addComment(PostCommentDto postCommentDto) {
         log.debug("[addComment]");
         log.debug("[postCommentDto: {}]", postCommentDto);

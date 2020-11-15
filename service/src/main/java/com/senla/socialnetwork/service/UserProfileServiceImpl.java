@@ -1,17 +1,23 @@
 package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dao.LocationDao;
+import com.senla.socialnetwork.dao.PrivateMessageDao;
+import com.senla.socialnetwork.dao.PublicMessageDao;
 import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.LocationDto;
+import com.senla.socialnetwork.dto.PrivateMessageDto;
+import com.senla.socialnetwork.dto.PublicMessageDto;
 import com.senla.socialnetwork.dto.SchoolDto;
 import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.dto.UserProfileDto;
 import com.senla.socialnetwork.service.enumaration.UserProfileSortParameter;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.LocationMapper;
+import com.senla.socialnetwork.service.util.PrivateMessageMapper;
+import com.senla.socialnetwork.service.util.PublicMessageMapper;
 import com.senla.socialnetwork.service.util.SchoolMapper;
 import com.senla.socialnetwork.service.util.UniversityMapper;
 import com.senla.socialnetwork.service.util.UserProfileMapper;
@@ -38,6 +44,10 @@ public class UserProfileServiceImpl implements UserProfileService {
     private SchoolDao schoolDao;
     @Autowired
     private UniversityDao universityDao;
+    @Autowired
+    private PrivateMessageDao privateMessageDao;
+    @Autowired
+    private PublicMessageDao publicMessageDao;
 
     @Override
     @Transactional
@@ -49,7 +59,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public UserProfileDto getUserProfileFiltered(String email) {
+    public UserProfileDto getUserProfile(String email) {
         log.debug("[getUserProfile]");
         log.trace("[email: {}]", email);
         return UserProfileMapper.getUserProfileDto(userProfileDao.findByEmail(email));
@@ -84,7 +94,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public List<UserProfileDto> getUserProfileFiltered(LocationDto locationDto, int firstResult, int maxResults) {
+    public List<UserProfileDto> getUserProfiles(LocationDto locationDto, int firstResult, int maxResults) {
         log.debug("[getUserProfileFiltered]");
         log.trace("[locationDto: {}]", locationDto);
         return UserProfileMapper.getUserProfileDto(userProfileDao.getUserProfilesFilteredByLocation(
@@ -93,7 +103,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public List<UserProfileDto> getUserProfileFiltered(SchoolDto schoolDto, int firstResult, int maxResults) {
+    public List<UserProfileDto> getUserProfiles(SchoolDto schoolDto, int firstResult, int maxResults) {
         log.debug("[getUserProfileFiltered]");
         log.trace("[schoolDto: {}]", schoolDto);
         return UserProfileMapper.getUserProfileDto(
@@ -103,7 +113,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public List<UserProfileDto> getUserProfileFiltered(UniversityDto universityDto, int firstResult, int maxResults) {
+    public List<UserProfileDto> getUserProfiles(UniversityDto universityDto, int firstResult, int maxResults) {
         log.debug("[getUserProfileFiltered]");
         log.trace("[schoolDto: {}]", universityDto);
         return UserProfileMapper.getUserProfileDto(userProfileDao.getUserProfilesFilteredByUniversity(
@@ -237,6 +247,55 @@ public class UserProfileServiceImpl implements UserProfileService {
             throw new BusinessException("Error, there is no such profile");
         }
         userProfileDao.deleteRecord(userProfileId);
+    }
+
+    @Override
+    @Transactional
+    public List<PrivateMessageDto> getPrivateMessages(String email, int firstResult, int maxResults) {
+        log.debug("[getUserProfileMessages]");
+        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        UserProfile ownProfile = userProfileDao.findByEmail(email);
+        if (ownProfile == null) {
+            throw new BusinessException("Error, user with this email does not exist");
+        }
+        return PrivateMessageMapper.getPrivateMessageDto(
+            privateMessageDao.getByEmail(email, firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public List<PrivateMessageDto> getDialogue(String email, Long userProfileId, int firstResult, int maxResults) {
+        log.debug("[getDialogue]");
+        log.debug("[email: {}, userProfileId: {}, firstResult: {}, maxResults: {}]",
+                  email, userProfileId, firstResult, maxResults);
+        return PrivateMessageMapper.getPrivateMessageDto(
+            privateMessageDao.getDialogue(email, userProfileId, firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public List<PrivateMessageDto> getUnreadMessages(String email, int firstResult, int maxResults) {
+        log.debug("[getUnreadMessages]");
+        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        return PrivateMessageMapper.getPrivateMessageDto(
+            privateMessageDao.getUnreadMessages(email, firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public List<PublicMessageDto> getFriendsPublicMessages(String email, int firstResult, int maxResults) {
+        log.debug("[getFriendsPublicMessages]");
+        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        return PublicMessageMapper.getPublicMessageDto(
+            publicMessageDao.getFriendsMessages(email, firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public List<PublicMessageDto> getPublicMessages(String email, int firstResult, int maxResults) {
+        log.debug("[getPublicMessages]");
+        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        return PublicMessageMapper.getPublicMessageDto(publicMessageDao.getByEmail(email, firstResult, maxResults));
     }
 
 }

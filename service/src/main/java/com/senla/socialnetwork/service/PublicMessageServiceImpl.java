@@ -8,8 +8,10 @@ import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessage;
 import com.senla.socialnetwork.domain.PublicMessageComment;
+import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.util.PublicMessageCommentMapper;
 import com.senla.socialnetwork.service.util.PublicMessageMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,23 +46,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
         log.debug("[getSchools]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PublicMessageMapper.getPublicMessageDto(publicMessageDao.getAllRecords(firstResult, maxResults));
-    }
-
-    @Override
-    @Transactional
-    public List<PublicMessageDto> getFriendsMessages(String email, int firstResult, int maxResults) {
-        log.debug("[getUserProfileMessages]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        return PublicMessageMapper.getPublicMessageDto(
-            publicMessageDao.getFriendsMessages(email, firstResult, maxResults));
-    }
-
-    @Override
-    @Transactional
-    public List<PublicMessageDto> getUserProfileMessages(String email, int firstResult, int maxResults) {
-        log.debug("[getUserProfileMessages]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        return PublicMessageMapper.getPublicMessageDto(publicMessageDao.getByEmail(email, firstResult, maxResults));
     }
 
     @Override
@@ -116,6 +101,15 @@ public class PublicMessageServiceImpl implements PublicMessageService {
             throw new BusinessException("Error, there is no such message");
         }
         publicMessageDao.deleteRecord(messageId);
+    }
+
+    @Override
+    @Transactional
+    public List<PublicMessageCommentDto> getPublicMessageComments(Long publicMessageId, int firstResult, int maxResults) {
+        log.debug("[getPublicMessageComments]");
+        log.trace("[publicMessageId: {}]", publicMessageId);
+        return PublicMessageCommentMapper.getPublicMessageCommentDto(
+            publicMessageCommentDao.getPublicMessageComments(publicMessageId, firstResult, maxResults));
     }
 
 }

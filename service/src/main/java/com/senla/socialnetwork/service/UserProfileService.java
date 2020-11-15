@@ -1,6 +1,8 @@
 package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dto.LocationDto;
+import com.senla.socialnetwork.dto.PrivateMessageDto;
+import com.senla.socialnetwork.dto.PublicMessageDto;
 import com.senla.socialnetwork.dto.SchoolDto;
 import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.dto.UserProfileDto;
@@ -10,7 +12,7 @@ import java.sql.Date;
 import java.util.List;
 
 public interface UserProfileService {
-    UserProfileDto getUserProfileFiltered(String email);
+    UserProfileDto getUserProfile(String email);
 
     void updateUserProfile(UserProfileDto userProfileDto);
 
@@ -18,11 +20,11 @@ public interface UserProfileService {
 
     List<UserProfileDto> getSortUserProfiles(UserProfileSortParameter sortParameter, int firstResult, int maxResults);
 
-    List<UserProfileDto> getUserProfileFiltered(LocationDto locationDto, int firstResult, int maxResults);
+    List<UserProfileDto> getUserProfiles(LocationDto locationDto, int firstResult, int maxResults);
 
-    List<UserProfileDto> getUserProfileFiltered(SchoolDto schoolDto, int firstResult, int maxResults);
+    List<UserProfileDto> getUserProfiles(SchoolDto schoolDto, int firstResult, int maxResults);
 
-    List<UserProfileDto> getUserProfileFiltered(UniversityDto universityDto, int firstResult, int maxResults);
+    List<UserProfileDto> getUserProfiles(UniversityDto universityDto, int firstResult, int maxResults);
 
     List<UserProfileDto> getUserProfilesFilteredByAge(Date startPeriodDate,
                                                       Date endPeriodDate,
@@ -50,4 +52,13 @@ public interface UserProfileService {
 
     void deleteUserProfile(Long userProfileId);
 
+    List<PrivateMessageDto> getPrivateMessages(String email, int firstResult, int maxResults);
+
+    List<PrivateMessageDto> getDialogue(String email, Long userProfileId, int firstResult, int maxResults);
+
+    List<PrivateMessageDto> getUnreadMessages(String email, int firstResult, int maxResults);
+
+    List<PublicMessageDto> getFriendsPublicMessages(String email, int firstResult, int maxResults);
+
+    List<PublicMessageDto> getPublicMessages(String email, int firstResult, int maxResults);
 }

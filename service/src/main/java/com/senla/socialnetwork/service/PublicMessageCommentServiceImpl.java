@@ -46,15 +46,6 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public List<PublicMessageCommentDto> getPublicMessageComments(Long publicMessageId, int firstResult, int maxResults) {
-        log.debug("[getPublicMessageComments]");
-        log.trace("[publicMessageId: {}]", publicMessageId);
-        return PublicMessageCommentMapper.getPublicMessageCommentDto(
-            publicMessageCommentDao.getPublicMessageComments(publicMessageId, firstResult, maxResults));
-    }
-
-    @Override
-    @Transactional
     public PublicMessageCommentDto addComment(PublicMessageCommentDto publicMessageCommentDto) {
         log.debug("[addComment]");
         log.debug("[publicMessageCommentDto: {}]", publicMessageCommentDto);

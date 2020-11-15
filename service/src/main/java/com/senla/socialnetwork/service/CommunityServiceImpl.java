@@ -11,8 +11,10 @@ import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.CommunityDto;
+import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.CommunityMapper;
+import com.senla.socialnetwork.service.util.PostMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,6 +132,14 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
+    public List<PostDto> getCommunityPosts(Long communityId, int firstResult, int maxResults) {
+        log.debug("[getUserProfileMessages]");
+        log.debug("[communityId: {}, firstResult: {}, maxResults: {}]", communityId, firstResult, maxResults);
+        return PostMapper.getPostDto(postDao.getByCommunityId(communityId, firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
     public CommunityDto addCommunity(CommunityDto communityDto) {
         log.debug("[addCommunity]");
         log.debug("[CommunityDto: {}]", communityDto);
@@ -181,6 +191,27 @@ public class CommunityServiceImpl implements CommunityService {
             throw new BusinessException("Error, there is no such community");
         }
         schoolDao.deleteRecord(communityId);
+    }
+
+    @Override
+    @Transactional
+    public void addPostToCommunity(String email, PostDto postDto, Long communityId) {
+        log.debug("[addPosts]");
+        log.debug("[email: {}, postDto: {}, communityId: {}]", email,  postDto, communityId);
+        if (postDto == null) {
+            throw new BusinessException("Error, null post");
+        }
+        Community community = communityDao.findByIdAndEmail(email, communityId);
+        if (community == null) {
+            throw new BusinessException("Error, there is no such community");
+        } else if (community.isDeleted()) {
+            throw new BusinessException("Error, the message has already been deleted");
+        }
+        List<Post> posts = postDao.getByCommunityId(communityId, FIRST_RESULT, MAX_RESULTS);
+        posts.add(PostMapper.getPost(
+            postDto, postDao, communityDao, userProfileDao, locationDao, schoolDao, universityDao));
+        community.setPosts(posts);
+        communityDao.updateRecord(community);
     }
 
 }

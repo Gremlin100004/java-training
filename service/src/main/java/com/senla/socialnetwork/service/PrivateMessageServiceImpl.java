@@ -6,7 +6,6 @@ import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PrivateMessage;
-import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.PrivateMessageMapper;
@@ -24,9 +23,9 @@ import java.util.List;
 @Slf4j
 public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Autowired
-    UserProfileDao userProfileDao;
-    @Autowired
     PrivateMessageDao privateMessageDao;
+    @Autowired
+    UserProfileDao userProfileDao;
     @Autowired
     LocationDao locationDao;
     @Autowired
@@ -40,38 +39,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
         log.debug("[getPrivateMessages]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.getAllRecords(firstResult, maxResults));
-    }
-
-    @Override
-    @Transactional
-    public List<PrivateMessageDto> getUserProfileMessages(String email, int firstResult, int maxResults) {
-        log.debug("[getUserProfileMessages]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        UserProfile ownProfile = userProfileDao.findByEmail(email);
-        if (ownProfile == null) {
-            throw new BusinessException("Error, user with this email does not exist");
-        }
-        return PrivateMessageMapper.getPrivateMessageDto(
-            privateMessageDao.getByEmail(email, firstResult, maxResults));
-    }
-
-    @Override
-    @Transactional
-    public List<PrivateMessageDto> getDialogue(String email, Long userProfileId, int firstResult, int maxResults) {
-        log.debug("[getDialogue]");
-        log.debug("[email: {}, userProfileId: {}, firstResult: {}, maxResults: {}]",
-                  email, userProfileId, firstResult, maxResults);
-        return PrivateMessageMapper.getPrivateMessageDto(
-            privateMessageDao.getDialogue(email, userProfileId, firstResult, maxResults));
-    }
-
-    @Override
-    @Transactional
-    public List<PrivateMessageDto> getUnreadMessages(String email, int firstResult, int maxResults) {
-        log.debug("[getUnreadMessages]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        return PrivateMessageMapper.getPrivateMessageDto(
-            privateMessageDao.getUnreadMessages(email, firstResult, maxResults));
     }
 
     @Override

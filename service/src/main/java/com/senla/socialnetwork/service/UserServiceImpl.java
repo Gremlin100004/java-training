@@ -7,14 +7,21 @@ import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.UserMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -26,13 +33,13 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
     @Autowired
     private UserProfileDao userProfileDao;
-//    @Autowired
-//    private BCryptPasswordEncoder cryptPasswordEncoder;
-//    @Autowired
-//    private AuthenticationManager authenticationManager;
-    @Value("${com.senla.carservice.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    @Autowired
+    private BCryptPasswordEncoder cryptPasswordEncoder;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
-    @Value("${com.senla.carservice.controller.JwtUtil.expiration:3600000}")
+    @Value("${com.senla.socialnetwork.controller.JwtUtil.expiration:3600000}")
     private Integer expiration;
 
     @Override
@@ -45,28 +52,56 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto getUser() {
+    public UserDto getUser(String email) {
         log.debug("[getUser]");
-//        String email = authentication.getName();
-        String email = "";
         return UserMapper.getUserDto(userDao.findByEmail(email));
     }
 
-//    @Override
-//    public String logIn(UserDto userDto) {
-//        log.debug("[logIn]");
-//        SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
-//        if (systemUser == null) {
-//            throw new BusinessException("This email does not exist");
-//        }
-//        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDto.getEmail(),
-//                                                                                                     userDto.getPassword());
-//        authenticationManager.authenticate(authentication);
-//        List<SimpleGrantedAuthority> authorities = List.of(
-//            new SimpleGrantedAuthority(systemUser.getRole().toString()));
-//        User user = new User(userDto.getEmail(), userDto.getPassword(), authorities);
-//        return JwtUtil.generateToken(user, secretKey, expiration);
-//    }
+    @Override
+    @Transactional
+    public String getUserLogoutToken(String email) {
+        log.debug("[getUserLogoutToken]");
+        log.debug("[email: {}]", email);
+        String token = userDao.getLogoutToken(email);
+        if (token == null) {
+            token = "";
+        }
+        return token;
+    }
+
+    @Override
+    @Transactional
+    public String logIn(UserDto userDto) {
+        log.debug("[logIn]");
+        log.debug("[userDto: {}]", userDto);
+        String logoutToken = userDao.getLogoutToken(userDto.getEmail());
+        if (logoutToken != null) {
+            return logoutToken;
+        }
+        SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
+        if (systemUser == null) {
+            throw new BusinessException("This email does not exist");
+        }
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDto.getEmail(),
+            userDto.getPassword());
+        authenticationManager.authenticate(authentication);
+        List<SimpleGrantedAuthority> authorities = List.of(
+            new SimpleGrantedAuthority(systemUser.getRole().toString()));
+        User user = new User(userDto.getEmail(), userDto.getPassword(), authorities);
+        return JwtUtil.generateToken(user, secretKey, expiration);
+    }
+
+    @Override
+    @Transactional
+    public void logOut(String email, HttpServletRequest request) {
+        log.debug("[logOut]");
+        log.debug("[email: {}, request: {}]", email, request);
+        String token = JwtUtil.getToken(request);
+        if (token == null) {
+            throw new BusinessException("Logout error");
+        }
+        userDao.addLogoutToken(email, token);
+    }
 
     @Override
     @Transactional
@@ -80,7 +115,7 @@ public class UserServiceImpl implements UserService {
         if (systemUser != null) {
             throw new BusinessException("A user with this email address already exists");
         }
-//        userDto.setPassword(cryptPasswordEncoder.encode(userDto.getPassword()));
+        userDto.setPassword(cryptPasswordEncoder.encode(userDto.getPassword()));
         systemUser = UserMapper.getSystemUser(userDto);
         systemUser.setRole(RoleName.ROLE_USER);
         SystemUser savedSystemUser = userDao.saveRecord(systemUser);

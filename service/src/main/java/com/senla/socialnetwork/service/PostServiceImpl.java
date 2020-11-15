@@ -7,11 +7,12 @@ import com.senla.socialnetwork.dao.PostDao;
 import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
-import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.domain.PostComment;
+import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.util.PostCommentMapper;
 import com.senla.socialnetwork.service.util.PostMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,39 +53,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostDto> getCommunityPosts(Long communityId, int firstResult, int maxResults) {
-        log.debug("[getUserProfileMessages]");
-        log.debug("[communityId: {}, firstResult: {}, maxResults: {}]", communityId, firstResult, maxResults);
-        return PostMapper.getPostDto(postDao.getByCommunityId(communityId, firstResult, maxResults));
-    }
-
-    @Override
-    @Transactional
     public List<PostDto> getPostsFromSubscribedCommunities(String email, int firstResult, int maxResults) {
         log.debug("[getPostsFromSubscribedCommunities]");
         log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         return PostMapper.getPostDto(postDao.getByEmail(email, firstResult, maxResults));
-    }
-
-    @Override
-    @Transactional
-    public void addPostToCommunity(String email, PostDto postDto, Long communityId) {
-        log.debug("[addPosts]");
-        log.debug("[email: {}, postDto: {}, communityId: {}]", email,  postDto, communityId);
-        if (postDto == null) {
-            throw new BusinessException("Error, null post");
-        }
-        Community community = communityDao.findByIdAndEmail(email, communityId);
-        if (community == null) {
-            throw new BusinessException("Error, there is no such community");
-        } else if (community.isDeleted()) {
-            throw new BusinessException("Error, the message has already been deleted");
-        }
-        List<Post> posts = postDao.getByCommunityId(communityId, FIRST_RESULT, MAX_RESULTS);
-        posts.add(PostMapper.getPost(
-            postDto, postDao, communityDao, userProfileDao, locationDao, schoolDao, universityDao));
-        community.setPosts(posts);
-        communityDao.updateRecord(community);
     }
 
     @Override
@@ -126,6 +98,14 @@ public class PostServiceImpl implements PostService {
             throw new BusinessException("Error, there is no such post");
         }
         postDao.deleteRecord(postId);
+    }
+
+    @Override
+    @Transactional
+    public List<PostCommentDto> getPostComments(Long postId, int firstResult, int maxResults) {
+        log.debug("[getPostComments]");
+        log.trace("[postId: {}, firstResult: {}, maxResults: {}]", postId, firstResult, maxResults);
+        return PostCommentMapper.getPostCommentDto(postCommentDao.getPostComments(postId, firstResult, maxResults));
     }
 
 }

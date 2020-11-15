@@ -7,8 +7,6 @@ import java.util.List;
 public interface PostCommentService {
     List<PostCommentDto> getComments(int firstResult, int maxResults);
 
-    List<PostCommentDto> getPostComments(Long postId, int firstResult, int maxResults);
-
     PostCommentDto addComment(PostCommentDto postCommentDto);
 
     void updateComment(PostCommentDto postCommentDto);

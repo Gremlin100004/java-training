@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.CommunityDto;
+import com.senla.socialnetwork.dto.PostDto;
 
 import java.util.List;
 
@@ -22,12 +23,16 @@ public interface CommunityService {
 
     void unsubscribeFromCommunity(String email, Long communityId);
 
+    List<PostDto> getCommunityPosts(Long communityId, int firstResult, int maxResults);
+
     CommunityDto addCommunity(CommunityDto communityDto);
 
     void updateCommunity(CommunityDto communityDto);
 
-    void deleteCommunityByUser(String email, Long messageId);
+    void deleteCommunityByUser(String email, Long communityId);
 
     void deleteCommunity(Long communityId);
+
+    void addPostToCommunity(String email, PostDto postDto, Long communityId);
 
 }

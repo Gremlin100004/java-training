@@ -7,13 +7,11 @@ import java.util.List;
 public interface PublicMessageCommentService {
     List<PublicMessageCommentDto> getComments(int firstResult, int maxResults);
 
-    List<PublicMessageCommentDto> getPublicMessageComments(Long publicMessageId, int firstResult, int maxResults);
-
     PublicMessageCommentDto addComment(PublicMessageCommentDto publicMessageCommentDto);
 
     void updateComment(PublicMessageCommentDto publicMessageCommentDto);
 
-    void deleteCommentByUser(String email, Long messageId);
+    void deleteCommentByUser(String email, Long commentId);
 
     void deleteComment(Long commentId);
 
