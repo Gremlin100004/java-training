@@ -8,7 +8,7 @@ import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.dto.UserProfileDto;
 import com.senla.socialnetwork.service.enumaration.UserProfileSortParameter;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 public interface UserProfileService {

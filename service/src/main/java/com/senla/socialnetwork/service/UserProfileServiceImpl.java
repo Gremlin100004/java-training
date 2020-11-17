@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -190,6 +190,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         log.debug("[sendAFriendRequest]");
         log.debug("[email: {}, userProfileId: {}]", email, userProfileId);
         UserProfile ownProfile = userProfileDao.findByEmail(email);
+        if (ownProfile == null) {
+            throw new BusinessException("Error, this user is not exist");
+        }
         UserProfile userProfile = userProfileDao.getFutureFriend(email, userProfileId);
         if (userProfile == null) {
             throw new BusinessException("Error, this user is not suitable");
@@ -206,6 +209,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         log.debug("[confirmFriend]");
         log.debug("[email: {}, userProfileId: {}]", email, userProfileId);
         UserProfile ownProfile = userProfileDao.findByEmail(email);
+        if (ownProfile == null) {
+            throw new BusinessException("Error, this user is not exist");
+        }
         UserProfile userProfile = userProfileDao.getSignedFriend(email, userProfileId);
         if (userProfile == null) {
             throw new BusinessException("Error, this user is not suitable");
@@ -225,6 +231,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         log.debug("[removeUserFromFriends]");
         log.debug("[email: {}, userProfileId: {}]", email, userProfileId);
         UserProfile ownProfile = userProfileDao.findByEmail(email);
+        if (ownProfile == null) {
+            throw new BusinessException("Error, this user is not exist");
+        }
         UserProfile userProfile = userProfileDao.getFriend(email, userProfileId);
         if (userProfile == null) {
             throw new BusinessException("Error, this user is not suitable");

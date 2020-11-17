@@ -21,7 +21,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -204,7 +204,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
         log.trace("[email: {}]", email);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-            Expression<Date> currentDate = criteriaBuilder.currentDate();
+            Expression<java.sql.Date> currentDate = criteriaBuilder.currentDate();
             Expression<Integer> month = criteriaBuilder.function(PARAMETER_MONTH, Integer.class, currentDate);
             Expression<Integer> day = criteriaBuilder.function(PARAMETER_DAY, Integer.class, currentDate);
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);

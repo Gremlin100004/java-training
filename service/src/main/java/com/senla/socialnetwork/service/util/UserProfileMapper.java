@@ -16,15 +16,33 @@ public class UserProfileMapper {
         UserProfileDto userProfileDto = new UserProfileDto();
         userProfileDto.setId(userProfile.getId());
         userProfileDto.setRegistrationDate(userProfile.getRegistrationDate());
-        userProfileDto.setDateOfBirth(userProfile.getDateOfBirth());
-        userProfileDto.setName(userProfile.getName());
-        userProfileDto.setSurname(userProfile.getSurname());
-        userProfileDto.setTelephone_number(userProfile.getTelephone_number());
-        userProfileDto.setLocation(LocationMapper.getLocationDto(userProfile.getLocation()));
-        userProfileDto.setSchool(SchoolMapper.getSchoolDto(userProfile.getSchool()));
-        userProfileDto.setSchoolGraduationYear(userProfile.getSchoolGraduationYear());
-        userProfileDto.setUniversity(UniversityMapper.getUniversityDto(userProfile.getUniversity()));
-        userProfileDto.setUniversityGraduationYear(userProfile.getSchoolGraduationYear());
+        if (userProfile.getDateOfBirth() != null) {
+            userProfileDto.setDateOfBirth(userProfile.getDateOfBirth());
+        }
+        if (userProfile.getName() != null) {
+            userProfileDto.setName(userProfile.getName());
+        }
+        if (userProfile.getSurname() != null) {
+            userProfileDto.setSurname(userProfile.getSurname());
+        }
+        if (userProfile.getTelephone_number() != null) {
+            userProfileDto.setTelephone_number(userProfile.getTelephone_number());
+        }
+        if (userProfile.getLocation() != null) {
+            userProfileDto.setLocation(LocationMapper.getLocationDto(userProfile.getLocation()));
+        }
+        if (userProfile.getSchool() != null) {
+            userProfileDto.setSchool(SchoolMapper.getSchoolDto(userProfile.getSchool()));
+        }
+        if (userProfile.getSchoolGraduationYear() != null) {
+            userProfileDto.setSchoolGraduationYear(userProfile.getSchoolGraduationYear());
+        }
+        if (userProfile.getUniversity() != null) {
+            userProfileDto.setUniversity(UniversityMapper.getUniversityDto(userProfile.getUniversity()));
+        }
+        if (userProfile.getSchoolGraduationYear() != null) {
+            userProfileDto.setUniversityGraduationYear(userProfile.getSchoolGraduationYear());
+        }
         return userProfileDto;
     }
 
@@ -40,31 +58,34 @@ public class UserProfileMapper {
             userProfile = userProfileDao.findById(userProfileDto.getId());
         }
         userProfile.setRegistrationDate(userProfileDto.getRegistrationDate());
-        userProfile.setDateOfBirth(userProfileDto.getDateOfBirth());
-        userProfile.setName(userProfileDto.getName());
-        userProfile.setSurname(userProfileDto.getSurname());
-        userProfile.setTelephone_number(userProfileDto.getTelephone_number());
-        userProfile.setLocation(LocationMapper.getLocation(userProfileDto.getLocation(), locationDao));
-        userProfile.setSchool(SchoolMapper.getSchool(userProfileDto.getSchool(), schoolDao, locationDao));
-        userProfile.setSchoolGraduationYear(userProfileDto.getSchoolGraduationYear());
-        userProfile
-            .setUniversity(UniversityMapper.getUniversity(userProfileDto.getUniversity(), universityDao, locationDao));
-        userProfile.setUniversityGraduationYear(userProfileDto.getUniversityGraduationYear());
-        return userProfile;
-    }
-
-    public static List<UserProfile> getUserProfile(List<UserProfileDto> userProfilesDto,
-                                                   UserProfileDao userProfileDao,
-                                                   LocationDao locationDao,
-                                                   SchoolDao schoolDao,
-                                                   UniversityDao universityDao) {
-        List<UserProfile> userProfiles = new ArrayList<>();
-        for (UserProfileDto userProfileDto : userProfilesDto) {
-            UserProfile userProfile =
-                getUserProfile(userProfileDto, userProfileDao, locationDao, schoolDao, universityDao);
-            userProfiles.add(userProfile);
+        if (userProfileDto.getDateOfBirth() != null) {
+            userProfile.setDateOfBirth(userProfileDto.getDateOfBirth());
         }
-        return userProfiles;
+        if (userProfileDto.getName() != null) {
+            userProfile.setName(userProfileDto.getName());
+        }
+        if (userProfileDto.getSurname() != null) {
+            userProfile.setSurname(userProfileDto.getSurname());
+        }
+        if (userProfileDto.getTelephone_number() != null) {
+            userProfile.setTelephone_number(userProfileDto.getTelephone_number());
+        }
+        if (userProfileDto.getLocation() != null) {
+            userProfile.setLocation(LocationMapper.getLocation(userProfileDto.getLocation(), locationDao));
+        }
+        if (userProfileDto.getSchool() != null) {
+            userProfile.setSchool(SchoolMapper.getSchool(userProfileDto.getSchool(), schoolDao, locationDao));
+        }
+        if (userProfileDto.getSchoolGraduationYear() != null) {
+            userProfile.setSchoolGraduationYear(userProfileDto.getSchoolGraduationYear());
+        }
+        if (userProfileDto.getUniversity() != null) {
+            userProfile.setUniversity(UniversityMapper.getUniversity(userProfileDto.getUniversity(), universityDao, locationDao));
+        }
+        if (userProfileDto.getUniversityGraduationYear() != null) {
+            userProfile.setUniversityGraduationYear(userProfileDto.getUniversityGraduationYear());
+        }
+        return userProfile;
     }
 
     public static List<UserProfileDto> getUserProfileDto(List<UserProfile> userProfiles) {

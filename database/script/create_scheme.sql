@@ -126,7 +126,6 @@ CREATE TABLE IF NOT EXISTS posts (
   creation_date DATETIME NOT NULL,
   tittle VARCHAR(1000) NULL,
   content VARCHAR(8000) NULL,
-  author_id INT NOT NULL,
   communities_id INT NOT NULL,
   is_deleted BOOLEAN DEFAULT false,
   PRIMARY KEY pk_posts (id)
@@ -250,11 +249,6 @@ REFERENCES user_profiles (id) ON DELETE CASCADE;
 
 ALTER TABLE communities
 ADD CONSTRAINT fk_communities_users
-FOREIGN KEY (author_id)
-REFERENCES user_profiles (id) ON DELETE CASCADE;
-
-ALTER TABLE posts
-ADD CONSTRAINT fk_posts_users
 FOREIGN KEY (author_id)
 REFERENCES user_profiles (id) ON DELETE CASCADE;
 

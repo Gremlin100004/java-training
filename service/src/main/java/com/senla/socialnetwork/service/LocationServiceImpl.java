@@ -31,9 +31,6 @@ public class LocationServiceImpl implements LocationService {
     public LocationDto addLocation(LocationDto locationDto) {
         log.debug("[addLocation]");
         log.debug("[locationDto: {}]", locationDto);
-        if (locationDto == null) {
-            throw new BusinessException("Error, null location");
-        }
         return LocationMapper.getLocationDto(locationDao.saveRecord(
             LocationMapper.getLocation(locationDto, locationDao)));
     }
@@ -43,9 +40,6 @@ public class LocationServiceImpl implements LocationService {
     public void updateLocation(LocationDto locationDto) {
         log.debug("[updateLocation]");
         log.debug("[locationDto: {}]", locationDto);
-        if (locationDto == null) {
-            throw new BusinessException("Error, null location");
-        }
         locationDao.updateRecord(LocationMapper.getLocation(locationDto, locationDao));
     }
 

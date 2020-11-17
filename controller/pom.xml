@@ -70,7 +70,6 @@
             <groupId>com.senla.socialnetwork</groupId>
             <artifactId>service</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

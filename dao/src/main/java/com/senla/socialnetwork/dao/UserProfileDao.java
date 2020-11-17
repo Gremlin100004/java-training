@@ -5,7 +5,7 @@ import com.senla.socialnetwork.domain.School;
 import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.domain.UserProfile;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 public interface UserProfileDao extends GenericDao<UserProfile, Long> {

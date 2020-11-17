@@ -17,8 +17,12 @@ public class PostMapper {
         PostDto postDto = new PostDto();
         postDto.setId(post.getId());
         postDto.setCreationDate(post.getCreationDate());
-        postDto.setTittle(post.getTittle());
-        postDto.setContent(post.getContent());
+        if (post.getTittle() != null) {
+            postDto.setTittle(post.getTittle());
+        }
+        if (post.getContent() != null) {
+            postDto.setContent(post.getContent());
+        }
         postDto.setCommunity(CommunityMapper.getCommunityDto(post.getCommunity()));
         postDto.setDeleted(post.isDeleted());
         return postDto;

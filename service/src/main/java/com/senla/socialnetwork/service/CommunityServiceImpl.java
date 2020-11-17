@@ -146,8 +146,7 @@ public class CommunityServiceImpl implements CommunityService {
         if (communityDto == null) {
             throw new BusinessException("Error, null community");
         }
-        return CommunityMapper.getCommunityDto(communityDao.saveRecord(
-            CommunityMapper.getCommunity(
+        return CommunityMapper.getCommunityDto(communityDao.saveRecord(CommunityMapper.getCommunity(
                 communityDto, communityDao, userProfileDao, locationDao, schoolDao, universityDao)));
     }
 
@@ -190,7 +189,7 @@ public class CommunityServiceImpl implements CommunityService {
         if (communityDao.findById(communityId) == null) {
             throw new BusinessException("Error, there is no such community");
         }
-        schoolDao.deleteRecord(communityId);
+        communityDao.deleteRecord(communityId);
     }
 
     @Override
