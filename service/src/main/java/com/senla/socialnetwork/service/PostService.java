@@ -14,7 +14,7 @@ public interface PostService {
 
     void deletePost(Long postId);
 
-    void deletePostByUser(Long postId);
+    void deletePostByUser(String email, Long postId);
 
     List<PostCommentDto> getPostComments(Long postId, int firstResult, int maxResults);
 

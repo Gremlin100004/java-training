@@ -22,7 +22,7 @@ public class LocationDaoImpl extends AbstractDao<Location, Long> implements Loca
     }
 
     @Override
-    public Location getLocation(String email) {
+    public Location getLocation(final String email) {
         log.debug("[getLocation]");
         log.trace("[email: {}]", email);
         try {

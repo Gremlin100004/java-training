@@ -45,14 +45,14 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public List<CommunityDto> getAllCommunities(int firstResult, int maxResults) {
+    public List<CommunityDto> getAllCommunities(final int firstResult, final int maxResults) {
         log.debug("[getOwnCommunities]");
         return CommunityMapper.getCommunityDto(communityDao.getAllRecords(firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public List<CommunityDto> getCommunities(int firstResult, int maxResults) {
+    public List<CommunityDto> getCommunities(final int firstResult, final int maxResults) {
         log.debug("[getCommunities]");
         log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(communityDao.getCommunities(firstResult, maxResults));
@@ -60,7 +60,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public List<CommunityDto> getCommunitiesSortiedByNumberOfSubscribers(int firstResult, int maxResults) {
+    public List<CommunityDto> getCommunitiesSortiedByNumberOfSubscribers(final int firstResult, final int maxResults) {
         log.debug("[NumberOfSubscribers]");
         log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
@@ -69,7 +69,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public List<CommunityDto> getCommunitiesFilteredByType(CommunityType communityType, int firstResult, int maxResults) {
+    public List<CommunityDto> getCommunitiesFilteredByType(final CommunityType communityType,
+                                                           final int firstResult,
+                                                           final int maxResults) {
         log.debug("[getCommunityFilteredByType]");
         log.trace("[communityType: {}, firstResult: {}, maxResults: {}]", communityType, firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
@@ -78,7 +80,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public List<CommunityDto> getOwnCommunities(String email, int firstResult, int maxResults) {
+    public List<CommunityDto> getOwnCommunities(final String email, final int firstResult, final int maxResults) {
         log.debug("[getOwnCommunities]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         return CommunityMapper.getCommunityDto(communityDao.getOwnCommunitiesByEmail(email, firstResult, maxResults));
@@ -86,7 +88,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public List<CommunityDto> getSubscribedCommunities(String email, int firstResult, int maxResults) {
+    public List<CommunityDto> getSubscribedCommunities(final String email,
+                                                       final int firstResult,
+                                                       final int maxResults) {
         log.debug("[getSubscribedCommunities]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
@@ -95,7 +99,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void subscribeToCommunity(String email, Long communityId) {
+    public void subscribeToCommunity(final String email, final Long communityId) {
         log.debug("[subscribeToCommunity]");
         log.debug("[email: {}, communityId: {}]", email, communityId);
         Community community = communityDao.findByIdAndEmail(email, communityId);
@@ -112,7 +116,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void unsubscribeFromCommunity(String email, Long communityId) {
+    public void unsubscribeFromCommunity(final String email, final Long communityId) {
         log.debug("[subscribeToCommunity]");
         log.debug("[email: {}, communityId: {}]", email, communityId);
         Community community = communityDao.findByIdAndEmail(email, communityId);
@@ -132,7 +136,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public List<PostDto> getCommunityPosts(Long communityId, int firstResult, int maxResults) {
+    public List<PostDto> getCommunityPosts(final Long communityId, final int firstResult, final int maxResults) {
         log.debug("[getUserProfileMessages]");
         log.debug("[communityId: {}, firstResult: {}, maxResults: {}]", communityId, firstResult, maxResults);
         return PostMapper.getPostDto(postDao.getByCommunityId(communityId, firstResult, maxResults));
@@ -140,31 +144,25 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public CommunityDto addCommunity(CommunityDto communityDto) {
+    public CommunityDto addCommunity(final CommunityDto communityDto) {
         log.debug("[addCommunity]");
         log.debug("[CommunityDto: {}]", communityDto);
-        if (communityDto == null) {
-            throw new BusinessException("Error, null community");
-        }
         return CommunityMapper.getCommunityDto(communityDao.saveRecord(CommunityMapper.getCommunity(
                 communityDto, communityDao, userProfileDao, locationDao, schoolDao, universityDao)));
     }
 
     @Override
     @Transactional
-    public void updateCommunity(CommunityDto communityDto) {
+    public void updateCommunity(final CommunityDto communityDto) {
         log.debug("[updateCommunity]");
         log.debug("[CommunityDto: {}]", communityDto);
-        if (communityDto == null) {
-            throw new BusinessException("Error, null community");
-        }
         communityDao.updateRecord(CommunityMapper.getCommunity(
             communityDto, communityDao, userProfileDao, locationDao, schoolDao, universityDao));
     }
 
     @Override
     @Transactional
-    public void deleteCommunityByUser(String email, Long communityId) {
+    public void deleteCommunityByUser(final String email, final Long communityId) {
         log.debug("[deleteMessageByUser]");
         log.debug("[email: {}, messageId: {}]", email, communityId);
         Community community = communityDao.findByIdAndEmail(email, communityId);
@@ -183,7 +181,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void deleteCommunity(Long communityId) {
+    public void deleteCommunity(final Long communityId) {
         log.debug("[deleteCommunity]");
         log.debug("[communityId: {}]", communityId);
         if (communityDao.findById(communityId) == null) {
@@ -194,12 +192,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void addPostToCommunity(String email, PostDto postDto, Long communityId) {
+    public void addPostToCommunity(final String email, final PostDto postDto, final Long communityId) {
         log.debug("[addPosts]");
         log.debug("[email: {}, postDto: {}, communityId: {}]", email,  postDto, communityId);
-        if (postDto == null) {
-            throw new BusinessException("Error, null post");
-        }
         Community community = communityDao.findByIdAndEmail(email, communityId);
         if (community == null) {
             throw new BusinessException("Error, there is no such community");

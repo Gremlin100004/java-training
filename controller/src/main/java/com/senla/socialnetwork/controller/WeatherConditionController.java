@@ -21,18 +21,18 @@ public class WeatherConditionController {
     private WeatherConditionService weatherConditionService;
 
     @GetMapping
-    public List<WeatherConditionDto> getWeatherConditions(int firstResult, int maxResults) {
+    public List<WeatherConditionDto> getWeatherConditions(final int firstResult, final int maxResults) {
         return weatherConditionService.getWeatherConditions(firstResult, maxResults);
     }
 
     @GetMapping("/location")
-    public WeatherConditionDto getWeatherCondition(Authentication authentication) {
+    public WeatherConditionDto getWeatherCondition(final Authentication authentication) {
         String email = authentication.getName();
         return weatherConditionService.getWeatherCondition(email);
     }
 
     @DeleteMapping("/{id}")
-    public ClientMessageDto deleteWeatherCondition(Long weatherConditionId) {
+    public ClientMessageDto deleteWeatherCondition(final Long weatherConditionId) {
         weatherConditionService.deleteWeatherCondition(weatherConditionId);
         return new ClientMessageDto("Weather condition deleted successfully");
     }

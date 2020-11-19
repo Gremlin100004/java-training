@@ -62,7 +62,12 @@ public class LoggingFilter extends OncePerRequestFilter {
             }
         }
         String ip = request.getHeader(HTTP_HEADER_CLIENT_IP_ADDRESS);
-        String ipAddress = (ip == null) ? getRemoteAddress(request) : ip;
+        String ipAddress;
+        if (ip == null) {
+            ipAddress = getRemoteAddress(request);
+        } else {
+            ipAddress = ip;
+        }
         if (ipAddress != null && !ipAddress.equals(EMPTY_IP_ADDRESS)) {
             posted.append(PROGRAM_SYSTEM_INFORMATION_PROTOCOL).append(ipAddress);
         }

@@ -2,7 +2,7 @@ package com.senla.socialnetwork.dao;
 
 import com.senla.socialnetwork.domain.PrivateMessage;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 public interface PrivateMessageDao extends GenericDao<PrivateMessage, Long> {

@@ -25,15 +25,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
         log.debug("[loadUserByUsername]");
         SystemUser systemUser = userDao.findByEmail(email);
         if (systemUser == null) {
             throw new BusinessException("This email does not exist");
-        } else {
-            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(systemUser.getRole().toString());
-            return new User(email, systemUser.getPassword(), List.of(authority));
         }
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(systemUser.getRole().toString());
+        return new User(email, systemUser.getPassword(), List.of(authority));
+
     }
 
 }

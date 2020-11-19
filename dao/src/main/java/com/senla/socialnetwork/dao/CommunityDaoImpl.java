@@ -26,7 +26,7 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
     }
 
     @Override
-    public List<Community> getCommunities(int firstResult, int maxResults) {
+    public List<Community> getCommunities(final int firstResult, final int maxResults) {
         log.debug("[getCommunities]");
         log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         try {
@@ -46,7 +46,7 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
     }
 
     @Override
-    public List<Community> getCommunitiesByType(CommunityType communityType, int firstResult, int maxResults) {
+    public List<Community> getCommunitiesByType(final CommunityType communityType, final int firstResult, final int maxResults) {
         log.debug("[getCommunitiesByType]");
         log.trace("[communityType: {}, firstResult: {}, maxResults: {}]", communityType, firstResult, maxResults);
         try {
@@ -69,7 +69,7 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
     }
 
     @Override
-    public List<Community> getCommunitiesSortiedByNumberOfSubscribers(int firstResult, int maxResults) {
+    public List<Community> getCommunitiesSortiedByNumberOfSubscribers(final int firstResult, final int maxResults) {
         log.debug("[getCommunitiesByType]");
         log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         try {
@@ -90,16 +90,15 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
     }
 
     @Override
-    public List<Community> getOwnCommunitiesByEmail(String email, int firstResult, int maxResults) {
+    public List<Community> getOwnCommunitiesByEmail(final String email, final int firstResult, final int maxResults) {
         log.debug("[getOwnCommunitiesByEmail]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
-            Join<Community, UserProfile>
-                CommunityUserProfileJoin = communityRoot.join(Community_.author);
-            Join<UserProfile, SystemUser> userProfileSystemUserJoin = CommunityUserProfileJoin.join(
+            Join<Community, UserProfile> communityUserProfileJoin = communityRoot.join(Community_.author);
+            Join<UserProfile, SystemUser> userProfileSystemUserJoin = communityUserProfileJoin.join(
                 UserProfile_.systemUser);
             criteriaQuery.select(communityRoot);
             criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(userProfileSystemUserJoin.get(
@@ -116,7 +115,7 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
     }
 
     @Override
-    public List<Community> getSubscribedCommunitiesByEmail(String email, int firstResult, int maxResults) {
+    public List<Community> getSubscribedCommunitiesByEmail(final String email, final int firstResult, final int maxResults) {
         log.debug("[getSubscribedCommunitiesByEmail]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
@@ -142,7 +141,7 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
     }
 
     @Override
-    public Community findByIdAndEmail(String email, Long communityId) {
+    public Community findByIdAndEmail(final String email, final Long communityId) {
         log.debug("[findByIdAndEmail]");
         log.trace("[email: {}, messageId: {}]", email, communityId);
         try {

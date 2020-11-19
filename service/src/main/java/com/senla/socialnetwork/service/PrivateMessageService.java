@@ -2,7 +2,7 @@ package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 public interface PrivateMessageService {

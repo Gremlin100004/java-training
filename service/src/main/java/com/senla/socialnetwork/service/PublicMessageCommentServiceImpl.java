@@ -37,7 +37,7 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public List<PublicMessageCommentDto> getComments(int firstResult, int maxResults) {
+    public List<PublicMessageCommentDto> getComments(final int firstResult, final int maxResults) {
         log.debug("[Comments]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PublicMessageCommentMapper.getPublicMessageCommentDto(
@@ -46,12 +46,9 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public PublicMessageCommentDto addComment(PublicMessageCommentDto publicMessageCommentDto) {
+    public PublicMessageCommentDto addComment(final PublicMessageCommentDto publicMessageCommentDto) {
         log.debug("[addComment]");
         log.debug("[publicMessageCommentDto: {}]", publicMessageCommentDto);
-        if (publicMessageCommentDto == null) {
-            throw new BusinessException("Error, null comment");
-        }
         return PublicMessageCommentMapper.getPublicMessageCommentDto(publicMessageCommentDao.saveRecord(
             PublicMessageCommentMapper.getPublicMessageComment(
                 publicMessageCommentDto, publicMessageCommentDao, publicMessageDao,  userProfileDao,
@@ -60,12 +57,9 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public void updateComment(PublicMessageCommentDto publicMessageCommentDto) {
+    public void updateComment(final PublicMessageCommentDto publicMessageCommentDto) {
         log.debug("[updateComment]");
         log.debug("[publicMessageCommentDto: {}]", publicMessageCommentDto);
-        if (publicMessageCommentDto == null) {
-            throw new BusinessException("Error, null comment");
-        }
         publicMessageCommentDao.updateRecord(PublicMessageCommentMapper.getPublicMessageComment(
             publicMessageCommentDto, publicMessageCommentDao, publicMessageDao,  userProfileDao,
             locationDao, schoolDao, universityDao));
@@ -73,7 +67,7 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public void deleteCommentByUser(String email, Long commentId) {
+    public void deleteCommentByUser(final String email, final Long commentId) {
         log.debug("[deleteCommentByUser]");
         log.debug("[email: {}, commentId: {}]", email, commentId);
         PublicMessageComment publicMessageComment = publicMessageCommentDao.findByIdAndEmail(email, commentId);
@@ -88,7 +82,7 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public void deleteComment(Long commentId) {
+    public void deleteComment(final Long commentId) {
         log.debug("[deleteComment]");
         log.debug("[commentId: {}]", commentId);
         if (publicMessageCommentDao.findById(commentId) == null) {

@@ -16,9 +16,9 @@ public class ServletOutputStreamCopier extends ServletOutputStream {
     private final ByteArrayOutputStream copy;
     private WriteListener listener;
 
-    public ServletOutputStreamCopier(OutputStream outputStream) {
-        this.outputStream = outputStream;
-        this.copy = new ByteArrayOutputStream(BUFFER_SIZE);
+    public ServletOutputStreamCopier(OutputStream outputStreamObject) {
+        outputStream = outputStreamObject;
+        copy = new ByteArrayOutputStream(BUFFER_SIZE);
     }
 
     @Override

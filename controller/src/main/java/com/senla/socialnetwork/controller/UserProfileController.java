@@ -40,17 +40,18 @@ public class UserProfileController {
                                                 @RequestBody(required = false) LocationDto locationDto,
                                                 @RequestParam int firstResult,
                                                 @RequestParam int maxResults) {
-        if (startPeriodDate == null && endPeriodDate == null && universityDto == null && schoolDto == null &&
-            locationDto == null) {
+        if (startPeriodDate == null && endPeriodDate == null && universityDto == null && schoolDto == null
+            && locationDto == null) {
             return userProfileService.getUserProfiles(firstResult, maxResults);
-        } else if (startPeriodDate != null && endPeriodDate != null && universityDto == null && schoolDto == null &&
-                   locationDto == null) {
-            return userProfileService.getUserProfilesFilteredByAge(startPeriodDate, endPeriodDate, firstResult, maxResults);
-        } else if (startPeriodDate == null && endPeriodDate == null && universityDto != null && schoolDto == null &&
-                   locationDto == null) {
+        } else if (startPeriodDate != null && endPeriodDate != null && universityDto == null && schoolDto == null
+                   && locationDto == null) {
+            return userProfileService.getUserProfilesFilteredByAge(
+                startPeriodDate, endPeriodDate, firstResult, maxResults);
+        } else if (startPeriodDate == null && endPeriodDate == null && universityDto != null && schoolDto == null
+                   && locationDto == null) {
             return userProfileService.getUserProfiles(universityDto, firstResult, maxResults);
-        } else if (startPeriodDate == null && endPeriodDate == null && universityDto == null && schoolDto != null &&
-                   locationDto == null) {
+        } else if (startPeriodDate == null && endPeriodDate == null && universityDto == null && schoolDto != null
+                   && locationDto == null) {
             return userProfileService.getUserProfiles(schoolDto, firstResult, maxResults);
         } else if (startPeriodDate == null && endPeriodDate == null && universityDto == null && schoolDto == null) {
             return userProfileService.getUserProfiles(locationDto, firstResult, maxResults);

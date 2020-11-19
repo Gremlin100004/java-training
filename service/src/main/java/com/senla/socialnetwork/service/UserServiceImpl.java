@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<UserDto> getUsers(int firstResult, int maxResults) {
+    public List<UserDto> getUsers(final int firstResult, final int maxResults) {
         log.debug("[getUsers]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return UserMapper.getUserDto(userDao.getAllRecords(firstResult, maxResults));
@@ -52,14 +52,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto getUser(String email) {
+    public UserDto getUser(final String email) {
         log.debug("[getUser]");
         return UserMapper.getUserDto(userDao.findByEmail(email));
     }
 
     @Override
     @Transactional
-    public String getUserLogoutToken(String email) {
+    public String getUserLogoutToken(final String email) {
         log.debug("[getUserLogoutToken]");
         log.debug("[email: {}]", email);
         String token = userDao.getLogoutToken(email);
@@ -71,13 +71,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public String logIn(UserDto userDto) {
+    public String logIn(final UserDto userDto) {
         log.debug("[logIn]");
         log.debug("[userDto: {}]", userDto);
-        String logoutToken = userDao.getLogoutToken(userDto.getEmail());
-        if (logoutToken != null) {
-            return logoutToken;
-        }
         SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
         if (systemUser == null) {
             throw new BusinessException("This email does not exist");
@@ -93,7 +89,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void logOut(String email, HttpServletRequest request) {
+    public void logOut(final String email, final HttpServletRequest request) {
         log.debug("[logOut]");
         log.debug("[email: {}, request: {}]", email, request);
         String token = JwtUtil.getToken(request);
@@ -105,7 +101,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto addUser(UserDto userDto) {
+    public UserDto addUser(final UserDto userDto) {
         log.debug("[addUser]");
         log.debug("[userDto: {}]", userDto);
         if (userDto == null) {
@@ -128,7 +124,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(Long userId) {
+    public void deleteUser(final Long userId) {
         log.debug("[deleteUser]");
         log.debug("[userId: {}]", userId);
         if (userDao.findById(userId) == null) {

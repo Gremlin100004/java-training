@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PostCommentMapper {
-    public static PostCommentDto getPostCommentDto(PostComment postComment) {
+    public static PostCommentDto getPostCommentDto(final PostComment postComment) {
         PostCommentDto postCommentDto = new PostCommentDto();
         postCommentDto.setId(postComment.getId());
         postCommentDto.setCreationDate(postComment.getCreationDate());
@@ -25,20 +25,20 @@ public class PostCommentMapper {
         return postCommentDto;
     }
 
-    public static List<PostCommentDto> getPostCommentDto(List<PostComment> postComments) {
+    public static List<PostCommentDto> getPostCommentDto(final List<PostComment> postComments) {
         return postComments.stream()
                 .map(PostCommentMapper::getPostCommentDto)
                 .collect(Collectors.toList());
     }
 
-    public static PostComment getPostComment(PostCommentDto postCommentDto,
-                                             PostCommentDao postCommentDao,
-                                             PostDao postDao,
-                                             CommunityDao communityDao,
-                                             UserProfileDao userProfileDao,
-                                             LocationDao locationDao,
-                                             SchoolDao schoolDao,
-                                             UniversityDao universityDao) {
+    public static PostComment getPostComment(final PostCommentDto postCommentDto,
+                                             final PostCommentDao postCommentDao,
+                                             final PostDao postDao,
+                                             final CommunityDao communityDao,
+                                             final UserProfileDao userProfileDao,
+                                             final LocationDao locationDao,
+                                             final SchoolDao schoolDao,
+                                             final UniversityDao universityDao) {
         PostComment postComment;
         if (postCommentDto.getId() == null) {
             postComment = new PostComment();

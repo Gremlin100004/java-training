@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UniversityMapper {
-    public static UniversityDto getUniversityDto(University university) {
+    public static UniversityDto getUniversityDto(final University university) {
         UniversityDto universityDto = new UniversityDto();
         universityDto.setId(university.getId());
         universityDto.setName(university.getName());
@@ -17,15 +17,15 @@ public class UniversityMapper {
         return universityDto;
     }
 
-    public static List<UniversityDto> getUniversityDto(List<University> universities) {
+    public static List<UniversityDto> getUniversityDto(final List<University> universities) {
         return universities.stream()
             .map(UniversityMapper::getUniversityDto)
             .collect(Collectors.toList());
     }
 
-    public static University getUniversity(UniversityDto universityDto,
-                                           UniversityDao universityDao,
-                                           LocationDao locationDao) {
+    public static University getUniversity(final UniversityDto universityDto,
+                                           final UniversityDao universityDao,
+                                           final LocationDao locationDao) {
         University university;
         if (universityDto.getId() == null) {
             university = new University();

@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -35,7 +35,7 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public List<PrivateMessageDto> getPrivateMessages(int firstResult, int maxResults) {
+    public List<PrivateMessageDto> getPrivateMessages(final int firstResult, final int maxResults) {
         log.debug("[getPrivateMessages]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.getAllRecords(firstResult, maxResults));
@@ -43,11 +43,11 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public List<PrivateMessageDto> getMessageFilteredByPeriod(String email,
-                                                              Date startPeriodDate,
-                                                              Date endPeriodDate,
-                                                              int firstResult,
-                                                              int maxResults) {
+    public List<PrivateMessageDto> getMessageFilteredByPeriod(final String email,
+                                                              final Date startPeriodDate,
+                                                              final Date endPeriodDate,
+                                                              final int firstResult,
+                                                              final int maxResults) {
         log.debug("[getMessageFilteredByPeriod]");
         log.debug("[email: {}, startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
                   email, startPeriodDate, endPeriodDate, firstResult, maxResults);
@@ -58,12 +58,9 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public PrivateMessageDto addMessage(PrivateMessageDto privateMessageDto) {
+    public PrivateMessageDto addMessage(final PrivateMessageDto privateMessageDto) {
         log.debug("[addMessage]");
         log.debug("[privateMessageDto: {}]", privateMessageDto);
-        if (privateMessageDto == null) {
-            throw new BusinessException("Error, null message");
-        }
         return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.saveRecord(
             PrivateMessageMapper.getPrivateMessage(
                 privateMessageDto, privateMessageDao, userProfileDao, locationDao, schoolDao, universityDao)));
@@ -71,19 +68,16 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public void updateMessage(PrivateMessageDto privateMessageDto) {
-        log.debug("[deleteMessageByUser]");
+    public void updateMessage(final PrivateMessageDto privateMessageDto) {
+        log.debug("[updateMessage]");
         log.debug("[privateMessage: {}]", privateMessageDto);
-        if (privateMessageDto == null) {
-            throw new BusinessException("Error, null message");
-        }
         privateMessageDao.updateRecord(PrivateMessageMapper.getPrivateMessage(
             privateMessageDto, privateMessageDao, userProfileDao, locationDao, schoolDao, universityDao));
     }
 
     @Override
     @Transactional
-    public void deleteMessageByUser(String email, Long messageId) {
+    public void deleteMessageByUser(final String email, final Long messageId) {
         log.debug("[deleteMessageByUser]");
         log.debug("[email: {}, messageId: {}]", email, messageId);
         PrivateMessage privateMessage = privateMessageDao.findByIdAndEmail(email, messageId);
@@ -98,8 +92,8 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public void deleteMessage(Long messageId) {
-        log.debug("[deleteMessageByUser]");
+    public void deleteMessage(final Long messageId) {
+        log.debug("[deleteMessage]");
         log.debug("[messageId: {}]", messageId);
         if (privateMessageDao.findById(messageId) == null) {
             throw new BusinessException("Error, there is no such message");

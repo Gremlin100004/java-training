@@ -16,7 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -27,7 +27,7 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
     }
 
     @Override
-    public List<PrivateMessage> getByEmail(String email, int firstResult, int maxResults) {
+    public List<PrivateMessage> getByEmail(final String email, final int firstResult, final int maxResults) {
         log.debug("[getByUserProfile]");
         log.trace("[email: {}, firstResult: {},maxResults: {}]", email, firstResult, maxResults);
         try {
@@ -59,7 +59,10 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
     }
 
     @Override
-    public List<PrivateMessage> getDialogue(String email, Long idUser, int firstResult, int maxResults) {
+    public List<PrivateMessage> getDialogue(final String email,
+                                            final Long idUser,
+                                            final int firstResult,
+                                            final int maxResults) {
         log.debug("[getDialogue]");
         log.trace("[email: {}, idUser: {}, firstResult: {},maxResults: {}]", email, idUser, firstResult, maxResults);
         try {
@@ -100,7 +103,7 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
     }
 
     @Override
-    public List<PrivateMessage> getUnreadMessages(String email, int firstResult, int maxResults) {
+    public List<PrivateMessage> getUnreadMessages(final String email, final int firstResult, final int maxResults) {
         log.debug("[getUnreadMessages]");
         log.trace("[email: {}]", email);
         try {
@@ -131,11 +134,11 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
     }
 
     @Override
-    public List<PrivateMessage> getMessageFilteredByPeriod(String email,
-                                                           Date startPeriodDate,
-                                                           Date endPeriodDate,
-                                                           int firstResult,
-                                                           int maxResults) {
+    public List<PrivateMessage> getMessageFilteredByPeriod(final String email,
+                                                           final Date startPeriodDate,
+                                                           final Date endPeriodDate,
+                                                           final int firstResult,
+                                                           final int maxResults) {
         log.debug("[getMessageFilteredByPeriod]");
         log.trace("[email: {}, startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
                   email, startPeriodDate, endPeriodDate, firstResult, maxResults);
@@ -172,7 +175,7 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
     }
 
     @Override
-    public PrivateMessage findByIdAndEmail(String email, Long messageId) {
+    public PrivateMessage findByIdAndEmail(final String email, final Long messageId) {
         log.debug("[findByIdAndEmail]");
         log.trace("[email: {}, messageId: {}]", email, messageId);
         try {

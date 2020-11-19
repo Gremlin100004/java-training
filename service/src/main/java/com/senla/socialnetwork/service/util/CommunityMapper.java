@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CommunityMapper {
-    public static CommunityDto getCommunityDto(Community community) {
+    public static CommunityDto getCommunityDto(final Community community) {
         CommunityDto communityDto = new CommunityDto();
         communityDto.setId(community.getId());
         communityDto.setCreationDate(community.getCreationDate());
@@ -24,18 +24,18 @@ public class CommunityMapper {
         return communityDto;
     }
 
-    public static List<CommunityDto> getCommunityDto(List<Community> communities) {
+    public static List<CommunityDto> getCommunityDto(final List<Community> communities) {
         return communities.stream()
                 .map(CommunityMapper::getCommunityDto)
                 .collect(Collectors.toList());
     }
 
-    public static Community getCommunity(CommunityDto communityDto,
-                                                 CommunityDao communityDao,
-                                                 UserProfileDao userProfileDao,
-                                                 LocationDao locationDao,
-                                                 SchoolDao schoolDao,
-                                                 UniversityDao universityDao) {
+    public static Community getCommunity(final CommunityDto communityDto,
+                                         final CommunityDao communityDao,
+                                         final UserProfileDao userProfileDao,
+                                         final LocationDao locationDao,
+                                         final SchoolDao schoolDao,
+                                         final UniversityDao universityDao) {
         Community community;
         if (communityDto.getId() == null) {
             community = new Community();

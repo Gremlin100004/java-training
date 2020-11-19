@@ -40,19 +40,16 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public List<PostCommentDto> getComments(int firstResult, int maxResults) {
+    public List<PostCommentDto> getComments(final int firstResult, final int maxResults) {
         log.debug("[getComments]");
         return PostCommentMapper.getPostCommentDto(postCommentDao.getAllRecords(firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public PostCommentDto addComment(PostCommentDto postCommentDto) {
+    public PostCommentDto addComment(final PostCommentDto postCommentDto) {
         log.debug("[addComment]");
         log.debug("[postCommentDto: {}]", postCommentDto);
-        if (postCommentDto == null) {
-            throw new BusinessException("Error, null comment");
-        }
         return PostCommentMapper.getPostCommentDto(postCommentDao.saveRecord(PostCommentMapper.getPostComment(
             postCommentDto, postCommentDao, postDao, communityDao, userProfileDao,
             locationDao, schoolDao, universityDao)));
@@ -60,7 +57,7 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public void updateComment(PostCommentDto postCommentDto) {
+    public void updateComment(final PostCommentDto postCommentDto) {
         log.debug("[updateComment]");
         log.debug("[postCommentDto: {}]", postCommentDto);
         if (postCommentDto == null) {
@@ -73,7 +70,7 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public void deleteCommentByUser(String email, Long commentId) {
+    public void deleteCommentByUser(final String email, final Long commentId) {
         log.debug("[deleteCommentByUser]");
         log.debug("[email: {}, commentId: {}]", email, commentId);
         PostComment postComment = postCommentDao.findByIdAndEmail(email, commentId);
@@ -88,7 +85,7 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public void deleteComment(Long commentId) {
+    public void deleteComment(final Long commentId) {
         log.debug("[deleteComment]");
         log.debug("[commentId: {}]", commentId);
         if (postCommentDao.findById(commentId) == null) {

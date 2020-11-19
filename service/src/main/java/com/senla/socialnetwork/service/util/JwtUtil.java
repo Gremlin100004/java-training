@@ -7,7 +7,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -15,12 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Service
 @Slf4j
 public class JwtUtil {
     private static final String TYPE_TOKEN = "Bearer ";
 
-    public static String getToken(HttpServletRequest request) {
+    public static String getToken(final HttpServletRequest request) {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authorizationHeader != null && authorizationHeader.startsWith(TYPE_TOKEN)) {
             return authorizationHeader.substring(TYPE_TOKEN.length());
@@ -28,7 +26,9 @@ public class JwtUtil {
         return null;
     }
 
-    public static String generateToken(UserDetails userDetails, String secretKey, Integer expiration) {
+    public static String generateToken(final UserDetails userDetails,
+                                       final String secretKey,
+                                       final Integer expiration) {
         log.debug("[generateToken]");
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername()).setIssuedAt(
@@ -36,19 +36,21 @@ public class JwtUtil {
             .signWith(SignatureAlgorithm.HS256, secretKey).compact();
     }
 
-    public static Boolean validateToken(String token, UserDetails userDetails, String secretKey) {
+    public static Boolean validateToken(final String token, final UserDetails userDetails, final String secretKey) {
         log.debug("[validateToken]");
         String username = extractUsername(token, secretKey);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token, secretKey));
     }
 
-    private static <T> T extractClaim(String token, Function<Claims, T> claimsResolver, String secretKey) {
+    private static <T> T extractClaim(final String token,
+                                      final Function<Claims, T> claimsResolver,
+                                      final String secretKey) {
         log.debug("[extractClaim]");
         Claims claims = extractAllClaims(token, secretKey);
         return claimsResolver.apply(claims);
     }
 
-    private static Claims extractAllClaims(String token, String secretKey) {
+    private static Claims extractAllClaims(final String token, final String secretKey) {
         log.debug("[extractClaim]");
         try {
             return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
@@ -58,16 +60,16 @@ public class JwtUtil {
         }
     }
 
-    private static Boolean isTokenExpired(String token, String secretKey) {
+    private static Boolean isTokenExpired(final String token, final String secretKey) {
         return extractExpiration(token, secretKey).before(new Date());
     }
 
-    public static String extractUsername(String token, String secretKey) {
+    public static String extractUsername(final String token, final String secretKey) {
         log.debug("[extractUsername]");
         return extractClaim(token, Claims::getSubject, secretKey);
     }
 
-    private static Date extractExpiration(String token, String secretKey) {
+    private static Date extractExpiration(final String token, final String secretKey) {
         log.debug("[extractExpiration]");
         return extractClaim(token, Claims::getExpiration, secretKey);
     }

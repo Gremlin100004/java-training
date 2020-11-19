@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 
 public class UserMapper {
 
-    public static List<UserDto> getUserDto(List<SystemUser> users) {
+    public static List<UserDto> getUserDto(final List<SystemUser> users) {
         return users.stream()
             .map(UserMapper::getUserDto)
             .collect(Collectors.toList());
     }
 
-    public static UserDto getUserDto(SystemUser user) {
+    public static UserDto getUserDto(final SystemUser user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setEmail(user.getEmail());
@@ -22,7 +22,7 @@ public class UserMapper {
         return userDto;
     }
 
-    public static SystemUser getSystemUser(UserDto userDto) {
+    public static SystemUser getSystemUser(final UserDto userDto) {
         SystemUser systemUser = new SystemUser();
         systemUser.setEmail(userDto.getEmail());
         systemUser.setPassword(userDto.getPassword());

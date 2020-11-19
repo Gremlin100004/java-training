@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PublicMessageMapper {
-    public static PublicMessageDto getPublicMessageDto(PublicMessage publicMessage) {
+    public static PublicMessageDto getPublicMessageDto(final PublicMessage publicMessage) {
         PublicMessageDto publicMessageDto = new PublicMessageDto();
         publicMessageDto.setId(publicMessage.getId());
         publicMessageDto.setCreationDate(publicMessage.getCreationDate());
@@ -23,18 +23,18 @@ public class PublicMessageMapper {
         return publicMessageDto;
     }
 
-    public static List<PublicMessageDto> getPublicMessageDto(List<PublicMessage> publicMessages) {
+    public static List<PublicMessageDto> getPublicMessageDto(final List<PublicMessage> publicMessages) {
         return publicMessages.stream()
             .map(PublicMessageMapper::getPublicMessageDto)
             .collect(Collectors.toList());
     }
 
-    public static PublicMessage getPublicMessage(PublicMessageDto publicMessageDto,
-                                                 PublicMessageDao publicMessageDao,
-                                                 UserProfileDao userProfileDao,
-                                                 LocationDao locationDao,
-                                                 SchoolDao schoolDao,
-                                                 UniversityDao universityDao) {
+    public static PublicMessage getPublicMessage(final PublicMessageDto publicMessageDto,
+                                                 final PublicMessageDao publicMessageDao,
+                                                 final UserProfileDao userProfileDao,
+                                                 final LocationDao locationDao,
+                                                 final SchoolDao schoolDao,
+                                                 final UniversityDao universityDao) {
         PublicMessage publicMessage;
         if (publicMessageDto.getId() == null) {
             publicMessage = new PublicMessage();

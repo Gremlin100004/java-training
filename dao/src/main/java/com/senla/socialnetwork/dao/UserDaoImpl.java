@@ -22,7 +22,7 @@ public class UserDaoImpl extends AbstractDao<SystemUser, Long> implements UserDa
     }
 
     @Override
-    public SystemUser findByEmail(String email) {
+    public SystemUser findByEmail(final String email) {
         log.debug("[findByEmail]");
         log.trace("[email: {}]", email);
         try {
@@ -39,17 +39,17 @@ public class UserDaoImpl extends AbstractDao<SystemUser, Long> implements UserDa
     }
 
     @Override
-    public String getLogoutToken(String email) {
+    public String getLogoutToken(final String email) {
         return logoutToken.get(email);
     }
 
     @Override
-    public void addLogoutToken(String email, String token) {
+    public void addLogoutToken(final String email, final String token) {
         logoutToken.putIfAbsent(email, token);
     }
 
     @Override
-    public void deleteLogoutToken(String email) {
+    public void deleteLogoutToken(final String email) {
         logoutToken.remove(email);
     }
 

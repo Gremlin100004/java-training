@@ -27,7 +27,28 @@ public class PostDaoImpl extends AbstractDao<Post, Long> implements PostDao {
     }
 
     @Override
-    public List<Post> getByCommunityId(Long communityId, int firstResult, int maxResults) {
+    public Post findByIdAndEmail(final String email, final Long postId) {
+        log.debug("[findByIdAndEmail]");
+        log.trace("[email: {}, postId: {}]", email, postId);
+        try {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Post> criteriaQuery = criteriaBuilder.createQuery(Post.class);
+            Root<Post> postRoot = criteriaQuery.from(Post.class);
+            Join<Post, Community> postCommunityJoin = postRoot.join(Post_.community);
+            Join<Community, UserProfile> communityUserProfileJoin = postCommunityJoin.join(Community_.author);
+            Join<UserProfile, SystemUser> userProfileSystemUserJoin = communityUserProfileJoin.join(UserProfile_.systemUser);
+            criteriaQuery.select(postRoot);
+            criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email)),
+                                criteriaBuilder.equal(postRoot.get(Post_.id), postId));
+            return entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (NoResultException exception) {
+            log.error("[{}]", exception.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public List<Post> getByCommunityId(final Long communityId, final int firstResult, final int maxResults) {
         log.debug("[getByCommunityId]");
         log.trace("[communityId: {}, firstResult: {}, maxResults: {}]", communityId, firstResult,  maxResults);
         try {
@@ -51,7 +72,7 @@ public class PostDaoImpl extends AbstractDao<Post, Long> implements PostDao {
     }
 
     @Override
-    public List<Post> getByEmail(String email, int firstResult, int maxResults) {
+    public List<Post> getByEmail(final String email, final int firstResult, final int maxResults) {
         log.debug("[getPostsFromSubscribedCommunities]");
         log.trace("[email: {}, firstResult: {},maxResults: {}]", email, firstResult, maxResults);
         try {

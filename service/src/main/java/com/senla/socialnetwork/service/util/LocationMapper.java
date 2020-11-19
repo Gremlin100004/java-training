@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class LocationMapper {
-    public static LocationDto getLocationDto(Location location) {
+    public static LocationDto getLocationDto(final Location location) {
         LocationDto locationDto = new LocationDto();
         locationDto.setId(location.getId());
         locationDto.setCity(location.getCity());
@@ -16,13 +16,13 @@ public class LocationMapper {
         return locationDto;
     }
 
-    public static List<LocationDto> getLocationDto(List<Location> locations) {
+    public static List<LocationDto> getLocationDto(final List<Location> locations) {
        return locations.stream()
            .map(LocationMapper::getLocationDto)
            .collect(Collectors.toList());
     }
 
-    public static Location getLocation(LocationDto locationDto, LocationDao locationDao) {
+    public static Location getLocation(final LocationDto locationDto, final LocationDao locationDao) {
         Location location;
         if (locationDto.getId() == null) {
             location = new Location();

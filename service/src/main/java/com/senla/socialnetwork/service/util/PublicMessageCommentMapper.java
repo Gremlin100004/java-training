@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PublicMessageCommentMapper {
-    public static PublicMessageCommentDto getPublicMessageCommentDto(PublicMessageComment publicMessageComment) {
+        public static PublicMessageCommentDto getPublicMessageCommentDto(final PublicMessageComment publicMessageComment) {
         PublicMessageCommentDto publicMessageCommentDto = new PublicMessageCommentDto();
         publicMessageCommentDto.setId(publicMessageComment.getId());
         publicMessageCommentDto.setCreationDate(publicMessageComment.getCreationDate());
@@ -25,19 +25,19 @@ public class PublicMessageCommentMapper {
         return publicMessageCommentDto;
     }
 
-    public static List<PublicMessageCommentDto> getPublicMessageCommentDto(List<PublicMessageComment> publicMessageComments) {
+    public static List<PublicMessageCommentDto> getPublicMessageCommentDto(final List<PublicMessageComment> publicMessageComments) {
         return publicMessageComments.stream()
             .map(PublicMessageCommentMapper::getPublicMessageCommentDto)
             .collect(Collectors.toList());
     }
 
-    public static PublicMessageComment getPublicMessageComment(PublicMessageCommentDto publicMessageCommentDto,
-                                                               PublicMessageCommentDao publicMessageCommentDao,
-                                                               PublicMessageDao publicMessageDao,
-                                                               UserProfileDao userProfileDao,
-                                                               LocationDao locationDao,
-                                                               SchoolDao schoolDao,
-                                                               UniversityDao universityDao) {
+    public static PublicMessageComment getPublicMessageComment(final PublicMessageCommentDto publicMessageCommentDto,
+                                                               final PublicMessageCommentDao publicMessageCommentDao,
+                                                               final PublicMessageDao publicMessageDao,
+                                                               final UserProfileDao userProfileDao,
+                                                               final LocationDao locationDao,
+                                                               final SchoolDao schoolDao,
+                                                               final UniversityDao universityDao) {
         PublicMessageComment publicMessageComment;
         if (publicMessageCommentDto.getId() == null) {
             publicMessageComment = new PublicMessageComment();

@@ -24,7 +24,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Transactional
-    public List<SchoolDto> getSchools(int firstResult, int maxResults) {
+    public List<SchoolDto> getSchools(final int firstResult, final int maxResults) {
         log.debug("[getSchools]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return SchoolMapper.getSchoolDto(schoolDao.getAllRecords(firstResult, maxResults));
@@ -32,7 +32,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Transactional
-    public SchoolDto addSchool(SchoolDto schoolDto) {
+    public SchoolDto addSchool(final SchoolDto schoolDto) {
         log.debug("[addSchool]");
         log.debug("[schoolDto: {}]", schoolDto);
         if (schoolDto == null) {
@@ -44,18 +44,18 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Transactional
-    public void updateSchool(SchoolDto schoolDto) {
+    public void updateSchool(final SchoolDto schoolDto) {
         log.debug("[updateSchool]");
         log.debug("[schoolDto: {}]", schoolDto);
         if (schoolDto == null) {
             throw new BusinessException("Error, null school");
         }
-        schoolDao.saveRecord(SchoolMapper.getSchool(schoolDto, schoolDao, locationDao));
+        schoolDao.updateRecord(SchoolMapper.getSchool(schoolDto, schoolDao, locationDao));
     }
 
     @Override
     @Transactional
-    public void deleteSchool(Long schoolId) {
+    public void deleteSchool(final Long schoolId) {
         log.debug("[deleteSchool]");
         log.debug("[schoolId: {}]", schoolId);
         if (schoolDao.findById(schoolId) == null) {

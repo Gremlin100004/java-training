@@ -47,7 +47,7 @@ public class PostController {
     @PutMapping("/{id}/changes")
     public ClientMessageDto deletePostByUser(@PathVariable("id") Long postId, Authentication authentication) {
         String email = authentication.getName();
-        postService.deletePostByUser(postId);
+        postService.deletePostByUser(email, postId);
         return new ClientMessageDto("Post deleted successfully");
     }
 

@@ -42,7 +42,7 @@ public class PublicMessageServiceImpl implements PublicMessageService {
 
     @Override
     @Transactional
-    public List<PublicMessageDto> getMessages(int firstResult, int maxResults) {
+    public List<PublicMessageDto> getMessages(final int firstResult, final int maxResults) {
         log.debug("[getSchools]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PublicMessageMapper.getPublicMessageDto(publicMessageDao.getAllRecords(firstResult, maxResults));
@@ -50,12 +50,9 @@ public class PublicMessageServiceImpl implements PublicMessageService {
 
     @Override
     @Transactional
-    public PublicMessageDto addMessage(PublicMessageDto publicMessageDto) {
+    public PublicMessageDto addMessage(final PublicMessageDto publicMessageDto) {
         log.debug("[addMessage]");
         log.debug("[publicMessageDto: {}]", publicMessageDto);
-        if (publicMessageDto == null) {
-            throw new BusinessException("Error, null message");
-        }
         return PublicMessageMapper.getPublicMessageDto(publicMessageDao.saveRecord(
             PublicMessageMapper.getPublicMessage(
                 publicMessageDto, publicMessageDao, userProfileDao, locationDao, schoolDao, universityDao)));
@@ -63,19 +60,16 @@ public class PublicMessageServiceImpl implements PublicMessageService {
 
     @Override
     @Transactional
-    public void updateMessage(PublicMessageDto publicMessageDto) {
+    public void updateMessage(final PublicMessageDto publicMessageDto) {
         log.debug("[updateMessage]");
         log.debug("[publicMessageDto: {}]", publicMessageDto);
-        if (publicMessageDto == null) {
-            throw new BusinessException("Error, null message");
-        }
         publicMessageDao.updateRecord(PublicMessageMapper.getPublicMessage(
             publicMessageDto, publicMessageDao, userProfileDao, locationDao, schoolDao, universityDao));
     }
 
     @Override
     @Transactional
-    public void deleteMessageByUser(String email, Long messageId) {
+    public void deleteMessageByUser(final String email, final Long messageId) {
         log.debug("[deleteMessageByUser]");
         log.debug("[email: {}, messageId: {}]", email, messageId);
         PublicMessage publicMessage = publicMessageDao.findByIdAndEmail(email, messageId);
@@ -94,7 +88,7 @@ public class PublicMessageServiceImpl implements PublicMessageService {
 
     @Override
     @Transactional
-    public void deleteMessage(Long messageId) {
+    public void deleteMessage(final Long messageId) {
         log.debug("[deleteMessage]");
         log.debug("[messageId: {}]", messageId);
         if (publicMessageDao.findById(messageId) == null) {
@@ -105,7 +99,9 @@ public class PublicMessageServiceImpl implements PublicMessageService {
 
     @Override
     @Transactional
-    public List<PublicMessageCommentDto> getPublicMessageComments(Long publicMessageId, int firstResult, int maxResults) {
+    public List<PublicMessageCommentDto> getPublicMessageComments(final Long publicMessageId,
+                                                                  final int firstResult,
+                                                                  final int maxResults) {
         log.debug("[getPublicMessageComments]");
         log.trace("[publicMessageId: {}]", publicMessageId);
         return PublicMessageCommentMapper.getPublicMessageCommentDto(

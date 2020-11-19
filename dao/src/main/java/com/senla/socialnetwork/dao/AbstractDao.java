@@ -22,12 +22,12 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     }
 
     @Override
-    public void setType(final Class<T> type) {
-        this.type = type;
+    public void setType(final Class<T> typeClass) {
+        type = typeClass;
     }
 
     @Override
-    public T saveRecord(T entity) {
+    public T saveRecord(final T entity) {
         log.debug("[saveRecord]");
         log.trace("[entity: {}]", entity);
         entityManager.persist(entity);
@@ -35,14 +35,14 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     }
 
     @Override
-    public T findById(PK id) {
+    public T findById(final PK id) {
         log.debug("[findById]");
         log.trace("[type: {}, id: {}]", type, id);
         return entityManager.find(type, id);
     }
 
     @Override
-    public List<T> getAllRecords(int firstResult, int maxResults) {
+    public List<T> getAllRecords(final int firstResult, final int maxResults) {
         log.debug("[getAllRecords]");
         log.trace("[type: {}]", type);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -58,14 +58,14 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     }
 
     @Override
-    public void updateRecord(T entity) {
+    public void updateRecord(final T entity) {
         log.debug("[updateRecord]");
         log.trace("[entity: {}]", entity);
         entityManager.merge(entity);
     }
 
     @Override
-    public void deleteRecord(PK id) {
+    public void deleteRecord(final PK id) {
         log.debug("[deleteRecord]");
         log.trace("[id: {}]", id);
         entityManager.remove(id);

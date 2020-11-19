@@ -36,7 +36,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public UserProfile findByEmail(String email) {
+    public UserProfile findByEmail(final String email) {
         log.debug("[findByEmail]");
         log.trace("[email: {}]", email);
         try {
@@ -54,7 +54,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getCommunityUsers(Long communityId) {
+    public List<UserProfile> getCommunityUsers(final Long communityId) {
         log.debug("[getCommunityUsers]");
         log.trace("[communityId: {}]", communityId);
         try {
@@ -71,7 +71,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getUserProfilesSortBySurname(int firstResult, int maxResults) {
+    public List<UserProfile> getUserProfilesSortBySurname(final int firstResult, final int maxResults) {
         log.debug("[getUserProfilesSortByName]");
         log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         try {
@@ -91,7 +91,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getUserProfilesSortByRegistrationDate(int firstResult, int maxResults) {
+    public List<UserProfile> getUserProfilesSortByRegistrationDate(final int firstResult, final int maxResults) {
         log.debug("[getUserProfilesSortByRegistrationDate]");
         log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         try {
@@ -111,7 +111,9 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getUserProfilesFilteredByLocation(Location location, int firstResult, int maxResults) {
+    public List<UserProfile> getUserProfilesFilteredByLocation(final Location location,
+                                                               final int firstResult,
+                                                               final int maxResults) {
         log.debug("[getUserProfilesFilteredByLocation]");
         log.trace("[location: {}, firstResult: {}, maxResults: {}]", location, firstResult, maxResults);
         try {
@@ -131,7 +133,9 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getUserProfilesFilteredBySchool(School school, int firstResult, int maxResults) {
+    public List<UserProfile> getUserProfilesFilteredBySchool(final School school,
+                                                             final int firstResult,
+                                                             final int maxResults) {
         log.debug("[getUserProfilesFilteredBySchool]");
         log.trace("[school: {}, firstResult: {}, maxResults: {}]", school, firstResult, maxResults);
         try {
@@ -151,9 +155,9 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getUserProfilesFilteredByUniversity(University university,
-                                                                 int firstResult,
-                                                                 int maxResults) {
+    public List<UserProfile> getUserProfilesFilteredByUniversity(final University university,
+                                                                 final int firstResult,
+                                                                 final int maxResults) {
         log.debug("[getUserProfilesFilteredByUniversity]");
         log.trace("[university: {}, firstResult: {}, maxResults: {}]", university, firstResult, maxResults);
         try {
@@ -173,10 +177,10 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getUserProfilesFilteredByAge(Date startPeriodDate,
-                                                          Date endPeriodDate,
-                                                          int firstResult,
-                                                          int maxResults) {
+    public List<UserProfile> getUserProfilesFilteredByAge(final Date startPeriodDate,
+                                                          final Date endPeriodDate,
+                                                          final int firstResult,
+                                                          final int maxResults) {
         log.debug("[getUserProfilesFilteredByAge]");
         log.trace("[startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
              startPeriodDate, endPeriodDate, firstResult, maxResults);
@@ -199,7 +203,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public UserProfile getNearestBirthdayByCurrentDate(String email) {
+    public UserProfile getNearestBirthdayByCurrentDate(final String email) {
         log.debug("[getNearestBirthdayByCurrentDate]");
         log.trace("[email: {}]", email);
         try {
@@ -235,7 +239,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public UserProfile getNearestBirthdayFromTheBeginningOfTheYear(String email) {
+    public UserProfile getNearestBirthdayFromTheBeginningOfTheYear(final String email) {
         log.debug("[getNearestBirthdayFromTheBeginningOfTheYear]");
         log.trace("[email: {}]", email);
         try {
@@ -257,7 +261,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getFriendsSortByAge(String email, int firstResult, int maxResults) {
+    public List<UserProfile> getFriendsSortByAge(final String email, final int firstResult, final int maxResults) {
         log.debug("[getFriendsSortByAge]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
@@ -275,7 +279,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getFriendsSortByName(String email, int firstResult, int maxResults) {
+    public List<UserProfile> getFriendsSortByName(final String email, final int firstResult, final int maxResults) {
         log.debug("[getFriendsSortByName]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
@@ -293,7 +297,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getFriendsSortByNumberOfFriends(String email, int firstResult, int maxResults) {
+    public List<UserProfile> getFriendsSortByNumberOfFriends(final String email, final int firstResult, final int maxResults) {
         log.debug("[getFriendsSortByNumberOfFriends]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
@@ -313,7 +317,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getFriends(String email, int firstResult, int maxResults) {
+    public List<UserProfile> getFriends(final String email, final int firstResult, final int maxResults) {
         log.debug("[getFriends]");
         log.trace("[email: {}]", email);
         try {
@@ -333,7 +337,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public UserProfile getFriend(String email, Long userProfileId) {
+    public UserProfile getFriend(final String email, final Long userProfileId) {
         log.debug("[getFriend]");
         log.trace("[email: {}, userProfileId: {}]", email, userProfileId);
         try {
@@ -368,7 +372,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getSignedFriends(String email, int firstResult, int maxResults) {
+    public List<UserProfile> getSignedFriends(final String email, final int firstResult, final int maxResults) {
         log.debug("[getFriends]");
         log.trace("[email: {}]", email);
         try {
@@ -405,7 +409,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
     //ToDo check this method
     @Override
-    public UserProfile getSignedFriend(String email, Long userProfileId) {
+    public UserProfile getSignedFriend(final String email, final Long userProfileId) {
         log.debug("[getSignedFriend]");
         log.trace("[email: {}, userProfileId: {}]", email, userProfileId);
         try {
@@ -440,7 +444,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public UserProfile getFutureFriend(String email, Long userProfileId) {
+    public UserProfile getFutureFriend(final String email, final Long userProfileId) {
         log.debug("[getFriends]");
         log.trace("[email: {}, userProfileId: {}]", email, userProfileId);
         try {
@@ -470,9 +474,9 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
         }
     }
 
-    private Root<UserProfile> fillCriteriaQueryFriend(CriteriaQuery<UserProfile> criteriaQuery,
-                                         CriteriaBuilder criteriaBuilder,
-                                         String email) {
+    private Root<UserProfile> fillCriteriaQueryFriend(final CriteriaQuery<UserProfile> criteriaQuery,
+                                                      final CriteriaBuilder criteriaBuilder,
+                                                      final String email) {
         Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
         Root<UserProfile> friendsRoot = subquery.from(UserProfile.class);
         Join<UserProfile, UserProfile> userProfileUserProfileJoin = friendsRoot.join(

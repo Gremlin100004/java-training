@@ -7,12 +7,11 @@ import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.UserProfileDto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserProfileMapper {
-    public static UserProfileDto getUserProfileDto(UserProfile userProfile) {
+    public static UserProfileDto getUserProfileDto(final UserProfile userProfile) {
         UserProfileDto userProfileDto = new UserProfileDto();
         userProfileDto.setId(userProfile.getId());
         userProfileDto.setRegistrationDate(userProfile.getRegistrationDate());
@@ -46,11 +45,11 @@ public class UserProfileMapper {
         return userProfileDto;
     }
 
-    public static UserProfile getUserProfile(UserProfileDto userProfileDto,
-                                             UserProfileDao userProfileDao,
-                                             LocationDao locationDao,
-                                             SchoolDao schoolDao,
-                                             UniversityDao universityDao) {
+    public static UserProfile getUserProfile(final UserProfileDto userProfileDto,
+                                             final UserProfileDao userProfileDao,
+                                             final LocationDao locationDao,
+                                             final SchoolDao schoolDao,
+                                             final UniversityDao universityDao) {
         UserProfile userProfile;
         if (userProfileDto.getId() == null) {
             userProfile = new UserProfile();
@@ -88,7 +87,7 @@ public class UserProfileMapper {
         return userProfile;
     }
 
-    public static List<UserProfileDto> getUserProfileDto(List<UserProfile> userProfiles) {
+    public static List<UserProfileDto> getUserProfileDto(final List<UserProfile> userProfiles) {
         return userProfiles.stream()
             .map(UserProfileMapper::getUserProfileDto)
             .collect(Collectors.toList());

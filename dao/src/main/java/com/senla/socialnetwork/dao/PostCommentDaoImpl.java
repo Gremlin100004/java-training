@@ -28,7 +28,7 @@ public class PostCommentDaoImpl extends AbstractDao<PostComment, Long> implement
     }
 
     @Override
-    public PostComment findByIdAndEmail(String email, Long commentId) {
+    public PostComment findByIdAndEmail(final String email, final Long commentId) {
         log.debug("[findByIdAndEmail]");
         log.trace("[email: {}, commentId: {}]", email, commentId);
         try {
@@ -50,7 +50,7 @@ public class PostCommentDaoImpl extends AbstractDao<PostComment, Long> implement
     }
 
     @Override
-    public List<PostComment> getPostComments(Long postId, int firstResult, int maxResults) {
+    public List<PostComment> getPostComments(final Long postId, final int firstResult, final int maxResults) {
         log.debug("[getPostComments]");
         log.trace("[postId: {}, firstResult: {}, maxResults: {}]", postId, firstResult, maxResults);
         try {

@@ -49,7 +49,7 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
 
     @Override
     @Transactional
-    public List<WeatherConditionDto> getWeatherConditions(int firstResult, int maxResults) {
+    public List<WeatherConditionDto> getWeatherConditions(final int firstResult, final int maxResults) {
         log.debug("[getWeatherConditions]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return WeatherConditionMapper.getWeatherConditionDto(weatherConditionDao.getAllRecords(firstResult, maxResults));
@@ -57,7 +57,7 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
 
     @Override
     @Transactional
-    public WeatherConditionDto getWeatherCondition(String email) {
+    public WeatherConditionDto getWeatherCondition(final String email) {
         log.debug("[getWeatherCondition]");
         log.debug("[email: {}]", email);
         Location location = locationDao.getLocation(email);
@@ -74,11 +74,22 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
         return WeatherConditionMapper.getWeatherConditionDto(weatherCondition);
     }
 
-    private long getTimeWithoutUpdate(long registrationDate) {
+    @Override
+    @Transactional
+    public void deleteWeatherCondition(final Long weatherConditionId) {
+        log.debug("[deleteWeatherCondition]");
+        log.debug("[weatherConditionId: {}]", weatherConditionId);
+        if (weatherConditionDao.findById(weatherConditionId) == null) {
+            throw new BusinessException("Error, there is no such weather condition");
+        }
+        weatherConditionDao.deleteRecord(weatherConditionId);
+    }
+
+    private long getTimeWithoutUpdate(final long registrationDate) {
         return (new Date().getTime() - registrationDate) / MILLISECONDS_IN_SECONDS;
     }
 
-    private WeatherCondition getWeatherCondition(Location location) {
+    private WeatherCondition getWeatherCondition(final Location location) {
         String status = getStatus(location);
         if (status == null) {
             throw new BusinessException("Error getting weather conditions");
@@ -90,19 +101,19 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
         return weatherCondition;
     }
 
-    private void updateWeatherCondition(WeatherCondition weatherCondition, Location location) {
+    private void updateWeatherCondition(final WeatherCondition weatherCondition, final Location location) {
         String condition = getStatus(location);
         if (condition != null) {
             weatherCondition.setStatus(condition);
             weatherCondition.setRegistrationDate(new Date());
         }
-        weatherConditionDao.saveRecord(weatherCondition);
+        weatherConditionDao.updateRecord(weatherCondition);
     }
 
-    private String getStatus(Location location) {
+    private String getStatus(final Location location) {
         try {
-            String url = WEATHER_API_URL + LOCATION_PARAMETER + location.getCity() + PARAMETERS_SEPARATOR +
-                location.getCountry() + KEY_PARAMETER + weatherKey;
+            String url = WEATHER_API_URL + LOCATION_PARAMETER + location.getCity() + PARAMETERS_SEPARATOR
+                         + location.getCountry() + KEY_PARAMETER + weatherKey;
             System.out.println(url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             String stringJson = response.getBody();
@@ -122,17 +133,6 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
             log.error(exception.getResponseBodyAsString());
             return null;
         }
-    }
-
-    @Override
-    @Transactional
-    public void deleteWeatherCondition(Long weatherConditionId) {
-        log.debug("[deleteWeatherCondition]");
-        log.debug("[weatherConditionId: {}]", weatherConditionId);
-        if (weatherConditionDao.findById(weatherConditionId) == null) {
-            throw new BusinessException("Error, there is no such weather condition");
-        }
-        weatherConditionDao.deleteRecord(weatherConditionId);
     }
 
 }

@@ -22,7 +22,7 @@ public class DaoConfiguration {
     private static final String DRIVER_DATABASE = "hibernate.connection.driver_class";
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(Environment environment) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(final Environment environment) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource(environment));
         em.setPackagesToScan(environment.getRequiredProperty(DATA_SOURCE_PACKAGE));
@@ -32,7 +32,7 @@ public class DaoConfiguration {
     }
 
     @Bean
-    public DataSource dataSource(Environment environment) {
+    public DataSource dataSource(final Environment environment) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(environment.getRequiredProperty(DRIVER_DATABASE));
         dataSource.setUrl(environment.getRequiredProperty(CONNECTION_URL));
@@ -40,7 +40,7 @@ public class DaoConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(Environment environment) {
+    public PlatformTransactionManager transactionManager(final Environment environment) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory(environment).getObject());
         return transactionManager;

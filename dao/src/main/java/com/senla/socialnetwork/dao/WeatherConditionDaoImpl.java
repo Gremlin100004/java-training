@@ -19,7 +19,7 @@ public class WeatherConditionDaoImpl extends AbstractDao<WeatherCondition, Long>
     }
 
     @Override
-    public WeatherCondition findByLocation(Location location) {
+    public WeatherCondition findByLocation(final Location location) {
         log.debug("[findByLocation]");
         log.trace("[location: {}]", location);
         try {

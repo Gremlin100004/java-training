@@ -26,7 +26,7 @@ public class PublicMessageDaoImpl extends AbstractDao<PublicMessage, Long> imple
     }
 
     @Override
-    public List<PublicMessage> getFriendsMessages(String email, int firstResult, int maxResults) {
+    public List<PublicMessage> getFriendsMessages(final String email, final int firstResult, final int maxResults) {
         log.debug("[getFriendsMessages]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
@@ -56,7 +56,7 @@ public class PublicMessageDaoImpl extends AbstractDao<PublicMessage, Long> imple
     }
 
     @Override
-    public List<PublicMessage> getByEmail(String email, int firstResult, int maxResults) {
+    public List<PublicMessage> getByEmail(final String email, final int firstResult, final int maxResults) {
         log.debug("[getByEmail]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
@@ -81,7 +81,7 @@ public class PublicMessageDaoImpl extends AbstractDao<PublicMessage, Long> imple
     }
 
     @Override
-    public PublicMessage findByIdAndEmail(String email, Long messageId) {
+    public PublicMessage findByIdAndEmail(final String email, final Long messageId) {
         log.debug("[findByIdAndEmail]");
         log.trace("[email: {}, messageId: {}]", email, messageId);
         try {

@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 
 public class WeatherConditionMapper {
 
-    public static WeatherConditionDto getWeatherConditionDto(WeatherCondition weatherCondition) {
+    public static WeatherConditionDto getWeatherConditionDto(final WeatherCondition weatherCondition) {
         WeatherConditionDto weatherConditionDto = new WeatherConditionDto();
         weatherConditionDto.setStatus(weatherCondition.getStatus());
         return weatherConditionDto;
     }
 
-    public static List<WeatherConditionDto> getWeatherConditionDto(List<WeatherCondition> weatherConditions) {
+    public static List<WeatherConditionDto> getWeatherConditionDto(final List<WeatherCondition> weatherConditions) {
         return weatherConditions.stream()
             .map(WeatherConditionMapper::getWeatherConditionDto)
             .collect(Collectors.toList());

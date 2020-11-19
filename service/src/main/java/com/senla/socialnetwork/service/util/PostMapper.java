@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PostMapper {
-    public static PostDto getPostDto(Post post) {
+    public static PostDto getPostDto(final Post post) {
         PostDto postDto = new PostDto();
         postDto.setId(post.getId());
         postDto.setCreationDate(post.getCreationDate());
@@ -28,19 +28,19 @@ public class PostMapper {
         return postDto;
     }
 
-    public static List<PostDto> getPostDto(List<Post> posts) {
+    public static List<PostDto> getPostDto(final List<Post> posts) {
         return posts.stream()
                 .map(PostMapper::getPostDto)
                 .collect(Collectors.toList());
     }
 
-    public static Post getPost(PostDto postDto,
-                               PostDao postDao,
-                               CommunityDao communityDao,
-                               UserProfileDao userProfileDao,
-                               LocationDao locationDao,
-                               SchoolDao schoolDao,
-                               UniversityDao universityDao) {
+    public static Post getPost(final PostDto postDto,
+                               final PostDao postDao,
+                               final CommunityDao communityDao,
+                               final UserProfileDao userProfileDao,
+                               final LocationDao locationDao,
+                               final SchoolDao schoolDao,
+                               final UniversityDao universityDao) {
         Post post;
         if (postDto.getId() == null) {
             post = new Post();

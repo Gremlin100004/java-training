@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PrivateMessageMapper {
-    public static PrivateMessageDto getPrivateMessageDto(PrivateMessage privateMessage) {
+
+    public static PrivateMessageDto getPrivateMessageDto(final PrivateMessage privateMessage) {
         PrivateMessageDto privateMessageDto = new PrivateMessageDto();
         privateMessageDto.setId(privateMessage.getId());
         privateMessageDto.setDepartureDate(privateMessage.getDepartureDate());
@@ -24,18 +25,18 @@ public class PrivateMessageMapper {
         return privateMessageDto;
     }
 
-    public static List<PrivateMessageDto> getPrivateMessageDto(List<PrivateMessage> privateMessages) {
+    public static List<PrivateMessageDto> getPrivateMessageDto(final List<PrivateMessage> privateMessages) {
         return privateMessages.stream()
             .map(PrivateMessageMapper::getPrivateMessageDto)
             .collect(Collectors.toList());
     }
 
-    public static PrivateMessage getPrivateMessage(PrivateMessageDto privateMessageDto,
-                                                   PrivateMessageDao privateMessageDao,
-                                                   UserProfileDao userProfileDao,
-                                                   LocationDao locationDao,
-                                                   SchoolDao schoolDao,
-                                                   UniversityDao universityDao) {
+    public static PrivateMessage getPrivateMessage(final PrivateMessageDto privateMessageDto,
+                                                   final PrivateMessageDao privateMessageDao,
+                                                   final UserProfileDao userProfileDao,
+                                                   final LocationDao locationDao,
+                                                   final SchoolDao schoolDao,
+                                                   final UniversityDao universityDao) {
         PrivateMessage privateMessage;
         if (privateMessageDto.getId() == null) {
             privateMessage = new PrivateMessage();

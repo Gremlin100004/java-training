@@ -27,7 +27,7 @@ public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageCommen
     }
 
     @Override
-    public PublicMessageComment findByIdAndEmail(String email, Long commentId) {
+    public PublicMessageComment findByIdAndEmail(final String email, final Long commentId) {
         log.debug("[findByIdAndEmail]");
         log.trace("[email: {}, commentId: {}]", email, commentId);
         try {
@@ -50,7 +50,9 @@ public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageCommen
     }
 
     @Override
-    public List<PublicMessageComment> getPublicMessageComments(Long publicMessageId, int firstResult, int maxResults) {
+    public List<PublicMessageComment> getPublicMessageComments(final Long publicMessageId,
+                                                               final int firstResult,
+                                                               final int maxResults) {
         log.debug("[getPublicMessageComments]");
         log.trace("[publicMessageId: {}]", publicMessageId);
         try {
