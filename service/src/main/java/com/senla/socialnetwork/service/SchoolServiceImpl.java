@@ -35,9 +35,6 @@ public class SchoolServiceImpl implements SchoolService {
     public SchoolDto addSchool(final SchoolDto schoolDto) {
         log.debug("[addSchool]");
         log.debug("[schoolDto: {}]", schoolDto);
-        if (schoolDto == null) {
-            throw new BusinessException("Error, null school");
-        }
         return SchoolMapper.getSchoolDto(schoolDao.saveRecord(
             SchoolMapper.getSchool(schoolDto, schoolDao, locationDao)));
     }
@@ -47,9 +44,6 @@ public class SchoolServiceImpl implements SchoolService {
     public void updateSchool(final SchoolDto schoolDto) {
         log.debug("[updateSchool]");
         log.debug("[schoolDto: {}]", schoolDto);
-        if (schoolDto == null) {
-            throw new BusinessException("Error, null school");
-        }
         schoolDao.updateRecord(SchoolMapper.getSchool(schoolDto, schoolDao, locationDao));
     }
 

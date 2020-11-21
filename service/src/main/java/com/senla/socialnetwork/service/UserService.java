@@ -18,6 +18,8 @@ public interface UserService {
 
     UserDto addUser(UserDto userDto);
 
+    void updateUser(String email, List<UserDto> usersDto);
+
     void deleteUser(Long userId);
 
 }

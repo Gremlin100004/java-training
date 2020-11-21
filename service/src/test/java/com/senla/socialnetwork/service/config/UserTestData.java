@@ -13,6 +13,7 @@ public class UserTestData {
     private static final Long RIGHT_NUMBER_USERS = 2L;
     private static final String EMAIL = "test@test.com";
     private static final String PASSWORD = "test";
+    private static final String WRONG_PASSWORD = "WRONG";
     private static final String TOKEN = "test";
     private static final String EMPTY_TOKEN = "";
 
@@ -38,6 +39,10 @@ public class UserTestData {
 
     public static String getEmptyToken() {
         return EMPTY_TOKEN;
+    }
+
+    public static String getWrongPassword() {
+        return WRONG_PASSWORD;
     }
 
     public static SystemUser getTestUser() {

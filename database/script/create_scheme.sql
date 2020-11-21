@@ -64,6 +64,17 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   university_graduation_year INT NULL,
   PRIMARY KEY pk_user_profiles (id)
 );
+
+-- -----------------------------------------------------
+-- Table `tokens`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS tokens (
+  id INT NOT NULL AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  value VARCHAR(256) NOT NULL,
+  PRIMARY KEY pk_tokens (id)
+);
+
 -- -----------------------------------------------------
 -- Table `public_messages`
 -- -----------------------------------------------------
@@ -212,6 +223,11 @@ ADD CONSTRAINT fk_user_profiles_universities
 FOREIGN KEY (university_id)
 REFERENCES universities (id) ON DELETE CASCADE;
 
+ALTER TABLE tokens
+ADD CONSTRAINT fk_tokens_users
+FOREIGN KEY (user_id)
+REFERENCES users (id) ON DELETE CASCADE;
+
 ALTER TABLE public_messages
 ADD CONSTRAINT fk_public_messages
 FOREIGN KEY (author_id)
@@ -305,6 +321,12 @@ ON universities (id);
 
 CREATE UNIQUE INDEX users_id_idx
 ON users (id);
+
+CREATE UNIQUE INDEX user_profiles_id_idx
+ON user_profiles (id);
+
+CREATE UNIQUE INDEX tokens_id_idx
+ON tokens (id);
 
 CREATE UNIQUE INDEX public_messages_id_idx
 ON public_messages (id);

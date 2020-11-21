@@ -34,9 +34,6 @@ public class UniversityServiceImpl implements UniversityService {
     public UniversityDto addUniversity(final UniversityDto universityDto) {
         log.debug("[addUniversity]");
         log.debug("[universityDto: {}]", universityDto);
-        if (universityDto == null) {
-            throw new BusinessException("Error, null university");
-        }
         return UniversityMapper.getUniversityDto(universityDao.saveRecord(
             UniversityMapper.getUniversity(universityDto, universityDao, locationDao)));
     }
@@ -46,9 +43,6 @@ public class UniversityServiceImpl implements UniversityService {
     public void updateUniversity(final UniversityDto universityDto) {
         log.debug("[updateUniversity]");
         log.debug("[universityDto: {}]", universityDto);
-        if (universityDto == null) {
-            throw new BusinessException("Error, null university");
-        }
         universityDao.updateRecord(UniversityMapper.getUniversity(universityDto, universityDao, locationDao));
     }
 

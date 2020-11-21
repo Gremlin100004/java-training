@@ -1,7 +1,9 @@
 package com.senla.socialnetwork.service;
 
+import com.senla.socialnetwork.dao.TokenDao;
 import com.senla.socialnetwork.dao.UserDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
+import com.senla.socialnetwork.domain.LogoutToken;
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
@@ -29,8 +31,13 @@ import java.util.List;
 @NoArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
+    private static final int LIST_SIZE = 2;
+    private static final int ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA = 0;
+    private static final int ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA = 1;
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private TokenDao tokenDao;
     @Autowired
     private UserProfileDao userProfileDao;
     @Autowired
@@ -62,7 +69,7 @@ public class UserServiceImpl implements UserService {
     public String getUserLogoutToken(final String email) {
         log.debug("[getUserLogoutToken]");
         log.debug("[email: {}]", email);
-        String token = userDao.getLogoutToken(email);
+        String token = tokenDao.getLogoutToken(email);
         if (token == null) {
             token = "";
         }
@@ -96,7 +103,10 @@ public class UserServiceImpl implements UserService {
         if (token == null) {
             throw new BusinessException("Logout error");
         }
-        userDao.addLogoutToken(email, token);
+        LogoutToken logoutToken = new LogoutToken();
+        logoutToken.setValue(token);
+        logoutToken.setSystemUser(userDao.findByEmail(email));
+        tokenDao.saveRecord(logoutToken);
     }
 
     @Override
@@ -104,9 +114,6 @@ public class UserServiceImpl implements UserService {
     public UserDto addUser(final UserDto userDto) {
         log.debug("[addUser]");
         log.debug("[userDto: {}]", userDto);
-        if (userDto == null) {
-            throw new BusinessException("Error, null user");
-        }
         SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
         if (systemUser != null) {
             throw new BusinessException("A user with this email address already exists");
@@ -120,6 +127,26 @@ public class UserServiceImpl implements UserService {
         userProfile.setRegistrationDate(new Date());
         userProfileDao.saveRecord(userProfile);
         return UserMapper.getUserDto(savedSystemUser);
+    }
+
+    @Override
+    public void updateUser(String email, final List<UserDto> usersDto) {
+        log.debug("[updateUser]");
+        log.debug("[usersDto: {}]", usersDto);
+        if (usersDto.size() != LIST_SIZE) {
+            throw new BusinessException("Input data amount error");
+        }
+        SystemUser currentUser = userDao.findByEmail(email);
+        String verifiablePasswordHash = cryptPasswordEncoder.encode(
+            usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).getPassword());
+        String verifiableEmail = usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).getEmail();
+        if (!currentUser.getEmail().equals(verifiableEmail) || !currentUser.getPassword().equals(verifiablePasswordHash)) {
+            throw new BusinessException("Wrong login or password");
+        }
+        currentUser.setEmail(usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getEmail());
+        currentUser.setPassword(cryptPasswordEncoder.encode(
+            usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getPassword()));
+        userDao.updateRecord(currentUser);
     }
 
     @Override

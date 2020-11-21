@@ -8,7 +8,7 @@ import lombok.ToString;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -20,7 +20,7 @@ import javax.persistence.Table;
 public class School extends AEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
 

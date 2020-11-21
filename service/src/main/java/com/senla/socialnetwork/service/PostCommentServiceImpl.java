@@ -60,9 +60,6 @@ public class PostCommentServiceImpl implements PostCommentService {
     public void updateComment(final PostCommentDto postCommentDto) {
         log.debug("[updateComment]");
         log.debug("[postCommentDto: {}]", postCommentDto);
-        if (postCommentDto == null) {
-            throw new BusinessException("Error, null comment");
-        }
         postCommentDao.updateRecord(PostCommentMapper.getPostComment(
             postCommentDto, postCommentDao, postDao, communityDao, userProfileDao,
             locationDao, schoolDao, universityDao));

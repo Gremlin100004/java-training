@@ -29,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         log.debug("[loadUserByUsername]");
         SystemUser systemUser = userDao.findByEmail(email);
         if (systemUser == null) {
-            throw new BusinessException("This email does not exist");
+            throw new BusinessException("This user does not exist");
         }
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(systemUser.getRole().toString());
         return new User(email, systemUser.getPassword(), List.of(authority));

@@ -9,14 +9,10 @@ import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 @Repository
 @Slf4j
 public class UserDaoImpl extends AbstractDao<SystemUser, Long> implements UserDao {
-    private final ConcurrentMap<String, String> logoutToken = new ConcurrentHashMap<>();
-
     public UserDaoImpl() {
         setType(SystemUser.class);
     }
@@ -36,21 +32,6 @@ public class UserDaoImpl extends AbstractDao<SystemUser, Long> implements UserDa
             log.error("[{}]", exception.getMessage());
             return null;
         }
-    }
-
-    @Override
-    public String getLogoutToken(final String email) {
-        return logoutToken.get(email);
-    }
-
-    @Override
-    public void addLogoutToken(final String email, final String token) {
-        logoutToken.putIfAbsent(email, token);
-    }
-
-    @Override
-    public void deleteLogoutToken(final String email) {
-        logoutToken.remove(email);
     }
 
 }

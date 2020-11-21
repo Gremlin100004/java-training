@@ -8,6 +8,7 @@ import com.senla.socialnetwork.dao.PrivateMessageDao;
 import com.senla.socialnetwork.dao.PublicMessageCommentDao;
 import com.senla.socialnetwork.dao.PublicMessageDao;
 import com.senla.socialnetwork.dao.SchoolDao;
+import com.senla.socialnetwork.dao.TokenDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
@@ -81,6 +82,11 @@ public class TestConfig {
     @Bean
     UserDao userDao() {
         return Mockito.mock(UserDao.class);
+    }
+
+    @Bean
+    TokenDao tokenDao() {
+        return Mockito.mock(TokenDao.class);
     }
 
     @Bean

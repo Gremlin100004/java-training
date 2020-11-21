@@ -7,21 +7,22 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "universities")
+@Table(name = "tokens")
 @Getter
 @Setter
-@ToString(exclude = "location")
+@ToString(exclude = "systemUser")
 @NoArgsConstructor
-public class University extends AEntity {
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
-    @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
+public class LogoutToken extends AEntity {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private SystemUser systemUser;
+    @Column(name = "value")
+    private String value;
 
 }

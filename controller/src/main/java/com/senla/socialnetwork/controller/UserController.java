@@ -57,6 +57,12 @@ public class UserController {
         return new ClientMessageDto("Logout was successful");
     }
 
+    @PutMapping
+    public ClientMessageDto updateUser(Authentication authentication, @RequestBody List<UserDto> usersDto) {
+        userService.updateUser(authentication.getName(), usersDto);
+        return new ClientMessageDto("Data update was successful");
+    }
+
     @DeleteMapping("/{id}")
     public ClientMessageDto deleteUser(@PathVariable("id") Long orderId) {
         userService.deleteUser(orderId);
