@@ -3,6 +3,7 @@ package com.senla.socialnetwork.controller;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.service.UniversityService;
+import io.swagger.annotations.Api;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/universities")
+@Api(tags = "Universities")
 @NoArgsConstructor
 public class UniversityController {
     @Autowired

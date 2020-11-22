@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.dto;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.util.Date;
 @Setter
 @ToString
 @NoArgsConstructor
+@ApiModel(value = "User Profile")
 public class UserProfileDto extends GeneralDto {
     private Date registrationDate;
     private Date dateOfBirth;

@@ -4,6 +4,7 @@ import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
 import com.senla.socialnetwork.service.PublicMessageService;
+import io.swagger.annotations.Api;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/publicMessages")
+@Api(tags = "Public Messages")
 @NoArgsConstructor
 public class PublicMessageController {
     @Autowired

@@ -14,7 +14,7 @@
     <suppress checks="DesignForExtension" files="java$"/>
 <!--    <suppress checks="OperatorWrap" files="java$"/>-->
 <!--    <suppress checks="NeedBraces" files="java$"/>-->
-<!--    <suppress checks="MagicNumber" files="java$"/>-->
+    <suppress checks="MagicNumber" files="java$"/>
 <!--    <suppress checks="ConstantName" files="java$"/>-->
     <suppress checks="VisibilityModifier" files="java$"/>
     <suppress checks="MemberName" files="java$"/>

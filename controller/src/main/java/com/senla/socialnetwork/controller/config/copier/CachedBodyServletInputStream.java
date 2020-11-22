@@ -1,4 +1,4 @@
-package com.senla.socialnetwork.controller.config;
+package com.senla.socialnetwork.controller.config.copier;
 
 import com.senla.socialnetwork.controller.exception.ControllerException;
 import lombok.extern.slf4j.Slf4j;

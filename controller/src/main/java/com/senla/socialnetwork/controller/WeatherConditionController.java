@@ -3,6 +3,7 @@ package com.senla.socialnetwork.controller;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.WeatherConditionDto;
 import com.senla.socialnetwork.service.WeatherConditionService;
+import io.swagger.annotations.Api;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/weatherCondition")
+@RequestMapping("/weatherConditions")
+@Api(tags = "Weather Conditions")
 @NoArgsConstructor
 public class WeatherConditionController {
     @Autowired

@@ -1,10 +1,11 @@
 package com.senla.socialnetwork.controller.config.filter;
 
-import com.senla.socialnetwork.controller.config.CachedBodyHttpServletRequest;
-import com.senla.socialnetwork.controller.config.HttpServletResponseCopier;
+import com.senla.socialnetwork.controller.config.copier.CachedBodyHttpServletRequest;
+import com.senla.socialnetwork.controller.config.copier.HttpServletResponseCopier;
 import com.senla.socialnetwork.controller.exception.ControllerException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -28,9 +29,9 @@ public class LoggingFilter extends OncePerRequestFilter {
     private static final int NUMBER_PARAMETERS = 1;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest,
-                                    HttpServletResponse httpServletResponse,
-                                    FilterChain filterChain) {
+    protected void doFilterInternal(@NonNull HttpServletRequest httpServletRequest,
+                                    @NonNull HttpServletResponse httpServletResponse,
+                                    @NonNull FilterChain filterChain) {
         try {
             HttpServletResponseCopier responseCopier = new HttpServletResponseCopier(httpServletResponse);
             CachedBodyHttpServletRequest requestCopier = new CachedBodyHttpServletRequest(httpServletRequest);

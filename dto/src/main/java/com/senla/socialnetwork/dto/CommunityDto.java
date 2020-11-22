@@ -1,6 +1,7 @@
 package com.senla.socialnetwork.dto;
 
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
+import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.util.Date;
 @Setter
 @ToString
 @NoArgsConstructor
+@ApiModel(value = "Community")
 public class CommunityDto extends GeneralDto {
     private Date creationDate;
     private UserProfileDto author;

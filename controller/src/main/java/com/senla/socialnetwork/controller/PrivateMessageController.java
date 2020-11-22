@@ -4,6 +4,7 @@ import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.service.PrivateMessageService;
+import io.swagger.annotations.Api;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/privateMessages")
+@Api(tags = "Private Messages")
 @NoArgsConstructor
 public class PrivateMessageController {
     @Autowired

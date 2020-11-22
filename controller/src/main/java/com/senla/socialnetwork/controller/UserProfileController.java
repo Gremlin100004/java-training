@@ -10,6 +10,7 @@ import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.dto.UserProfileDto;
 import com.senla.socialnetwork.service.UserProfileService;
 import com.senla.socialnetwork.service.enumaration.UserProfileSortParameter;
+import io.swagger.annotations.Api;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/userProfiles")
+@Api(tags = "User Profiles")
 @NoArgsConstructor
 public class UserProfileController {
     @Autowired

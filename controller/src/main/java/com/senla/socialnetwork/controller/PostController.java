@@ -4,6 +4,7 @@ import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.service.PostService;
+import io.swagger.annotations.Api;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
+@Api(tags = "Posts")
 @NoArgsConstructor
 public class PostController {
     @Autowired

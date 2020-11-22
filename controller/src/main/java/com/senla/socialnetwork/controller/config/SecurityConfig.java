@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,6 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String REGISTRATION_URL = "/users/registration";
     private static final String LOGIN_URL = "/users/login";
+    private static final String SWAGGER_URL = "/swagger-ui.html";
     private final UserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
 
@@ -38,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, REGISTRATION_URL).permitAll()
                 .antMatchers(HttpMethod.PUT, LOGIN_URL).permitAll()
+                .antMatchers(HttpMethod.GET, SWAGGER_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -52,6 +55,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             log.error("[{}]", exception.getMessage());
             throw new ControllerException("HttpSecurity configuration is wrong");
         }
+    }
+
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/v2/api-docs",
+                                   "/configuration/ui",
+                                   "/swagger-resources/**",
+                                   "/configuration/security",
+                                   "/swagger-ui.html",
+                                   "/webjars/**");
     }
 
     @Bean

@@ -3,6 +3,7 @@ package com.senla.socialnetwork.controller;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.UserDto;
 import com.senla.socialnetwork.service.UserService;
+import io.swagger.annotations.Api;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@Api(tags = "Users")
 @NoArgsConstructor
 @Slf4j
 public class UserController {
