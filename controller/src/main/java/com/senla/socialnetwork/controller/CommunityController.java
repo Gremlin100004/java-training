@@ -14,7 +14,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -32,16 +32,24 @@ import java.util.List;
 @Api(tags = "Communities")
 @NoArgsConstructor
 public class CommunityController {
+    public static final int OK = 200;
+    public static final int UNAUTHORIZED = 401;
+    public static final int FORBIDDEN = 403;
+    public static final int NOT_FOUND = 404;
+    public static final String OK_MESSAGE = "Successfully retrieved list";
+    public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
+    public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
+    public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
     @Autowired
     private CommunityService communityService;
 
     @GetMapping("/all")
     @ApiOperation(value = "This method is used to get absolutely all communities.", response = CommunityDto.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved list"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = OK, message = OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<CommunityDto> getAllCommunities(@ApiParam(value = "The number of the first element of the expected list")
                                                 @RequestParam int firstResult,
@@ -71,17 +79,15 @@ public class CommunityController {
     @GetMapping("/ownCommunities")
     @ApiOperation(value = "XXXX", response = List.class)
     public List<CommunityDto> getOwnCommunities(
-        @RequestParam int firstResult, @RequestParam int maxResults, Authentication authentication) {
-        String email = authentication.getName();
-        return communityService.getOwnCommunities(email, firstResult, maxResults);
+        @RequestParam int firstResult, @RequestParam int maxResults, HttpServletRequest request) {
+        return communityService.getOwnCommunities(request, firstResult, maxResults);
     }
 
     @GetMapping("/subscriptions")
     @ApiOperation(value = "XXXX", response = List.class)
     public List<CommunityDto> getSubscribedCommunities(
-        @RequestParam int firstResult, @RequestParam int maxResults, Authentication authentication) {
-        String email = authentication.getName();
-        return communityService.getSubscribedCommunities(email, firstResult, maxResults);
+        @RequestParam int firstResult, @RequestParam int maxResults, HttpServletRequest request) {
+        return communityService.getSubscribedCommunities(request, firstResult, maxResults);
     }
 
     @GetMapping("/{id}/posts")
@@ -94,18 +100,16 @@ public class CommunityController {
     @PutMapping("/{id}/subscriptions")
     @ApiOperation(value = "XXXX", response = List.class)
     public ClientMessageDto subscribeToCommunity(@PathVariable("id") Long communityId,
-                                                 Authentication authentication) {
-        String email = authentication.getName();
-        communityService.subscribeToCommunity(email, communityId);
+                                                 HttpServletRequest request) {
+        communityService.subscribeToCommunity(request, communityId);
         return new ClientMessageDto("Community subscription was successful");
     }
 
     @PutMapping("/{id}/subscriptions/changes")
     @ApiOperation(value = "XXXX", response = List.class)
     public ClientMessageDto unsubscribeFromCommunity(
-        @PathVariable("id") Long communityId, Authentication authentication) {
-        String email = authentication.getName();
-        communityService.unsubscribeFromCommunity(email, communityId);
+        @PathVariable("id") Long communityId, HttpServletRequest request) {
+        communityService.unsubscribeFromCommunity(request, communityId);
         return new ClientMessageDto("Community unsubscription was successful");
     }
 
@@ -124,9 +128,8 @@ public class CommunityController {
 
     @PutMapping("/{id}/changes")
     @ApiOperation(value = "XXXX", response = List.class)
-    public ClientMessageDto deleteCommunityByUser(@PathVariable("id") Long communityId, Authentication authentication) {
-        String email = authentication.getName();
-        communityService.deleteCommunityByUser(email, communityId);
+    public ClientMessageDto deleteCommunityByUser(@PathVariable("id") Long communityId, HttpServletRequest request) {
+        communityService.deleteCommunityByUser(request, communityId);
         return new ClientMessageDto("Community deleted successfully");
     }
 
@@ -140,9 +143,8 @@ public class CommunityController {
     @PostMapping("/{id}/posts")
     @ApiOperation(value = "XXXX", response = List.class)
     public ClientMessageDto addPostToCommunity(
-        @RequestBody PostDto postDto, @PathVariable("id") Long communityId, Authentication authentication) {
-        String email = authentication.getName();
-        communityService.addPostToCommunity(email, postDto, communityId);
+        @RequestBody PostDto postDto, @PathVariable("id") Long communityId, HttpServletRequest request) {
+        communityService.addPostToCommunity(request, postDto, communityId);
         return new ClientMessageDto("Post added successfully");
     }
 

@@ -59,9 +59,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto getUser(final String email) {
+    public UserDto getUser(final HttpServletRequest request) {
         log.debug("[getUser]");
-        return UserMapper.getUserDto(userDao.findByEmail(email));
+        log.debug("[request: {}]", request);
+        return UserMapper.getUserDto(userDao.findByEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey)));
     }
 
     @Override
@@ -96,16 +98,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void logOut(final String email, final HttpServletRequest request) {
+    public void logOut(final HttpServletRequest request) {
         log.debug("[logOut]");
-        log.debug("[email: {}, request: {}]", email, request);
+        log.debug("[request: {}]", request);
         String token = JwtUtil.getToken(request);
         if (token == null) {
             throw new BusinessException("Logout error");
         }
         LogoutToken logoutToken = new LogoutToken();
         logoutToken.setValue(token);
-        logoutToken.setSystemUser(userDao.findByEmail(email));
+        logoutToken.setSystemUser(userDao.findByEmail(JwtUtil.extractUsername(token, secretKey)));
         tokenDao.saveRecord(logoutToken);
     }
 
@@ -130,13 +132,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(String email, final List<UserDto> usersDto) {
+    public void updateUser(HttpServletRequest request, final List<UserDto> usersDto) {
         log.debug("[updateUser]");
-        log.debug("[usersDto: {}]", usersDto);
+        log.debug("[request: {}, usersDto: {}]", request, usersDto);
         if (usersDto.size() != LIST_SIZE) {
             throw new BusinessException("Input data amount error");
         }
-        SystemUser currentUser = userDao.findByEmail(email);
+        SystemUser currentUser = userDao.findByEmail(JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey));
         String verifiablePasswordHash = cryptPasswordEncoder.encode(
             usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).getPassword());
         String verifiableEmail = usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).getEmail();

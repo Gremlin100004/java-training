@@ -2,13 +2,14 @@ package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
 public interface PrivateMessageService {
     List<PrivateMessageDto> getPrivateMessages(int firstResult, int maxResults);
 
-    List<PrivateMessageDto> getMessageFilteredByPeriod(String email,
+    List<PrivateMessageDto> getMessageFilteredByPeriod(HttpServletRequest request,
                                                        Date startPeriodDate,
                                                        Date endPeriodDate,
                                                        int firstResult,
@@ -18,7 +19,7 @@ public interface PrivateMessageService {
 
     void updateMessage(PrivateMessageDto privateMessageDto);
 
-    void deleteMessageByUser(String email, Long messageId);
+    void deleteMessageByUser(HttpServletRequest request, Long messageId);
 
     void deleteMessage(Long messageId);
 

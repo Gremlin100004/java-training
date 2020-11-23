@@ -8,13 +8,16 @@ import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PrivateMessage;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.PrivateMessageMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +35,8 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     SchoolDao schoolDao;
     @Autowired
     UniversityDao universityDao;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
 
     @Override
     @Transactional
@@ -43,17 +48,17 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public List<PrivateMessageDto> getMessageFilteredByPeriod(final String email,
+    public List<PrivateMessageDto> getMessageFilteredByPeriod(final HttpServletRequest request,
                                                               final Date startPeriodDate,
                                                               final Date endPeriodDate,
                                                               final int firstResult,
                                                               final int maxResults) {
         log.debug("[getMessageFilteredByPeriod]");
-        log.debug("[email: {}, startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
-                  email, startPeriodDate, endPeriodDate, firstResult, maxResults);
+        log.debug("[request: {}, startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
+                  request, startPeriodDate, endPeriodDate, firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
-            privateMessageDao.getMessageFilteredByPeriod(
-                email, startPeriodDate, endPeriodDate, firstResult, maxResults));
+            privateMessageDao.getMessageFilteredByPeriod(JwtUtil.extractUsername(JwtUtil.getToken(
+                request), secretKey), startPeriodDate, endPeriodDate, firstResult, maxResults));
     }
 
     @Override
@@ -77,10 +82,11 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public void deleteMessageByUser(final String email, final Long messageId) {
+    public void deleteMessageByUser(final HttpServletRequest request, final Long messageId) {
         log.debug("[deleteMessageByUser]");
-        log.debug("[email: {}, messageId: {}]", email, messageId);
-        PrivateMessage privateMessage = privateMessageDao.findByIdAndEmail(email, messageId);
+        log.debug("[request: {}, messageId: {}]", request, messageId);
+        PrivateMessage privateMessage = privateMessageDao.findByIdAndEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey), messageId);
         if (privateMessage == null) {
             throw new BusinessException("Error, there is no such message");
         } else if (privateMessage.isDeleted()) {

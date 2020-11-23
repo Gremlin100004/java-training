@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -23,6 +24,14 @@ import java.util.List;
 @Api(tags = "Public Messages Comments")
 @NoArgsConstructor
 public class PublicMessageCommentController {
+    public static final int BAD_REQUEST = 400;
+    public static final int UNAUTHORIZED = 401;
+    public static final int FORBIDDEN = 403;
+    public static final int NOT_FOUND = 404;
+    public static final String BAD_REQUEST_MESSAGE = "Successfully retrieved list";
+    public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
+    public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
+    public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
     @Autowired
     private PublicMessageCommentService publicMessageCommentService;
 
@@ -43,10 +52,8 @@ public class PublicMessageCommentController {
     }
 
     @PutMapping("/{id}/changes")
-    public ClientMessageDto deleteCommentByUser(@PathVariable("id") Long commentId) {
-        String email = "";
-//        String email = authentication.getName();
-        publicMessageCommentService.deleteCommentByUser(email, commentId);
+    public ClientMessageDto deleteCommentByUser(@PathVariable("id") Long commentId, HttpServletRequest request) {
+         publicMessageCommentService.deleteCommentByUser(request, commentId);
         return new ClientMessageDto("Comment deleted successfully");
     }
 

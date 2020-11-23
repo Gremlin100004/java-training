@@ -8,16 +8,20 @@ import com.senla.socialnetwork.dto.UserDto;
 import com.senla.socialnetwork.service.config.TestConfig;
 import com.senla.socialnetwork.service.config.UserTestData;
 import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.util.JwtUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +40,12 @@ public class UserServiceImplTest {
     private TokenDao tokenDao;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private HttpServletRequest request;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
+
+
 
     @Test
     void UserServiceImpl_getUsers() {
@@ -56,9 +66,11 @@ public class UserServiceImplTest {
     void UserServiceImpl_getUser() {
         SystemUser systemUser = UserTestData.getTestUser();
         UserDto userDto = UserTestData.getTestUserDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(systemUser).when(userDao).findByEmail(UserTestData.getEmail());
 
-        UserDto resultUserDto = userService.getUser(UserTestData.getEmail());
+        UserDto resultUserDto = userService.getUser(request);
         Assertions.assertNotNull(resultUserDto);
         Assertions.assertEquals(userDto, resultUserDto);
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -67,11 +79,11 @@ public class UserServiceImplTest {
 
     @Test
     void UserServiceImpl_getUserLogoutToken() {
-        Mockito.doReturn(UserTestData.getTOKEN()).when(tokenDao).getLogoutToken(UserTestData.getEmail());
+        Mockito.doReturn(UserTestData.getToken()).when(tokenDao).getLogoutToken(UserTestData.getEmail());
 
         String resultToken = userService.getUserLogoutToken(UserTestData.getEmail());
         Assertions.assertNotNull(resultToken);
-        Assertions.assertEquals(UserTestData.getTOKEN(), resultToken);
+        Assertions.assertEquals(UserTestData.getToken(), resultToken);
         Mockito.verify(tokenDao, Mockito.times(1)).getLogoutToken(UserTestData.getEmail());
         Mockito.reset(tokenDao);
     }
@@ -144,13 +156,15 @@ public class UserServiceImplTest {
     void UserServiceImplTest_updateUser() {
         SystemUser testUser = UserTestData.getTestUser();
         List<UserDto> usersDto = UserTestData.getTestUsersDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(testUser).when(userDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(testUser.getPassword()).when(bCryptPasswordEncoder).encode(
             usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).getPassword());
         Mockito.doReturn(usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getPassword()).when(
             bCryptPasswordEncoder).encode(usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getPassword());
 
-        Assertions.assertDoesNotThrow(() -> userService.updateUser(UserTestData.getEmail(), usersDto));
+        Assertions.assertDoesNotThrow(() -> userService.updateUser(request, usersDto));
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(bCryptPasswordEncoder, Mockito.times(2)).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.times(1)).updateRecord(testUser);
@@ -164,8 +178,7 @@ public class UserServiceImplTest {
         List<UserDto> usersDto = new ArrayList<>();
         usersDto.add(UserTestData.getTestUserDto());
 
-        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(
-            UserTestData.getEmail(), usersDto));
+        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
         Mockito.verify(userDao, Mockito.never()).findByEmail(UserTestData.getEmail());
         Mockito.verify(bCryptPasswordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.never()).updateRecord(testUser);
@@ -175,12 +188,13 @@ public class UserServiceImplTest {
     void UserServiceImplTest_updateUser_wrongUserData() {
         SystemUser testUser = UserTestData.getTestUser();
         List<UserDto> usersDto = UserTestData.getTestUsersDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(testUser).when(userDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(UserTestData.getWrongPassword()).when(bCryptPasswordEncoder).encode(
             usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).getPassword());
 
-        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(
-            UserTestData.getEmail(), usersDto));
+        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(bCryptPasswordEncoder, Mockito.times(1)).encode(
             ArgumentMatchers.anyString());

@@ -20,6 +20,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Configuration
 @ComponentScan("com.senla.socialnetwork.service")
 public class TestConfig {
@@ -97,6 +99,11 @@ public class TestConfig {
     @Bean
     WeatherConditionDao weatherConditionDao() {
         return Mockito.mock(WeatherConditionDao.class);
+    }
+
+    @Bean
+    HttpServletRequest request() {
+        return Mockito.mock(HttpServletRequest.class);
     }
 
 }

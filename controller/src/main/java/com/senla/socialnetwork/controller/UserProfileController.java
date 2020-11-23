@@ -13,7 +13,6 @@ import com.senla.socialnetwork.service.enumaration.UserProfileSortParameter;
 import io.swagger.annotations.Api;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
 import java.util.List;
 
@@ -31,6 +31,14 @@ import java.util.List;
 @Api(tags = "User Profiles")
 @NoArgsConstructor
 public class UserProfileController {
+    public static final int BAD_REQUEST = 400;
+    public static final int UNAUTHORIZED = 401;
+    public static final int FORBIDDEN = 403;
+    public static final int NOT_FOUND = 404;
+    public static final String BAD_REQUEST_MESSAGE = "Successfully retrieved list";
+    public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
+    public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
+    public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
     @Autowired
     private UserProfileService userProfileService;
 
@@ -63,9 +71,8 @@ public class UserProfileController {
     }
 
     @GetMapping("/own")
-    public UserProfileDto getUserProfile(Authentication authentication) {
-        String email = authentication.getName();
-        return userProfileService.getUserProfile(email);
+    public UserProfileDto getUserProfile(HttpServletRequest request) {
+        return userProfileService.getUserProfile(request);
     }
 
     @PutMapping
@@ -82,63 +89,55 @@ public class UserProfileController {
     }
 
     @GetMapping("/friends/birthday")
-    public UserProfileDto getFriendNearestDateOfBirth(Authentication authentication) {
-        String email = authentication.getName();
-        return userProfileService.getFriendNearestDateOfBirth(email);
+    public UserProfileDto getFriendNearestDateOfBirth(HttpServletRequest request) {
+        return userProfileService.getFriendNearestDateOfBirth(request);
     }
 
     @GetMapping("/friends/{id}")
-    public UserProfileDto getUserProfileFriend(@PathVariable("id") Long userProfileId, Authentication authentication) {
-        String email = authentication.getName();
-        return userProfileService.getUserProfileFriend(email, userProfileId);
+    public UserProfileDto getUserProfileFriend(@PathVariable("id") Long userProfileId, HttpServletRequest request) {
+        return userProfileService.getUserProfileFriend(request, userProfileId);
     }
 
     @GetMapping("/friends")
     public List<UserProfileDto> getUserProfileFriends(@RequestParam int firstResult,
                                                       @RequestParam int maxResults,
-                                                      Authentication authentication) {
-        String email = authentication.getName();
-        return userProfileService.getUserProfileFriends(email, firstResult, maxResults);
+                                                      HttpServletRequest request) {
+        return userProfileService.getUserProfileFriends(request, firstResult, maxResults);
     }
 
     @GetMapping("/friends/sorting")
     public List<UserProfileDto> getSortedFriendsOfUserProfile(@RequestParam UserProfileSortParameter sortParameter,
                                                               @RequestParam int firstResult,
                                                               @RequestParam int maxResults,
-                                                              Authentication authentication) {
-        String email = authentication.getName();
-        return userProfileService.getSortedFriendsOfUserProfile(email, sortParameter, firstResult, maxResults);
+                                                              HttpServletRequest request) {
+        return userProfileService.getSortedFriendsOfUserProfile(request, sortParameter, firstResult, maxResults);
     }
 
     @GetMapping("/friends/requests")
     public List<UserProfileDto> getUserProfileSignedFriends(@RequestParam int firstResult,
                                                             @RequestParam int maxResults,
-                                                            Authentication authentication) {
-        String email = authentication.getName();
-        return userProfileService.getUserProfileSignedFriends(email, firstResult, maxResults);
+                                                            HttpServletRequest request) {
+        return userProfileService.getUserProfileSignedFriends(request, firstResult, maxResults);
     }
 
     @PutMapping("/friends/requests/{id}")
     public ClientMessageDto sendAFriendRequest(@PathVariable("id") Long userProfileId,
-                                               Authentication authentication) {
-        String email = authentication.getName();
-        userProfileService.sendAFriendRequest(email, userProfileId);
+                                               HttpServletRequest request) {
+        userProfileService.sendAFriendRequest(request, userProfileId);
         return new ClientMessageDto("Friend request sent successfully");
     }
 
     @PutMapping("/friends/positiveRequests/{id}")
     public ClientMessageDto confirmFriend(@PathVariable("id") Long userProfileId,
-                                          Authentication authentication) {
-        String email = authentication.getName();
-        userProfileService.sendAFriendRequest(email, userProfileId);
+                                          HttpServletRequest request) {
+        userProfileService.sendAFriendRequest(request, userProfileId);
         return new ClientMessageDto("User added as friend successfully");
     }
 
     @PutMapping("/friends/negativeRequests/{id}")
     public ClientMessageDto removeUserFromFriends(@PathVariable("id") Long userProfileId,
-                                                  Authentication authentication) {
-        String email = authentication.getName();
-        userProfileService.removeUserFromFriends(email, userProfileId);
+                                                  HttpServletRequest request) {
+        userProfileService.removeUserFromFriends(request, userProfileId);
         return new ClientMessageDto("User removed from friends successfully");
     }
 
@@ -151,41 +150,36 @@ public class UserProfileController {
     @GetMapping("/privateMessages")
     public List<PrivateMessageDto> getPrivateMessages(@RequestParam int firstResult,
                                                       @RequestParam int maxResults,
-                                                      Authentication authentication) {
-        String email = authentication.getName();
-        return userProfileService.getPrivateMessages(email, firstResult, maxResults);
+                                                      HttpServletRequest request) {
+        return userProfileService.getPrivateMessages(request, firstResult, maxResults);
     }
 
     @GetMapping("/{id}/privateMessages")
     public List<PrivateMessageDto> getDialogue(@PathVariable("id") Long userProfileId,
                                                @RequestParam int firstResult,
                                                @RequestParam int maxResults,
-                                               Authentication authentication) {
-        String email = authentication.getName();
-        return userProfileService.getDialogue(email, userProfileId, firstResult, maxResults);
+                                               HttpServletRequest request) {
+        return userProfileService.getDialogue(request, userProfileId, firstResult, maxResults);
     }
     @GetMapping("/privateMessages/unreadMessages")
     public List<PrivateMessageDto> getUnreadMessages(@RequestParam int firstResult,
                                                      @RequestParam int maxResults,
-                                                     Authentication authentication) {
-        String email = authentication.getName();
-        return userProfileService.getUnreadMessages(email, firstResult, maxResults);
+                                                     HttpServletRequest request) {
+        return userProfileService.getUnreadMessages(request, firstResult, maxResults);
     }
 
     @GetMapping("/friends/publicMessages")
     public List<PublicMessageDto> getFriendsPublicMessages(@RequestParam int firstResult,
                                                            @RequestParam int maxResults,
-                                                           Authentication authentication) {
-        String email = authentication.getName();
-        return userProfileService.getFriendsPublicMessages(email, firstResult, maxResults);
+                                                           HttpServletRequest request) {
+        return userProfileService.getFriendsPublicMessages(request, firstResult, maxResults);
     }
 
     @GetMapping("/publicMessages")
     public List<PublicMessageDto> getPublicMessages(@RequestParam int firstResult,
                                                     @RequestParam int maxResults,
-                                                    Authentication authentication) {
-        String email = authentication.getName();
-        return userProfileService.getPublicMessages(email, firstResult, maxResults);
+                                                    HttpServletRequest request) {
+        return userProfileService.getPublicMessages(request, firstResult, maxResults);
     }
 
 }

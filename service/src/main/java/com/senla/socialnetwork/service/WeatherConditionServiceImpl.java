@@ -8,6 +8,7 @@ import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.domain.WeatherCondition;
 import com.senla.socialnetwork.dto.WeatherConditionDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.WeatherConditionMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -46,6 +48,8 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     private RestTemplate restTemplate;
     @Autowired
     private ObjectMapper objectMapper;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
 
     @Override
     @Transactional
@@ -57,10 +61,10 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
 
     @Override
     @Transactional
-    public WeatherConditionDto getWeatherCondition(final String email) {
+    public WeatherConditionDto getWeatherCondition(final HttpServletRequest request) {
         log.debug("[getWeatherCondition]");
-        log.debug("[email: {}]", email);
-        Location location = locationDao.getLocation(email);
+        log.debug("[request: {}]", request);
+        Location location = locationDao.getLocation(JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey));
         if (location == null) {
             throw new BusinessException("There is no location");
         }

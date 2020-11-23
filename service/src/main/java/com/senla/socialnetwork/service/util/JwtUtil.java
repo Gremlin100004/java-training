@@ -42,6 +42,16 @@ public class JwtUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token, secretKey));
     }
 
+    public static String extractUsername(final String token, final String secretKey) {
+        log.debug("[extractUsername]");
+        return extractClaim(token, Claims::getSubject, secretKey);
+    }
+
+    private static Date extractExpiration(final String token, final String secretKey) {
+        log.debug("[extractExpiration]");
+        return extractClaim(token, Claims::getExpiration, secretKey);
+    }
+
     private static <T> T extractClaim(final String token,
                                       final Function<Claims, T> claimsResolver,
                                       final String secretKey) {
@@ -64,13 +74,4 @@ public class JwtUtil {
         return extractExpiration(token, secretKey).before(new Date());
     }
 
-    public static String extractUsername(final String token, final String secretKey) {
-        log.debug("[extractUsername]");
-        return extractClaim(token, Claims::getSubject, secretKey);
-    }
-
-    private static Date extractExpiration(final String token, final String secretKey) {
-        log.debug("[extractExpiration]");
-        return extractClaim(token, Claims::getExpiration, secretKey);
-    }
 }

@@ -3,7 +3,10 @@ package com.senla.socialnetwork.service.config;
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserDto;
+import com.senla.socialnetwork.service.util.JwtUtil;
+import org.springframework.security.core.userdetails.User;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +19,8 @@ public class UserTestData {
     private static final String WRONG_PASSWORD = "WRONG";
     private static final String TOKEN = "test";
     private static final String EMPTY_TOKEN = "";
+    private static final String TOKEN_TYPE = "Bearer ";
+    private static final Integer EXPIRATION = 3600000;
 
     public static Long getIdUser() {
         return ID_USER;
@@ -33,7 +38,7 @@ public class UserTestData {
         return PASSWORD;
     }
 
-    public static String getTOKEN() {
+    public static String getToken() {
         return TOKEN;
     }
 
@@ -43,6 +48,11 @@ public class UserTestData {
 
     public static String getWrongPassword() {
         return WRONG_PASSWORD;
+    }
+
+    public static String getAuthorizationHeader(String secretKey){
+        User user = new User(EMAIL, PASSWORD, new ArrayList<>());
+        return TOKEN_TYPE + JwtUtil.generateToken(user, secretKey, EXPIRATION);
     }
 
     public static SystemUser getTestUser() {

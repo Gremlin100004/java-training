@@ -33,9 +33,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -61,6 +64,10 @@ public class UserProfileServiceImplTest {
     private PrivateMessageDao privateMessageDao;
     @Autowired
     private PublicMessageDao publicMessageDao;
+    @Autowired
+    private HttpServletRequest request;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
 
     @Test
     void UserProfileServiceImpl_getUserProfiles() {
@@ -82,9 +89,11 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getUserProfile() {
         UserProfileDto userProfileDto = UserProfileTestData.getTestUserProfileDto();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
 
-        UserProfileDto resultProfilesDto = userProfileService.getUserProfile(UserTestData.getEmail());
+        UserProfileDto resultProfilesDto = userProfileService.getUserProfile(request);
         Assertions.assertNotNull(resultProfilesDto);
         Assertions.assertEquals(resultProfilesDto, userProfileDto);
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -263,9 +272,11 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getFriendNearestDateOfBirth_userProfileDao_getNearestBirthdayByCurrentDate() {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         UserProfileDto userProfileDto = UserProfileTestData.getTestUserProfileDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).getNearestBirthdayByCurrentDate(UserTestData.getEmail());
 
-        UserProfileDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth(UserTestData.getEmail());
+        UserProfileDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth(request);
         Assertions.assertEquals(resultProfileDto, userProfileDto);
         Mockito.verify(userProfileDao, Mockito.times(1)).getNearestBirthdayByCurrentDate(UserTestData.getEmail());
         Mockito.verify(userProfileDao, Mockito.never()).getNearestBirthdayFromTheBeginningOfTheYear(UserTestData.getEmail());
@@ -276,10 +287,12 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getFriendNearestDateOfBirth_userProfileDao_getNearestBirthdayFromTheBeginningOfTheYear() {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         UserProfileDto userProfileDto = UserProfileTestData.getTestUserProfileDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(userProfileDao).getNearestBirthdayByCurrentDate(UserTestData.getEmail());
         Mockito.doReturn(userProfile).when(userProfileDao).getNearestBirthdayFromTheBeginningOfTheYear(UserTestData.getEmail());
 
-        UserProfileDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth(UserTestData.getEmail());
+        UserProfileDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth(request);
         Assertions.assertEquals(resultProfileDto, userProfileDto);
         Mockito.verify(userProfileDao, Mockito.times(1)).getNearestBirthdayByCurrentDate(UserTestData.getEmail());
         Mockito.verify(userProfileDao, Mockito.times(1))
@@ -289,10 +302,12 @@ public class UserProfileServiceImplTest {
 
     @Test
     void UserProfileServiceImpl_getFriendNearestDateOfBirth_userProfileDao_getNearestBirthdayFromTheBeginningOfTheYear_null() {
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(userProfileDao).getNearestBirthdayByCurrentDate(UserTestData.getEmail());
         Mockito.doReturn(null).when(userProfileDao).getNearestBirthdayFromTheBeginningOfTheYear(UserTestData.getEmail());
 
-        UserProfileDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth(UserTestData.getEmail());
+        UserProfileDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth(request);
         Assertions.assertNull(resultProfileDto);
         Mockito.verify(userProfileDao, Mockito.times(1)).getNearestBirthdayByCurrentDate(UserTestData.getEmail());
         Mockito.verify(userProfileDao, Mockito.times(1))
@@ -304,9 +319,11 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getUserProfileFriend() {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         UserProfileDto profileDto = UserProfileTestData.getTestUserProfileDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).getFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileId());
 
-        UserProfileDto resultProfileDto = userProfileService.getUserProfileFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileId());
+        UserProfileDto resultProfileDto = userProfileService.getUserProfileFriend(request, UserProfileTestData.getUserProfileId());
         Assertions.assertNotNull(resultProfileDto);
         Assertions.assertEquals(resultProfileDto, profileDto);
         Mockito.verify(userProfileDao, Mockito.times(1)).getFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileId());
@@ -317,10 +334,12 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getUserProfileFriends() {
         List<UserProfile> userProfiles = UserProfileTestData.getTestUserProfiles();
         List<UserProfileDto> profilesDto = UserProfileTestData.getTestUserProfilesDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfiles).when(userProfileDao).getFriends(UserTestData.getEmail(),  FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<UserProfileDto> resultProfilesDto = userProfileService.getUserProfileFriends(
-            UserTestData.getEmail(),  FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request,  FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultProfilesDto);
         Assertions.assertEquals(UserTestData.getRightNumberUsers(), resultProfilesDto.size());
         Assertions.assertFalse(resultProfilesDto.isEmpty());
@@ -334,11 +353,13 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getSortedFriendsOfUserProfile_userProfileDao_getFriendsSortByAge() {
         List<UserProfileDto> profilesDto = UserProfileTestData.getTestUserProfilesDto();
         List<UserProfile> userProfiles = UserProfileTestData.getTestUserProfiles();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfiles).when(userProfileDao).getFriendsSortByAge(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<UserProfileDto> resultProfilesDto = userProfileService.getSortedFriendsOfUserProfile(
-            UserTestData.getEmail(), UserProfileSortParameter.BY_BIRTHDAY, FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, UserProfileSortParameter.BY_BIRTHDAY, FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultProfilesDto);
         Assertions.assertEquals(UserTestData.getRightNumberUsers(), resultProfilesDto.size());
         Assertions.assertFalse(resultProfilesDto.isEmpty());
@@ -354,11 +375,13 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getSortedFriendsOfUserProfile_userProfileDao_getFriendsSortByName() {
         List<UserProfileDto> profilesDto = UserProfileTestData.getTestUserProfilesDto();
         List<UserProfile> userProfiles = UserProfileTestData.getTestUserProfiles();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfiles).when(userProfileDao).getFriendsSortByName(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<UserProfileDto> resultProfilesDto = userProfileService.getSortedFriendsOfUserProfile(
-            UserTestData.getEmail(), UserProfileSortParameter.BY_NAME, FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, UserProfileSortParameter.BY_NAME, FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultProfilesDto);
         Assertions.assertEquals(UserTestData.getRightNumberUsers(), resultProfilesDto.size());
         Assertions.assertFalse(resultProfilesDto.isEmpty());
@@ -375,11 +398,13 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getSortedFriendsOfUserProfile_userProfileDao_getFriendsSortByNumberOfFriends() {
         List<UserProfileDto> profilesDto = UserProfileTestData.getTestUserProfilesDto();
         List<UserProfile> userProfiles = UserProfileTestData.getTestUserProfiles();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfiles).when(userProfileDao).getFriendsSortByNumberOfFriends(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<UserProfileDto> resultProfilesDto = userProfileService.getSortedFriendsOfUserProfile(
-            UserTestData.getEmail(), UserProfileSortParameter.BY_NUMBER_OF_FRIENDS, FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, UserProfileSortParameter.BY_NUMBER_OF_FRIENDS, FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultProfilesDto);
         Assertions.assertEquals(UserTestData.getRightNumberUsers(), resultProfilesDto.size());
         Assertions.assertFalse(resultProfilesDto.isEmpty());
@@ -394,8 +419,11 @@ public class UserProfileServiceImplTest {
 
     @Test
     void UserProfileServiceImpl_getSortedFriendsOfUserProfile_wrongSortParameter() {
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
+
         Assertions.assertThrows(BusinessException.class, () -> userProfileService.getSortedFriendsOfUserProfile(
-            UserTestData.getEmail(), UserProfileSortParameter.BY_SURNAME, FIRST_RESULT, NORMAL_MAX_RESULTS));
+            request, UserProfileSortParameter.BY_SURNAME, FIRST_RESULT, NORMAL_MAX_RESULTS));
         Mockito.verify(userProfileDao, Mockito.never()).getFriendsSortByAge(UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
         Mockito.verify(userProfileDao, Mockito.never()).getFriendsSortByName(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
@@ -408,11 +436,13 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getUserProfileSignedFriends() {
         List<UserProfileDto> profilesDto = UserProfileTestData.getTestUserProfilesDto();
         List<UserProfile> userProfiles = UserProfileTestData.getTestUserProfiles();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfiles).when(userProfileDao).getSignedFriends(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<UserProfileDto> resultProfilesDto = userProfileService.getUserProfileSignedFriends(
-            UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultProfilesDto);
         Assertions.assertEquals(UserTestData.getRightNumberUsers(), resultProfilesDto.size());
         Assertions.assertFalse(resultProfilesDto.isEmpty());
@@ -428,11 +458,13 @@ public class UserProfileServiceImplTest {
         UserProfile userAnotherProfile = UserProfileTestData.getTestUserProfile();
         List<UserProfile> userProfiles = UserProfileTestData.getTestUserProfiles();
         userAnotherProfile.setId(UserProfileTestData.getUserProfileOtherId());
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(userAnotherProfile).when(userProfileDao).getFutureFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
         Mockito.doReturn(userProfiles).when(userProfileDao).getSignedFriends(UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
 
-        Assertions.assertDoesNotThrow(() -> userProfileService.sendAFriendRequest(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId()));
+        Assertions.assertDoesNotThrow(() -> userProfileService.sendAFriendRequest(request, UserProfileTestData.getUserProfileOtherId()));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(userProfileDao, Mockito.times(1)).getFutureFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
         Mockito.verify(userProfileDao, Mockito.times(1)).getSignedFriends(
@@ -444,10 +476,12 @@ public class UserProfileServiceImplTest {
     @Test
     void UserProfileServiceImpl_sendAFriendRequest_userProfileDao_findByEmail_nullObject() {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(userProfileDao).findByEmail(UserTestData.getEmail());
 
         Assertions.assertThrows(BusinessException.class, () -> userProfileService.sendAFriendRequest(
-            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId()));
+            request, UserProfileTestData.getUserProfileOtherId()));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(userProfileDao, Mockito.never()).getFutureFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
         Mockito.verify(userProfileDao, Mockito.never()).getSignedFriends(
@@ -459,11 +493,13 @@ public class UserProfileServiceImplTest {
     @Test
     void UserProfileServiceImpl_sendAFriendRequest_userProfileDao_getFutureFriend_nullObject() {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(null).when(userProfileDao).getFutureFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
 
         Assertions.assertThrows(BusinessException.class, () -> userProfileService.sendAFriendRequest(
-            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId()));
+            request, UserProfileTestData.getUserProfileOtherId()));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(userProfileDao, Mockito.times(1)).getFutureFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
         Mockito.verify(userProfileDao, Mockito.never()).getSignedFriends(
@@ -481,14 +517,20 @@ public class UserProfileServiceImplTest {
         friends.get(0).setId(UserProfileTestData.getFriendId());
         friends.get(1).setId(UserProfileTestData.getFriendOtherId());
         userAnotherProfile.setId(UserProfileTestData.getUserProfileOtherId());
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(userAnotherProfile).when(userProfileDao).getSignedFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
-        Mockito.doReturn(userProfiles).when(userProfileDao).getSignedFriends(UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
+        Mockito.doReturn(userAnotherProfile).when(userProfileDao).getSignedFriend(
+            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
+        Mockito.doReturn(userProfiles).when(userProfileDao).getSignedFriends(
+            UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
         Mockito.doReturn(friends).when(userProfileDao).getFriends(UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
 
-        Assertions.assertDoesNotThrow(() -> userProfileService.confirmFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId()));
+        Assertions.assertDoesNotThrow(() -> userProfileService.confirmFriend(
+            request, UserProfileTestData.getUserProfileOtherId()));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(userProfileDao, Mockito.times(1)).getSignedFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
+        Mockito.verify(userProfileDao, Mockito.times(1)).getSignedFriend(
+            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
         Mockito.verify(userProfileDao, Mockito.times(1)).getSignedFriends(
             UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
         Mockito.verify(userProfileDao, Mockito.times(1)).getFriends(
@@ -500,12 +542,15 @@ public class UserProfileServiceImplTest {
     @Test
     void UserProfileServiceImpl_confirmFriend_userProfileDao_findByEmail_nullObject() {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(userProfileDao).findByEmail(UserTestData.getEmail());
 
         Assertions.assertThrows(BusinessException.class, () -> userProfileService.confirmFriend(
-            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId()));
+            request, UserProfileTestData.getUserProfileOtherId()));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(userProfileDao, Mockito.never()).getSignedFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
+        Mockito.verify(userProfileDao, Mockito.never()).getSignedFriend(
+            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
         Mockito.verify(userProfileDao, Mockito.never()).getSignedFriends(
             UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
         Mockito.verify(userProfileDao, Mockito.never()).getFriends(
@@ -517,13 +562,17 @@ public class UserProfileServiceImplTest {
     @Test
     void UserProfileServiceImpl_confirmFriend_userProfileDao_getSignedFriend_nullObject() {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(null).when(userProfileDao).getSignedFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
+        Mockito.doReturn(null).when(userProfileDao).getSignedFriend(
+            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
 
         Assertions.assertThrows(BusinessException.class, () -> userProfileService.confirmFriend(
-            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId()));
+            request, UserProfileTestData.getUserProfileOtherId()));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(userProfileDao, Mockito.times(1)).getSignedFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
+        Mockito.verify(userProfileDao, Mockito.times(1)).getSignedFriend(
+            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
         Mockito.verify(userProfileDao, Mockito.never()).getSignedFriends(
             UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
         Mockito.verify(userProfileDao, Mockito.never()).getFriends(
@@ -541,14 +590,20 @@ public class UserProfileServiceImplTest {
         friends.get(0).setId(UserProfileTestData.getFriendId());
         friends.get(1).setId(UserProfileTestData.getFriendOtherId());
         userAnotherProfile.setId(UserProfileTestData.getUserProfileOtherId());
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(userAnotherProfile).when(userProfileDao).getFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
-        Mockito.doReturn(userProfiles).when(userProfileDao).getSignedFriends(UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
+        Mockito.doReturn(userAnotherProfile).when(userProfileDao).getFriend(
+            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
+        Mockito.doReturn(userProfiles).when(userProfileDao).getSignedFriends(
+            UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
         Mockito.doReturn(friends).when(userProfileDao).getFriends(UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
 
-        Assertions.assertDoesNotThrow(() -> userProfileService.removeUserFromFriends(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId()));
+        Assertions.assertDoesNotThrow(() -> userProfileService.removeUserFromFriends(
+            request, UserProfileTestData.getUserProfileOtherId()));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(userProfileDao, Mockito.times(1)).getFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
+        Mockito.verify(userProfileDao, Mockito.times(1)).getFriend(
+            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
         Mockito.verify(userProfileDao, Mockito.times(1)).getSignedFriends(
             UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
         Mockito.verify(userProfileDao, Mockito.times(1)).getFriends(
@@ -560,12 +615,15 @@ public class UserProfileServiceImplTest {
     @Test
     void UserProfileServiceImpl_removeUserFromFriends_userProfileDao_findByEmail_nullObject() {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(userProfileDao).findByEmail(UserTestData.getEmail());
 
         Assertions.assertThrows(BusinessException.class, () -> userProfileService.removeUserFromFriends(
-            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId()));
+            request, UserProfileTestData.getUserProfileOtherId()));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(userProfileDao, Mockito.never()).getFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
+        Mockito.verify(userProfileDao, Mockito.never()).getFriend(
+            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
         Mockito.verify(userProfileDao, Mockito.never()).getSignedFriends(
             UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
         Mockito.verify(userProfileDao, Mockito.never()).getFriends(
@@ -577,13 +635,17 @@ public class UserProfileServiceImplTest {
     @Test
     void UserProfileServiceImpl_removeUserFromFriends_userProfileDao_getSignedFriend_nullObject() {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(null).when(userProfileDao).getFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
+        Mockito.doReturn(null).when(userProfileDao).getFriend(
+            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
 
         Assertions.assertThrows(BusinessException.class, () -> userProfileService.removeUserFromFriends(
-            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId()));
+            request, UserProfileTestData.getUserProfileOtherId()));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(userProfileDao, Mockito.times(1)).getFriend(UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
+        Mockito.verify(userProfileDao, Mockito.times(1)).getFriend(
+            UserTestData.getEmail(), UserProfileTestData.getUserProfileOtherId());
         Mockito.verify(userProfileDao, Mockito.never()).getSignedFriends(
             UserTestData.getEmail(), FIRST_RESULT, MAX_RESULTS);
         Mockito.verify(userProfileDao, Mockito.never()).getFriends(
@@ -597,9 +659,12 @@ public class UserProfileServiceImplTest {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
 
-        Assertions.assertDoesNotThrow(() -> userProfileService.deleteUserProfile(UserProfileTestData.getUserProfileId()));
-        Mockito.verify(userProfileDao, Mockito.times(1)).findById(UserProfileTestData.getUserProfileId());
-        Mockito.verify(userProfileDao, Mockito.times(1)).deleteRecord(UserProfileTestData.getUserProfileId());
+        Assertions.assertDoesNotThrow(() -> userProfileService.deleteUserProfile(
+            UserProfileTestData.getUserProfileId()));
+        Mockito.verify(userProfileDao, Mockito.times(1)).findById(
+            UserProfileTestData.getUserProfileId());
+        Mockito.verify(userProfileDao, Mockito.times(1)).deleteRecord(
+            UserProfileTestData.getUserProfileId());
         Mockito.reset(userProfileDao);
     }
 
@@ -607,8 +672,10 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_deleteUserProfile_userProfileDao_findByEmail_nullObject() {
         Mockito.doReturn(null).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
 
-        Assertions.assertThrows(BusinessException.class, () -> userProfileService.deleteUserProfile(UserProfileTestData.getUserProfileId()));
-        Mockito.verify(userProfileDao, Mockito.times(1)).findById(UserProfileTestData.getUserProfileId());
+        Assertions.assertThrows(BusinessException.class, () -> userProfileService.deleteUserProfile(
+            UserProfileTestData.getUserProfileId()));
+        Mockito.verify(userProfileDao, Mockito.times(1)).findById(
+            UserProfileTestData.getUserProfileId());
         Mockito.verify(userProfileDao, Mockito.never()).deleteRecord(UserProfileTestData.getUserProfileId());
         Mockito.reset(userProfileDao);
     }
@@ -618,11 +685,14 @@ public class UserProfileServiceImplTest {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         List<PrivateMessage> privateMessages = PrivateMessageTestData.getTestPrivateMessages();
         List<PrivateMessageDto> privateMessagesDto = PrivateMessageTestData.getTestPrivateMessagesDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(privateMessages).when(privateMessageDao).getByEmail(UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
+        Mockito.doReturn(privateMessages).when(privateMessageDao).getByEmail(
+            UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<PrivateMessageDto> resultPrivateMessagesDto = userProfileService.getPrivateMessages(
-            UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultPrivateMessagesDto);
         Assertions.assertEquals(PrivateMessageTestData.getRightNumberPrivateMessages(), resultPrivateMessagesDto.size());
         Assertions.assertFalse(resultPrivateMessagesDto.isEmpty());
@@ -636,10 +706,12 @@ public class UserProfileServiceImplTest {
 
     @Test
     void UserProfileServiceImpl_getPrivateMessages_userProfileDao_findByEmail_nullObject() {
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(userProfileDao).findByEmail(UserTestData.getEmail());
 
         Assertions.assertThrows(BusinessException.class, () -> userProfileService.getPrivateMessages(
-            UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS));
+            request, FIRST_RESULT, NORMAL_MAX_RESULTS));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(privateMessageDao, Mockito.never()).getByEmail(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
@@ -650,11 +722,13 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getDialogue() {
         List<PrivateMessage> privateMessages = PrivateMessageTestData.getTestPrivateMessages();
         List<PrivateMessageDto> privateMessagesDto = PrivateMessageTestData.getTestPrivateMessagesDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(privateMessages).when(privateMessageDao).getDialogue(
             UserTestData.getEmail(), UserProfileTestData.getUserProfileId(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<PrivateMessageDto> resultPrivateMessagesDto = userProfileService.getDialogue(
-            UserTestData.getEmail(), UserProfileTestData.getUserProfileId(), FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, UserProfileTestData.getUserProfileId(), FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultPrivateMessagesDto);
         Assertions.assertEquals(PrivateMessageTestData.getRightNumberPrivateMessages(), resultPrivateMessagesDto.size());
         Assertions.assertFalse(resultPrivateMessagesDto.isEmpty());
@@ -669,11 +743,13 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getUnreadMessages() {
         List<PrivateMessage> privateMessages = PrivateMessageTestData.getTestPrivateMessages();
         List<PrivateMessageDto> privateMessagesDto = PrivateMessageTestData.getTestPrivateMessagesDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(privateMessages).when(privateMessageDao).getUnreadMessages(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<PrivateMessageDto> resultPrivateMessagesDto = userProfileService.getUnreadMessages(
-            UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultPrivateMessagesDto);
         Assertions.assertEquals(PrivateMessageTestData.getRightNumberPrivateMessages(), resultPrivateMessagesDto.size());
         Assertions.assertFalse(resultPrivateMessagesDto.isEmpty());
@@ -688,11 +764,13 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getFriendsPublicMessages() {
         List<PublicMessage> publicMessages = PublicMessageTestData.getTestPublicMessages();
         List<PublicMessageDto> publicMessagesDto = PublicMessageTestData.getTestPublicMessagesDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(publicMessages).when(publicMessageDao).getFriendsMessages(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<PublicMessageDto> resultProfilesDto = userProfileService.getFriendsPublicMessages(
-            UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultProfilesDto);
         Assertions.assertEquals(PublicMessageTestData.getRightNumberPublicMessages(), resultProfilesDto.size());
         Assertions.assertFalse(resultProfilesDto.isEmpty());
@@ -706,11 +784,13 @@ public class UserProfileServiceImplTest {
     void UserProfileServiceImpl_getPublicMessages() {
         List<PublicMessage> publicMessages = PublicMessageTestData.getTestPublicMessages();
         List<PublicMessageDto> publicMessagesDto = PublicMessageTestData.getTestPublicMessagesDto();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(publicMessages).when(publicMessageDao).getByEmail(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<PublicMessageDto> resultProfilesDto = userProfileService.getPublicMessages(
-            UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultProfilesDto);
         Assertions.assertEquals(PublicMessageTestData.getRightNumberPublicMessages(), resultProfilesDto.size());
         Assertions.assertFalse(resultProfilesDto.isEmpty());

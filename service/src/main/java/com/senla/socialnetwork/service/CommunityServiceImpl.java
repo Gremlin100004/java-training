@@ -14,13 +14,16 @@ import com.senla.socialnetwork.dto.CommunityDto;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.CommunityMapper;
+import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.PostMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +45,8 @@ public class CommunityServiceImpl implements CommunityService {
     SchoolDao schoolDao;
     @Autowired
     UniversityDao universityDao;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
 
     @Override
     @Transactional
@@ -80,28 +85,33 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public List<CommunityDto> getOwnCommunities(final String email, final int firstResult, final int maxResults) {
+    public List<CommunityDto> getOwnCommunities(final HttpServletRequest request,
+                                                final int firstResult,
+                                                final int maxResults) {
         log.debug("[getOwnCommunities]");
-        log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        return CommunityMapper.getCommunityDto(communityDao.getOwnCommunitiesByEmail(email, firstResult, maxResults));
+        log.trace("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
+        return CommunityMapper.getCommunityDto(communityDao.getOwnCommunitiesByEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey), firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public List<CommunityDto> getSubscribedCommunities(final String email,
+    public List<CommunityDto> getSubscribedCommunities(final HttpServletRequest request,
                                                        final int firstResult,
                                                        final int maxResults) {
         log.debug("[getSubscribedCommunities]");
-        log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        log.trace("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
-            communityDao.getSubscribedCommunitiesByEmail(email, firstResult, maxResults));
+            communityDao.getSubscribedCommunitiesByEmail(JwtUtil.extractUsername(
+                JwtUtil.getToken(request), secretKey), firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public void subscribeToCommunity(final String email, final Long communityId) {
+    public void subscribeToCommunity(final HttpServletRequest request, final Long communityId) {
         log.debug("[subscribeToCommunity]");
-        log.debug("[email: {}, communityId: {}]", email, communityId);
+        log.debug("[request: {}, communityId: {}]", request, communityId);
+        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
         Community community = communityDao.findByIdAndEmail(email, communityId);
         if (community == null) {
             throw new BusinessException("Error, there is no such community");
@@ -116,9 +126,10 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void unsubscribeFromCommunity(final String email, final Long communityId) {
+    public void unsubscribeFromCommunity(final HttpServletRequest request, final Long communityId) {
         log.debug("[subscribeToCommunity]");
-        log.debug("[email: {}, communityId: {}]", email, communityId);
+        log.debug("[request: {}, communityId: {}]", request, communityId);
+        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
         Community community = communityDao.findByIdAndEmail(email, communityId);
         if (community == null) {
             throw new BusinessException("Error, there is no such community");
@@ -162,10 +173,11 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void deleteCommunityByUser(final String email, final Long communityId) {
+    public void deleteCommunityByUser(final HttpServletRequest request, final Long communityId) {
         log.debug("[deleteMessageByUser]");
-        log.debug("[email: {}, messageId: {}]", email, communityId);
-        Community community = communityDao.findByIdAndEmail(email, communityId);
+        log.debug("[request: {}, messageId: {}]", request, communityId);
+        Community community = communityDao.findByIdAndEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey), communityId);
         if (community == null) {
             throw new BusinessException("Error, there is no such message");
         } else if (community.isDeleted()) {
@@ -192,10 +204,11 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void addPostToCommunity(final String email, final PostDto postDto, final Long communityId) {
+    public void addPostToCommunity(final HttpServletRequest request, final PostDto postDto, final Long communityId) {
         log.debug("[addPosts]");
-        log.debug("[email: {}, postDto: {}, communityId: {}]", email,  postDto, communityId);
-        Community community = communityDao.findByIdAndEmail(email, communityId);
+        log.debug("[request: {}, postDto: {}, communityId: {}]", request,  postDto, communityId);
+        Community community = communityDao.findByIdAndEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey), communityId);
         if (community == null) {
             throw new BusinessException("Error, there is no such community");
         } else if (community.isDeleted()) {

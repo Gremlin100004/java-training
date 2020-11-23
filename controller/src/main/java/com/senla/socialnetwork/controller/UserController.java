@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +28,14 @@ import java.util.List;
 @NoArgsConstructor
 @Slf4j
 public class UserController {
+    public static final int BAD_REQUEST = 400;
+    public static final int UNAUTHORIZED = 401;
+    public static final int FORBIDDEN = 403;
+    public static final int NOT_FOUND = 404;
+    public static final String BAD_REQUEST_MESSAGE = "Successfully retrieved list";
+    public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
+    public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
+    public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
     @Autowired
     private UserService userService;
 
@@ -38,8 +45,8 @@ public class UserController {
     }
 
     @GetMapping("/own")
-    public UserDto getUser(@RequestParam int firstResult, @RequestParam int maxResults, Authentication authentication) {
-        return userService.getUser(authentication.getName());
+    public UserDto getUser(@RequestParam int firstResult, @RequestParam int maxResults, HttpServletRequest request) {
+        return userService.getUser(request);
     }
 
     @PostMapping("/registration")
@@ -54,14 +61,14 @@ public class UserController {
     }
 
     @PutMapping("/logout")
-    public ClientMessageDto logOut(Authentication authentication, HttpServletRequest request) {
-        userService.logOut(authentication.getName(), request);
+    public ClientMessageDto logOut(HttpServletRequest request) {
+        userService.logOut(request);
         return new ClientMessageDto("Logout was successful");
     }
 
     @PutMapping
-    public ClientMessageDto updateUser(Authentication authentication, @RequestBody List<UserDto> usersDto) {
-        userService.updateUser(authentication.getName(), usersDto);
+    public ClientMessageDto updateUser(HttpServletRequest request, @RequestBody List<UserDto> usersDto) {
+        userService.updateUser(request, usersDto);
         return new ClientMessageDto("Data update was successful");
     }
 

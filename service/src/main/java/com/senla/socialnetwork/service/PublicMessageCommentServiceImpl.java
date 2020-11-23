@@ -9,13 +9,16 @@ import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessageComment;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.PublicMessageCommentMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -34,6 +37,8 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
     SchoolDao schoolDao;
     @Autowired
     UniversityDao universityDao;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
 
     @Override
     @Transactional
@@ -67,10 +72,11 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public void deleteCommentByUser(final String email, final Long commentId) {
+    public void deleteCommentByUser(final HttpServletRequest request, final Long commentId) {
         log.debug("[deleteCommentByUser]");
-        log.debug("[email: {}, commentId: {}]", email, commentId);
-        PublicMessageComment publicMessageComment = publicMessageCommentDao.findByIdAndEmail(email, commentId);
+        log.debug("[request: {}, commentId: {}]", request, commentId);
+        PublicMessageComment publicMessageComment = publicMessageCommentDao.findByIdAndEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey), commentId);
         if (publicMessageComment == null) {
             throw new BusinessException("Error, there is no such comment");
         } else if (publicMessageComment.isDeleted()) {

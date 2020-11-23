@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface PublicMessageCommentService {
@@ -11,7 +12,7 @@ public interface PublicMessageCommentService {
 
     void updateComment(PublicMessageCommentDto publicMessageCommentDto);
 
-    void deleteCommentByUser(String email, Long commentId);
+    void deleteCommentByUser(HttpServletRequest request, Long commentId);
 
     void deleteComment(Long commentId);
 

@@ -15,6 +15,7 @@ import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.dto.UserProfileDto;
 import com.senla.socialnetwork.service.enumaration.UserProfileSortParameter;
 import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.LocationMapper;
 import com.senla.socialnetwork.service.util.PrivateMessageMapper;
 import com.senla.socialnetwork.service.util.PublicMessageMapper;
@@ -24,9 +25,11 @@ import com.senla.socialnetwork.service.util.UserProfileMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +51,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     private PrivateMessageDao privateMessageDao;
     @Autowired
     private PublicMessageDao publicMessageDao;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
 
     @Override
     @Transactional
@@ -59,10 +64,11 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public UserProfileDto getUserProfile(final String email) {
+    public UserProfileDto getUserProfile(final HttpServletRequest request) {
         log.debug("[getUserProfile]");
-        log.trace("[email: {}]", email);
-        return UserProfileMapper.getUserProfileDto(userProfileDao.findByEmail(email));
+        log.trace("[request: {}]", request);
+        return UserProfileMapper.getUserProfileDto(userProfileDao.findByEmail(JwtUtil.extractUsername(JwtUtil.getToken(
+            request), secretKey)));
     }
 
     @Override
@@ -79,8 +85,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<UserProfileDto> getSortUserProfiles(final UserProfileSortParameter sortParameter,
                                                     final int firstResult,
                                                     final int maxResults) {
-        log.debug("[getUserProfiles]");
-        log.trace("[sortParameter: {}]", sortParameter);
+        log.debug("[getSortUserProfiles]");
+        log.trace("[sortParameter: {}, firstResult: {}, maxResults: {}]", sortParameter, firstResult, maxResults);
         List<UserProfile> userProfiles;
         if (sortParameter.equals(UserProfileSortParameter.BY_SURNAME)) {
             userProfiles = userProfileDao.getUserProfilesSortBySurname(firstResult, maxResults);
@@ -97,8 +103,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<UserProfileDto> getUserProfiles(final LocationDto locationDto,
                                                 final int firstResult,
                                                 final int maxResults) {
-        log.debug("[getUserProfileFiltered]");
-        log.trace("[locationDto: {}]", locationDto);
+        log.debug("[getUserProfiles]");
+        log.trace("[locationDto: {}, firstResult: {}, maxResults: {}]", locationDto, firstResult, maxResults);
         return UserProfileMapper.getUserProfileDto(userProfileDao.getUserProfilesFilteredByLocation(
                 LocationMapper.getLocation(locationDto, locationDao), firstResult, maxResults));
     }
@@ -108,8 +114,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<UserProfileDto> getUserProfiles(final SchoolDto schoolDto,
                                                 final int firstResult,
                                                 final int maxResults) {
-        log.debug("[getUserProfileFiltered]");
-        log.trace("[schoolDto: {}]", schoolDto);
+        log.debug("[getUserProfiles]");
+        log.trace("[schoolDto: {}, firstResult: {}, maxResults: {}]", schoolDto, firstResult, maxResults);
         return UserProfileMapper.getUserProfileDto(
             userProfileDao.getUserProfilesFilteredBySchool(
                 SchoolMapper.getSchool(schoolDto, schoolDao, locationDao), firstResult, maxResults));
@@ -117,9 +123,11 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public List<UserProfileDto> getUserProfiles(final UniversityDto universityDto, final int firstResult, final int maxResults) {
-        log.debug("[getUserProfileFiltered]");
-        log.trace("[schoolDto: {}]", universityDto);
+    public List<UserProfileDto> getUserProfiles(final UniversityDto universityDto,
+                                                final int firstResult,
+                                                final int maxResults) {
+        log.debug("[getUserProfiles]");
+        log.trace("[universityDto: {}, firstResult: {}, maxResults: {}]", universityDto, firstResult, maxResults);
         return UserProfileMapper.getUserProfileDto(userProfileDao.getUserProfilesFilteredByUniversity(
             UniversityMapper.getUniversity(universityDto, universityDao, locationDao), firstResult, maxResults));
     }
@@ -130,13 +138,19 @@ public class UserProfileServiceImpl implements UserProfileService {
                                                              final Date endPeriodDate,
                                                              final int firstResult,
                                                              final int maxResults) {
+        log.debug("[getUserProfilesFilteredByAge]");
+        log.trace("[startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
+            startPeriodDate, endPeriodDate, firstResult, maxResults);
         return UserProfileMapper.getUserProfileDto(
             userProfileDao.getUserProfilesFilteredByAge(startPeriodDate, endPeriodDate, firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public UserProfileDto getFriendNearestDateOfBirth(final String email) {
+    public UserProfileDto getFriendNearestDateOfBirth(final HttpServletRequest request) {
+        log.debug("[getFriendNearestDateOfBirth]");
+        log.trace("[request: {}]", request);
+        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
         UserProfile userProfile = userProfileDao.getNearestBirthdayByCurrentDate(email);
         if (userProfile == null) {
             userProfile = userProfileDao.getNearestBirthdayFromTheBeginningOfTheYear(email);
@@ -149,29 +163,34 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public UserProfileDto getUserProfileFriend(final String email, final Long userProfileId) {
-        log.debug("[getUserProfileMessages]");
-        log.debug("[email: {}, userProfileId: {}]", email, userProfileId);
-        return UserProfileMapper.getUserProfileDto(userProfileDao.getFriend(email, userProfileId));
+    public UserProfileDto getUserProfileFriend(final HttpServletRequest request, final Long userProfileId) {
+        log.debug("[getUserProfileFriend]");
+        log.debug("[request: {}, userProfileId: {}]", request, userProfileId);
+        return UserProfileMapper.getUserProfileDto(userProfileDao.getFriend(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey), userProfileId));
     }
 
     @Override
     @Transactional
-    public List<UserProfileDto> getUserProfileFriends(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getUserProfileMessages]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        return UserProfileMapper.getUserProfileDto(userProfileDao.getFriends(email, firstResult, maxResults));
+    public List<UserProfileDto> getUserProfileFriends(final HttpServletRequest request,
+                                                      final int firstResult,
+                                                      final int maxResults) {
+        log.debug("[getUserProfileFriends]");
+        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
+        return UserProfileMapper.getUserProfileDto(userProfileDao.getFriends(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey), firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public List<UserProfileDto> getSortedFriendsOfUserProfile(final String email,
+    public List<UserProfileDto> getSortedFriendsOfUserProfile(final HttpServletRequest request,
                                                               final UserProfileSortParameter sortParameter,
                                                               final int firstResult,
                                                               final int maxResults) {
         log.debug("[getSortedFriendsOfUserProfile]");
-        log.debug("[email: {}, email: {}, firstResult: {}, maxResults: {}]",
-            email, sortParameter, firstResult, maxResults);
+        log.debug("[request: {}, email: {}, firstResult: {}, maxResults: {}]",
+            request, sortParameter, firstResult, maxResults);
+        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
         List<UserProfile> userProfiles;
         if (sortParameter.equals(UserProfileSortParameter.BY_BIRTHDAY)) {
             userProfiles = userProfileDao.getFriendsSortByAge(email, firstResult, maxResults);
@@ -187,19 +206,21 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public List<UserProfileDto> getUserProfileSignedFriends(final String email,
+    public List<UserProfileDto> getUserProfileSignedFriends(final HttpServletRequest request,
                                                             final int firstResult,
                                                             final int maxResults) {
-        log.debug("[getUserProfileMessages]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        return UserProfileMapper.getUserProfileDto(userProfileDao.getSignedFriends(email, firstResult, maxResults));
+        log.debug("[getUserProfileSignedFriends]");
+        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
+        return UserProfileMapper.getUserProfileDto(userProfileDao.getSignedFriends(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey), firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public void sendAFriendRequest(final String email, final  Long userProfileId) {
+    public void sendAFriendRequest(final HttpServletRequest request, final  Long userProfileId) {
         log.debug("[sendAFriendRequest]");
-        log.debug("[email: {}, userProfileId: {}]", email, userProfileId);
+        log.debug("[request: {}, userProfileId: {}]", request, userProfileId);
+        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
             throw new BusinessException("Error, this user is not exist");
@@ -216,9 +237,10 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public void confirmFriend(final String email, final Long userProfileId) {
+    public void confirmFriend(final HttpServletRequest request, final Long userProfileId) {
         log.debug("[confirmFriend]");
-        log.debug("[email: {}, userProfileId: {}]", email, userProfileId);
+        log.debug("[request: {}, userProfileId: {}]", request, userProfileId);
+        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
             throw new BusinessException("Error, this user is not exist");
@@ -238,9 +260,10 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public void removeUserFromFriends(final String email, final Long userProfileId) {
+    public void removeUserFromFriends(final HttpServletRequest request, final Long userProfileId) {
         log.debug("[removeUserFromFriends]");
-        log.debug("[email: {}, userProfileId: {}]", email, userProfileId);
+        log.debug("[request: {}, userProfileId: {}]", request, userProfileId);
+        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
             throw new BusinessException("Error, this user is not exist");
@@ -261,7 +284,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional
     public void deleteUserProfile(final Long userProfileId) {
-        log.debug("[deleteSchool]");
+        log.debug("[deleteUserProfile]");
         log.debug("[userProfileId: {}]", userProfileId);
         if (userProfileDao.findById(userProfileId) == null) {
             throw new BusinessException("Error, there is no such profile");
@@ -271,11 +294,12 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public List<PrivateMessageDto> getPrivateMessages(final String email,
+    public List<PrivateMessageDto> getPrivateMessages(final HttpServletRequest request,
                                                       final int firstResult,
                                                       final int maxResults) {
-        log.debug("[getUserProfileMessages]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        log.debug("[getPrivateMessages]");
+        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
+        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
             throw new BusinessException("Error, user with this email does not exist");
@@ -286,45 +310,49 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public List<PrivateMessageDto> getDialogue(final String email,
+    public List<PrivateMessageDto> getDialogue(final HttpServletRequest request,
                                                final Long userProfileId,
                                                final int firstResult,
                                                final int maxResults) {
         log.debug("[getDialogue]");
-        log.debug("[email: {}, userProfileId: {}, firstResult: {}, maxResults: {}]",
-                  email, userProfileId, firstResult, maxResults);
+        log.debug("[request: {}, userProfileId: {}, firstResult: {}, maxResults: {}]",
+            request, userProfileId, firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
-            privateMessageDao.getDialogue(email, userProfileId, firstResult, maxResults));
+            privateMessageDao.getDialogue(JwtUtil.extractUsername(JwtUtil.getToken(
+                request), secretKey), userProfileId, firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public List<PrivateMessageDto> getUnreadMessages(final String email,
+    public List<PrivateMessageDto> getUnreadMessages(final HttpServletRequest request,
                                                      final int firstResult,
                                                      final int maxResults) {
         log.debug("[getUnreadMessages]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
-            privateMessageDao.getUnreadMessages(email, firstResult, maxResults));
+            privateMessageDao.getUnreadMessages(JwtUtil.extractUsername(JwtUtil.getToken(
+                request), secretKey), firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public List<PublicMessageDto> getFriendsPublicMessages(final String email,
+    public List<PublicMessageDto> getFriendsPublicMessages(final HttpServletRequest request,
                                                            final int firstResult,
                                                            final int maxResults) {
         log.debug("[getFriendsPublicMessages]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         return PublicMessageMapper.getPublicMessageDto(
-            publicMessageDao.getFriendsMessages(email, firstResult, maxResults));
+            publicMessageDao.getFriendsMessages(JwtUtil.extractUsername(JwtUtil.getToken(
+                request), secretKey), firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public List<PublicMessageDto> getPublicMessages(final String email, final int firstResult, final int maxResults) {
+    public List<PublicMessageDto> getPublicMessages(final HttpServletRequest request, final int firstResult, final int maxResults) {
         log.debug("[getPublicMessages]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        return PublicMessageMapper.getPublicMessageDto(publicMessageDao.getByEmail(email, firstResult, maxResults));
+        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
+        return PublicMessageMapper.getPublicMessageDto(publicMessageDao.getByEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey), firstResult, maxResults));
     }
 
 }

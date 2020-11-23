@@ -29,9 +29,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -53,6 +56,10 @@ public class PublicMessageCommentServiceImplTest {
     SchoolDao schoolDao;
     @Autowired
     UniversityDao universityDao;
+    @Autowired
+    private HttpServletRequest request;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
 
     @Test
     void PublicMessageCommentServiceImpl_getComments() {
@@ -147,11 +154,13 @@ public class PublicMessageCommentServiceImplTest {
     @Test
     void PublicMessageCommentServiceImpl_deleteCommentByUser() {
         PublicMessageComment publicMessageComment = PublicMessageCommentTestData.getTestPublicMessageComment();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(publicMessageComment).when(publicMessageCommentDao).findByIdAndEmail(
             UserTestData.getEmail(), PublicMessageCommentTestData.getPublicMessageCommentId());
 
         Assertions.assertDoesNotThrow(() -> publicMessageCommentService.deleteCommentByUser(
-            UserTestData.getEmail(), PublicMessageCommentTestData.getPublicMessageCommentId()));
+            request, PublicMessageCommentTestData.getPublicMessageCommentId()));
         Mockito.verify(publicMessageCommentDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
         Mockito.verify(publicMessageCommentDao, Mockito.times(1)).updateRecord(
@@ -161,11 +170,13 @@ public class PublicMessageCommentServiceImplTest {
 
     @Test
     void PublicMessageCommentServiceImpl_deleteCommentByUser_publicMessageCommentDao_findByIdAndEmail_nullObject() {
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(publicMessageCommentDao).findByIdAndEmail(
             UserTestData.getEmail(), PublicMessageCommentTestData.getPublicMessageCommentId());
 
         Assertions.assertThrows(BusinessException.class, () -> publicMessageCommentService.deleteCommentByUser(
-            UserTestData.getEmail(), PublicMessageCommentTestData.getPublicMessageCommentId()));
+            request, PublicMessageCommentTestData.getPublicMessageCommentId()));
         Mockito.verify(publicMessageCommentDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
         Mockito.verify(publicMessageCommentDao, Mockito.never()).updateRecord(
@@ -177,11 +188,13 @@ public class PublicMessageCommentServiceImplTest {
     void PublicMessageCommentServiceImpl_deleteCommentByUser_publicMessageCommentDao_findByIdAndEmail_deletedObject() {
         PublicMessageComment publicMessageComment = PublicMessageCommentTestData.getTestPublicMessageComment();
         publicMessageComment.setDeleted(true);
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(publicMessageComment).when(publicMessageCommentDao).findByIdAndEmail(
             UserTestData.getEmail(), PublicMessageCommentTestData.getPublicMessageCommentId());
 
         Assertions.assertThrows(BusinessException.class, () -> publicMessageCommentService.deleteCommentByUser(
-            UserTestData.getEmail(), PublicMessageCommentTestData.getPublicMessageCommentId()));
+            request, PublicMessageCommentTestData.getPublicMessageCommentId()));
         Mockito.verify(publicMessageCommentDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
         Mockito.verify(publicMessageCommentDao, Mockito.never()).updateRecord(

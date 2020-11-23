@@ -12,14 +12,17 @@ import com.senla.socialnetwork.domain.PostComment;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.PostCommentMapper;
 import com.senla.socialnetwork.service.util.PostMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -42,6 +45,8 @@ public class PostServiceImpl implements PostService {
     SchoolDao schoolDao;
     @Autowired
     UniversityDao universityDao;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
 
     @Override
     @Transactional
@@ -53,12 +58,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostDto> getPostsFromSubscribedCommunities(final String email,
+    public List<PostDto> getPostsFromSubscribedCommunities(final HttpServletRequest request,
                                                            final int firstResult,
                                                            final int maxResults) {
         log.debug("[getPostsFromSubscribedCommunities]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        return PostMapper.getPostDto(postDao.getByEmail(email, firstResult, maxResults));
+        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
+        return PostMapper.getPostDto(postDao.getByEmail(JwtUtil.extractUsername(JwtUtil.getToken(
+            request), secretKey), firstResult, maxResults));
     }
 
     @Override
@@ -72,10 +78,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void deletePostByUser(final String email, final Long postId) {
+    public void deletePostByUser(final HttpServletRequest request, final Long postId) {
         log.debug("[deleteMessageByUser]");
         log.debug("[postId: {}]", postId);
-        Post post = postDao.findByIdAndEmail(email, postId);
+        Post post = postDao.findByIdAndEmail(JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey), postId);
         if (post == null) {
             throw new BusinessException("Error, there is no such post");
         } else if (post.isDeleted()) {
