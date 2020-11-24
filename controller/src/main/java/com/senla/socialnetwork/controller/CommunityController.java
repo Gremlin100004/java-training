@@ -33,38 +33,74 @@ import java.util.List;
 @NoArgsConstructor
 public class CommunityController {
     public static final int OK = 200;
+    public static final int CREATED = 201;
     public static final int UNAUTHORIZED = 401;
     public static final int FORBIDDEN = 403;
     public static final int NOT_FOUND = 404;
-    public static final String OK_MESSAGE = "Successfully retrieved list";
+    public static final String RETURN_LIST_OF_COMMUNITIES_OK_MESSAGE = "Successfully retrieved list of communities";
+    public static final String RETURN_LIST_OF_POSTS_OK_MESSAGE = "Successfully retrieved list of posts";
+    public static final String SUBSCRIBE_TO_COMMUNITY_OK_MESSAGE = "Community subscription was successful";
+    public static final String UNSUBSCRIBE_TO_COMMUNITY_OK_MESSAGE = "Community unsubscription was successful";
+    public static final String ADD_COMMUNITY_OK_MESSAGE = "Successful community addition";
+    public static final String UPDATE_COMMUNITY_OK_MESSAGE = "Successful community update";
+    public static final String DELETE_COMMUNITY_OK_MESSAGE = "Community deleted successfully";
+    public static final String ADD_POST_TO_COMMUNITY_OK_MESSAGE = "Post added successfully";
     public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
     public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
     public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
+    public static final String GET_ALL_COMMUNITIES_DESCRIPTION = "This method is used to get absolutely all communities by admin.";
+    public static final String GET_COMMUNITIES_DESCRIPTION = "This method is used to get communities that have not been deleted. Communities can be sort or filtered";
+    public static final String GET_OWN_COMMUNITIES_DESCRIPTION = "This method is used to get the communities of the user of his account";
+    public static final String GET_SUBSCRIBED_COMMUNITIES_DESCRIPTION = "This method allows you to get the communities that the user has subscribed to";
+    public static final String GET_COMMUNITY_POSTS_DESCRIPTION = "This method is used to get a list of community posts";
+    public static final String SUBSCRIBE_TO_COMMUNITY_DESCRIPTION = "This method allows the user to subscribe to the community";
+    public static final String UNSUBSCRIBE_FROM_COMMUNITY_DESCRIPTION = "This method allows the user to unsubscribe from the community";
+    public static final String ADD_COMMUNITY_DESCRIPTION = "This method allows you to add a new community of the given account";
+    public static final String UPDATE_COMMUNITY_DESCRIPTION = "This method allows you to update a new community of the given account";
+    public static final String DELETE_COMMUNITY_BY_USER_DESCRIPTION = "This method allows you to delete the community of the given account(deletion status is set)";
+    public static final String DELETE_COMMUNITY_DESCRIPTION = "This method allows you to delete a record from the database by the admin";
+    public static final String ADD_POST_TO_COMMUNITY_DESCRIPTION = "This method allows you to add a post to the community of the given account";
+    public static final String FIRST_RESULT_DESCRIPTION = "The number of the first element of the expected list";
+    public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
+    public static final String SORT_PARAMETER_DESCRIPTION = "Parameter to select sorting";
+    public static final String COMMUNITY_TYPE_DESCRIPTION = "The type of community to filter the list by";
+    public static final String COMMUNITY_ID_DESCRIPTION = " Community id";
+    public static final String COMMUNITY_DTO_DESCRIPTION = " DTO community object";
+    public static final String POST_DTO_DESCRIPTION = " DTO community post object";
     @Autowired
     private CommunityService communityService;
 
     @GetMapping("/all")
-    @ApiOperation(value = "This method is used to get absolutely all communities.", response = CommunityDto.class)
+    @ApiOperation(value = GET_ALL_COMMUNITIES_DESCRIPTION, response = CommunityDto.class)
     @ApiResponses(value = {
-        @ApiResponse(code = OK, message = OK_MESSAGE),
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_COMMUNITIES_OK_MESSAGE),
         @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<CommunityDto> getAllCommunities(@ApiParam(value = "The number of the first element of the expected list")
+    public List<CommunityDto> getAllCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION)
                                                 @RequestParam int firstResult,
-                                                @ApiParam(value = "Maximum number of list elements")
+                                                @ApiParam(value = MAX_RESULTS_DESCRIPTION)
                                                 @RequestParam int maxResults) {
         return communityService.getAllCommunities(firstResult, maxResults);
     }
 
     @GetMapping
-    @ApiOperation(value = "XXXX", response = List.class)
-    public List<CommunityDto> getCommunities(
-        @RequestParam(required = false) CommunitySortParameter sortParameter,
-        @RequestParam(required = false) CommunityType communityType,
-        @RequestParam int firstResult,
-        @RequestParam int maxResults) {
+    @ApiOperation(value = GET_COMMUNITIES_DESCRIPTION, response = CommunityDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_COMMUNITIES_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<CommunityDto> getCommunities(@ApiParam(value = SORT_PARAMETER_DESCRIPTION)
+                                             @RequestParam(required = false) CommunitySortParameter sortParameter,
+                                             @ApiParam(value = COMMUNITY_TYPE_DESCRIPTION)
+                                             @RequestParam(required = false) CommunityType communityType,
+                                             @ApiParam(value = FIRST_RESULT_DESCRIPTION)
+                                             @RequestParam int firstResult,
+                                             @ApiParam(value = MAX_RESULTS_DESCRIPTION)
+                                             @RequestParam int maxResults) {
         if (sortParameter == null && communityType == null) {
             return communityService.getCommunities(firstResult, maxResults);
         } else if (sortParameter == CommunitySortParameter.NUMBER_OF_SUBSCRIBERS && communityType == null) {
@@ -77,75 +113,157 @@ public class CommunityController {
     }
 
     @GetMapping("/ownCommunities")
-    @ApiOperation(value = "XXXX", response = List.class)
-    public List<CommunityDto> getOwnCommunities(
-        @RequestParam int firstResult, @RequestParam int maxResults, HttpServletRequest request) {
+    @ApiOperation(value = GET_OWN_COMMUNITIES_DESCRIPTION, response = CommunityDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_COMMUNITIES_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<CommunityDto> getOwnCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION)
+                                                @RequestParam int firstResult,
+                                                @ApiParam(value = MAX_RESULTS_DESCRIPTION)
+                                                @RequestParam int maxResults,
+                                                HttpServletRequest request) {
         return communityService.getOwnCommunities(request, firstResult, maxResults);
     }
 
     @GetMapping("/subscriptions")
-    @ApiOperation(value = "XXXX", response = List.class)
-    public List<CommunityDto> getSubscribedCommunities(
-        @RequestParam int firstResult, @RequestParam int maxResults, HttpServletRequest request) {
+    @ApiOperation(value = GET_SUBSCRIBED_COMMUNITIES_DESCRIPTION, response = CommunityDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_COMMUNITIES_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<CommunityDto> getSubscribedCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION)
+                                                       @RequestParam int firstResult,
+                                                       @ApiParam(value = MAX_RESULTS_DESCRIPTION)
+                                                       @RequestParam int maxResults,
+                                                       HttpServletRequest request) {
         return communityService.getSubscribedCommunities(request, firstResult, maxResults);
     }
 
     @GetMapping("/{id}/posts")
-    @ApiOperation(value = "XXXX", response = List.class)
-    public List<PostDto> getCommunityPosts(
-        @PathVariable("id") Long communityId, @RequestParam int firstResult, @RequestParam int maxResults) {
+    @ApiOperation(value = GET_COMMUNITY_POSTS_DESCRIPTION, response = PostDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_POSTS_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<PostDto> getCommunityPosts(@ApiParam(value = COMMUNITY_ID_DESCRIPTION)
+                                           @PathVariable("id") Long communityId,
+                                           @ApiParam(value = FIRST_RESULT_DESCRIPTION)
+                                           @RequestParam int firstResult,
+                                           @ApiParam(value = MAX_RESULTS_DESCRIPTION)
+                                           @RequestParam int maxResults) {
         return communityService.getCommunityPosts(communityId, firstResult, maxResults);
     }
 
     @PutMapping("/{id}/subscriptions")
-    @ApiOperation(value = "XXXX", response = List.class)
-    public ClientMessageDto subscribeToCommunity(@PathVariable("id") Long communityId,
+    @ApiOperation(value = SUBSCRIBE_TO_COMMUNITY_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = SUBSCRIBE_TO_COMMUNITY_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto subscribeToCommunity(@ApiParam(value = COMMUNITY_ID_DESCRIPTION)
+                                                 @PathVariable("id") Long communityId,
                                                  HttpServletRequest request) {
         communityService.subscribeToCommunity(request, communityId);
-        return new ClientMessageDto("Community subscription was successful");
+        return new ClientMessageDto(SUBSCRIBE_TO_COMMUNITY_OK_MESSAGE);
     }
 
     @PutMapping("/{id}/subscriptions/changes")
-    @ApiOperation(value = "XXXX", response = List.class)
-    public ClientMessageDto unsubscribeFromCommunity(
-        @PathVariable("id") Long communityId, HttpServletRequest request) {
+    @ApiOperation(value = UNSUBSCRIBE_FROM_COMMUNITY_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = UNSUBSCRIBE_TO_COMMUNITY_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto unsubscribeFromCommunity(@ApiParam(value = COMMUNITY_ID_DESCRIPTION)
+                                                     @PathVariable("id") Long communityId,
+                                                     HttpServletRequest request) {
         communityService.unsubscribeFromCommunity(request, communityId);
-        return new ClientMessageDto("Community unsubscription was successful");
+        return new ClientMessageDto(UNSUBSCRIBE_TO_COMMUNITY_OK_MESSAGE);
     }
 
     @PostMapping
-    @ApiOperation(value = "XXXX", response = List.class)
-    public CommunityDto addCommunity(@RequestBody CommunityDto communityDto) {
-        return communityService.addCommunity(communityDto);
+    @ApiOperation(value = ADD_COMMUNITY_DESCRIPTION, response = CommunityDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = ADD_COMMUNITY_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public CommunityDto addCommunity(@ApiParam(value = COMMUNITY_DTO_DESCRIPTION)
+                                     @RequestBody CommunityDto communityDto,
+                                     HttpServletRequest request) {
+        return communityService.addCommunity(request, communityDto);
     }
 
     @PutMapping
-    @ApiOperation(value = "XXXX", response = List.class)
-    public ClientMessageDto updateCommunity(@RequestBody CommunityDto communityDto) {
-        communityService.updateCommunity(communityDto);
-        return new ClientMessageDto("Community updated successfully");
+    @ApiOperation(value = UPDATE_COMMUNITY_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = CREATED, message = UPDATE_COMMUNITY_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto updateCommunity(@ApiParam(value = COMMUNITY_DTO_DESCRIPTION)
+                                            @RequestBody CommunityDto communityDto,
+                                            HttpServletRequest request) {
+        communityService.updateCommunity(request, communityDto);
+        return new ClientMessageDto(UPDATE_COMMUNITY_OK_MESSAGE);
     }
 
     @PutMapping("/{id}/changes")
-    @ApiOperation(value = "XXXX", response = List.class)
-    public ClientMessageDto deleteCommunityByUser(@PathVariable("id") Long communityId, HttpServletRequest request) {
+    @ApiOperation(value = DELETE_COMMUNITY_BY_USER_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = DELETE_COMMUNITY_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto deleteCommunityByUser(@ApiParam(value = COMMUNITY_ID_DESCRIPTION)
+                                                  @PathVariable("id") Long communityId,
+                                                  HttpServletRequest request) {
         communityService.deleteCommunityByUser(request, communityId);
-        return new ClientMessageDto("Community deleted successfully");
+        return new ClientMessageDto(DELETE_COMMUNITY_OK_MESSAGE);
     }
 
     @DeleteMapping("/{id}")
-    @ApiOperation(value = "XXXX", response = List.class)
-    public ClientMessageDto deleteCommunity(@PathVariable("id") Long communityId) {
+    @ApiOperation(value = DELETE_COMMUNITY_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = DELETE_COMMUNITY_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto deleteCommunity(@ApiParam(value = COMMUNITY_ID_DESCRIPTION)
+                                            @PathVariable("id") Long communityId) {
         communityService.deleteCommunity(communityId);
-        return new ClientMessageDto("Community deleted successfully");
+        return new ClientMessageDto(DELETE_COMMUNITY_OK_MESSAGE);
     }
 
     @PostMapping("/{id}/posts")
-    @ApiOperation(value = "XXXX", response = List.class)
-    public ClientMessageDto addPostToCommunity(
-        @RequestBody PostDto postDto, @PathVariable("id") Long communityId, HttpServletRequest request) {
+    @ApiOperation(value = ADD_POST_TO_COMMUNITY_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = ADD_POST_TO_COMMUNITY_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto addPostToCommunity(@ApiParam(value = POST_DTO_DESCRIPTION)
+                                               @RequestBody PostDto postDto,
+                                               @ApiParam(value = COMMUNITY_ID_DESCRIPTION)
+                                               @PathVariable("id") Long communityId,
+                                               HttpServletRequest request) {
         communityService.addPostToCommunity(request, postDto, communityId);
-        return new ClientMessageDto("Post added successfully");
+        return new ClientMessageDto(ADD_POST_TO_COMMUNITY_OK_MESSAGE);
     }
 
 }

@@ -7,6 +7,7 @@ import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessageComment;
+import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.JwtUtil;
@@ -51,23 +52,33 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public PublicMessageCommentDto addComment(final PublicMessageCommentDto publicMessageCommentDto) {
+    public PublicMessageCommentDto addComment(final HttpServletRequest request,
+                                              final PublicMessageCommentDto publicMessageCommentDto) {
         log.debug("[addComment]");
-        log.debug("[publicMessageCommentDto: {}]", publicMessageCommentDto);
-        return PublicMessageCommentMapper.getPublicMessageCommentDto(publicMessageCommentDao.saveRecord(
-            PublicMessageCommentMapper.getPublicMessageComment(
-                publicMessageCommentDto, publicMessageCommentDao, publicMessageDao,  userProfileDao,
-                locationDao, schoolDao, universityDao)));
+        log.debug("[request: {}, publicMessageCommentDto: {}]", request, publicMessageCommentDto);
+        PublicMessageComment publicMessageComment = PublicMessageCommentMapper.getPublicMessageComment(
+            publicMessageCommentDto, publicMessageCommentDao, publicMessageDao,  userProfileDao,
+            locationDao, schoolDao, universityDao);
+        publicMessageComment.setAuthor(userProfileDao.findByEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey)));
+        return PublicMessageCommentMapper.getPublicMessageCommentDto(
+            publicMessageCommentDao.saveRecord(publicMessageComment));
     }
 
     @Override
     @Transactional
-    public void updateComment(final PublicMessageCommentDto publicMessageCommentDto) {
+    public void updateComment(final HttpServletRequest request, final PublicMessageCommentDto publicMessageCommentDto) {
         log.debug("[updateComment]");
-        log.debug("[publicMessageCommentDto: {}]", publicMessageCommentDto);
-        publicMessageCommentDao.updateRecord(PublicMessageCommentMapper.getPublicMessageComment(
+        log.debug("[request: {}, publicMessageCommentDto: {}]", request, publicMessageCommentDto);
+        UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey));
+        PublicMessageComment publicMessageComment = PublicMessageCommentMapper.getPublicMessageComment(
             publicMessageCommentDto, publicMessageCommentDao, publicMessageDao,  userProfileDao,
-            locationDao, schoolDao, universityDao));
+            locationDao, schoolDao, universityDao);
+        if (publicMessageComment.getAuthor() != userProfile) {
+            throw new BusinessException("Error, this comment does not belong to this profile");
+        }
+        publicMessageCommentDao.updateRecord(publicMessageComment);
     }
 
     @Override

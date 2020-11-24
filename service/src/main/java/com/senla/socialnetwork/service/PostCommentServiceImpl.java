@@ -8,15 +8,19 @@ import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PostComment;
+import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.PostCommentMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -37,6 +41,8 @@ public class PostCommentServiceImpl implements PostCommentService {
     SchoolDao schoolDao;
     @Autowired
     UniversityDao universityDao;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
 
     @Override
     @Transactional
@@ -47,22 +53,31 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public PostCommentDto addComment(final PostCommentDto postCommentDto) {
+    public PostCommentDto addComment(final HttpServletRequest request, final PostCommentDto postCommentDto) {
         log.debug("[addComment]");
-        log.debug("[postCommentDto: {}]", postCommentDto);
-        return PostCommentMapper.getPostCommentDto(postCommentDao.saveRecord(PostCommentMapper.getPostComment(
-            postCommentDto, postCommentDao, postDao, communityDao, userProfileDao,
-            locationDao, schoolDao, universityDao)));
+        log.debug("[request: {}, postCommentDto: {}]", request, postCommentDto);
+        PostComment postComment = PostCommentMapper.getPostComment(
+            postCommentDto, postCommentDao, postDao, communityDao, userProfileDao, locationDao, schoolDao,
+            universityDao);
+        postComment.setAuthor(userProfileDao.findByEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey)));
+        return PostCommentMapper.getPostCommentDto(postCommentDao.saveRecord(postComment));
     }
 
     @Override
     @Transactional
-    public void updateComment(final PostCommentDto postCommentDto) {
+    public void updateComment(final HttpServletRequest request, final PostCommentDto postCommentDto) {
         log.debug("[updateComment]");
-        log.debug("[postCommentDto: {}]", postCommentDto);
-        postCommentDao.updateRecord(PostCommentMapper.getPostComment(
+        log.debug("[request: {}, postCommentDto: {}]", request, postCommentDto);
+        UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey));
+        PostComment postComment = PostCommentMapper.getPostComment(
             postCommentDto, postCommentDao, postDao, communityDao, userProfileDao,
-            locationDao, schoolDao, universityDao));
+            locationDao, schoolDao, universityDao);
+        if (postComment.getAuthor() != userProfile) {
+            throw new BusinessException("Error, this comment does not belong to this profile");
+        }
+        postCommentDao.updateRecord(postComment);
     }
 
     @Override

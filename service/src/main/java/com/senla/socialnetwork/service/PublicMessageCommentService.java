@@ -8,9 +8,9 @@ import java.util.List;
 public interface PublicMessageCommentService {
     List<PublicMessageCommentDto> getComments(int firstResult, int maxResults);
 
-    PublicMessageCommentDto addComment(PublicMessageCommentDto publicMessageCommentDto);
+    PublicMessageCommentDto addComment(HttpServletRequest request, PublicMessageCommentDto publicMessageCommentDto);
 
-    void updateComment(PublicMessageCommentDto publicMessageCommentDto);
+    void updateComment(HttpServletRequest request, PublicMessageCommentDto publicMessageCommentDto);
 
     void deleteCommentByUser(HttpServletRequest request, Long commentId);
 

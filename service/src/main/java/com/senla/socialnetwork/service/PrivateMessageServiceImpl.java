@@ -6,6 +6,7 @@ import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PrivateMessage;
+import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.JwtUtil;
@@ -63,21 +64,29 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public PrivateMessageDto addMessage(final PrivateMessageDto privateMessageDto) {
+    public PrivateMessageDto addMessage(final HttpServletRequest request, final PrivateMessageDto privateMessageDto) {
         log.debug("[addMessage]");
-        log.debug("[privateMessageDto: {}]", privateMessageDto);
-        return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.saveRecord(
-            PrivateMessageMapper.getPrivateMessage(
-                privateMessageDto, privateMessageDao, userProfileDao, locationDao, schoolDao, universityDao)));
+        log.debug("[request: {}, privateMessageDto: {}]", request, privateMessageDto);
+        PrivateMessage privateMessage = PrivateMessageMapper.getPrivateMessage(
+            privateMessageDto, privateMessageDao, userProfileDao, locationDao, schoolDao, universityDao);
+        privateMessage.setSender(userProfileDao.findByEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey)));
+        return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.saveRecord(privateMessage));
     }
 
     @Override
     @Transactional
-    public void updateMessage(final PrivateMessageDto privateMessageDto) {
+    public void updateMessage(final HttpServletRequest request, final PrivateMessageDto privateMessageDto) {
         log.debug("[updateMessage]");
-        log.debug("[privateMessage: {}]", privateMessageDto);
-        privateMessageDao.updateRecord(PrivateMessageMapper.getPrivateMessage(
-            privateMessageDto, privateMessageDao, userProfileDao, locationDao, schoolDao, universityDao));
+        log.debug("[request: {}, privateMessage: {}]", request, privateMessageDto);
+        UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey));
+        PrivateMessage privateMessage = PrivateMessageMapper.getPrivateMessage(
+            privateMessageDto, privateMessageDao, userProfileDao, locationDao, schoolDao, universityDao);
+        if (privateMessage.getSender() != userProfile) {
+            throw new BusinessException("Error, this message does not belong to this profile");
+        }
+        privateMessageDao.updateRecord(privateMessage);
     }
 
     @Override

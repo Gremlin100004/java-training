@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -44,14 +45,16 @@ public class PostCommentController {
 
     @PostMapping
     @ApiOperation(value = "XXXX")
-    public PostCommentDto addComment(@RequestBody PostCommentDto postCommentDto) {
-        return postCommentService.addComment(postCommentDto);
+    public PostCommentDto addComment(@RequestBody PostCommentDto postCommentDto,
+                                     HttpServletRequest request) {
+        return postCommentService.addComment(request, postCommentDto);
     }
 
     @PutMapping
     @ApiOperation(value = "XXXX")
-    public ClientMessageDto updateComment(@RequestBody PostCommentDto postCommentDto) {
-        postCommentService.updateComment(postCommentDto);
+    public ClientMessageDto updateComment(@RequestBody PostCommentDto postCommentDto,
+                                          HttpServletRequest request) {
+        postCommentService.updateComment(request, postCommentDto);
         return new ClientMessageDto("Comment updated successfully");
     }
 

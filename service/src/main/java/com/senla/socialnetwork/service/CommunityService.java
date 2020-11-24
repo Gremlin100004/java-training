@@ -26,9 +26,9 @@ public interface CommunityService {
 
     List<PostDto> getCommunityPosts(Long communityId, int firstResult, int maxResults);
 
-    CommunityDto addCommunity(CommunityDto communityDto);
+    CommunityDto addCommunity(HttpServletRequest request, CommunityDto communityDto);
 
-    void updateCommunity(CommunityDto communityDto);
+    void updateCommunity(HttpServletRequest request, CommunityDto communityDto);
 
     void deleteCommunityByUser(HttpServletRequest request, Long communityId);
 

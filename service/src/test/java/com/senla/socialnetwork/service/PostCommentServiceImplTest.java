@@ -31,9 +31,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -57,6 +60,10 @@ public class PostCommentServiceImplTest {
     SchoolDao schoolDao;
     @Autowired
     UniversityDao universityDao;
+    @Autowired
+    private HttpServletRequest request;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
 
     @Test
     void PostCommentServiceImpl_getComments() {
@@ -85,6 +92,9 @@ public class PostCommentServiceImplTest {
         Location location = LocationTestData.getTestLocation();
         School school = SchoolTestData.getTestSchool();
         University university = UniversityTestData.getTestUniversity();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
+        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(postComment).when(postCommentDao).saveRecord(ArgumentMatchers.any(PostComment.class));
         Mockito.doReturn(post).when(postDao).findById(PostTestData.getPostId());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
@@ -93,11 +103,12 @@ public class PostCommentServiceImplTest {
         Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
         Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
 
-        PostCommentDto resultPostCommentDto = postCommentService.addComment(postCommentDto);
+        PostCommentDto resultPostCommentDto = postCommentService.addComment(request, postCommentDto);
         Assertions.assertNotNull(resultPostCommentDto);
         Mockito.verify(postCommentDao, Mockito.times(1)).saveRecord(
             ArgumentMatchers.any(PostComment.class));
         Mockito.verify(postCommentDao, Mockito.never()).findById(PostCommentTestData.getPostCommentId());
+        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(postDao, Mockito.times(1)).findById(PostTestData.getPostId());
         Mockito.verify(communityDao, Mockito.times(1)).findById(CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.times(2)).findById(UserProfileTestData.getUserProfileId());
@@ -123,6 +134,9 @@ public class PostCommentServiceImplTest {
         Location location = LocationTestData.getTestLocation();
         School school = SchoolTestData.getTestSchool();
         University university = UniversityTestData.getTestUniversity();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
+        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(postComment).when(postCommentDao).findById(PostCommentTestData.getPostCommentId());
         Mockito.doReturn(post).when(postDao).findById(PostTestData.getPostId());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
@@ -131,9 +145,53 @@ public class PostCommentServiceImplTest {
         Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
         Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
 
-        Assertions.assertDoesNotThrow(() -> postCommentService.updateComment(postCommentDto));
+        Assertions.assertDoesNotThrow(() -> postCommentService.updateComment(request, postCommentDto));
         Mockito.verify(postCommentDao, Mockito.times(1)).updateRecord(
             ArgumentMatchers.any(PostComment.class));
+        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
+        Mockito.verify(postCommentDao, Mockito.times(1)).findById(PostCommentTestData.getPostCommentId());
+        Mockito.verify(postDao, Mockito.times(1)).findById(PostTestData.getPostId());
+        Mockito.verify(communityDao, Mockito.times(1)).findById(CommunityTestData.getCommunityId());
+        Mockito.verify(userProfileDao, Mockito.times(2)).findById(UserProfileTestData.getUserProfileId());
+        Mockito.verify(locationDao, Mockito.times(6)).findById(LocationTestData.getLocationId());
+        Mockito.verify(schoolDao, Mockito.times(2)).findById(SchoolTestData.getSchoolId());
+        Mockito.verify(universityDao, Mockito.times(2)).findById(UniversityTestData.getUniversityId());
+        Mockito.reset(postCommentDao);
+        Mockito.reset(postDao);
+        Mockito.reset(communityDao);
+        Mockito.reset(userProfileDao);
+        Mockito.reset(locationDao);
+        Mockito.reset(schoolDao);
+        Mockito.reset(universityDao);
+    }
+
+    @Test
+    void PostCommentServiceImpl_updateComment_someoneElseComment() {
+        PostComment postComment = PostCommentTestData.getTestPostComment();
+        PostCommentDto postCommentDto = PostCommentTestData.getTestPostCommentDto();
+        Post post = PostTestData.getTestPost();
+        Community community = CommunityTestData.getTestCommunity();
+        UserProfile userProfile = UserProfileTestData.getTestUserProfile();
+        UserProfile wrongUserProfile = UserProfileTestData.getTestUserProfile();
+        wrongUserProfile.setId(UserProfileTestData.getUserProfileOtherId());
+        Location location = LocationTestData.getTestLocation();
+        School school = SchoolTestData.getTestSchool();
+        University university = UniversityTestData.getTestUniversity();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
+        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
+        Mockito.doReturn(postComment).when(postCommentDao).findById(PostCommentTestData.getPostCommentId());
+        Mockito.doReturn(post).when(postDao).findById(PostTestData.getPostId());
+        Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
+        Mockito.doReturn(wrongUserProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
+        Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
+        Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
+        Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
+
+        Assertions.assertThrows(BusinessException.class, () -> postCommentService.updateComment(request, postCommentDto));
+        Mockito.verify(postCommentDao, Mockito.never()).updateRecord(
+            ArgumentMatchers.any(PostComment.class));
+        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(postCommentDao, Mockito.times(1)).findById(PostCommentTestData.getPostCommentId());
         Mockito.verify(postDao, Mockito.times(1)).findById(PostTestData.getPostId());
         Mockito.verify(communityDao, Mockito.times(1)).findById(CommunityTestData.getCommunityId());

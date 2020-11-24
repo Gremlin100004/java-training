@@ -15,9 +15,9 @@ public interface PrivateMessageService {
                                                        int firstResult,
                                                        int maxResults);
 
-    PrivateMessageDto addMessage(PrivateMessageDto privateMessageDto);
+    PrivateMessageDto addMessage(HttpServletRequest request, PrivateMessageDto privateMessageDto);
 
-    void updateMessage(PrivateMessageDto privateMessageDto);
+    void updateMessage(HttpServletRequest request, PrivateMessageDto privateMessageDto);
 
     void deleteMessageByUser(HttpServletRequest request, Long messageId);
 

@@ -155,20 +155,28 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public CommunityDto addCommunity(final CommunityDto communityDto) {
+    public CommunityDto addCommunity(final HttpServletRequest request, final CommunityDto communityDto) {
         log.debug("[addCommunity]");
-        log.debug("[CommunityDto: {}]", communityDto);
-        return CommunityMapper.getCommunityDto(communityDao.saveRecord(CommunityMapper.getCommunity(
-                communityDto, communityDao, userProfileDao, locationDao, schoolDao, universityDao)));
+        log.debug("[request: {}, communityDto: {}]", request, communityDto);
+        Community community = CommunityMapper.getCommunity(
+            communityDto, communityDao, userProfileDao, locationDao, schoolDao, universityDao);
+        community.setAuthor(userProfileDao.findByEmail(JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey)));
+        return CommunityMapper.getCommunityDto(communityDao.saveRecord(community));
     }
 
     @Override
     @Transactional
-    public void updateCommunity(final CommunityDto communityDto) {
+    public void updateCommunity(final HttpServletRequest request, final CommunityDto communityDto) {
         log.debug("[updateCommunity]");
-        log.debug("[CommunityDto: {}]", communityDto);
-        communityDao.updateRecord(CommunityMapper.getCommunity(
-            communityDto, communityDao, userProfileDao, locationDao, schoolDao, universityDao));
+        log.debug("[request: {}, communityDto: {}]", request, communityDto);
+        UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey));
+        Community community = CommunityMapper.getCommunity(
+            communityDto, communityDao, userProfileDao, locationDao, schoolDao, universityDao);
+        if (community.getAuthor() != userProfile) {
+            throw new BusinessException("Error, this community does not belong to this profile");
+        }
+        communityDao.updateRecord(community);
     }
 
     @Override

@@ -54,13 +54,15 @@ public class PrivateMessageController {
     }
 
     @PostMapping
-    public PrivateMessageDto addMessage(@RequestBody PrivateMessageDto privateMessageDto) {
-        return privateMessageService.addMessage(privateMessageDto);
+    public PrivateMessageDto addMessage(@RequestBody PrivateMessageDto privateMessageDto,
+                                        HttpServletRequest request) {
+        return privateMessageService.addMessage(request, privateMessageDto);
     }
 
     @PutMapping
-    public ClientMessageDto updateMessage(@RequestBody PrivateMessageDto privateMessageDto) {
-        privateMessageService.addMessage(privateMessageDto);
+    public ClientMessageDto updateMessage(@RequestBody PrivateMessageDto privateMessageDto,
+                                          HttpServletRequest request) {
+        privateMessageService.updateMessage(request, privateMessageDto);
         return new ClientMessageDto("Message updated successfully");
     }
 

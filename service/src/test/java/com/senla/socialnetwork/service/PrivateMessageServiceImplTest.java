@@ -104,17 +104,21 @@ public class PrivateMessageServiceImplTest {
         Location location = LocationTestData.getTestLocation();
         School school = SchoolTestData.getTestSchool();
         University university = UniversityTestData.getTestUniversity();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
+        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(privateMessage).when(privateMessageDao).saveRecord(ArgumentMatchers.any(PrivateMessage.class));
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
         Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
         Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
         Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
 
-        PrivateMessageDto resultPrivateMessageDto = privateMessageService.addMessage(privateMessageDto);
+        PrivateMessageDto resultPrivateMessageDto = privateMessageService.addMessage(request, privateMessageDto);
         Assertions.assertNotNull(resultPrivateMessageDto);
         Mockito.verify(privateMessageDao, Mockito.times(1)).saveRecord(
             ArgumentMatchers.any(PrivateMessage.class));
         Mockito.verify(privateMessageDao, Mockito.never()).findById(PrivateMessageTestData.getPrivateMessageId());
+        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(userProfileDao, Mockito.times(2)).findById(UserProfileTestData.getUserProfileId());
         Mockito.verify(locationDao, Mockito.times(6)).findById(LocationTestData.getLocationId());
         Mockito.verify(schoolDao, Mockito.times(2)).findById(SchoolTestData.getSchoolId());
@@ -134,15 +138,55 @@ public class PrivateMessageServiceImplTest {
         Location location = LocationTestData.getTestLocation();
         School school = SchoolTestData.getTestSchool();
         University university = UniversityTestData.getTestUniversity();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
+        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(privateMessage).when(privateMessageDao).findById(PrivateMessageTestData.getPrivateMessageId());
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
         Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
         Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
         Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
 
-        Assertions.assertDoesNotThrow(() -> privateMessageService.updateMessage(privateMessageDto));
+        Assertions.assertDoesNotThrow(() -> privateMessageService.updateMessage(request, privateMessageDto));
         Mockito.verify(privateMessageDao, Mockito.times(1)).updateRecord(
             ArgumentMatchers.any(PrivateMessage.class));
+        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
+        Mockito.verify(privateMessageDao, Mockito.times(1)).findById(PrivateMessageTestData.getPrivateMessageId());
+        Mockito.verify(userProfileDao, Mockito.times(2)).findById(UserProfileTestData.getUserProfileId());
+        Mockito.verify(locationDao, Mockito.times(6)).findById(LocationTestData.getLocationId());
+        Mockito.verify(schoolDao, Mockito.times(2)).findById(SchoolTestData.getSchoolId());
+        Mockito.verify(universityDao, Mockito.times(2)).findById(UniversityTestData.getUniversityId());
+        Mockito.reset(privateMessageDao);
+        Mockito.reset(userProfileDao);
+        Mockito.reset(locationDao);
+        Mockito.reset(schoolDao);
+        Mockito.reset(universityDao);
+    }
+
+    @Test
+    void PrivateMessageServiceImpl_updateMessage_someoneElseMessage() {
+        PrivateMessage privateMessage = PrivateMessageTestData.getTestPrivateMessage();
+        PrivateMessageDto privateMessageDto = PrivateMessageTestData.getTestPrivateMessageDto();
+        UserProfile userProfile = UserProfileTestData.getTestUserProfile();
+        UserProfile wrongUserProfile = UserProfileTestData.getTestUserProfile();
+        wrongUserProfile.setId(UserProfileTestData.getUserProfileOtherId());
+        Location location = LocationTestData.getTestLocation();
+        School school = SchoolTestData.getTestSchool();
+        University university = UniversityTestData.getTestUniversity();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
+        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
+        Mockito.doReturn(privateMessage).when(privateMessageDao).findById(PrivateMessageTestData.getPrivateMessageId());
+        Mockito.doReturn(wrongUserProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
+        Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
+        Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
+        Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
+
+        Assertions.assertThrows(BusinessException.class, () -> privateMessageService.updateMessage(
+            request, privateMessageDto));
+        Mockito.verify(privateMessageDao, Mockito.never()).updateRecord(
+            ArgumentMatchers.any(PrivateMessage.class));
+        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(privateMessageDao, Mockito.times(1)).findById(PrivateMessageTestData.getPrivateMessageId());
         Mockito.verify(userProfileDao, Mockito.times(2)).findById(UserProfileTestData.getUserProfileId());
         Mockito.verify(locationDao, Mockito.times(6)).findById(LocationTestData.getLocationId());

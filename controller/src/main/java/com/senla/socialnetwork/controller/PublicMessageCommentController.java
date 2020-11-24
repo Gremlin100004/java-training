@@ -6,6 +6,7 @@ import com.senla.socialnetwork.service.PublicMessageCommentService;
 import io.swagger.annotations.Api;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,8 @@ public class PublicMessageCommentController {
     public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
     @Autowired
     private PublicMessageCommentService publicMessageCommentService;
+    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    private String secretKey;
 
     @GetMapping
     public List<PublicMessageCommentDto> getComments(@RequestParam int firstResult, @RequestParam int maxResults) {
@@ -41,13 +44,15 @@ public class PublicMessageCommentController {
     }
 
     @PostMapping
-    public PublicMessageCommentDto addComment(@RequestBody PublicMessageCommentDto publicMessageCommentDto) {
-        return publicMessageCommentService.addComment(publicMessageCommentDto);
+    public PublicMessageCommentDto addComment(@RequestBody PublicMessageCommentDto publicMessageCommentDto,
+                                              HttpServletRequest request) {
+        return publicMessageCommentService.addComment(request, publicMessageCommentDto);
     }
 
     @PutMapping
-    public ClientMessageDto updateComment(@RequestBody PublicMessageCommentDto publicMessageCommentDto) {
-        publicMessageCommentService.updateComment(publicMessageCommentDto);
+    public ClientMessageDto updateComment(@RequestBody PublicMessageCommentDto publicMessageCommentDto,
+                                          HttpServletRequest request) {
+        publicMessageCommentService.updateComment(request, publicMessageCommentDto);
         return new ClientMessageDto("Comment updated successfully");
     }
 
