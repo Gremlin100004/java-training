@@ -15,6 +15,7 @@ import com.senla.socialnetwork.domain.School;
 import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PostCommentDto;
+import com.senla.socialnetwork.dto.PostCommentForCreateDto;
 import com.senla.socialnetwork.service.config.CommunityTestData;
 import com.senla.socialnetwork.service.config.LocationTestData;
 import com.senla.socialnetwork.service.config.PostCommentTestData;
@@ -84,8 +85,7 @@ public class PostCommentServiceImplTest {
     @Test
     void PostCommentServiceImpl_addComment() {
         PostComment postComment = PostCommentTestData.getTestPostComment();
-        PostCommentDto postCommentDto = PostCommentTestData.getTestPostCommentDto();
-        postCommentDto.setId(null);
+        PostCommentForCreateDto postCommentDto = PostCommentTestData.getTestPostCommentForCreationDto();
         Post post = PostTestData.getTestPost();
         Community community = CommunityTestData.getTestCommunity();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
@@ -211,11 +211,13 @@ public class PostCommentServiceImplTest {
     @Test
     void PostCommentServiceImpl_deleteCommentByUser() {
         PostComment postComment = PostCommentTestData.getTestPostComment();
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(postComment).when(postCommentDao).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
 
         Assertions.assertDoesNotThrow(() -> postCommentService.deleteCommentByUser(
-            UserTestData.getEmail(), PostCommentTestData.getPostCommentId()));
+            request, PostCommentTestData.getPostCommentId()));
         Mockito.verify(postCommentDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
         Mockito.verify(postCommentDao, Mockito.times(1)).updateRecord(
@@ -225,11 +227,13 @@ public class PostCommentServiceImplTest {
 
     @Test
     void PostCommentServiceImpl_deleteCommentByUser_postCommentDao_findByIdAndEmail_nullObject() {
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(postCommentDao).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
 
         Assertions.assertThrows(BusinessException.class, () -> postCommentService.deleteCommentByUser(
-            UserTestData.getEmail(), PostCommentTestData.getPostCommentId()));
+            request, PostCommentTestData.getPostCommentId()));
         Mockito.verify(postCommentDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
         Mockito.verify(postCommentDao, Mockito.never()).updateRecord(
@@ -241,11 +245,13 @@ public class PostCommentServiceImplTest {
     void PostCommentServiceImpl_deleteCommentByUser_postCommentDao_findByIdAndEmail_deletedObject() {
         PostComment postComment = PostCommentTestData.getTestPostComment();
         postComment.setDeleted(true);
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(postComment).when(postCommentDao).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
 
         Assertions.assertThrows(BusinessException.class, () -> postCommentService.deleteCommentByUser(
-            UserTestData.getEmail(), PostCommentTestData.getPostCommentId()));
+            request, PostCommentTestData.getPostCommentId()));
         Mockito.verify(postCommentDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
         Mockito.verify(postCommentDao, Mockito.never()).updateRecord(

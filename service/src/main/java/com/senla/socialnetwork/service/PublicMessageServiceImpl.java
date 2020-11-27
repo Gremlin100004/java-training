@@ -11,6 +11,7 @@ import com.senla.socialnetwork.domain.PublicMessageComment;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
+import com.senla.socialnetwork.dto.PublicMessageForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.PublicMessageCommentMapper;
@@ -56,11 +57,12 @@ public class PublicMessageServiceImpl implements PublicMessageService {
 
     @Override
     @Transactional
-    public PublicMessageDto addMessage(final HttpServletRequest request, final PublicMessageDto publicMessageDto) {
+    public PublicMessageDto addMessage(final HttpServletRequest request,
+                                       final PublicMessageForCreateDto publicMessageDto) {
         log.debug("[addMessage]");
         log.debug("[request: {}, publicMessageDto: {}]", request, publicMessageDto);
-        PublicMessage publicMessage = PublicMessageMapper.getPublicMessage(
-            publicMessageDto, publicMessageDao, userProfileDao, locationDao, schoolDao, universityDao);
+        PublicMessage publicMessage = PublicMessageMapper.getNewPublicMessage(
+            publicMessageDto, userProfileDao, locationDao, schoolDao, universityDao);
         publicMessage.setAuthor(userProfileDao.findByEmail(JwtUtil.extractUsername(
             JwtUtil.getToken(request), secretKey)));
         return PublicMessageMapper.getPublicMessageDto(publicMessageDao.saveRecord(publicMessage));

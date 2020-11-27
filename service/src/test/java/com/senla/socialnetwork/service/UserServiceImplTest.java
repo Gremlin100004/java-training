@@ -4,11 +4,11 @@ import com.senla.socialnetwork.dao.TokenDao;
 import com.senla.socialnetwork.dao.UserDao;
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
-import com.senla.socialnetwork.dto.UserDto;
+import com.senla.socialnetwork.dto.UserForAdminDto;
+import com.senla.socialnetwork.dto.UserForSecurityDto;
 import com.senla.socialnetwork.service.config.TestConfig;
 import com.senla.socialnetwork.service.config.UserTestData;
 import com.senla.socialnetwork.service.exception.BusinessException;
-import com.senla.socialnetwork.service.util.JwtUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,10 +50,10 @@ public class UserServiceImplTest {
     @Test
     void UserServiceImpl_getUsers() {
         List<SystemUser> systemUsers = UserTestData.getTestUsers();
-        List<UserDto> usersDto = UserTestData.getTestUsersDto();
+        List<UserForAdminDto> usersDto = UserTestData.getTestUsersForClientDto();
         Mockito.doReturn(systemUsers).when(userDao).getAllRecords(FIRST_RESULT, NORMAL_MAX_RESULTS);
 
-        List<UserDto> resultUserDto = userService.getUsers(FIRST_RESULT, NORMAL_MAX_RESULTS);
+        List<UserForAdminDto> resultUserDto = userService.getUsers(FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultUserDto);
         Assertions.assertEquals(UserTestData.getRightNumberUsers(), resultUserDto.size());
         Assertions.assertFalse(resultUserDto.isEmpty());
@@ -65,14 +65,15 @@ public class UserServiceImplTest {
     @Test
     void UserServiceImpl_getUser() {
         SystemUser systemUser = UserTestData.getTestUser();
-        UserDto userDto = UserTestData.getTestUserDto();
+        UserForSecurityDto userDto = UserTestData.getTestUserForSecurityDto();
+        userDto.setPassword(null);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(systemUser).when(userDao).findByEmail(UserTestData.getEmail());
 
-        UserDto resultUserDto = userService.getUser(request);
+        UserForSecurityDto resultUserDto = userService.getUser(request);
         Assertions.assertNotNull(resultUserDto);
-        Assertions.assertEquals(userDto, resultUserDto);
+        Assertions.assertEquals(userDto.getEmail(), resultUserDto.getEmail());
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.reset(userDao);
     }
@@ -102,7 +103,7 @@ public class UserServiceImplTest {
     @Test
     void UserServiceImpl_logIn() {
         SystemUser testUser = UserTestData.getTestUser();
-        UserDto userDto = UserTestData.getTestUserDto();
+        UserForSecurityDto userDto = UserTestData.getTestUserForSecurityDto();
         testUser.setRole(RoleName.ROLE_USER);
         Mockito.doReturn(testUser).when(userDao).findByEmail(UserTestData.getEmail());
 
@@ -114,7 +115,7 @@ public class UserServiceImplTest {
     @Test
     void UserServiceImplTest_logIn_userDao_findByEmail_userNull() {
         SystemUser testUser = UserTestData.getTestUser();
-        UserDto userDto = UserTestData.getTestUserDto();
+        UserForSecurityDto userDto = UserTestData.getTestUserForSecurityDto();
         testUser.setRole(RoleName.ROLE_USER);
         Mockito.doReturn(null).when(userDao).findByEmail(UserTestData.getEmail());
 
@@ -126,7 +127,7 @@ public class UserServiceImplTest {
     @Test
     void UserServiceImpl_addUser() {
         SystemUser testUser = UserTestData.getTestUser();
-        UserDto userDto = UserTestData.getTestUserDto();
+        UserForSecurityDto userDto = UserTestData.getTestUserForSecurityDto();
         Mockito.doReturn(testUser).when(userDao).saveRecord(ArgumentMatchers.any(SystemUser.class));
         Mockito.doReturn(null).when(userDao).findByEmail(UserTestData.getEmail());
 
@@ -142,7 +143,7 @@ public class UserServiceImplTest {
     @Test
     void UserServiceImplTest_addUser_userDao_findByEmail_nullObject() {
         SystemUser testUser = UserTestData.getTestUser();
-        UserDto userDto = UserTestData.getTestUserDto();
+        UserForSecurityDto userDto = UserTestData.getTestUserForSecurityDto();
         Mockito.doReturn(testUser).when(userDao).findByEmail(UserTestData.getEmail());
 
         Assertions.assertThrows(BusinessException.class, () -> userService.addUser(userDto));
@@ -155,7 +156,7 @@ public class UserServiceImplTest {
     @Test
     void UserServiceImplTest_updateUser() {
         SystemUser testUser = UserTestData.getTestUser();
-        List<UserDto> usersDto = UserTestData.getTestUsersDto();
+        List<UserForSecurityDto> usersDto = UserTestData.getTestUsersForLoginDto();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(testUser).when(userDao).findByEmail(UserTestData.getEmail());
@@ -175,8 +176,8 @@ public class UserServiceImplTest {
     @Test
     void UserServiceImplTest_updateUser_wrongSize() {
         SystemUser testUser = UserTestData.getTestUser();
-        List<UserDto> usersDto = new ArrayList<>();
-        usersDto.add(UserTestData.getTestUserDto());
+        List<UserForSecurityDto> usersDto = new ArrayList<>();
+        usersDto.add(UserTestData.getTestUserForSecurityDto());
 
         Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
         Mockito.verify(userDao, Mockito.never()).findByEmail(UserTestData.getEmail());
@@ -187,7 +188,7 @@ public class UserServiceImplTest {
     @Test
     void UserServiceImplTest_updateUser_wrongUserData() {
         SystemUser testUser = UserTestData.getTestUser();
-        List<UserDto> usersDto = UserTestData.getTestUsersDto();
+        List<UserForSecurityDto> usersDto = UserTestData.getTestUsersForLoginDto();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(testUser).when(userDao).findByEmail(UserTestData.getEmail());

@@ -13,15 +13,14 @@ import javax.validation.constraints.NotNull;
 @Setter
 @ToString
 @NoArgsConstructor
-@ApiModel(value = "Location")
-public class LocationDto extends GeneralDto {
-    @ApiModelProperty(value = "Country",
-        example = "Belarus")
+@ApiModel(value = "University For Create")
+public class UniversityForCreateDto {
+    @ApiModelProperty(value = "University name",
+        example = "Academy of Management under the President of the Republic of Belarus")
     @NotNull
-    private String country;
-    @ApiModelProperty(value = "City",
-        example = "Grodno")
+    private String name;
+    @ApiModelProperty(value = "University location")
     @NotNull
-    private String city;
+    private LocationDto location;
 
 }

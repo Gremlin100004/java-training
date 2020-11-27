@@ -10,6 +10,7 @@ import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PostComment;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PostCommentDto;
+import com.senla.socialnetwork.dto.PostCommentForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.PostCommentMapper;
@@ -53,11 +54,11 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public PostCommentDto addComment(final HttpServletRequest request, final PostCommentDto postCommentDto) {
+    public PostCommentDto addComment(final HttpServletRequest request, final PostCommentForCreateDto postCommentDto) {
         log.debug("[addComment]");
         log.debug("[request: {}, postCommentDto: {}]", request, postCommentDto);
-        PostComment postComment = PostCommentMapper.getPostComment(
-            postCommentDto, postCommentDao, postDao, communityDao, userProfileDao, locationDao, schoolDao,
+        PostComment postComment = PostCommentMapper.getPostNewComment(
+            postCommentDto, postDao, communityDao, userProfileDao, locationDao, schoolDao,
             universityDao);
         postComment.setAuthor(userProfileDao.findByEmail(JwtUtil.extractUsername(
             JwtUtil.getToken(request), secretKey)));
@@ -82,10 +83,11 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public void deleteCommentByUser(final String email, final Long commentId) {
+    public void deleteCommentByUser(final HttpServletRequest request, final Long commentId) {
         log.debug("[deleteCommentByUser]");
-        log.debug("[email: {}, commentId: {}]", email, commentId);
-        PostComment postComment = postCommentDao.findByIdAndEmail(email, commentId);
+        log.debug("[email: {}, commentId: {}]", request, commentId);
+        PostComment postComment = postCommentDao.findByIdAndEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey), commentId);
         if (postComment == null) {
             throw new BusinessException("Error, there is no such comment");
         } else if (postComment.isDeleted()) {

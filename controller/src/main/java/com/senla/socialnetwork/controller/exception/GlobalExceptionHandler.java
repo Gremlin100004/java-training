@@ -180,7 +180,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                   WebRequest request) {
         log.debug("[handleMethodArgumentNotValid]");
         log.error("[{}]", exception.getMessage());
-        return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), status);
+        return new ResponseEntity<>(new ClientMessageDto("The entered data is incorrect"), status);
     }
 
     @Override

@@ -14,7 +14,9 @@ import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.CommunityDto;
+import com.senla.socialnetwork.dto.CommunityForCreateDto;
 import com.senla.socialnetwork.dto.PostDto;
+import com.senla.socialnetwork.dto.PostForCreationDto;
 import com.senla.socialnetwork.service.config.CommunityTestData;
 import com.senla.socialnetwork.service.config.LocationTestData;
 import com.senla.socialnetwork.service.config.PostTestData;
@@ -332,8 +334,7 @@ public class CommunityServiceImplTest {
 
     @Test
     void CommunityServiceImpl_addCommunity() {
-        CommunityDto communityDto = CommunityTestData.getTestCommunityDto();
-        communityDto.setId(null);
+        CommunityForCreateDto communityDto = CommunityTestData.getTestCommunityForCreationDto();
         Community community = CommunityTestData.getTestCommunity();
         Location location = LocationTestData.getTestLocation();
         School school = SchoolTestData.getTestSchool();
@@ -533,7 +534,7 @@ public class CommunityServiceImplTest {
 
     @Test
     void CommunityServiceImpl_addPostToCommunity() {
-        PostDto postDto = PostTestData.getTestPostDto();
+        PostForCreationDto postDto = PostTestData.getTestPostForCreationDto();
         Post post = PostTestData.getTestPost();
         Community community = CommunityTestData.getTestCommunity();
         List<Post> posts = PostTestData.getTestPosts();
@@ -547,7 +548,6 @@ public class CommunityServiceImplTest {
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
         Mockito.doReturn(posts).when(postDao).getByCommunityId(
             CommunityTestData.getCommunityId(), FIRST_RESULT, MAX_RESULTS);
-        Mockito.doReturn(post).when(postDao).findById(PostTestData.getPostId());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
         Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
@@ -562,7 +562,6 @@ public class CommunityServiceImplTest {
             CommunityTestData.getCommunityId(), FIRST_RESULT, MAX_RESULTS);
         Mockito.verify(communityDao, Mockito.times(1)).updateRecord(
             ArgumentMatchers.any(Community.class));
-        Mockito.verify(postDao, Mockito.times(1)).findById(PostTestData.getPostId());
         Mockito.verify(communityDao, Mockito.times(1)).findById(CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.times(1)).findById(UserProfileTestData.getUserProfileId());
         Mockito.verify(locationDao, Mockito.times(3)).findById(
@@ -581,7 +580,7 @@ public class CommunityServiceImplTest {
 
     @Test
     void CommunityServiceImpl_addPostToCommunity_communityDao_findByIdAndEmail_nullObject() {
-        PostDto postDto = PostTestData.getTestPostDto();
+        PostForCreationDto postDto = PostTestData.getTestPostForCreationDto();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(communityDao).findByIdAndEmail(
@@ -595,7 +594,6 @@ public class CommunityServiceImplTest {
             CommunityTestData.getCommunityId(), FIRST_RESULT, MAX_RESULTS);
         Mockito.verify(communityDao, Mockito.never()).updateRecord(
             ArgumentMatchers.any(Community.class));
-        Mockito.verify(postDao, Mockito.never()).findById(PostTestData.getPostId());
         Mockito.verify(communityDao, Mockito.never()).findById(CommunityTestData.getCommunityId());
         Mockito.reset(communityDao);
         Mockito.reset(postDao);
@@ -603,7 +601,7 @@ public class CommunityServiceImplTest {
 
     @Test
     void CommunityServiceImpl_addPostToCommunity_communityDao_findByIdAndEmail_objectDeleted() {
-        PostDto postDto = PostTestData.getTestPostDto();
+        PostForCreationDto postDto = PostTestData.getTestPostForCreationDto();
         Community community = CommunityTestData.getTestCommunity();
         community.setDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
@@ -619,7 +617,6 @@ public class CommunityServiceImplTest {
             CommunityTestData.getCommunityId(), FIRST_RESULT, MAX_RESULTS);
         Mockito.verify(communityDao, Mockito.never()).updateRecord(
             ArgumentMatchers.any(Community.class));
-        Mockito.verify(postDao, Mockito.never()).findById(PostTestData.getPostId());
         Mockito.verify(communityDao, Mockito.never()).findById(CommunityTestData.getCommunityId());
         Mockito.reset(communityDao);
         Mockito.reset(postDao);

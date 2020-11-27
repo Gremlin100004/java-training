@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service.config;
 
 import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.dto.CommunityDto;
+import com.senla.socialnetwork.dto.CommunityForCreateDto;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,14 @@ public class CommunityTestData {
     public static CommunityDto getTestCommunityDto() {
         CommunityDto communityDto = new CommunityDto();
         communityDto.setId(COMMUNITY_ID);
+        communityDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
+        communityDto.setTittle(COMMUNITY_TITTLE);
+        communityDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
+        return communityDto;
+    }
+
+    public static CommunityForCreateDto getTestCommunityForCreationDto() {
+        CommunityForCreateDto communityDto = new CommunityForCreateDto();
         communityDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
         communityDto.setTittle(COMMUNITY_TITTLE);
         communityDto.setAuthor(UserProfileTestData.getTestUserProfileDto());

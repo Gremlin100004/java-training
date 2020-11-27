@@ -6,8 +6,8 @@ import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.LogoutToken;
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.UserProfile;
-import com.senla.socialnetwork.domain.enumaration.RoleName;
-import com.senla.socialnetwork.dto.UserDto;
+import com.senla.socialnetwork.dto.UserForAdminDto;
+import com.senla.socialnetwork.dto.UserForSecurityDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.UserMapper;
@@ -51,18 +51,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<UserDto> getUsers(final int firstResult, final int maxResults) {
+    public List<UserForAdminDto> getUsers(final int firstResult, final int maxResults) {
         log.debug("[getUsers]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
-        return UserMapper.getUserDto(userDao.getAllRecords(firstResult, maxResults));
+        return UserMapper.getUserForAdminDto(userDao.getAllRecords(firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public UserDto getUser(final HttpServletRequest request) {
+    public UserForSecurityDto getUser(final HttpServletRequest request) {
         log.debug("[getUser]");
         log.debug("[request: {}]", request);
-        return UserMapper.getUserDto(userDao.findByEmail(JwtUtil.extractUsername(
+        return UserMapper.getUserForSecurityDto(userDao.findByEmail(JwtUtil.extractUsername(
             JwtUtil.getToken(request), secretKey)));
     }
 
@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public String logIn(final UserDto userDto) {
+    public String logIn(final UserForSecurityDto userDto) {
         log.debug("[logIn]");
         log.debug("[userDto: {}]", userDto);
         SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
@@ -113,26 +113,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto addUser(final UserDto userDto) {
+    public void addUser(final UserForSecurityDto userDto) {
         log.debug("[addUser]");
         log.debug("[userDto: {}]", userDto);
         SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
         if (systemUser != null) {
             throw new BusinessException("A user with this email address already exists");
         }
-        userDto.setPassword(cryptPasswordEncoder.encode(userDto.getPassword()));
-        systemUser = UserMapper.getSystemUser(userDto);
-        systemUser.setRole(RoleName.ROLE_USER);
+        systemUser = UserMapper.getSystemUser(cryptPasswordEncoder, userDto);
         SystemUser savedSystemUser = userDao.saveRecord(systemUser);
         UserProfile userProfile = new UserProfile();
         userProfile.setSystemUser(savedSystemUser);
         userProfile.setRegistrationDate(new Date());
         userProfileDao.saveRecord(userProfile);
-        return UserMapper.getUserDto(savedSystemUser);
     }
 
     @Override
-    public void updateUser(HttpServletRequest request, final List<UserDto> usersDto) {
+    public void updateUser(HttpServletRequest request, final List<UserForSecurityDto> usersDto) {
         log.debug("[updateUser]");
         log.debug("[request: {}, usersDto: {}]", request, usersDto);
         if (usersDto.size() != LIST_SIZE) {

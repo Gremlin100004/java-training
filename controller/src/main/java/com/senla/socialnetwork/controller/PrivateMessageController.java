@@ -1,10 +1,14 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
+import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
 import com.senla.socialnetwork.service.PrivateMessageService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.sql.Date;
 import java.util.List;
 
@@ -26,56 +31,136 @@ import java.util.List;
 @Api(tags = "Private Messages")
 @NoArgsConstructor
 public class PrivateMessageController {
-    public static final int BAD_REQUEST = 400;
+    public static final int OK = 200;
+    public static final int CREATED = 201;
     public static final int UNAUTHORIZED = 401;
     public static final int FORBIDDEN = 403;
     public static final int NOT_FOUND = 404;
-    public static final String BAD_REQUEST_MESSAGE = "Successfully retrieved list";
     public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
     public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
     public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
+    public static final String RETURN_LIST_OF_PRIVATE_MESSAGES_OK_MESSAGE = "Successfully retrieved list of "
+       + "private messages";
+    public static final String RETURN_PRIVATE_MESSAGE_OK_MESSAGE = "Successfully retrieved a private message";
+    public static final String UPDATE_PRIVATE_MESSAGE_OK_MESSAGE = "Successfully updated a private message";
+    public static final String DELETE_PRIVATE_MESSAGE_OK_MESSAGE = "Successfully deleted a private message";
+    public static final String FIRST_RESULT_DESCRIPTION = "The number of the first element of the expected list";
+    public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
+    public static final String FIRST_RESULT_EXAMPLE = "1";
+    public static final String MAX_RESULTS_EXAMPLE = "10";
+    public static final String PRIVATE_MESSAGE_DTO_DESCRIPTION = "DTO private message";
+    public static final String PRIVATE_MESSAGE_ID_DESCRIPTION = "Private message id";
+    public static final String START_PERIOD_DATE_DESCRIPTION = "Parameter with start date";
+    public static final String END_PERIOD_DATE_DESCRIPTION = "Parameter with end date";
+    public static final String GET_PRIVATE_MESSAGES_DESCRIPTION = "This method is used to get private messages by admin";
+    public static final String GET_PRIVATE_BY_PERIOD_MESSAGES_DESCRIPTION = "This method is used to get private "
+       + "messages filtered by date and time by this user";
+    public static final String ADD_PRIVATE_MESSAGE_DESCRIPTION = "This method is used to add new private message "
+       + "by this user";
+    public static final String UPDATE_PRIVATE_MESSAGE_DESCRIPTION = "This method is used to update private message "
+       + "by this user";
+    public static final String DELETE_PRIVATE_MESSAGE_BY_USER_DESCRIPTION = "This method is used to delete private "
+       + "message by this user";
+    public static final String DELETE_PRIVATE_MESSAGE_DESCRIPTION = "This method is used to delete private message "
+       + "by admin";
     @Autowired
     private PrivateMessageService privateMessageService;
 
-    @GetMapping
-    public List<PrivateMessageDto> getPrivateMessages(@RequestParam(required = false) Date startPeriodDate,
-                                                      @RequestParam(required = false) Date endPeriodDate,
+    @GetMapping("/admin")
+    @ApiOperation(value = GET_PRIVATE_MESSAGES_DESCRIPTION, response = PrivateMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_PRIVATE_MESSAGES_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<PrivateMessageDto> getPrivateMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
                                                       @RequestParam int firstResult,
-                                                      @RequestParam int maxResults,
-                                                      HttpServletRequest request) {
-        if (startPeriodDate == null && endPeriodDate == null) {
-            return privateMessageService.getPrivateMessages(firstResult, maxResults);
-        } else if (startPeriodDate != null && endPeriodDate != null) {
-            return privateMessageService.getMessageFilteredByPeriod(
-                request, startPeriodDate, endPeriodDate, firstResult, maxResults);
-        } else {
-            throw new ControllerException("Wrong request parameters");
-        }
+                                                      @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
+                                                      @RequestParam int maxResults) {
+        return privateMessageService.getPrivateMessages(firstResult, maxResults);
+
+    }
+
+    @GetMapping
+    @ApiOperation(value = GET_PRIVATE_BY_PERIOD_MESSAGES_DESCRIPTION, response = PrivateMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_PRIVATE_MESSAGES_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<PrivateMessageDto> getPrivateMessagesByPeriod(@ApiParam(value = START_PERIOD_DATE_DESCRIPTION)
+                                                              @RequestParam Date startPeriodDate,
+                                                              @ApiParam(value = END_PERIOD_DATE_DESCRIPTION)
+                                                              @RequestParam Date endPeriodDate,
+                                                              @ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                                        example = FIRST_RESULT_EXAMPLE)
+                                                              @RequestParam int firstResult,
+                                                              @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                                        example = MAX_RESULTS_EXAMPLE)
+                                                              @RequestParam int maxResults,
+                                                              HttpServletRequest request) {
+        return privateMessageService.getMessageFilteredByPeriod(
+            request, startPeriodDate, endPeriodDate, firstResult, maxResults);
     }
 
     @PostMapping
-    public PrivateMessageDto addMessage(@RequestBody PrivateMessageDto privateMessageDto,
+    @ApiOperation(value = ADD_PRIVATE_MESSAGE_DESCRIPTION, response = PrivateMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = CREATED, message = RETURN_PRIVATE_MESSAGE_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public PrivateMessageDto addMessage(@ApiParam(value = PRIVATE_MESSAGE_DTO_DESCRIPTION)
+                                        @RequestBody @Valid PrivateMessageForCreateDto privateMessageDto,
                                         HttpServletRequest request) {
         return privateMessageService.addMessage(request, privateMessageDto);
     }
 
     @PutMapping
-    public ClientMessageDto updateMessage(@RequestBody PrivateMessageDto privateMessageDto,
+    @ApiOperation(value = UPDATE_PRIVATE_MESSAGE_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = UPDATE_PRIVATE_MESSAGE_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto updateMessage(@ApiParam(value = PRIVATE_MESSAGE_DTO_DESCRIPTION)
+                                          @RequestBody @Valid PrivateMessageDto privateMessageDto,
                                           HttpServletRequest request) {
         privateMessageService.updateMessage(request, privateMessageDto);
-        return new ClientMessageDto("Message updated successfully");
+        return new ClientMessageDto(UPDATE_PRIVATE_MESSAGE_OK_MESSAGE);
     }
 
     @PutMapping("/{id}/changes")
-    public ClientMessageDto deleteMessageByUser(@PathVariable("id") Long messageId, HttpServletRequest request) {
+    @ApiOperation(value = DELETE_PRIVATE_MESSAGE_BY_USER_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = DELETE_PRIVATE_MESSAGE_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto deleteMessageByUser(@ApiParam(value = PRIVATE_MESSAGE_ID_DESCRIPTION)
+                                                @PathVariable("id") Long messageId,
+                                                HttpServletRequest request) {
         privateMessageService.deleteMessageByUser(request, messageId);
-        return new ClientMessageDto("Message deleted successfully");
+        return new ClientMessageDto(DELETE_PRIVATE_MESSAGE_OK_MESSAGE);
     }
 
     @DeleteMapping("/{id}")
-    public ClientMessageDto deleteMessage(@PathVariable("id") Long messageId) {
+    @ApiOperation(value = DELETE_PRIVATE_MESSAGE_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = DELETE_PRIVATE_MESSAGE_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto deleteMessage(@ApiParam(value = PRIVATE_MESSAGE_ID_DESCRIPTION)
+                                          @PathVariable("id") Long messageId) {
         privateMessageService.deleteMessage(messageId);
-        return new ClientMessageDto("Message deleted successfully");
+        return new ClientMessageDto(DELETE_PRIVATE_MESSAGE_OK_MESSAGE);
     }
 
 }

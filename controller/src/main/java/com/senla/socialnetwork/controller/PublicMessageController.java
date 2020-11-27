@@ -3,7 +3,7 @@ package com.senla.socialnetwork.controller;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
-import com.senla.socialnetwork.dto.UserProfileDto;
+import com.senla.socialnetwork.dto.PublicMessageForCreateDto;
 import com.senla.socialnetwork.service.PublicMessageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -38,24 +39,30 @@ public class PublicMessageController {
     public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
     public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
     public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
-    public static final String RETURN_LIST_OF_PUBLIC_MESSAGES_OK_MESSAGE = "Successfully retrieved list of public messages";
-    public static final String RETURN_PUBLIC_MESSAGE_OK_MESSAGE = "Successfully retrieved public message";
-    public static final String UPDATE_MESSAGE_OK_MESSAGE = "Successfully updated public message";
-    public static final String DELETE_MESSAGE_OK_MESSAGE = "Successfully deleted public message";
-    public static final String RETURN_LIST_OF_PUBLIC_MESSAGE_POSTS_OK_MESSAGE = "Successfully retrieved list of public message comments";
-
+    public static final String RETURN_LIST_OF_PUBLIC_MESSAGES_OK_MESSAGE = "Successfully retrieved list of "
+       + "public messages";
+    public static final String RETURN_PUBLIC_MESSAGE_OK_MESSAGE = "Successfully retrieved a public message";
+    public static final String UPDATE_MESSAGE_OK_MESSAGE = "Successfully updated a public message";
+    public static final String DELETE_MESSAGE_OK_MESSAGE = "Successfully deleted a public message";
+    public static final String RETURN_LIST_OF_PUBLIC_MESSAGE_POSTS_OK_MESSAGE = "Successfully retrieved list of "
+       + "public message comments";
     public static final String FIRST_RESULT_DESCRIPTION = "The number of the first element of the expected list";
     public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
+    public static final String FIRST_RESULT_EXAMPLE = "1";
+    public static final String MAX_RESULTS_EXAMPLE = "10";
     public static final String PUBLIC_MESSAGE_DTO_DESCRIPTION = "DTO public message object";
     public static final String PUBLIC_MESSAGE_ID_DESCRIPTION = "Public message id";
-
     public static final String GET_MESSAGES_DESCRIPTION = "This method is used to get public messages";
-    public static final String ADD_MESSAGE_DESCRIPTION = "This method is used to add new public message of a given user";
-    public static final String UPDATE_MESSAGE_DESCRIPTION = "This method is used to update the public message of a given user";
-    public static final String DELETE_MESSAGE_BY_USER_DESCRIPTION = "This method is used to delete the public message of a given user";
-    public static final String DELETE_MESSAGE_DESCRIPTION = "This method is used to delete a record from the database by the admin";
-    public static final String GET_PUBLIC_MESSAGE_COMMENTS_DESCRIPTION = "This method is used to get public message comments";
-
+    public static final String ADD_MESSAGE_DESCRIPTION = "This method is used to add new public message of a "
+       + "given user";
+    public static final String UPDATE_MESSAGE_DESCRIPTION = "This method is used to update the public message of a "
+       + "given user";
+    public static final String DELETE_MESSAGE_BY_USER_DESCRIPTION = "This method is used to delete the public "
+       + "message of a given user";
+    public static final String DELETE_MESSAGE_DESCRIPTION = "This method is used to delete a record from the "
+       + "database by the admin";
+    public static final String GET_PUBLIC_MESSAGE_COMMENTS_DESCRIPTION = "This method is used to get public message"
+       + " comments";
     @Autowired
     private PublicMessageService publicMessageService;
 
@@ -67,9 +74,9 @@ public class PublicMessageController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<PublicMessageDto> getMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION)
+    public List<PublicMessageDto> getMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
                                               @RequestParam int firstResult,
-                                              @ApiParam(value = MAX_RESULTS_DESCRIPTION)
+                                              @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
                                               @RequestParam int maxResults) {
         return publicMessageService.getMessages(firstResult, maxResults);
     }
@@ -83,7 +90,7 @@ public class PublicMessageController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public PublicMessageDto addMessage(@ApiParam(value = PUBLIC_MESSAGE_DTO_DESCRIPTION)
-                                       @RequestBody PublicMessageDto publicMessageDto,
+                                       @RequestBody @Valid PublicMessageForCreateDto publicMessageDto,
                                        HttpServletRequest request) {
         return publicMessageService.addMessage(request, publicMessageDto);
     }
@@ -97,7 +104,7 @@ public class PublicMessageController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateMessage(@ApiParam(value = PUBLIC_MESSAGE_DTO_DESCRIPTION)
-                                          @RequestBody PublicMessageDto publicMessageDto,
+                                          @RequestBody @Valid PublicMessageDto publicMessageDto,
                                           HttpServletRequest request) {
         publicMessageService.updateMessage(request, publicMessageDto);
         return new ClientMessageDto(UPDATE_MESSAGE_OK_MESSAGE);
@@ -142,9 +149,9 @@ public class PublicMessageController {
     })
     public List<PublicMessageCommentDto> getPublicMessageComments(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION)
                                                                   @PathVariable("id") Long publicMessageId,
-                                                                  @ApiParam(value = FIRST_RESULT_DESCRIPTION)
+                                                                  @ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
                                                                   @RequestParam int firstResult,
-                                                                  @ApiParam(value = MAX_RESULTS_DESCRIPTION)
+                                                                  @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
                                                                   @RequestParam int maxResults) {
         return publicMessageService.getPublicMessageComments(publicMessageId, firstResult, maxResults);
     }

@@ -2,8 +2,13 @@ package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.SchoolDto;
+import com.senla.socialnetwork.dto.SchoolForCreateDto;
 import com.senla.socialnetwork.service.SchoolService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -23,37 +29,83 @@ import java.util.List;
 @Api(tags = "Schools")
 @NoArgsConstructor
 public class SchoolController {
-    public static final int BAD_REQUEST = 400;
+    public static final int OK = 200;
+    public static final int CREATED = 201;
     public static final int UNAUTHORIZED = 401;
     public static final int FORBIDDEN = 403;
     public static final int NOT_FOUND = 404;
-    public static final String BAD_REQUEST_MESSAGE = "Successfully retrieved list";
     public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
     public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
     public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
+    public static final String FIRST_RESULT_DESCRIPTION = "The number of the first element of the expected list";
+    public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
+    public static final String FIRST_RESULT_EXAMPLE = "1";
+    public static final String MAX_RESULTS_EXAMPLE = "10";
+    public static final String RETURN_LIST_OF_SCHOOLS_OK_MESSAGE = "Successfully retrieved list of schools";
+    public static final String RETURN_SCHOOL_OK_MESSAGE = "Successfully retrieved a school";
+    public static final String UPDATE_SCHOOL_OK_MESSAGE = "Successfully updated a school";
+    public static final String DELETE_SCHOOL_OK_MESSAGE = "Successfully deleted a school";
+    public static final String SCHOOL_DTO_DESCRIPTION = "DTO school";
+    public static final String SCHOOL_ID_DESCRIPTION = "School id";
+    public static final String GET_SCHOOLS_DESCRIPTION = "This method is used to get schools";
+    public static final String ADD_SCHOOL_DESCRIPTION = "This method is used to add new school by admin";
+    public static final String UPDATE_SCHOOL_DESCRIPTION = "This method is used to update school by admin";
+    public static final String DELETE_SCHOOL_DESCRIPTION = "This method is used to delete school by admin";
     @Autowired
     private SchoolService schoolService;
 
     @GetMapping
-    public List<SchoolDto> getSchools(@RequestParam int firstResult, @RequestParam int maxResults) {
+    @ApiOperation(value = GET_SCHOOLS_DESCRIPTION, response = SchoolDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_SCHOOLS_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<SchoolDto> getSchools(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
+                                      @RequestParam int firstResult,
+                                      @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
+                                      @RequestParam int maxResults) {
         return schoolService.getSchools(firstResult, maxResults);
     }
 
     @PostMapping
-    public SchoolDto addSchool(@RequestBody SchoolDto schoolDto) {
+    @ApiOperation(value = ADD_SCHOOL_DESCRIPTION, response = SchoolDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = CREATED, message = RETURN_SCHOOL_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public SchoolDto addSchool(@ApiParam(value = SCHOOL_DTO_DESCRIPTION) @RequestBody @Valid SchoolForCreateDto schoolDto) {
         return schoolService.addSchool(schoolDto);
     }
 
     @PutMapping
-    public ClientMessageDto updateSchool(@RequestBody SchoolDto schoolDto) {
+    @ApiOperation(value = UPDATE_SCHOOL_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = UPDATE_SCHOOL_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto updateSchool(@ApiParam(value = SCHOOL_DTO_DESCRIPTION) @RequestBody @Valid SchoolDto schoolDto) {
         schoolService.updateSchool(schoolDto);
-        return new ClientMessageDto("School updated successfully");
+        return new ClientMessageDto(UPDATE_SCHOOL_OK_MESSAGE);
     }
 
     @DeleteMapping("/{id}")
-    public ClientMessageDto deleteSchool(@PathVariable("id") Long schoolId) {
+    @ApiOperation(value = DELETE_SCHOOL_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = DELETE_SCHOOL_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto deleteSchool(@ApiParam(value = SCHOOL_ID_DESCRIPTION)
+                                         @PathVariable("id") Long schoolId) {
         schoolService.deleteSchool(schoolId);
-        return new ClientMessageDto("School deleted successfully");
+        return new ClientMessageDto(DELETE_SCHOOL_OK_MESSAGE);
     }
 
 }

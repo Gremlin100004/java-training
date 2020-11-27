@@ -7,21 +7,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-@ApiModel(value = "Location")
-public class LocationDto extends GeneralDto {
-    @ApiModelProperty(value = "Country",
-        example = "Belarus")
+@ApiModel(value = "User For Security")
+public class UserForSecurityDto {
+    @ApiModelProperty(value = "user email",
+        example = "user1@test.com")
     @NotNull
-    private String country;
-    @ApiModelProperty(value = "City",
-        example = "Grodno")
+    @Email
+    private String email;
+    @ApiModelProperty(value = "user password",
+        example = "test")
     @NotNull
-    private String city;
+    private String password;
 
 }

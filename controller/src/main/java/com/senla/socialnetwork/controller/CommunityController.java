@@ -4,7 +4,9 @@ import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.CommunityDto;
+import com.senla.socialnetwork.dto.CommunityForCreateDto;
 import com.senla.socialnetwork.dto.PostDto;
+import com.senla.socialnetwork.dto.PostForCreationDto;
 import com.senla.socialnetwork.service.CommunityService;
 import com.senla.socialnetwork.service.enumaration.CommunitySortParameter;
 import io.swagger.annotations.Api;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -48,20 +51,33 @@ public class CommunityController {
     public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
     public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
     public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
-    public static final String GET_ALL_COMMUNITIES_DESCRIPTION = "This method is used to get absolutely all communities by admin.";
-    public static final String GET_COMMUNITIES_DESCRIPTION = "This method is used to get communities that have not been deleted. Communities can be sort or filtered";
-    public static final String GET_OWN_COMMUNITIES_DESCRIPTION = "This method is used to get the communities of the user of his account";
-    public static final String GET_SUBSCRIBED_COMMUNITIES_DESCRIPTION = "This method allows you to get the communities that the user has subscribed to";
+    public static final String GET_ALL_COMMUNITIES_DESCRIPTION = "This method is used to get absolutely all "
+       + "communities by admin.";
+    public static final String GET_COMMUNITIES_DESCRIPTION = "This method is used to get communities that have not "
+       + "been deleted. Communities can be sort or filtered";
+    public static final String GET_OWN_COMMUNITIES_DESCRIPTION = "This method is used to get the communities of the "
+       + "user of his account";
+    public static final String GET_SUBSCRIBED_COMMUNITIES_DESCRIPTION = "This method allows you to get the "
+       + "communities that the user has subscribed to";
     public static final String GET_COMMUNITY_POSTS_DESCRIPTION = "This method is used to get a list of community posts";
-    public static final String SUBSCRIBE_TO_COMMUNITY_DESCRIPTION = "This method allows the user to subscribe to the community";
-    public static final String UNSUBSCRIBE_FROM_COMMUNITY_DESCRIPTION = "This method allows the user to unsubscribe from the community";
-    public static final String ADD_COMMUNITY_DESCRIPTION = "This method allows you to add a new community of the given account";
-    public static final String UPDATE_COMMUNITY_DESCRIPTION = "This method allows you to update a new community of the given account";
-    public static final String DELETE_COMMUNITY_BY_USER_DESCRIPTION = "This method allows you to delete the community of the given account(deletion status is set)";
-    public static final String DELETE_COMMUNITY_DESCRIPTION = "This method allows you to delete a record from the database by the admin";
-    public static final String ADD_POST_TO_COMMUNITY_DESCRIPTION = "This method allows you to add a post to the community of the given account";
+    public static final String SUBSCRIBE_TO_COMMUNITY_DESCRIPTION = "This method allows the user to subscribe to "
+       + "the community";
+    public static final String UNSUBSCRIBE_FROM_COMMUNITY_DESCRIPTION = "This method allows the user to unsubscribe "
+       + "from the community";
+    public static final String ADD_COMMUNITY_DESCRIPTION = "This method allows you to add a new community of the "
+       + "given account";
+    public static final String UPDATE_COMMUNITY_DESCRIPTION = "This method allows you to update a new community of "
+       + "the given account";
+    public static final String DELETE_COMMUNITY_BY_USER_DESCRIPTION = "This method allows you to delete the "
+       + "community of the given account(deletion status is set)";
+    public static final String DELETE_COMMUNITY_DESCRIPTION = "This method allows you to delete a record from the "
+       + "database by the admin";
+    public static final String ADD_POST_TO_COMMUNITY_DESCRIPTION = "This method allows you to add a post to the "
+       + "community of the given account";
     public static final String FIRST_RESULT_DESCRIPTION = "The number of the first element of the expected list";
     public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
+    public static final String FIRST_RESULT_EXAMPLE = "1";
+    public static final String MAX_RESULTS_EXAMPLE = "10";
     public static final String SORT_PARAMETER_DESCRIPTION = "Parameter to select sorting";
     public static final String COMMUNITY_TYPE_DESCRIPTION = "The type of community to filter the list by";
     public static final String COMMUNITY_ID_DESCRIPTION = " Community id";
@@ -78,9 +94,11 @@ public class CommunityController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<CommunityDto> getAllCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION)
+    public List<CommunityDto> getAllCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                          example = FIRST_RESULT_EXAMPLE)
                                                 @RequestParam int firstResult,
-                                                @ApiParam(value = MAX_RESULTS_DESCRIPTION)
+                                                @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                          example = MAX_RESULTS_EXAMPLE)
                                                 @RequestParam int maxResults) {
         return communityService.getAllCommunities(firstResult, maxResults);
     }
@@ -97,9 +115,9 @@ public class CommunityController {
                                              @RequestParam(required = false) CommunitySortParameter sortParameter,
                                              @ApiParam(value = COMMUNITY_TYPE_DESCRIPTION)
                                              @RequestParam(required = false) CommunityType communityType,
-                                             @ApiParam(value = FIRST_RESULT_DESCRIPTION)
+                                             @ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
                                              @RequestParam int firstResult,
-                                             @ApiParam(value = MAX_RESULTS_DESCRIPTION)
+                                             @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
                                              @RequestParam int maxResults) {
         if (sortParameter == null && communityType == null) {
             return communityService.getCommunities(firstResult, maxResults);
@@ -120,9 +138,11 @@ public class CommunityController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<CommunityDto> getOwnCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION)
+    public List<CommunityDto> getOwnCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                          example = FIRST_RESULT_EXAMPLE)
                                                 @RequestParam int firstResult,
-                                                @ApiParam(value = MAX_RESULTS_DESCRIPTION)
+                                                @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                          example = MAX_RESULTS_EXAMPLE)
                                                 @RequestParam int maxResults,
                                                 HttpServletRequest request) {
         return communityService.getOwnCommunities(request, firstResult, maxResults);
@@ -136,9 +156,11 @@ public class CommunityController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<CommunityDto> getSubscribedCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION)
+    public List<CommunityDto> getSubscribedCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                                 example = FIRST_RESULT_EXAMPLE)
                                                        @RequestParam int firstResult,
-                                                       @ApiParam(value = MAX_RESULTS_DESCRIPTION)
+                                                       @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                                 example = MAX_RESULTS_EXAMPLE)
                                                        @RequestParam int maxResults,
                                                        HttpServletRequest request) {
         return communityService.getSubscribedCommunities(request, firstResult, maxResults);
@@ -154,9 +176,9 @@ public class CommunityController {
     })
     public List<PostDto> getCommunityPosts(@ApiParam(value = COMMUNITY_ID_DESCRIPTION)
                                            @PathVariable("id") Long communityId,
-                                           @ApiParam(value = FIRST_RESULT_DESCRIPTION)
+                                           @ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
                                            @RequestParam int firstResult,
-                                           @ApiParam(value = MAX_RESULTS_DESCRIPTION)
+                                           @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
                                            @RequestParam int maxResults) {
         return communityService.getCommunityPosts(communityId, firstResult, maxResults);
     }
@@ -200,7 +222,7 @@ public class CommunityController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public CommunityDto addCommunity(@ApiParam(value = COMMUNITY_DTO_DESCRIPTION)
-                                     @RequestBody CommunityDto communityDto,
+                                     @RequestBody @Valid CommunityForCreateDto communityDto,
                                      HttpServletRequest request) {
         return communityService.addCommunity(request, communityDto);
     }
@@ -214,7 +236,7 @@ public class CommunityController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateCommunity(@ApiParam(value = COMMUNITY_DTO_DESCRIPTION)
-                                            @RequestBody CommunityDto communityDto,
+                                            @RequestBody @Valid CommunityDto communityDto,
                                             HttpServletRequest request) {
         communityService.updateCommunity(request, communityDto);
         return new ClientMessageDto(UPDATE_COMMUNITY_OK_MESSAGE);
@@ -258,7 +280,7 @@ public class CommunityController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto addPostToCommunity(@ApiParam(value = POST_DTO_DESCRIPTION)
-                                               @RequestBody PostDto postDto,
+                                               @RequestBody @Valid PostForCreationDto postDto,
                                                @ApiParam(value = COMMUNITY_ID_DESCRIPTION)
                                                @PathVariable("id") Long communityId,
                                                HttpServletRequest request) {

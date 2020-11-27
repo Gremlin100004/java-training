@@ -9,20 +9,13 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
-import java.util.Date;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-@ApiModel(value = "Community")
-public class CommunityDto extends GeneralDto {
-    @ApiModelProperty(value = "Create community date",
-        example = "2020-09-21 10:00")
-    @Past
-    @NotNull
-    private Date creationDate;
+@ApiModel(value = "Community for create")
+public class CommunityForCreateDto {
     @ApiModelProperty(value = "Community author")
     @NotNull
     private UserProfileDto author;
@@ -30,12 +23,12 @@ public class CommunityDto extends GeneralDto {
     @NotNull
     private CommunityType type;
     @ApiModelProperty(value = "Tittle of community",
-        example = "Sport events")
+        example = "Huawei Europe")
     @NotNull
     private String tittle;
     @ApiModelProperty(value = "Community information",
-        example = "This community is dedicated to amateur sports activities")
+        example = "This is the official site of Huawei Europe, communicating the cultivation of digital change, " +
+                  "affecting people & business.")
     private String information;
-    private boolean isDeleted;
 
 }

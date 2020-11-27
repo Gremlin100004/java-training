@@ -5,6 +5,7 @@ import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.domain.School;
 import com.senla.socialnetwork.dto.SchoolDto;
+import com.senla.socialnetwork.dto.SchoolForCreateDto;
 import com.senla.socialnetwork.service.config.LocationTestData;
 import com.senla.socialnetwork.service.config.SchoolTestData;
 import com.senla.socialnetwork.service.config.TestConfig;
@@ -51,8 +52,7 @@ public class SchoolServiceImplTest {
     @Test
     void SchoolServiceImpl_addSchool() {
         School school = SchoolTestData.getTestSchool();
-        SchoolDto schoolDto = SchoolTestData.getTestSchoolDto();
-        schoolDto.setId(null);
+        SchoolForCreateDto schoolDto = SchoolTestData.getTestSchoolForCreationDto();
         Location location = LocationTestData.getTestLocation();
         Mockito.doReturn(school).when(schoolDao).saveRecord(ArgumentMatchers.any(School.class));
         Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());

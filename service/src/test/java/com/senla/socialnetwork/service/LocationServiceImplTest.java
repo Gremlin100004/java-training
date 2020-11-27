@@ -3,6 +3,7 @@ package com.senla.socialnetwork.service;
 import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.dto.LocationDto;
+import com.senla.socialnetwork.dto.LocationForCreateDto;
 import com.senla.socialnetwork.service.config.LocationTestData;
 import com.senla.socialnetwork.service.config.TestConfig;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -46,8 +47,7 @@ public class LocationServiceImplTest {
     @Test
     void LocationServiceImpl_addLocation() {
         Location location = LocationTestData.getTestLocation();
-        LocationDto locationDto = LocationTestData.getTestLocationDto();
-        locationDto.setId(null);
+        LocationForCreateDto locationDto = LocationTestData.getTestLocationForCreationDto();
         Mockito.doReturn(location).when(locationDao).saveRecord(ArgumentMatchers.any(Location.class));
 
         LocationDto resultLocationDto = locationService.addLocation(locationDto);

@@ -8,6 +8,7 @@ import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PrivateMessage;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
+import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.PrivateMessageMapper;
@@ -64,11 +65,12 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public PrivateMessageDto addMessage(final HttpServletRequest request, final PrivateMessageDto privateMessageDto) {
+    public PrivateMessageDto addMessage(final HttpServletRequest request,
+                                        final PrivateMessageForCreateDto privateMessageDto) {
         log.debug("[addMessage]");
         log.debug("[request: {}, privateMessageDto: {}]", request, privateMessageDto);
-        PrivateMessage privateMessage = PrivateMessageMapper.getPrivateMessage(
-            privateMessageDto, privateMessageDao, userProfileDao, locationDao, schoolDao, universityDao);
+        PrivateMessage privateMessage = PrivateMessageMapper.getNewPrivateMessage(
+            privateMessageDto, userProfileDao, locationDao, schoolDao, universityDao);
         privateMessage.setSender(userProfileDao.findByEmail(JwtUtil.extractUsername(
             JwtUtil.getToken(request), secretKey)));
         return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.saveRecord(privateMessage));

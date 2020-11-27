@@ -3,6 +3,7 @@ package com.senla.socialnetwork.service;
 import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dto.SchoolDto;
+import com.senla.socialnetwork.dto.SchoolForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.SchoolMapper;
 import lombok.NoArgsConstructor;
@@ -32,11 +33,11 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Transactional
-    public SchoolDto addSchool(final SchoolDto schoolDto) {
+    public SchoolDto addSchool(final SchoolForCreateDto schoolDto) {
         log.debug("[addSchool]");
         log.debug("[schoolDto: {}]", schoolDto);
         return SchoolMapper.getSchoolDto(schoolDao.saveRecord(
-            SchoolMapper.getSchool(schoolDto, schoolDao, locationDao)));
+            SchoolMapper.getNewSchool(schoolDto, locationDao)));
     }
 
     @Override

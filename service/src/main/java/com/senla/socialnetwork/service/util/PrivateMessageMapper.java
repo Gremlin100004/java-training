@@ -7,6 +7,7 @@ import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PrivateMessage;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
+import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,12 +38,7 @@ public class PrivateMessageMapper {
                                                    final LocationDao locationDao,
                                                    final SchoolDao schoolDao,
                                                    final UniversityDao universityDao) {
-        PrivateMessage privateMessage;
-        if (privateMessageDto.getId() == null) {
-            privateMessage = new PrivateMessage();
-        } else {
-            privateMessage = privateMessageDao.findById(privateMessageDto.getId());
-        }
+        PrivateMessage privateMessage = privateMessageDao.findById(privateMessageDto.getId());
         privateMessage.setId(privateMessageDto.getId());
         privateMessage.setDepartureDate(privateMessageDto.getDepartureDate());
         privateMessage.setSender(UserProfileMapper.getUserProfile(
@@ -52,6 +48,20 @@ public class PrivateMessageMapper {
         privateMessage.setContent(privateMessageDto.getContent());
         privateMessage.setRead(privateMessageDto.isRead());
         privateMessage.setDeleted(privateMessageDto.isDeleted());
+        return privateMessage;
+    }
+
+    public static PrivateMessage getNewPrivateMessage(final PrivateMessageForCreateDto privateMessageDto,
+                                                      final UserProfileDao userProfileDao,
+                                                      final LocationDao locationDao,
+                                                      final SchoolDao schoolDao,
+                                                      final UniversityDao universityDao) {
+        PrivateMessage privateMessage = new PrivateMessage();
+        privateMessage.setSender(UserProfileMapper.getUserProfile(
+            privateMessageDto.getSender(), userProfileDao, locationDao, schoolDao, universityDao));
+        privateMessage.setRecipient(UserProfileMapper.getUserProfile(
+            privateMessageDto.getRecipient(), userProfileDao, locationDao, schoolDao, universityDao));
+        privateMessage.setContent(privateMessageDto.getContent());
         return privateMessage;
     }
 

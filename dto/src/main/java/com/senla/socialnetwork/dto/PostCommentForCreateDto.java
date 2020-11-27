@@ -8,20 +8,13 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
-import java.util.Date;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-@ApiModel(value = "Post Comment")
-public class PostCommentDto extends GeneralDto {
-    @ApiModelProperty(value = "Create community date",
-        example = "2020-09-21 10:00")
-    @Past
-    @NotNull
-    private Date creationDate;
+@ApiModel(value = "Post Comment For Create")
+public class PostCommentForCreateDto {
     @ApiModelProperty(value = "Comment author")
     @NotNull
     private UserProfileDto author;
@@ -29,9 +22,8 @@ public class PostCommentDto extends GeneralDto {
     @NotNull
     private PostDto post;
     @ApiModelProperty(value = "Comment content",
-        example = "good news!")
+        example = "Let's go!")
     @NotNull
     private String content;
-    private boolean isDeleted;
 
 }

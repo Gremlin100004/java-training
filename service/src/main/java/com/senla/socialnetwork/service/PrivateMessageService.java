@@ -1,6 +1,7 @@
 package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dto.PrivateMessageDto;
+import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -15,7 +16,7 @@ public interface PrivateMessageService {
                                                        int firstResult,
                                                        int maxResults);
 
-    PrivateMessageDto addMessage(HttpServletRequest request, PrivateMessageDto privateMessageDto);
+    PrivateMessageDto addMessage(HttpServletRequest request, PrivateMessageForCreateDto privateMessageDto);
 
     void updateMessage(HttpServletRequest request, PrivateMessageDto privateMessageDto);
 

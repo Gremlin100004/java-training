@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service.config;
 
 import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.dto.LocationDto;
+import com.senla.socialnetwork.dto.LocationForCreateDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,13 @@ public class LocationTestData {
     public static LocationDto getTestLocationDto() {
         LocationDto locationDto = new LocationDto();
         locationDto.setId(LOCATION_ID);
+        locationDto.setCountry(COUNTRY);
+        locationDto.setCity(CITY);
+        return locationDto;
+    }
+
+    public static LocationForCreateDto getTestLocationForCreationDto() {
+        LocationForCreateDto locationDto = new LocationForCreateDto();
         locationDto.setCountry(COUNTRY);
         locationDto.setCity(CITY);
         return locationDto;

@@ -3,6 +3,7 @@ package com.senla.socialnetwork.service.util;
 import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.dto.LocationDto;
+import com.senla.socialnetwork.dto.LocationForCreateDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,12 +24,14 @@ public class LocationMapper {
     }
 
     public static Location getLocation(final LocationDto locationDto, final LocationDao locationDao) {
-        Location location;
-        if (locationDto.getId() == null) {
-            location = new Location();
-        } else {
-            location = locationDao.findById(locationDto.getId());
-        }
+        Location location = locationDao.findById(locationDto.getId());
+        location.setCity(locationDto.getCity());
+        location.setCountry(locationDto.getCountry());
+        return location;
+    }
+
+    public static Location getNewLocation(final LocationForCreateDto locationDto) {
+        Location location = new Location();
         location.setCity(locationDto.getCity());
         location.setCountry(locationDto.getCountry());
         return location;

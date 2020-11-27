@@ -7,6 +7,7 @@ import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessage;
 import com.senla.socialnetwork.dto.PublicMessageDto;
+import com.senla.socialnetwork.dto.PublicMessageForCreateDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,17 +36,25 @@ public class PublicMessageMapper {
                                                  final LocationDao locationDao,
                                                  final SchoolDao schoolDao,
                                                  final UniversityDao universityDao) {
-        PublicMessage publicMessage;
-        if (publicMessageDto.getId() == null) {
-            publicMessage = new PublicMessage();
-        } else {
-            publicMessage = publicMessageDao.findById(publicMessageDto.getId());
-        }
+        PublicMessage publicMessage = publicMessageDao.findById(publicMessageDto.getId());
         publicMessage.setAuthor(UserProfileMapper.getUserProfile(
             publicMessageDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
         publicMessage.setTittle(publicMessageDto.getTittle());
         publicMessage.setContent(publicMessageDto.getContent());
         publicMessage.setDeleted(publicMessageDto.isDeleted());
+        return publicMessage;
+    }
+
+    public static PublicMessage getNewPublicMessage(final PublicMessageForCreateDto publicMessageDto,
+                                                    final UserProfileDao userProfileDao,
+                                                    final LocationDao locationDao,
+                                                    final SchoolDao schoolDao,
+                                                    final UniversityDao universityDao) {
+        PublicMessage publicMessage = new PublicMessage();
+        publicMessage.setAuthor(UserProfileMapper.getUserProfile(
+            publicMessageDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
+        publicMessage.setTittle(publicMessageDto.getTittle());
+        publicMessage.setContent(publicMessageDto.getContent());
         return publicMessage;
     }
 

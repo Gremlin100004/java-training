@@ -3,6 +3,7 @@ package com.senla.socialnetwork.service;
 import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dto.UniversityDto;
+import com.senla.socialnetwork.dto.UniversityForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.UniversityMapper;
 import lombok.NoArgsConstructor;
@@ -31,11 +32,11 @@ public class UniversityServiceImpl implements UniversityService {
 
     @Override
     @Transactional
-    public UniversityDto addUniversity(final UniversityDto universityDto) {
+    public UniversityDto addUniversity(final UniversityForCreateDto universityDto) {
         log.debug("[addUniversity]");
         log.debug("[universityDto: {}]", universityDto);
         return UniversityMapper.getUniversityDto(universityDao.saveRecord(
-            UniversityMapper.getUniversity(universityDto, universityDao, locationDao)));
+            UniversityMapper.getNewUniversity(universityDto, locationDao)));
     }
 
     @Override

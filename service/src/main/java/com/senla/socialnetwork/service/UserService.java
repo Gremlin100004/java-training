@@ -1,24 +1,25 @@
 package com.senla.socialnetwork.service;
 
-import com.senla.socialnetwork.dto.UserDto;
+import com.senla.socialnetwork.dto.UserForAdminDto;
+import com.senla.socialnetwork.dto.UserForSecurityDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface UserService {
-    List<UserDto> getUsers(int firstResult, int maxResults);
+    List<UserForAdminDto> getUsers(int firstResult, int maxResults);
 
-    UserDto getUser(HttpServletRequest request);
+    UserForSecurityDto getUser(HttpServletRequest request);
 
     String getUserLogoutToken(String email);
 
-    String logIn(UserDto userDto);
+    String logIn(UserForSecurityDto userDto);
 
     void logOut(HttpServletRequest request);
 
-    UserDto addUser(UserDto userDto);
+    void addUser(UserForSecurityDto userDto);
 
-    void updateUser(HttpServletRequest request, List<UserDto> usersDto);
+    void updateUser(HttpServletRequest request, List<UserForSecurityDto> usersDto);
 
     void deleteUser(Long userId);
 

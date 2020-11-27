@@ -2,7 +2,9 @@ package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.CommunityDto;
+import com.senla.socialnetwork.dto.CommunityForCreateDto;
 import com.senla.socialnetwork.dto.PostDto;
+import com.senla.socialnetwork.dto.PostForCreationDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -26,7 +28,7 @@ public interface CommunityService {
 
     List<PostDto> getCommunityPosts(Long communityId, int firstResult, int maxResults);
 
-    CommunityDto addCommunity(HttpServletRequest request, CommunityDto communityDto);
+    CommunityDto addCommunity(HttpServletRequest request, CommunityForCreateDto communityDto);
 
     void updateCommunity(HttpServletRequest request, CommunityDto communityDto);
 
@@ -34,6 +36,6 @@ public interface CommunityService {
 
     void deleteCommunity(Long communityId);
 
-    void addPostToCommunity(HttpServletRequest request, PostDto postDto, Long communityId);
+    void addPostToCommunity(HttpServletRequest request, PostForCreationDto postDto, Long communityId);
 
 }

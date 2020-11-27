@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service.config;
 
 import com.senla.socialnetwork.domain.PostComment;
 import com.senla.socialnetwork.dto.PostCommentDto;
+import com.senla.socialnetwork.dto.PostCommentForCreateDto;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,8 +34,14 @@ public class PostCommentTestData {
     public static PostCommentDto getTestPostCommentDto() {
         PostCommentDto postCommentDto = new PostCommentDto();
         postCommentDto.setId(POST_COMMENT_ID);
-        postCommentDto.setId(POST_COMMENT_ID);
         postCommentDto.setCreationDate(POST_COMMENT_CREATION_DATE);
+        postCommentDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
+        postCommentDto.setPost(PostTestData.getTestPostDto());
+        return postCommentDto;
+    }
+
+    public static PostCommentForCreateDto getTestPostCommentForCreationDto() {
+        PostCommentForCreateDto postCommentDto = new PostCommentForCreateDto();
         postCommentDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
         postCommentDto.setPost(PostTestData.getTestPostDto());
         return postCommentDto;

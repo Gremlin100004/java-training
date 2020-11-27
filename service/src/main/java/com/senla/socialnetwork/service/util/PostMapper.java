@@ -8,6 +8,7 @@ import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.dto.PostDto;
+import com.senla.socialnetwork.dto.PostForCreationDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,17 +42,26 @@ public class PostMapper {
                                final LocationDao locationDao,
                                final SchoolDao schoolDao,
                                final UniversityDao universityDao) {
-        Post post;
-        if (postDto.getId() == null) {
-            post = new Post();
-        } else {
-            post = postDao.findById(postDto.getId());
-        }
+        Post post = postDao.findById(postDto.getId());
         post.setTittle(postDto.getTittle());
         post.setContent(postDto.getContent());
         post.setCommunity(CommunityMapper.getCommunity(
                 postDto.getCommunity(), communityDao, userProfileDao, locationDao, schoolDao, universityDao));
         post.setDeleted(postDto.isDeleted());
+        return post;
+    }
+
+    public static Post getNewPost(final PostForCreationDto postDto,
+                               final CommunityDao communityDao,
+                               final UserProfileDao userProfileDao,
+                               final LocationDao locationDao,
+                               final SchoolDao schoolDao,
+                               final UniversityDao universityDao) {
+        Post post = new Post();
+        post.setTittle(postDto.getTittle());
+        post.setContent(postDto.getContent());
+        post.setCommunity(CommunityMapper.getCommunity(
+            postDto.getCommunity(), communityDao, userProfileDao, locationDao, schoolDao, universityDao));
         return post;
     }
 

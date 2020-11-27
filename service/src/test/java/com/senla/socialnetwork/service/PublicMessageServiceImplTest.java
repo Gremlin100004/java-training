@@ -14,6 +14,7 @@ import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
+import com.senla.socialnetwork.dto.PublicMessageForCreateDto;
 import com.senla.socialnetwork.service.config.LocationTestData;
 import com.senla.socialnetwork.service.config.PrivateMessageTestData;
 import com.senla.socialnetwork.service.config.PublicMessageCommentTestData;
@@ -82,7 +83,7 @@ public class PublicMessageServiceImplTest {
     @Test
     void PublicMessageServiceImpl_addMessage() {
         PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
-        PublicMessageDto publicMessageDto = PublicMessageTestData.getTestPublicMessageDto();
+        PublicMessageForCreateDto publicMessageDto = PublicMessageTestData.getTestPublicMessageForCreationDto();
         publicMessageDto.setId(null);
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         Location location = LocationTestData.getTestLocation();

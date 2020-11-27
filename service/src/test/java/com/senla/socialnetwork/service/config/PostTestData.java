@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service.config;
 
 import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.dto.PostDto;
+import com.senla.socialnetwork.dto.PostForCreationDto;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +37,13 @@ public class PostTestData {
         postDto.setId(POST_ID);
         postDto.setTittle(POST_TITTLE);
         postDto.setCreationDate(POST_CREATION_DATE);
+        postDto.setCommunity(CommunityTestData.getTestCommunityDto());
+        return postDto;
+    }
+
+    public static PostForCreationDto getTestPostForCreationDto() {
+        PostForCreationDto postDto = new PostForCreationDto();
+        postDto.setTittle(POST_TITTLE);
         postDto.setCommunity(CommunityTestData.getTestCommunityDto());
         return postDto;
     }

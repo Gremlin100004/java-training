@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dto.LocationDto;
+import com.senla.socialnetwork.dto.LocationForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.LocationMapper;
 import lombok.NoArgsConstructor;
@@ -28,11 +29,11 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     @Transactional
-    public LocationDto addLocation(final LocationDto locationDto) {
+    public LocationDto addLocation(final LocationForCreateDto locationDto) {
         log.debug("[addLocation]");
         log.debug("[locationDto: {}]", locationDto);
         return LocationMapper.getLocationDto(locationDao.saveRecord(
-            LocationMapper.getLocation(locationDto, locationDao)));
+            LocationMapper.getNewLocation(locationDto)));
     }
 
     @Override

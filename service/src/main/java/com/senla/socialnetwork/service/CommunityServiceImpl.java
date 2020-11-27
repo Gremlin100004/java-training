@@ -11,7 +11,9 @@ import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.CommunityDto;
+import com.senla.socialnetwork.dto.CommunityForCreateDto;
 import com.senla.socialnetwork.dto.PostDto;
+import com.senla.socialnetwork.dto.PostForCreationDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.CommunityMapper;
 import com.senla.socialnetwork.service.util.JwtUtil;
@@ -155,11 +157,11 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public CommunityDto addCommunity(final HttpServletRequest request, final CommunityDto communityDto) {
+    public CommunityDto addCommunity(final HttpServletRequest request, final CommunityForCreateDto communityDto) {
         log.debug("[addCommunity]");
         log.debug("[request: {}, communityDto: {}]", request, communityDto);
-        Community community = CommunityMapper.getCommunity(
-            communityDto, communityDao, userProfileDao, locationDao, schoolDao, universityDao);
+        Community community = CommunityMapper.getNewCommunity(
+            communityDto, userProfileDao, locationDao, schoolDao, universityDao);
         community.setAuthor(userProfileDao.findByEmail(JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey)));
         return CommunityMapper.getCommunityDto(communityDao.saveRecord(community));
     }
@@ -212,7 +214,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void addPostToCommunity(final HttpServletRequest request, final PostDto postDto, final Long communityId) {
+    public void addPostToCommunity(final HttpServletRequest request,
+                                   final PostForCreationDto postDto,
+                                   final Long communityId) {
         log.debug("[addPosts]");
         log.debug("[request: {}, postDto: {}, communityId: {}]", request,  postDto, communityId);
         Community community = communityDao.findByIdAndEmail(JwtUtil.extractUsername(
@@ -223,8 +227,7 @@ public class CommunityServiceImpl implements CommunityService {
             throw new BusinessException("Error, the message has already been deleted");
         }
         List<Post> posts = postDao.getByCommunityId(communityId, FIRST_RESULT, MAX_RESULTS);
-        posts.add(PostMapper.getPost(
-            postDto, postDao, communityDao, userProfileDao, locationDao, schoolDao, universityDao));
+        posts.add(PostMapper.getNewPost(postDto, communityDao, userProfileDao, locationDao, schoolDao, universityDao));
         community.setPosts(posts);
         communityDao.updateRecord(community);
     }

@@ -8,6 +8,7 @@ import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessageComment;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
+import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,12 +39,7 @@ public class PublicMessageCommentMapper {
                                                                final LocationDao locationDao,
                                                                final SchoolDao schoolDao,
                                                                final UniversityDao universityDao) {
-        PublicMessageComment publicMessageComment;
-        if (publicMessageCommentDto.getId() == null) {
-            publicMessageComment = new PublicMessageComment();
-        } else {
-            publicMessageComment = publicMessageCommentDao.findById(publicMessageCommentDto.getId());
-        }
+        PublicMessageComment publicMessageComment = publicMessageCommentDao.findById(publicMessageCommentDto.getId());
         publicMessageComment.setCreationDate(publicMessageCommentDto.getCreationDate());
         publicMessageComment.setAuthor(UserProfileMapper.getUserProfile(
             publicMessageCommentDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
@@ -52,6 +48,22 @@ public class PublicMessageCommentMapper {
             locationDao, schoolDao, universityDao));
         publicMessageComment.setContent(publicMessageCommentDto.getContent());
         publicMessageComment.setDeleted(publicMessageCommentDto.isDeleted());
+        return publicMessageComment;
+    }
+
+    public static PublicMessageComment getNewPublicMessageComment(final PublicMessageCommentForCreateDto publicMessageCommentDto,
+                                                                  final PublicMessageDao publicMessageDao,
+                                                                  final UserProfileDao userProfileDao,
+                                                                  final LocationDao locationDao,
+                                                                  final SchoolDao schoolDao,
+                                                                  final UniversityDao universityDao) {
+        PublicMessageComment publicMessageComment = new PublicMessageComment();
+        publicMessageComment.setAuthor(UserProfileMapper.getUserProfile(
+            publicMessageCommentDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
+        publicMessageComment.setPublicMessage(PublicMessageMapper.getPublicMessage(
+            publicMessageCommentDto.getPublicMessage(), publicMessageDao, userProfileDao,
+            locationDao, schoolDao, universityDao));
+        publicMessageComment.setContent(publicMessageCommentDto.getContent());
         return publicMessageComment;
     }
 

@@ -11,6 +11,7 @@ import com.senla.socialnetwork.domain.School;
 import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
+import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
 import com.senla.socialnetwork.service.config.LocationTestData;
 import com.senla.socialnetwork.service.config.PrivateMessageTestData;
 import com.senla.socialnetwork.service.config.SchoolTestData;
@@ -98,8 +99,7 @@ public class PrivateMessageServiceImplTest {
     @Test
     void PrivateMessageServiceImpl_addMessage() {
         PrivateMessage privateMessage = PrivateMessageTestData.getTestPrivateMessage();
-        PrivateMessageDto privateMessageDto = PrivateMessageTestData.getTestPrivateMessageDto();
-        privateMessageDto.setId(null);
+        PrivateMessageForCreateDto privateMessageDto = PrivateMessageTestData.getTestPrivateMessageForCreationDto();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         Location location = LocationTestData.getTestLocation();
         School school = SchoolTestData.getTestSchool();

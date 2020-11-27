@@ -1,9 +1,14 @@
 package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.dto.ClientMessageDto;
-import com.senla.socialnetwork.dto.UserDto;
+import com.senla.socialnetwork.dto.UserForAdminDto;
+import com.senla.socialnetwork.dto.UserForSecurityDto;
 import com.senla.socialnetwork.service.UserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -28,55 +34,139 @@ import java.util.List;
 @NoArgsConstructor
 @Slf4j
 public class UserController {
-    public static final int BAD_REQUEST = 400;
+    public static final int OK = 200;
+    public static final int CREATED = 201;
     public static final int UNAUTHORIZED = 401;
     public static final int FORBIDDEN = 403;
     public static final int NOT_FOUND = 404;
-    public static final String BAD_REQUEST_MESSAGE = "Successfully retrieved list";
     public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
     public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
     public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
+    public static final String RETURN_LIST_OF_USERS_OK_MESSAGE = "Successfully retrieved list of users";
+    public static final String RETURN_USER_OK_MESSAGE = "Successfully retrieved a user";
+    public static final String ADD_USER_OK_MESSAGE = "Successfully registered a user";
+    public static final String UPDATE_USER_OK_MESSAGE = "Successfully updated a user";
+    public static final String LOGIN_OK_MESSAGE = "Logged in successfully";
+    public static final String LOGOUT_OK_MESSAGE = "Successful logout";
+    public static final String DELETE_USER_OK_MESSAGE = "Successfully deleted a user";
+    public static final String FIRST_RESULT_DESCRIPTION = "The number of the first element of the expected list";
+    public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
+    public static final String FIRST_RESULT_EXAMPLE = "1";
+    public static final String MAX_RESULTS_EXAMPLE = "10";
+    public static final String USER_DTO_DESCRIPTION = "DTO user";
+    public static final String USERS_DTO_DESCRIPTION = "List of two DTO users. First object include old login data, "
+        + "the second object include new login data";
+    public static final String USER_ID_DESCRIPTION = "User id";
+    public static final String GET_USERS_DESCRIPTION = "This method is used to get users by admin";
+    public static final String GET_USER_DESCRIPTION = "This method is used to for the user to receive their "
+        + "security data";
+    public static final String ADD_USER_DESCRIPTION = "This method is used to add new user";
+    public static final String LOGIN_DESCRIPTION = "This method is used to authorize the user";
+    public static final String LOGOUT_DESCRIPTION = "This method is used to log out the user";
+    public static final String UPDATE_USER_DESCRIPTION = "This method is used to update security data by this user";
+    public static final String DELETE_USER_DESCRIPTION = "This method is used to delete user by admin";
+
     @Autowired
     private UserService userService;
 
     @GetMapping
-    public List<UserDto> getUsers(@RequestParam int firstResult, @RequestParam int maxResults) {
+    @ApiOperation(value = GET_USERS_DESCRIPTION, response = UserForAdminDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_USERS_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<UserForAdminDto> getUsers(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
+                                  @RequestParam int firstResult,
+                                          @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
+                                  @RequestParam int maxResults) {
         return userService.getUsers(firstResult, maxResults);
     }
 
     @GetMapping("/own")
-    public UserDto getUser(@RequestParam int firstResult, @RequestParam int maxResults, HttpServletRequest request) {
+    @ApiOperation(value = GET_USER_DESCRIPTION, response = UserForAdminDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_USER_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public UserForSecurityDto getUser(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
+                           @RequestParam int firstResult,
+                                      @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
+                           @RequestParam int maxResults,
+                                      HttpServletRequest request) {
         return userService.getUser(request);
     }
 
     @PostMapping("/registration")
+    @ApiOperation(value = ADD_USER_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = CREATED, message = ADD_USER_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto addUser(@RequestBody UserDto userDto) {
-        return userService.addUser(userDto);
+    public ClientMessageDto addUser(@RequestBody @Valid UserForSecurityDto userDto) {
+        userService.addUser(userDto);
+        return new ClientMessageDto(ADD_USER_OK_MESSAGE);
     }
 
     @PutMapping("/login")
-    public ClientMessageDto logIn(@RequestBody UserDto userDto) {
+    @ApiOperation(value = LOGIN_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = LOGIN_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto logIn(@ApiParam(value = USER_DTO_DESCRIPTION)
+                                  @RequestBody @Valid UserForSecurityDto userDto) {
         return new ClientMessageDto(userService.logIn(userDto));
     }
 
     @PutMapping("/logout")
+    @ApiOperation(value = LOGOUT_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = LOGOUT_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
     public ClientMessageDto logOut(HttpServletRequest request) {
         userService.logOut(request);
-        return new ClientMessageDto("Logout was successful");
+        return new ClientMessageDto(LOGOUT_DESCRIPTION);
     }
 
     @PutMapping
-    public ClientMessageDto updateUser(HttpServletRequest request, @RequestBody List<UserDto> usersDto) {
+    @ApiOperation(value = UPDATE_USER_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = UPDATE_USER_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto updateUser(HttpServletRequest request,
+                                       @ApiParam(value = USERS_DTO_DESCRIPTION)
+                                       @RequestBody @Valid List<UserForSecurityDto> usersDto) {
         userService.updateUser(request, usersDto);
-        return new ClientMessageDto("Data update was successful");
+        return new ClientMessageDto(UPDATE_USER_DESCRIPTION);
     }
 
     @DeleteMapping("/{id}")
-    public ClientMessageDto deleteUser(@PathVariable("id") Long orderId) {
+    @ApiOperation(value = DELETE_USER_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = DELETE_USER_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto deleteUser(@ApiParam(value = USER_ID_DESCRIPTION)
+                                       @PathVariable("id") Long orderId) {
         userService.deleteUser(orderId);
-        return new ClientMessageDto("User has been deleted successfully");
+        return new ClientMessageDto(DELETE_USER_OK_MESSAGE);
     }
 
 }
-

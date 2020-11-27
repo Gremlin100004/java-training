@@ -9,6 +9,7 @@ import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessageComment;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
+import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.PublicMessageCommentMapper;
@@ -53,12 +54,11 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
     @Override
     @Transactional
     public PublicMessageCommentDto addComment(final HttpServletRequest request,
-                                              final PublicMessageCommentDto publicMessageCommentDto) {
+                                              final PublicMessageCommentForCreateDto publicMessageCommentDto) {
         log.debug("[addComment]");
         log.debug("[request: {}, publicMessageCommentDto: {}]", request, publicMessageCommentDto);
-        PublicMessageComment publicMessageComment = PublicMessageCommentMapper.getPublicMessageComment(
-            publicMessageCommentDto, publicMessageCommentDao, publicMessageDao,  userProfileDao,
-            locationDao, schoolDao, universityDao);
+        PublicMessageComment publicMessageComment = PublicMessageCommentMapper.getNewPublicMessageComment(
+            publicMessageCommentDto, publicMessageDao,  userProfileDao, locationDao, schoolDao, universityDao);
         publicMessageComment.setAuthor(userProfileDao.findByEmail(JwtUtil.extractUsername(
             JwtUtil.getToken(request), secretKey)));
         return PublicMessageCommentMapper.getPublicMessageCommentDto(

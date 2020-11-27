@@ -9,6 +9,7 @@ import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PostComment;
 import com.senla.socialnetwork.dto.PostCommentDto;
+import com.senla.socialnetwork.dto.PostCommentForCreateDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,12 +40,7 @@ public class PostCommentMapper {
                                              final LocationDao locationDao,
                                              final SchoolDao schoolDao,
                                              final UniversityDao universityDao) {
-        PostComment postComment;
-        if (postCommentDto.getId() == null) {
-            postComment = new PostComment();
-        } else {
-            postComment = postCommentDao.findById(postCommentDto.getId());
-        }
+        PostComment postComment = postCommentDao.findById(postCommentDto.getId());
         postComment.setCreationDate(postCommentDto.getCreationDate());
         postComment.setAuthor(UserProfileMapper.getUserProfile(
                 postCommentDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
@@ -52,6 +48,22 @@ public class PostCommentMapper {
                 postCommentDto.getPost(), postDao, communityDao, userProfileDao, locationDao, schoolDao, universityDao));
         postComment.setContent(postCommentDto.getContent());
         postComment.setDeleted(postCommentDto.isDeleted());
+        return postComment;
+    }
+
+    public static PostComment getPostNewComment(final PostCommentForCreateDto postCommentDto,
+                                             final PostDao postDao,
+                                             final CommunityDao communityDao,
+                                             final UserProfileDao userProfileDao,
+                                             final LocationDao locationDao,
+                                             final SchoolDao schoolDao,
+                                             final UniversityDao universityDao) {
+        PostComment postComment = new PostComment();
+        postComment.setAuthor(UserProfileMapper.getUserProfile(
+            postCommentDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
+        postComment.setPost(PostMapper.getPost(
+            postCommentDto.getPost(), postDao, communityDao, userProfileDao, locationDao, schoolDao, universityDao));
+        postComment.setContent(postCommentDto.getContent());
         return postComment;
     }
 

@@ -15,13 +15,8 @@ import java.util.Date;
 @Setter
 @ToString
 @NoArgsConstructor
-@ApiModel(value = "User Profile")
-public class UserProfileDto extends GeneralDto {
-    @ApiModelProperty(value = "User registration date",
-        example = "2020-09-21 10:00")
-    @Past
-    @NotNull
-    private Date registrationDate;
+@ApiModel(value = "User Profile For Create")
+public class UserProfileForCreateDto {
     @ApiModelProperty(value = "User birthday",
         example = "2090-03-18")
     @Past

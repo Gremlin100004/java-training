@@ -13,6 +13,7 @@ import com.senla.socialnetwork.domain.School;
 import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
+import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
 import com.senla.socialnetwork.service.config.LocationTestData;
 import com.senla.socialnetwork.service.config.PrivateMessageTestData;
 import com.senla.socialnetwork.service.config.PublicMessageCommentTestData;
@@ -83,8 +84,8 @@ public class PublicMessageCommentServiceImplTest {
     @Test
     void PublicMessageCommentServiceImpl_addComment() {
         PublicMessageComment publicMessageComment = PublicMessageCommentTestData.getTestPublicMessageComment();
-        PublicMessageCommentDto publicMessageCommentDto = PublicMessageCommentTestData.getTestPublicMessageCommentDto();
-        publicMessageCommentDto.setId(null);
+        PublicMessageCommentForCreateDto publicMessageCommentDto = PublicMessageCommentTestData
+            .getTestPublicMessageCommentForCreationDto();
         PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         Location location = LocationTestData.getTestLocation();

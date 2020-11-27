@@ -4,6 +4,7 @@ import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.domain.School;
 import com.senla.socialnetwork.dto.SchoolDto;
+import com.senla.socialnetwork.dto.SchoolForCreateDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,12 +26,14 @@ public class SchoolMapper {
     }
 
     public static School getSchool(final SchoolDto schoolDto, final SchoolDao schoolDao, final LocationDao locationDao) {
-        School school;
-        if (schoolDto.getId() == null) {
-            school = new School();
-        } else {
-            school = schoolDao.findById(schoolDto.getId());
-        }
+        School school = schoolDao.findById(schoolDto.getId());
+        school.setName(schoolDto.getName());
+        school.setLocation(LocationMapper.getLocation(schoolDto.getLocation(), locationDao));
+        return school;
+    }
+
+    public static School getNewSchool(final SchoolForCreateDto schoolDto, final LocationDao locationDao) {
+        School school = new School();
         school.setName(schoolDto.getName());
         school.setLocation(LocationMapper.getLocation(schoolDto.getLocation(), locationDao));
         return school;

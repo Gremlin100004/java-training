@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service.config;
 
 import com.senla.socialnetwork.domain.PrivateMessage;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
+import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +44,14 @@ public class PrivateMessageTestData {
         privateMessageDto.setRecipient(UserProfileTestData.getTestUserProfileDto());
         privateMessageDto.setContent(CONTENT);
         privateMessageDto.setDepartureDate(PRIVATE_MESSAGE_CREATION_DATE);
+        return privateMessageDto;
+    }
+
+    public static PrivateMessageForCreateDto getTestPrivateMessageForCreationDto() {
+        PrivateMessageForCreateDto privateMessageDto = new PrivateMessageForCreateDto();
+        privateMessageDto.setSender(UserProfileTestData.getTestUserProfileDto());
+        privateMessageDto.setRecipient(UserProfileTestData.getTestUserProfileDto());
+        privateMessageDto.setContent(CONTENT);
         return privateMessageDto;
     }
 

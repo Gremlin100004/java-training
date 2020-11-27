@@ -2,8 +2,13 @@ package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.UniversityDto;
+import com.senla.socialnetwork.dto.UniversityForCreateDto;
 import com.senla.socialnetwork.service.UniversityService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -23,37 +29,85 @@ import java.util.List;
 @Api(tags = "Universities")
 @NoArgsConstructor
 public class UniversityController {
-    public static final int BAD_REQUEST = 400;
+    public static final int OK = 200;
+    public static final int CREATED = 201;
     public static final int UNAUTHORIZED = 401;
     public static final int FORBIDDEN = 403;
     public static final int NOT_FOUND = 404;
-    public static final String BAD_REQUEST_MESSAGE = "Successfully retrieved list";
     public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
     public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
     public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
+    public static final String RETURN_LIST_OF_UNIVERSITIES_OK_MESSAGE = "Successfully retrieved list of locations";
+    public static final String RETURN_UNIVERSITY_OK_MESSAGE = "Successfully retrieved a location";
+    public static final String UPDATE_UNIVERSITY_OK_MESSAGE = "Successfully updated a location";
+    public static final String DELETE_UNIVERSITY_OK_MESSAGE = "Successfully deleted a location";
+    public static final String FIRST_RESULT_DESCRIPTION = "The number of the first element of the expected list";
+    public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
+    public static final String FIRST_RESULT_EXAMPLE = "1";
+    public static final String MAX_RESULTS_EXAMPLE = "10";
+    public static final String LOCATION_DTO_DESCRIPTION = "DTO location";
+    public static final String LOCATION_ID_DESCRIPTION = "Location id";
+    public static final String GET_UNIVERSITIES_DESCRIPTION = "This method is used to get universities";
+    public static final String ADD_UNIVERSITY_DESCRIPTION = "This method is used to add new university by admin";
+    public static final String UPDATE_UNIVERSITY_DESCRIPTION = "This method is used to update university by admin";
+    public static final String DELETE_UNIVERSITY_DESCRIPTION = "This method is used to delete university by admin";
     @Autowired
     private UniversityService universityService;
 
     @GetMapping
-    public List<UniversityDto> getUniversities(@RequestParam int firstResult, @RequestParam int maxResults) {
+    @ApiOperation(value = GET_UNIVERSITIES_DESCRIPTION, response = UniversityDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_UNIVERSITIES_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<UniversityDto> getUniversities(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
+                                               @RequestParam int firstResult,
+                                               @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
+                                               @RequestParam int maxResults) {
         return universityService.getUniversities(firstResult, maxResults);
     }
 
     @PostMapping
-    public UniversityDto addUniversity(@RequestBody UniversityDto universityDto) {
+    @ApiOperation(value = ADD_UNIVERSITY_DESCRIPTION, response = UniversityDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = CREATED, message = RETURN_UNIVERSITY_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public UniversityDto addUniversity(@ApiParam(value = LOCATION_DTO_DESCRIPTION)
+                                       @RequestBody @Valid UniversityForCreateDto universityDto) {
         return universityService.addUniversity(universityDto);
     }
 
     @PutMapping
-    public ClientMessageDto updateUniversity(@RequestBody UniversityDto universityDto) {
+    @ApiOperation(value = UPDATE_UNIVERSITY_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = UPDATE_UNIVERSITY_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto updateUniversity(@ApiParam(value = LOCATION_DTO_DESCRIPTION)
+                                             @RequestBody @Valid UniversityDto universityDto) {
         universityService.updateUniversity(universityDto);
-        return new ClientMessageDto("University updated successfully");
+        return new ClientMessageDto(UPDATE_UNIVERSITY_OK_MESSAGE);
     }
 
     @DeleteMapping("/{id}")
-    public ClientMessageDto deleteUniversity(@PathVariable("id") Long universityId) {
+    @ApiOperation(value = DELETE_UNIVERSITY_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = DELETE_UNIVERSITY_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto deleteUniversity(@ApiParam(value = LOCATION_ID_DESCRIPTION)
+                                             @PathVariable("id") Long universityId) {
         universityService.deleteUniversity(universityId);
-        return new ClientMessageDto("University deleted successfully");
+        return new ClientMessageDto(DELETE_UNIVERSITY_OK_MESSAGE);
     }
 
 }

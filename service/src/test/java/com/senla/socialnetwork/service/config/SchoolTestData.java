@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service.config;
 
 import com.senla.socialnetwork.domain.School;
 import com.senla.socialnetwork.dto.SchoolDto;
+import com.senla.socialnetwork.dto.SchoolForCreateDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,13 @@ public class SchoolTestData {
     public static SchoolDto getTestSchoolDto() {
         SchoolDto schoolDto = new SchoolDto();
         schoolDto.setId(SCHOOL_ID);
+        schoolDto.setName(SCHOOL_NAME);
+        schoolDto.setLocation(LocationTestData.getTestLocationDto());
+        return schoolDto;
+    }
+
+    public static SchoolForCreateDto getTestSchoolForCreationDto() {
+        SchoolForCreateDto schoolDto = new SchoolForCreateDto();
         schoolDto.setName(SCHOOL_NAME);
         schoolDto.setLocation(LocationTestData.getTestLocationDto());
         return schoolDto;

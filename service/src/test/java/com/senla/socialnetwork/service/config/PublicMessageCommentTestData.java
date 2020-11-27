@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service.config;
 
 import com.senla.socialnetwork.domain.PublicMessageComment;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
+import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +35,13 @@ public class PublicMessageCommentTestData {
         PublicMessageCommentDto publicMessageCommentDto = new PublicMessageCommentDto();
         publicMessageCommentDto.setId(PUBLIC_MESSAGE_COMMENT_ID);
         publicMessageCommentDto.setCreationDate(PUBLIC_MESSAGE_COMMENT_CREATION_DATE);
+        publicMessageCommentDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
+        publicMessageCommentDto.setPublicMessage(PublicMessageTestData.getTestPublicMessageDto());
+        return publicMessageCommentDto;
+    }
+
+    public static PublicMessageCommentForCreateDto getTestPublicMessageCommentForCreationDto() {
+        PublicMessageCommentForCreateDto publicMessageCommentDto = new PublicMessageCommentForCreateDto();
         publicMessageCommentDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
         publicMessageCommentDto.setPublicMessage(PublicMessageTestData.getTestPublicMessageDto());
         return publicMessageCommentDto;

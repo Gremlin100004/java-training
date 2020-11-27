@@ -2,8 +2,13 @@ package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
+import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
 import com.senla.socialnetwork.service.PublicMessageCommentService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -25,47 +31,111 @@ import java.util.List;
 @Api(tags = "Public Messages Comments")
 @NoArgsConstructor
 public class PublicMessageCommentController {
-    public static final int BAD_REQUEST = 400;
+    public static final int OK = 200;
+    public static final int CREATED = 201;
     public static final int UNAUTHORIZED = 401;
     public static final int FORBIDDEN = 403;
     public static final int NOT_FOUND = 404;
-    public static final String BAD_REQUEST_MESSAGE = "Successfully retrieved list";
     public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
     public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
     public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
+    public static final String RETURN_LIST_OF_MESSAGES_OK_MESSAGE = "Successfully retrieved list of public "
+       + "messages comments";
+    public static final String RETURN_MESSAGE_OK_MESSAGE = "Successfully retrieved a public message comment";
+    public static final String UPDATE_MESSAGE_OK_MESSAGE = "Successfully updated a public message comment";
+    public static final String DELETE_MESSAGE_OK_MESSAGE = "Successfully deleted a public message comment";
+    public static final String FIRST_RESULT_DESCRIPTION = "The number of the first element of the expected list";
+    public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
+    public static final String FIRST_RESULT_EXAMPLE = "1";
+    public static final String MAX_RESULTS_EXAMPLE = "10";
+    public static final String COMMENTS_DTO_DESCRIPTION = "DTO public message comment";
+    public static final String COMMENTS_ID_DESCRIPTION = "Public message comment id";
+    public static final String GET_COMMENTS_DESCRIPTION = "This method is used to get public messages comments";
+    public static final String ADD_COMMENTS_DESCRIPTION = "This method is used to add new public message comment "
+       + "by this user";
+    public static final String UPDATE_COMMENTS_DESCRIPTION = "This method is used to update public message comment "
+       + "by this user";
+    public static final String DELETE_COMMENTS_BY_USER_DESCRIPTION = "This method is used to delete public message "
+       + "comment by this user";
+    public static final String DELETE_COMMENTS_DESCRIPTION = "This method is used to delete public message comment "
+       + "by admin";
     @Autowired
     private PublicMessageCommentService publicMessageCommentService;
     @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
 
     @GetMapping
-    public List<PublicMessageCommentDto> getComments(@RequestParam int firstResult, @RequestParam int maxResults) {
+    @ApiOperation(value = GET_COMMENTS_DESCRIPTION, response = PublicMessageCommentDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_MESSAGES_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<PublicMessageCommentDto> getComments(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
+                                                     @RequestParam int firstResult,
+                                                     @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
+                                                     @RequestParam int maxResults) {
         return publicMessageCommentService.getComments(firstResult, maxResults);
     }
 
     @PostMapping
-    public PublicMessageCommentDto addComment(@RequestBody PublicMessageCommentDto publicMessageCommentDto,
+    @ApiOperation(value = ADD_COMMENTS_DESCRIPTION, response = PublicMessageCommentDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = CREATED, message = RETURN_MESSAGE_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public PublicMessageCommentDto addComment(@ApiParam(value = COMMENTS_DTO_DESCRIPTION)
+                                              @RequestBody
+                                              @Valid PublicMessageCommentForCreateDto publicMessageCommentDto,
                                               HttpServletRequest request) {
         return publicMessageCommentService.addComment(request, publicMessageCommentDto);
     }
 
     @PutMapping
-    public ClientMessageDto updateComment(@RequestBody PublicMessageCommentDto publicMessageCommentDto,
+    @ApiOperation(value = UPDATE_COMMENTS_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = UPDATE_MESSAGE_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto updateComment(@ApiParam(value = COMMENTS_DTO_DESCRIPTION)
+                                          @RequestBody @Valid PublicMessageCommentDto publicMessageCommentDto,
                                           HttpServletRequest request) {
         publicMessageCommentService.updateComment(request, publicMessageCommentDto);
-        return new ClientMessageDto("Comment updated successfully");
+        return new ClientMessageDto(UPDATE_MESSAGE_OK_MESSAGE);
     }
 
     @PutMapping("/{id}/changes")
-    public ClientMessageDto deleteCommentByUser(@PathVariable("id") Long commentId, HttpServletRequest request) {
+    @ApiOperation(value = DELETE_COMMENTS_BY_USER_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = DELETE_MESSAGE_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto deleteCommentByUser(@ApiParam(value = COMMENTS_ID_DESCRIPTION)
+                                                @PathVariable("id") Long commentId,
+                                                HttpServletRequest request) {
          publicMessageCommentService.deleteCommentByUser(request, commentId);
-        return new ClientMessageDto("Comment deleted successfully");
+        return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
     }
 
     @DeleteMapping("/{id}")
-    public ClientMessageDto deleteComment(@PathVariable("id") Long commentId) {
+    @ApiOperation(value = DELETE_COMMENTS_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = DELETE_MESSAGE_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public ClientMessageDto deleteComment(@ApiParam(value = COMMENTS_ID_DESCRIPTION)
+                                          @PathVariable("id") Long commentId) {
         publicMessageCommentService.deleteComment(commentId);
-        return new ClientMessageDto("Comment deleted successfully");
+        return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
     }
 
 }
