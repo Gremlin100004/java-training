@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  social-network-mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=hrinkov_social_network
+      - MYSQL_USER=Grinya
+      - MYSQL_PASSWORD=gremlin280790
+    ports:
+      - 3306:3306
+    volumes: 
+     - ./database/script/prod/init:/docker-entrypoint-initdb.d
+  web:
+    build:
+      context: .
+      dockerfile: dockerfile/tomcat/Dockerfile
+    restart: on-failure
+    depends_on:
+      - social-network-mysql
+    ports:
+      - 2308:8080

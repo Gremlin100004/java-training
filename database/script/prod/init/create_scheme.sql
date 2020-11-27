@@ -1,6 +1,3 @@
--- Todo don't forget to delete this line
-DROP DATABASE IF EXISTS hrinkov_social_network;
-
 CREATE SCHEMA IF NOT EXISTS hrinkov_social_network DEFAULT CHARACTER SET utf8 ;
 
 USE hrinkov_social_network;
@@ -56,7 +53,7 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   date_of_birth DATETIME NULL,
   name VARCHAR(45) NULL,
   surname VARCHAR(45) NULL,
-  telephone_number VARCHAR(13) NULL,
+  telephone_number VARCHAR(20) NULL,
   location_id INT NULL,
   school_id INT NULL,
   school_graduation_year INT NULL,
