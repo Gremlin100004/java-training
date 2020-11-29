@@ -100,8 +100,7 @@ public class WeatherConditionServiceImplTest {
 
         Assertions.assertDoesNotThrow(() -> weatherConditionService.deleteWeatherCondition(
             WeatherConditionTestData.getWeatherId()));
-        Mockito.verify(weatherConditionDao, Mockito.times(1)).deleteRecord(
-            WeatherConditionTestData.getWeatherId());
+        Mockito.verify(weatherConditionDao, Mockito.times(1)).deleteRecord(location);
         Mockito.verify(weatherConditionDao, Mockito.times(1)).findById(
             WeatherConditionTestData.getWeatherId());
         Mockito.reset(weatherConditionDao);
@@ -109,13 +108,14 @@ public class WeatherConditionServiceImplTest {
 
     @Test
     void WeatherConditionServiceImpl_deleteWeatherCondition_weatherConditionDao_findById_nullObject() {
+        WeatherCondition location = WeatherConditionTestData.getTestWeatherCondition();
         Mockito.doReturn(null).when(weatherConditionDao).findById(WeatherConditionTestData.getWeatherId());
 
         Assertions.assertThrows(BusinessException.class, () -> weatherConditionService.deleteWeatherCondition(
             WeatherConditionTestData.getWeatherId()));
         Mockito.verify(weatherConditionDao, Mockito.times(1)).findById(
             WeatherConditionTestData.getWeatherId());
-        Mockito.verify(weatherConditionDao, Mockito.never()).deleteRecord(WeatherConditionTestData.getWeatherId());
+        Mockito.verify(weatherConditionDao, Mockito.never()).deleteRecord(location);
         Mockito.reset(weatherConditionDao);
     }
 

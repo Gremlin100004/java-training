@@ -76,19 +76,20 @@ public class LocationServiceImplTest {
         Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
 
         Assertions.assertDoesNotThrow(() -> locationService.deleteLocation(LocationTestData.getLocationId()));
-        Mockito.verify(locationDao, Mockito.times(1)).deleteRecord(LocationTestData.getLocationId());
+        Mockito.verify(locationDao, Mockito.times(1)).deleteRecord(location);
         Mockito.verify(locationDao, Mockito.times(1)).findById(LocationTestData.getLocationId());
         Mockito.reset(locationDao);
     }
 
     @Test
     void LocationServiceImpl_deleteLocation_locationDao_findById_nullObject() {
+        Location location = LocationTestData.getTestLocation();
         Mockito.doReturn(null).when(locationDao).findById(LocationTestData.getLocationId());
 
         Assertions.assertThrows(BusinessException.class, () -> locationService.deleteLocation(
             LocationTestData.getLocationId()));
         Mockito.verify(locationDao, Mockito.times(1)).findById(LocationTestData.getLocationId());
-        Mockito.verify(locationDao, Mockito.never()).deleteRecord(LocationTestData.getLocationId());
+        Mockito.verify(locationDao, Mockito.never()).deleteRecord(location);
         Mockito.reset(locationDao);
     }
 

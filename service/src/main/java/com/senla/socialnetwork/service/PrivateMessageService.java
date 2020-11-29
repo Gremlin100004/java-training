@@ -10,6 +10,10 @@ import java.util.List;
 public interface PrivateMessageService {
     List<PrivateMessageDto> getPrivateMessages(int firstResult, int maxResults);
 
+    List<PrivateMessageDto> getPrivateMessages(HttpServletRequest request, int firstResult, int maxResults);
+
+    List<PrivateMessageDto> getUnreadMessages(HttpServletRequest request, int firstResult, int maxResults);
+
     List<PrivateMessageDto> getMessageFilteredByPeriod(HttpServletRequest request,
                                                        Date startPeriodDate,
                                                        Date endPeriodDate,

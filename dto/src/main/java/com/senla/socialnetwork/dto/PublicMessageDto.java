@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -18,21 +19,24 @@ import java.util.Date;
 @ApiModel(value = "Public Message")
 public class PublicMessageDto extends GeneralDto {
     @ApiModelProperty(value = "Create public message date",
-        example = "2020-09-21 10:00")
+        example = "2020-07-21 10:00")
     @Past
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date creationDate;
     @ApiModelProperty(value = "Public message author")
     @NotNull
-    private UserProfileDto author;
+    private UserProfileForIdentificationDto author;
     @ApiModelProperty(value = "Tittle of public message",
-        example = "One has only to add a little perseverance and believe in yourself, as success immediately "
-                  + "becomes on your side!")
-    @NotNull
+        example = "I deleted everything.")
     private String tittle;
     @ApiModelProperty(value = "Content of community",
-        example = "I mean that you need to constantly work on yourself")
+        example = "I deleted everything. I’m done. For those who wanted me to “address it” I did. I’m sure u can find"
+                  + " it reposted somewhere. But I don’t want this energy in my life or on my timeline. I’m too "
+                  + "sensitive for this shit and I’m done.")
     private String content;
-    private boolean isDeleted;
+    @ApiModelProperty(value = "Is public message deleted",
+        example = "false")
+    private boolean deleted;
 
 }

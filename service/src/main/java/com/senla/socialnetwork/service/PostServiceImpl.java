@@ -1,15 +1,13 @@
 package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dao.CommunityDao;
-import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.PostCommentDao;
 import com.senla.socialnetwork.dao.PostDao;
-import com.senla.socialnetwork.dao.SchoolDao;
-import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.domain.PostComment;
 import com.senla.socialnetwork.dto.PostCommentDto;
+import com.senla.socialnetwork.dto.PostCommentForCreateDto;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.JwtUtil;
@@ -39,12 +37,6 @@ public class PostServiceImpl implements PostService {
     CommunityDao communityDao;
     @Autowired
     UserProfileDao userProfileDao;
-    @Autowired
-    LocationDao locationDao;
-    @Autowired
-    SchoolDao schoolDao;
-    @Autowired
-    UniversityDao universityDao;
     @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
 
@@ -72,8 +64,7 @@ public class PostServiceImpl implements PostService {
     public void updatePost(final PostDto postDto) {
         log.debug("[updatePosts]");
         log.debug("[postDto: {}]", postDto);
-        postDao.updateRecord(PostMapper.getPost(
-            postDto, postDao, communityDao, userProfileDao, locationDao, schoolDao, universityDao));
+        postDao.updateRecord(PostMapper.getPost(postDto, postDao, communityDao, userProfileDao));
     }
 
     @Override
@@ -103,7 +94,7 @@ public class PostServiceImpl implements PostService {
         if (post == null) {
             throw new BusinessException("Error, there is no such post");
         }
-        postDao.deleteRecord(postId);
+        postDao.deleteRecord(post);
     }
 
     @Override
@@ -112,6 +103,24 @@ public class PostServiceImpl implements PostService {
         log.debug("[getPostComments]");
         log.trace("[postId: {}, firstResult: {}, maxResults: {}]", postId, firstResult, maxResults);
         return PostCommentMapper.getPostCommentDto(postCommentDao.getPostComments(postId, firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public PostCommentDto addComment(final HttpServletRequest request,
+                                     final Long postId,
+                                     final PostCommentForCreateDto postCommentDto) {
+        log.debug("[addComment]");
+        log.debug("[request: {}, postCommentDto: {}]", request, postCommentDto);
+        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
+        Post post = postDao.findByIdAndEmail(email, postId);
+        if (post == null) {
+            throw new BusinessException("Error, there is no such post");
+        } else if (post.isDeleted()) {
+            throw new BusinessException("Error, the post has already been deleted");
+        }
+        return PostCommentMapper.getPostCommentDto(postCommentDao.saveRecord(PostCommentMapper.getPostNewComment(
+            postCommentDto, post, userProfileDao.findByEmail(email))));
     }
 
 }

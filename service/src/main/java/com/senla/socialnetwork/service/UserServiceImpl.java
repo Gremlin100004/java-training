@@ -153,10 +153,11 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(final Long userId) {
         log.debug("[deleteUser]");
         log.debug("[userId: {}]", userId);
-        if (userDao.findById(userId) == null) {
+        SystemUser user = userDao.findById(userId);
+        if (user == null) {
             throw new BusinessException("Error, there is no such user");
         }
-        userDao.deleteRecord(userId);
+        userDao.deleteRecord(user);
     }
 
 }

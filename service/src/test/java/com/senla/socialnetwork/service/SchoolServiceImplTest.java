@@ -86,22 +86,23 @@ public class SchoolServiceImplTest {
 
     @Test
     void SchoolServiceImpl_deleteSchool() {
-        School location = SchoolTestData.getTestSchool();
-        Mockito.doReturn(location).when(schoolDao).findById(SchoolTestData.getSchoolId());
+        School school = SchoolTestData.getTestSchool();
+        Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
 
         Assertions.assertDoesNotThrow(() -> schoolService.deleteSchool(SchoolTestData.getSchoolId()));
-        Mockito.verify(schoolDao, Mockito.times(1)).deleteRecord(SchoolTestData.getSchoolId());
+        Mockito.verify(schoolDao, Mockito.times(1)).deleteRecord(school);
         Mockito.verify(schoolDao, Mockito.times(1)).findById(SchoolTestData.getSchoolId());
         Mockito.reset(schoolDao);
     }
 
     @Test
     void SchoolServiceImpl_deleteSchool_schoolDao_findById_nullObject() {
+        School school = SchoolTestData.getTestSchool();
         Mockito.doReturn(null).when(schoolDao).findById(SchoolTestData.getSchoolId());
 
         Assertions.assertThrows(BusinessException.class, () -> schoolService.deleteSchool(SchoolTestData.getSchoolId()));
         Mockito.verify(schoolDao, Mockito.times(1)).findById(SchoolTestData.getSchoolId());
-        Mockito.verify(schoolDao, Mockito.never()).deleteRecord(SchoolTestData.getSchoolId());
+        Mockito.verify(schoolDao, Mockito.never()).deleteRecord(school);
         Mockito.reset(schoolDao);
     }
 

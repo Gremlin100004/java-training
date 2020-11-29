@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.Null;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -13,7 +13,7 @@ import javax.validation.constraints.Null;
 public class GeneralDto {
     @ApiModelProperty(value = "id",
         example = "1")
-    @Null
+    @NotNull
     protected Long id;
 
 }

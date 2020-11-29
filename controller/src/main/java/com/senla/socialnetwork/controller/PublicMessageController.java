@@ -2,6 +2,7 @@ package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
+import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageForCreateDto;
 import com.senla.socialnetwork.service.PublicMessageService;
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,13 +49,19 @@ public class PublicMessageController {
     public static final String DELETE_MESSAGE_OK_MESSAGE = "Successfully deleted a public message";
     public static final String RETURN_LIST_OF_PUBLIC_MESSAGE_POSTS_OK_MESSAGE = "Successfully retrieved list of "
        + "public message comments";
+    public static final String RETURN_COMMENT_OK_MESSAGE = "Successfully retrieved a public message comment";
     public static final String FIRST_RESULT_DESCRIPTION = "The number of the first element of the expected list";
     public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
     public static final String FIRST_RESULT_EXAMPLE = "1";
     public static final String MAX_RESULTS_EXAMPLE = "10";
     public static final String PUBLIC_MESSAGE_DTO_DESCRIPTION = "DTO public message object";
+    public static final String COMMENTS_DTO_DESCRIPTION = "DTO public message comment";
     public static final String PUBLIC_MESSAGE_ID_DESCRIPTION = "Public message id";
-    public static final String GET_MESSAGES_DESCRIPTION = "This method is used to get public messages";
+    public static final String PUBLIC_MESSAGE_ID_EXAMPLE = "1";
+    public static final String GET_PUBLIC_MESSAGES_ALL_DESCRIPTION = "This method is used to get public messages "
+       + "by admin";
+    public static final String GET_PUBLIC_MESSAGES_DESCRIPTION = "This method is used to get public messages of a "
+       + "given user";
     public static final String ADD_MESSAGE_DESCRIPTION = "This method is used to add new public message of a "
        + "given user";
     public static final String UPDATE_MESSAGE_DESCRIPTION = "This method is used to update the public message of a "
@@ -63,22 +72,44 @@ public class PublicMessageController {
        + "database by the admin";
     public static final String GET_PUBLIC_MESSAGE_COMMENTS_DESCRIPTION = "This method is used to get public message"
        + " comments";
+    public static final String ADD_COMMENTS_DESCRIPTION = "This method is used to add new public message comment "
+       + "by this user";
     @Autowired
     private PublicMessageService publicMessageService;
 
-    @GetMapping
-    @ApiOperation(value = GET_MESSAGES_DESCRIPTION, response = PublicMessageDto.class)
+    @GetMapping("/admin")
+    @ApiOperation(value = GET_PUBLIC_MESSAGES_ALL_DESCRIPTION, response = PublicMessageDto.class)
     @ApiResponses(value = {
         @ApiResponse(code = OK, message = RETURN_LIST_OF_PUBLIC_MESSAGES_OK_MESSAGE),
         @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<PublicMessageDto> getMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
+    public List<PublicMessageDto> getMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                        example = FIRST_RESULT_EXAMPLE)
                                               @RequestParam int firstResult,
-                                              @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
+                                              @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                        example = MAX_RESULTS_EXAMPLE)
                                               @RequestParam int maxResults) {
         return publicMessageService.getMessages(firstResult, maxResults);
+    }
+
+    @GetMapping
+    @ApiOperation(value = GET_PUBLIC_MESSAGES_DESCRIPTION, response = PublicMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_PUBLIC_MESSAGES_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<PublicMessageDto> getPublicMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+        example = FIRST_RESULT_EXAMPLE)
+                                                    @RequestParam int firstResult,
+                                                    @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                        example = MAX_RESULTS_EXAMPLE)
+                                                    @RequestParam int maxResults,
+                                                    HttpServletRequest request) {
+        return publicMessageService.getPublicMessages(request, firstResult, maxResults);
     }
 
     @PostMapping
@@ -89,6 +120,7 @@ public class PublicMessageController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
+    @ResponseStatus(HttpStatus.CREATED)
     public PublicMessageDto addMessage(@ApiParam(value = PUBLIC_MESSAGE_DTO_DESCRIPTION)
                                        @RequestBody @Valid PublicMessageForCreateDto publicMessageDto,
                                        HttpServletRequest request) {
@@ -118,8 +150,10 @@ public class PublicMessageController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto deleteMessageByUser(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION)
-                                                @PathVariable("id") Long messageId, HttpServletRequest request) {
+    public ClientMessageDto deleteMessageByUser(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
+                                                          example = PUBLIC_MESSAGE_ID_EXAMPLE)
+                                                @PathVariable("id") Long messageId,
+                                                HttpServletRequest request) {
 
         publicMessageService.deleteMessageByUser(messageId, request);
         return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
@@ -133,7 +167,8 @@ public class PublicMessageController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto deleteMessage(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION)
+    public ClientMessageDto deleteMessage(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
+                                                    example = PUBLIC_MESSAGE_ID_EXAMPLE)
                                           @PathVariable("id") Long messageId) {
         publicMessageService.deleteMessage(messageId);
         return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
@@ -147,13 +182,35 @@ public class PublicMessageController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<PublicMessageCommentDto> getPublicMessageComments(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION)
+    public List<PublicMessageCommentDto> getPublicMessageComments(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
+                                                                            example = PUBLIC_MESSAGE_ID_EXAMPLE)
                                                                   @PathVariable("id") Long publicMessageId,
-                                                                  @ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
+                                                                  @ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                                            example = FIRST_RESULT_EXAMPLE)
                                                                   @RequestParam int firstResult,
-                                                                  @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
+                                                                  @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                                            example = MAX_RESULTS_EXAMPLE)
                                                                   @RequestParam int maxResults) {
         return publicMessageService.getPublicMessageComments(publicMessageId, firstResult, maxResults);
+    }
+
+    @PostMapping("/{id}/comments")
+    @ApiOperation(value = ADD_COMMENTS_DESCRIPTION, response = PublicMessageCommentDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = CREATED, message = RETURN_COMMENT_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    @ResponseStatus(HttpStatus.CREATED)
+    public PublicMessageCommentDto addComment(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
+                                                        example = PUBLIC_MESSAGE_ID_EXAMPLE)
+                                              @PathVariable("id") Long publicMessageId,
+                                              @ApiParam(value = COMMENTS_DTO_DESCRIPTION)
+                                              @RequestBody
+                                              @Valid PublicMessageCommentForCreateDto publicMessageCommentDto,
+                                              HttpServletRequest request) {
+        return publicMessageService.addComment(request, publicMessageId, publicMessageCommentDto);
     }
 
 }

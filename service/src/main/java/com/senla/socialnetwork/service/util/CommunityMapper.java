@@ -1,14 +1,13 @@
 package com.senla.socialnetwork.service.util;
 
 import com.senla.socialnetwork.dao.CommunityDao;
-import com.senla.socialnetwork.dao.LocationDao;
-import com.senla.socialnetwork.dao.SchoolDao;
-import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.Community;
+import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.CommunityDto;
 import com.senla.socialnetwork.dto.CommunityForCreateDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +16,7 @@ public class CommunityMapper {
         CommunityDto communityDto = new CommunityDto();
         communityDto.setId(community.getId());
         communityDto.setCreationDate(community.getCreationDate());
-        communityDto.setAuthor(UserProfileMapper.getUserProfileDto(community.getAuthor()));
+        communityDto.setAuthor(UserProfileMapper.getUserProfileForIdentificationDto(community.getAuthor()));
         communityDto.setType(community.getType());
         communityDto.setTittle(community.getTittle());
         communityDto.setInformation(community.getInformation());
@@ -33,13 +32,10 @@ public class CommunityMapper {
 
     public static Community getCommunity(final CommunityDto communityDto,
                                          final CommunityDao communityDao,
-                                         final UserProfileDao userProfileDao,
-                                         final LocationDao locationDao,
-                                         final SchoolDao schoolDao,
-                                         final UniversityDao universityDao) {
+                                         final UserProfileDao userProfileDao) {
         Community community = communityDao.findById(communityDto.getId());
-        community.setAuthor(UserProfileMapper.getUserProfile(
-                communityDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
+        community.setAuthor(UserProfileMapper.getUserProfileFromUserProfileForIdentificationDto(
+                communityDto.getAuthor(), userProfileDao));
         community.setCreationDate(communityDto.getCreationDate());
         community.setTittle(communityDto.getTittle());
         community.setInformation(communityDto.getInformation());
@@ -48,17 +44,16 @@ public class CommunityMapper {
     }
 
     public static Community getNewCommunity(final CommunityForCreateDto communityDto,
-                                            final UserProfileDao userProfileDao,
-                                            final LocationDao locationDao,
-                                            final SchoolDao schoolDao,
-                                            final UniversityDao universityDao) {
+                                            final UserProfile userProfile) {
         Community community = new Community();
-        community.setAuthor(UserProfileMapper.getUserProfile(
-            communityDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
-        community.setTittle(communityDto.getTittle());
+        if (communityDto.getTittle() != null) {
+            community.setTittle(communityDto.getTittle());
+        }
         if (communityDto.getInformation() != null) {
             community.setInformation(communityDto.getInformation());
         }
+        community.setCreationDate(new Date());
+        community.setAuthor(userProfile);
         return community;
     }
     

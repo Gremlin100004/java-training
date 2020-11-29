@@ -211,17 +211,17 @@ public class UserServiceImplTest {
 
         Assertions.assertDoesNotThrow(() -> userService.deleteUser(UserTestData.getIdUser()));
         Mockito.verify(userDao, Mockito.times(1)).findById(UserTestData.getIdUser());
-        Mockito.verify(userDao, Mockito.times(1)).deleteRecord(UserTestData.getIdUser());
+        Mockito.verify(userDao, Mockito.times(1)).deleteRecord(testUser);
         Mockito.reset(userDao);
     }
 
     @Test
     void UserServiceImplTest_deleteUser_userDao_findById_nullObject() {
-        Mockito.doReturn(null).when(userDao).findById(UserTestData.getIdUser());
+        SystemUser testUser = UserTestData.getTestUser();Mockito.doReturn(null).when(userDao).findById(UserTestData.getIdUser());
 
         Assertions.assertThrows(BusinessException.class, () -> userService.deleteUser(UserTestData.getIdUser()));
         Mockito.verify(userDao, Mockito.times(1)).findById(UserTestData.getIdUser());
-        Mockito.verify(userDao, Mockito.never()).deleteRecord(UserTestData.getIdUser());
+        Mockito.verify(userDao, Mockito.never()).deleteRecord(testUser);
         Mockito.reset(userDao);
     }
 

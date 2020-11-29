@@ -6,6 +6,7 @@ import com.senla.socialnetwork.controller.exception.ControllerException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.NestedServletException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.annotation.WebFilter;

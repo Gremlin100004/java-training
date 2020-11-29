@@ -38,17 +38,15 @@ public class CommunityTestData {
     public static CommunityDto getTestCommunityDto() {
         CommunityDto communityDto = new CommunityDto();
         communityDto.setId(COMMUNITY_ID);
-        communityDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
+        communityDto.setAuthor(UserProfileTestData.getTestUserProfileForIdentificationDto());
         communityDto.setTittle(COMMUNITY_TITTLE);
-        communityDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
+        communityDto.setAuthor(UserProfileTestData.getTestUserProfileForIdentificationDto());
         return communityDto;
     }
 
     public static CommunityForCreateDto getTestCommunityForCreationDto() {
         CommunityForCreateDto communityDto = new CommunityForCreateDto();
-        communityDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
         communityDto.setTittle(COMMUNITY_TITTLE);
-        communityDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
         return communityDto;
     }
 

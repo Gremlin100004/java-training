@@ -1,9 +1,6 @@
 package com.senla.socialnetwork.service;
 
-import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.PrivateMessageDao;
-import com.senla.socialnetwork.dao.SchoolDao;
-import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PrivateMessage;
 import com.senla.socialnetwork.domain.UserProfile;
@@ -31,12 +28,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     PrivateMessageDao privateMessageDao;
     @Autowired
     UserProfileDao userProfileDao;
-    @Autowired
-    LocationDao locationDao;
-    @Autowired
-    SchoolDao schoolDao;
-    @Autowired
-    UniversityDao universityDao;
     @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
 
@@ -46,6 +37,34 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
         log.debug("[getPrivateMessages]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.getAllRecords(firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public List<PrivateMessageDto> getPrivateMessages(final HttpServletRequest request,
+                                                      final int firstResult,
+                                                      final int maxResults) {
+        log.debug("[getPrivateMessages]");
+        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
+        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
+        UserProfile ownProfile = userProfileDao.findByEmail(email);
+        if (ownProfile == null) {
+            throw new BusinessException("Error, user with this email does not exist");
+        }
+        return PrivateMessageMapper.getPrivateMessageDto(
+            privateMessageDao.getByEmail(email, firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public List<PrivateMessageDto> getUnreadMessages(final HttpServletRequest request,
+                                                     final int firstResult,
+                                                     final int maxResults) {
+        log.debug("[getUnreadMessages]");
+        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
+        return PrivateMessageMapper.getPrivateMessageDto(
+            privateMessageDao.getUnreadMessages(JwtUtil.extractUsername(JwtUtil.getToken(
+                request), secretKey), firstResult, maxResults));
     }
 
     @Override
@@ -69,11 +88,9 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
                                         final PrivateMessageForCreateDto privateMessageDto) {
         log.debug("[addMessage]");
         log.debug("[request: {}, privateMessageDto: {}]", request, privateMessageDto);
-        PrivateMessage privateMessage = PrivateMessageMapper.getNewPrivateMessage(
-            privateMessageDto, userProfileDao, locationDao, schoolDao, universityDao);
-        privateMessage.setSender(userProfileDao.findByEmail(JwtUtil.extractUsername(
-            JwtUtil.getToken(request), secretKey)));
-        return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.saveRecord(privateMessage));
+        return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.saveRecord(
+            PrivateMessageMapper.getNewPrivateMessage(privateMessageDto, userProfileDao.findByEmail(
+                JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey)))));
     }
 
     @Override
@@ -84,7 +101,7 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
         UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
             JwtUtil.getToken(request), secretKey));
         PrivateMessage privateMessage = PrivateMessageMapper.getPrivateMessage(
-            privateMessageDto, privateMessageDao, userProfileDao, locationDao, schoolDao, universityDao);
+            privateMessageDto, privateMessageDao, userProfileDao);
         if (privateMessage.getSender() != userProfile) {
             throw new BusinessException("Error, this message does not belong to this profile");
         }
@@ -112,10 +129,11 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     public void deleteMessage(final Long messageId) {
         log.debug("[deleteMessage]");
         log.debug("[messageId: {}]", messageId);
-        if (privateMessageDao.findById(messageId) == null) {
+        PrivateMessage privateMessage = privateMessageDao.findById(messageId);
+        if (privateMessage == null) {
             throw new BusinessException("Error, there is no such message");
         }
-        privateMessageDao.deleteRecord(messageId);
+        privateMessageDao.deleteRecord(privateMessage);
     }
 
 }

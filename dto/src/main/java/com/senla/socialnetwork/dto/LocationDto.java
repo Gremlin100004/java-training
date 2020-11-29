@@ -20,7 +20,7 @@ public class LocationDto extends GeneralDto {
     @NotNull
     private String country;
     @ApiModelProperty(value = "City",
-        example = "Grodno")
+        example = "Minsk")
     @NotNull
     private String city;
 

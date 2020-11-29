@@ -44,7 +44,6 @@ public class PostTestData {
     public static PostForCreationDto getTestPostForCreationDto() {
         PostForCreationDto postDto = new PostForCreationDto();
         postDto.setTittle(POST_TITTLE);
-        postDto.setCommunity(CommunityTestData.getTestCommunityDto());
         return postDto;
     }
 

@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @ApiModel(value = "School For Create")
 public class SchoolForCreateDto {
     @ApiModelProperty(value = "School name",
-        example = "Secondary school number 104")
+        example = "Gymnasium number 29")
     @NotNull
     private String name;
     @ApiModelProperty(value = "School location")

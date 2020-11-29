@@ -92,19 +92,19 @@ public class UniversityServiceImplTest {
 
         Assertions.assertDoesNotThrow(() -> universityService.deleteUniversity(UniversityTestData.getUniversityId()));
         Mockito.verify(universityDao, Mockito.times(1)).findById(UniversityTestData.getUniversityId());
-        Mockito.verify(universityDao, Mockito.times(1)).deleteRecord(
-            UniversityTestData.getUniversityId());
+        Mockito.verify(universityDao, Mockito.times(1)).deleteRecord(university);
         Mockito.reset(universityDao);
     }
 
     @Test
     void UniversityServiceImpl_deleteUniversity_universityDao_findById_nullObject() {
+        University university = UniversityTestData.getTestUniversity();
         Mockito.doReturn(null).when(universityDao).findById(UniversityTestData.getUniversityId());
 
         Assertions.assertThrows(BusinessException.class, () -> universityService.deleteUniversity(
             UniversityTestData.getUniversityId()));
         Mockito.verify(universityDao, Mockito.times(1)).findById(UniversityTestData.getUniversityId());
-        Mockito.verify(universityDao, Mockito.never()).deleteRecord(UniversityTestData.getUniversityId());
+        Mockito.verify(universityDao, Mockito.never()).deleteRecord(university);
         Mockito.reset(universityDao);
     }
 

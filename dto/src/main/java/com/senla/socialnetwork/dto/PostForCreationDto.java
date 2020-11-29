@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
 @ToString
@@ -23,8 +21,5 @@ public class PostForCreationDto {
                   + "balance is crucial for building a diverse and inclusive digital economy, and education is a key"
                   + " to empower women in the tech industry.")
     private String content;
-    @ApiModelProperty(value = "Community")
-    @NotNull
-    private CommunityDto community;
 
 }

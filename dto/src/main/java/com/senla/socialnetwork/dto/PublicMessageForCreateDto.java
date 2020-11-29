@@ -7,20 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @ApiModel(value = "Public Message For Create")
-public class PublicMessageForCreateDto extends GeneralDto {
-    @ApiModelProperty(value = "Public message author")
-    @NotNull
-    private UserProfileDto author;
+public class PublicMessageForCreateDto {
     @ApiModelProperty(value = "Tittle of public message",
         example = "Local restaurant in Cleveland is shocked when a customer leaves a $3,000 tip")
-    @NotNull
     private String tittle;
     @ApiModelProperty(value = "Content of community",
         example = "The customer placed the check on the table and told the owner he would see him when they reopen.\n"

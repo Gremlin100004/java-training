@@ -20,9 +20,9 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class LogoutToken extends AEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private SystemUser systemUser;
-    @Column(name = "value")
+    @Column(name = "value", nullable = false)
     private String value;
 
 }

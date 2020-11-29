@@ -1,15 +1,13 @@
 package com.senla.socialnetwork.service;
 
-import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.PublicMessageCommentDao;
 import com.senla.socialnetwork.dao.PublicMessageDao;
-import com.senla.socialnetwork.dao.SchoolDao;
-import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessage;
 import com.senla.socialnetwork.domain.PublicMessageComment;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
+import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -24,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -38,12 +37,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     PublicMessageCommentDao publicMessageCommentDao;
     @Autowired
     UserProfileDao userProfileDao;
-    @Autowired
-    LocationDao locationDao;
-    @Autowired
-    SchoolDao schoolDao;
-    @Autowired
-    UniversityDao universityDao;
     @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
 
@@ -57,15 +50,36 @@ public class PublicMessageServiceImpl implements PublicMessageService {
 
     @Override
     @Transactional
+    public List<PublicMessageDto> getFriendsPublicMessages(final HttpServletRequest request,
+                                                           final int firstResult,
+                                                           final int maxResults) {
+        log.debug("[getFriendsPublicMessages]");
+        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
+        return PublicMessageMapper.getPublicMessageDto(
+            publicMessageDao.getFriendsMessages(JwtUtil.extractUsername(JwtUtil.getToken(
+                request), secretKey), firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public List<PublicMessageDto> getPublicMessages(final HttpServletRequest request,
+                                                    final int firstResult,
+                                                    final int maxResults) {
+        log.debug("[getPublicMessages]");
+        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
+        return PublicMessageMapper.getPublicMessageDto(publicMessageDao.getByEmail(JwtUtil.extractUsername(
+            JwtUtil.getToken(request), secretKey), firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
     public PublicMessageDto addMessage(final HttpServletRequest request,
                                        final PublicMessageForCreateDto publicMessageDto) {
         log.debug("[addMessage]");
         log.debug("[request: {}, publicMessageDto: {}]", request, publicMessageDto);
-        PublicMessage publicMessage = PublicMessageMapper.getNewPublicMessage(
-            publicMessageDto, userProfileDao, locationDao, schoolDao, universityDao);
-        publicMessage.setAuthor(userProfileDao.findByEmail(JwtUtil.extractUsername(
-            JwtUtil.getToken(request), secretKey)));
-        return PublicMessageMapper.getPublicMessageDto(publicMessageDao.saveRecord(publicMessage));
+        return PublicMessageMapper.getPublicMessageDto(publicMessageDao.saveRecord(
+            PublicMessageMapper.getNewPublicMessage(publicMessageDto, userProfileDao.findByEmail(
+                JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey)))));
     }
 
     @Override
@@ -76,7 +90,7 @@ public class PublicMessageServiceImpl implements PublicMessageService {
         UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
             JwtUtil.getToken(request), secretKey));
         PublicMessage publicMessage = PublicMessageMapper.getPublicMessage(
-            publicMessageDto, publicMessageDao, userProfileDao, locationDao, schoolDao, universityDao);
+            publicMessageDto, publicMessageDao, userProfileDao);
         if (publicMessage.getAuthor() != userProfile) {
             throw new BusinessException("Error, this message does not belong to this profile");
         }
@@ -108,10 +122,11 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     public void deleteMessage(final Long messageId) {
         log.debug("[deleteMessage]");
         log.debug("[messageId: {}]", messageId);
-        if (publicMessageDao.findById(messageId) == null) {
+        PublicMessage publicMessage = publicMessageDao.findById(messageId);
+        if (publicMessage == null) {
             throw new BusinessException("Error, there is no such message");
         }
-        publicMessageDao.deleteRecord(messageId);
+        publicMessageDao.deleteRecord(publicMessage);
     }
 
     @Override
@@ -123,6 +138,25 @@ public class PublicMessageServiceImpl implements PublicMessageService {
         log.trace("[publicMessageId: {}]", publicMessageId);
         return PublicMessageCommentMapper.getPublicMessageCommentDto(
             publicMessageCommentDao.getPublicMessageComments(publicMessageId, firstResult, maxResults));
+    }
+
+    @Override
+    @Transactional
+    public PublicMessageCommentDto addComment(final HttpServletRequest request,
+                                              final Long publicMessageId,
+                                              final PublicMessageCommentForCreateDto publicMessageCommentDto) {
+        log.debug("[addComment]");
+        log.debug("[request: {}, publicMessageCommentDto: {}]", request, publicMessageCommentDto);
+        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
+        PublicMessage publicMessage = publicMessageDao.findByIdAndEmail(email, publicMessageId);
+        if (publicMessage == null) {
+            throw new BusinessException("Error, there is no such public message");
+        } else if (publicMessage.isDeleted()) {
+            throw new BusinessException("Error, the message has already been deleted");
+        }
+        return PublicMessageCommentMapper.getPublicMessageCommentDto(publicMessageCommentDao.saveRecord(
+            PublicMessageCommentMapper.getNewPublicMessageComment(
+                publicMessageCommentDto, publicMessage, userProfileDao.findByEmail(email))));
     }
 
 }

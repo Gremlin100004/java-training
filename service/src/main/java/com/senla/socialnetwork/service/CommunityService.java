@@ -36,6 +36,6 @@ public interface CommunityService {
 
     void deleteCommunity(Long communityId);
 
-    void addPostToCommunity(HttpServletRequest request, PostForCreationDto postDto, Long communityId);
+    PostDto addPostToCommunity(HttpServletRequest request, PostForCreationDto postDto, Long communityId);
 
 }

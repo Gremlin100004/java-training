@@ -15,13 +15,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @ApiModel(value = "Public Message Comment For Create")
 public class PublicMessageCommentForCreateDto {
-    @ApiModelProperty(value = "Comment author")
-    @NotNull
-    private UserProfileDto author;
-    @ApiModelProperty(value = "Public message to which the comment belongs")
-    @NotNull
-    private PublicMessageDto publicMessage;
-    @ApiModelProperty(value = "Bro why P40 doesn't have google?")
+    @ApiModelProperty(value = "Comment content",
+        example = "Bro why P40 doesn't have google?")
     @NotNull
     private String content;
 

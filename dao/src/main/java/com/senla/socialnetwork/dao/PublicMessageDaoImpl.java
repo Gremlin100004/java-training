@@ -47,7 +47,9 @@ public class PublicMessageDaoImpl extends AbstractDao<PublicMessage, Long> imple
             criteriaQuery.orderBy(criteriaBuilder.asc(publicMessageRoot.get(PublicMessage_.creationDate)));
             TypedQuery<PublicMessage> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -72,7 +74,9 @@ public class PublicMessageDaoImpl extends AbstractDao<PublicMessage, Long> imple
             criteriaQuery.orderBy(criteriaBuilder.asc(publicMessageRoot.get(PublicMessage_.creationDate)));
             TypedQuery<PublicMessage> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());

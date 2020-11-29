@@ -37,7 +37,9 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
             criteriaQuery.where(criteriaBuilder.equal(communityRoot.get(Community_.isDeleted), false));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -46,7 +48,9 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
     }
 
     @Override
-    public List<Community> getCommunitiesByType(final CommunityType communityType, final int firstResult, final int maxResults) {
+    public List<Community> getCommunitiesByType(final CommunityType communityType,
+                                                final int firstResult,
+                                                final int maxResults) {
         log.debug("[getCommunitiesByType]");
         log.trace("[communityType: {}, firstResult: {}, maxResults: {}]", communityType, firstResult, maxResults);
         try {
@@ -60,7 +64,9 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
             criteriaQuery.orderBy(criteriaBuilder.desc(communityRoot.get(Community_.creationDate)));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -81,7 +87,9 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
             criteriaQuery.orderBy(criteriaBuilder.desc(criteriaBuilder.size(communityRoot.get(Community_.subscribers))));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -106,7 +114,9 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
             criteriaQuery.orderBy(criteriaBuilder.desc(communityRoot.get(Community_.creationDate)));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -115,7 +125,9 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
     }
 
     @Override
-    public List<Community> getSubscribedCommunitiesByEmail(final String email, final int firstResult, final int maxResults) {
+    public List<Community> getSubscribedCommunitiesByEmail(final String email,
+                                                           final int firstResult,
+                                                           final int maxResults) {
         log.debug("[getSubscribedCommunitiesByEmail]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
@@ -125,14 +137,15 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
             Join<UserProfile, SystemUser> userProfileSystemUserJoin = userProfileRoot.join(UserProfile_.systemUser);
             Join<UserProfile, Community> userProfileCommunityJoin = userProfileRoot.join(
                 UserProfile_.communitiesSubscribedTo);
-            criteriaQuery.select(userProfileRoot.get(UserProfile_.COMMUNITIES_SUBSCRIBED_TO));
+            criteriaQuery.select(userProfileRoot.get(UserProfile_.COMMUNITIES_SUBSCRIBED_TO)).distinct(true);
             criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(userProfileSystemUserJoin.get(
                 SystemUser_.email), email), criteriaBuilder.equal(userProfileCommunityJoin.get(
                     Community_.isDeleted), false)));
-            criteriaQuery.orderBy(criteriaBuilder.desc(userProfileCommunityJoin.get(Community_.creationDate)));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());

@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.UniversityDao;
+import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.dto.UniversityForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -52,10 +53,11 @@ public class UniversityServiceImpl implements UniversityService {
     public void deleteUniversity(final Long universityId) {
         log.debug("[deleteUniversity]");
         log.debug("[universityId: {}]", universityId);
-        if (universityDao.findById(universityId) == null) {
+        University university = universityDao.findById(universityId);
+        if (university == null) {
             throw new BusinessException("Error, there is no such university");
         }
-        universityDao.deleteRecord(universityId);
+        universityDao.deleteRecord(university);
     }
 
 }

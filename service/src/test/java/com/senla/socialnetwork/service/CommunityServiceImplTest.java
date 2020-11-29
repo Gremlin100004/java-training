@@ -1,16 +1,10 @@
 package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dao.CommunityDao;
-import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.PostDao;
-import com.senla.socialnetwork.dao.SchoolDao;
-import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.Community;
-import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.domain.Post;
-import com.senla.socialnetwork.domain.School;
-import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.CommunityDto;
@@ -18,11 +12,8 @@ import com.senla.socialnetwork.dto.CommunityForCreateDto;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.dto.PostForCreationDto;
 import com.senla.socialnetwork.service.config.CommunityTestData;
-import com.senla.socialnetwork.service.config.LocationTestData;
 import com.senla.socialnetwork.service.config.PostTestData;
-import com.senla.socialnetwork.service.config.SchoolTestData;
 import com.senla.socialnetwork.service.config.TestConfig;
-import com.senla.socialnetwork.service.config.UniversityTestData;
 import com.senla.socialnetwork.service.config.UserProfileTestData;
 import com.senla.socialnetwork.service.config.UserTestData;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -55,12 +46,6 @@ public class CommunityServiceImplTest {
     PostDao postDao;
     @Autowired
     UserProfileDao userProfileDao;
-    @Autowired
-    LocationDao locationDao;
-    @Autowired
-    SchoolDao schoolDao;
-    @Autowired
-    UniversityDao universityDao;
     @Autowired
     private HttpServletRequest request;
     @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
@@ -182,19 +167,19 @@ public class CommunityServiceImplTest {
     @Test
     void CommunityServiceImpl_subscribeToCommunity() {
         Community community = CommunityTestData.getTestCommunity();
-        List<UserProfile> userProfiles = UserProfileTestData.getTestUserProfiles();
+        List<UserProfile> userProfiles = UserProfileTestData.getTestUsersProfiles();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
+        userProfile.setCommunitiesSubscribedTo(new ArrayList<>());
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
-        Mockito.doReturn(community).when(communityDao).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(userProfiles).when(userProfileDao).getCommunityUsers(CommunityTestData.getCommunityId());
 
         Assertions.assertDoesNotThrow(() -> communityService.subscribeToCommunity(
             request, CommunityTestData.getCommunityId()));
-        Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.verify(communityDao, Mockito.times(1)).findById(
+            CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.times(1)).getCommunityUsers(
             CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -206,13 +191,12 @@ public class CommunityServiceImplTest {
     void CommunityServiceImpl_subscribeToCommunity_communityDao_findByIdAndEmail_nullObject() {
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
-        Mockito.doReturn(null).when(communityDao).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.doReturn(null).when(communityDao).findById(CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.subscribeToCommunity(
             request, CommunityTestData.getCommunityId()));
-        Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.verify(communityDao, Mockito.times(1)).findById(
+            CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).getCommunityUsers(CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).findByEmail(UserTestData.getEmail());
         Mockito.reset(communityDao);
@@ -224,13 +208,12 @@ public class CommunityServiceImplTest {
         community.setDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
-        Mockito.doReturn(null).when(communityDao).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.doReturn(null).when(communityDao).findById(CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.subscribeToCommunity(
             request, CommunityTestData.getCommunityId()));
-        Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.verify(communityDao, Mockito.times(1)).findById(
+            CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).getCommunityUsers(CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).findByEmail(UserTestData.getEmail());
         Mockito.reset(communityDao);
@@ -239,19 +222,19 @@ public class CommunityServiceImplTest {
     @Test
     void CommunityServiceImpl_unsubscribeFromCommunity() {
         Community community = CommunityTestData.getTestCommunity();
-        List<UserProfile> userProfiles = UserProfileTestData.getTestUserProfiles();
+        List<UserProfile> userProfiles = UserProfileTestData.getTestUsersProfiles();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
+        userProfile.setCommunitiesSubscribedTo(new ArrayList<>());
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
-        Mockito.doReturn(community).when(communityDao).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(userProfiles).when(userProfileDao).getCommunityUsers(CommunityTestData.getCommunityId());
 
         Assertions.assertDoesNotThrow(() -> communityService.unsubscribeFromCommunity(
             request, CommunityTestData.getCommunityId()));
-        Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.verify(communityDao, Mockito.times(1)).findById(
+            CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.times(1)).getCommunityUsers(
             CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -263,13 +246,12 @@ public class CommunityServiceImplTest {
     void CommunityServiceImpl_unsubscribeFromCommunity_communityDao_findByIdAndEmail_nullObject() {
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
-        Mockito.doReturn(null).when(communityDao).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.doReturn(null).when(communityDao).findById(CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.unsubscribeFromCommunity(
             request, CommunityTestData.getCommunityId()));
-        Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.verify(communityDao, Mockito.times(1)).findById(
+            CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).getCommunityUsers(CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).findByEmail(UserTestData.getEmail());
         Mockito.reset(communityDao);
@@ -281,13 +263,12 @@ public class CommunityServiceImplTest {
         community.setDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
-        Mockito.doReturn(community).when(communityDao).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.unsubscribeFromCommunity(
             request, CommunityTestData.getCommunityId()));
-        Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.verify(communityDao, Mockito.times(1)).findById(
+            CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).getCommunityUsers(CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).findByEmail(UserTestData.getEmail());
         Mockito.reset(communityDao);
@@ -298,14 +279,13 @@ public class CommunityServiceImplTest {
         Community community = CommunityTestData.getTestCommunity();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
-        Mockito.doReturn(community).when(communityDao).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(new ArrayList<>()).when(userProfileDao).getCommunityUsers(CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.unsubscribeFromCommunity(
             request, CommunityTestData.getCommunityId()));
-        Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
-            UserTestData.getEmail(), CommunityTestData.getCommunityId());
+        Mockito.verify(communityDao, Mockito.times(1)).findById(
+            CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.times(1)).getCommunityUsers(
             CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).findByEmail(UserTestData.getEmail());
@@ -336,37 +316,19 @@ public class CommunityServiceImplTest {
     void CommunityServiceImpl_addCommunity() {
         CommunityForCreateDto communityDto = CommunityTestData.getTestCommunityForCreationDto();
         Community community = CommunityTestData.getTestCommunity();
-        Location location = LocationTestData.getTestLocation();
-        School school = SchoolTestData.getTestSchool();
-        University university = UniversityTestData.getTestUniversity();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(community).when(communityDao).saveRecord(ArgumentMatchers.any(Community.class));
-        Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
-        Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
-        Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
-        Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
 
         CommunityDto resultCommunityDto = communityService.addCommunity(request, communityDto);
         Assertions.assertNotNull(resultCommunityDto);
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(communityDao, Mockito.times(1)).saveRecord(
             ArgumentMatchers.any(Community.class));
-        Mockito.verify(userProfileDao, Mockito.times(1)).findById(
-            UserProfileTestData.getUserProfileId());
-        Mockito.verify(locationDao, Mockito.times(3)).findById(
-            LocationTestData.getLocationId());
-        Mockito.verify(schoolDao, Mockito.times(1)).findById(
-            SchoolTestData.getSchoolId());
-        Mockito.verify(universityDao, Mockito.times(1)).findById(
-            UniversityTestData.getUniversityId());
         Mockito.reset(communityDao);
         Mockito.reset(userProfileDao);
-        Mockito.reset(locationDao);
-        Mockito.reset(schoolDao);
-        Mockito.reset(universityDao);
     }
 
     @Test
@@ -374,17 +336,11 @@ public class CommunityServiceImplTest {
         CommunityDto communityDto = CommunityTestData.getTestCommunityDto();
         Community community = CommunityTestData.getTestCommunity();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        Location location = LocationTestData.getTestLocation();
-        School school = SchoolTestData.getTestSchool();
-        University university = UniversityTestData.getTestUniversity();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
-        Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
-        Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
-        Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
 
         Assertions.assertDoesNotThrow(() -> communityService.updateCommunity(request, communityDto));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(
@@ -393,17 +349,8 @@ public class CommunityServiceImplTest {
             ArgumentMatchers.any(Community.class));
         Mockito.verify(userProfileDao, Mockito.times(1)).findById(
             UserProfileTestData.getUserProfileId());
-        Mockito.verify(locationDao, Mockito.times(3)).findById(
-            LocationTestData.getLocationId());
-        Mockito.verify(schoolDao, Mockito.times(1)).findById(
-            SchoolTestData.getSchoolId());
-        Mockito.verify(universityDao, Mockito.times(1)).findById(
-            UniversityTestData.getUniversityId());
         Mockito.reset(communityDao);
         Mockito.reset(userProfileDao);
-        Mockito.reset(locationDao);
-        Mockito.reset(schoolDao);
-        Mockito.reset(universityDao);
     }
 
     @Test
@@ -413,36 +360,21 @@ public class CommunityServiceImplTest {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         UserProfile wrongUserProfile = UserProfileTestData.getTestUserProfile();
         wrongUserProfile.setId(UserProfileTestData.getUserProfileOtherId());
-        Location location = LocationTestData.getTestLocation();
-        School school = SchoolTestData.getTestSchool();
-        University university = UniversityTestData.getTestUniversity();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(wrongUserProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
-        Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
-        Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
-        Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.updateCommunity(request, communityDto));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(
             UserTestData.getEmail());
         Mockito.verify(userProfileDao, Mockito.times(1)).findById(
             UserProfileTestData.getUserProfileId());
-        Mockito.verify(locationDao, Mockito.times(3)).findById(
-            LocationTestData.getLocationId());
-        Mockito.verify(schoolDao, Mockito.times(1)).findById(
-            SchoolTestData.getSchoolId());
-        Mockito.verify(universityDao, Mockito.times(1)).findById(
-            UniversityTestData.getUniversityId());
         Mockito.verify(communityDao, Mockito.never()).updateRecord(
             ArgumentMatchers.any(Community.class));
         Mockito.reset(communityDao);
         Mockito.reset(userProfileDao);
-        Mockito.reset(locationDao);
-        Mockito.reset(schoolDao);
-        Mockito.reset(universityDao);
     }
 
     @Test
@@ -515,20 +447,20 @@ public class CommunityServiceImplTest {
 
         Assertions.assertDoesNotThrow(() -> communityService.deleteCommunity(CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findById(CommunityTestData.getCommunityId());
-        Mockito.verify(communityDao, Mockito.times(1)).deleteRecord(
-            CommunityTestData.getCommunityId());
+        Mockito.verify(communityDao, Mockito.times(1)).deleteRecord(community);
         Mockito.reset(communityDao);
     }
 
     @Test
     void CommunityServiceImpl_deleteCommunity_communityDao_findById_nullObject() {
+        Community community = CommunityTestData.getTestCommunity();
         Mockito.doReturn(null).when(communityDao).findById(CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.deleteCommunity(
             CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findById(
             CommunityTestData.getCommunityId());
-        Mockito.verify(communityDao, Mockito.never()).deleteRecord(CommunityTestData.getCommunityId());
+        Mockito.verify(communityDao, Mockito.never()).deleteRecord(community);
         Mockito.reset(communityDao);
     }
 
@@ -537,45 +469,19 @@ public class CommunityServiceImplTest {
         PostForCreationDto postDto = PostTestData.getTestPostForCreationDto();
         Post post = PostTestData.getTestPost();
         Community community = CommunityTestData.getTestCommunity();
-        List<Post> posts = PostTestData.getTestPosts();
-        UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        Location location = LocationTestData.getTestLocation();
-        School school = SchoolTestData.getTestSchool();
-        University university = UniversityTestData.getTestUniversity();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(community).when(communityDao).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
-        Mockito.doReturn(posts).when(postDao).getByCommunityId(
-            CommunityTestData.getCommunityId(), FIRST_RESULT, MAX_RESULTS);
-        Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
-        Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
-        Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
-        Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
-        Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
+        Mockito.doReturn(post).when(postDao).saveRecord(ArgumentMatchers.any(Post.class));
 
         Assertions.assertDoesNotThrow(() -> communityService.addPostToCommunity(
             request, postDto, CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
-        Mockito.verify(postDao, Mockito.times(1)).getByCommunityId(
-            CommunityTestData.getCommunityId(), FIRST_RESULT, MAX_RESULTS);
-        Mockito.verify(communityDao, Mockito.times(1)).updateRecord(
-            ArgumentMatchers.any(Community.class));
-        Mockito.verify(communityDao, Mockito.times(1)).findById(CommunityTestData.getCommunityId());
-        Mockito.verify(userProfileDao, Mockito.times(1)).findById(UserProfileTestData.getUserProfileId());
-        Mockito.verify(locationDao, Mockito.times(3)).findById(
-            LocationTestData.getLocationId());
-        Mockito.verify(schoolDao, Mockito.times(1)).findById(
-            SchoolTestData.getSchoolId());
-        Mockito.verify(universityDao, Mockito.times(1)).findById(
-            UniversityTestData.getUniversityId());
+        Mockito.verify(postDao, Mockito.times(1)).saveRecord(ArgumentMatchers.any(Post.class));
         Mockito.reset(communityDao);
         Mockito.reset(postDao);
-        Mockito.reset(userProfileDao);
-        Mockito.reset(locationDao);
-        Mockito.reset(schoolDao);
-        Mockito.reset(universityDao);
     }
 
     @Test
@@ -592,9 +498,7 @@ public class CommunityServiceImplTest {
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
         Mockito.verify(postDao, Mockito.never()).getByCommunityId(
             CommunityTestData.getCommunityId(), FIRST_RESULT, MAX_RESULTS);
-        Mockito.verify(communityDao, Mockito.never()).updateRecord(
-            ArgumentMatchers.any(Community.class));
-        Mockito.verify(communityDao, Mockito.never()).findById(CommunityTestData.getCommunityId());
+        Mockito.verify(postDao, Mockito.never()).saveRecord(ArgumentMatchers.any(Post.class));
         Mockito.reset(communityDao);
         Mockito.reset(postDao);
     }
@@ -615,8 +519,7 @@ public class CommunityServiceImplTest {
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
         Mockito.verify(postDao, Mockito.never()).getByCommunityId(
             CommunityTestData.getCommunityId(), FIRST_RESULT, MAX_RESULTS);
-        Mockito.verify(communityDao, Mockito.never()).updateRecord(
-            ArgumentMatchers.any(Community.class));
+        Mockito.verify(postDao, Mockito.never()).saveRecord(ArgumentMatchers.any(Post.class));
         Mockito.verify(communityDao, Mockito.never()).findById(CommunityTestData.getCommunityId());
         Mockito.reset(communityDao);
         Mockito.reset(postDao);

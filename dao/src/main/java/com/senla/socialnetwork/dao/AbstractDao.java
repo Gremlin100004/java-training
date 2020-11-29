@@ -65,10 +65,10 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     }
 
     @Override
-    public void deleteRecord(final PK id) {
+    public void deleteRecord(T entity) {
         log.debug("[deleteRecord]");
-        log.trace("[id: {}]", id);
-        entityManager.remove(id);
+        log.trace("[entity: {}]", entity);
+        entityManager.remove(entity);
     }
 
 }

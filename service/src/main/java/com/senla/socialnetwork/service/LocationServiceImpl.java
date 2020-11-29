@@ -1,6 +1,7 @@
 package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dao.LocationDao;
+import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.dto.LocationDto;
 import com.senla.socialnetwork.dto.LocationForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -49,10 +50,11 @@ public class LocationServiceImpl implements LocationService {
     public void deleteLocation(final Long locationId) {
         log.debug("[deleteLocation]");
         log.debug("[locationId: {}]", locationId);
-        if (locationDao.findById(locationId) == null) {
+        Location location = locationDao.findById(locationId);
+        if (location == null) {
             throw new BusinessException("Error, there is no such location");
         }
-        locationDao.deleteRecord(locationId);
+        locationDao.deleteRecord(location);
     }
 
 }

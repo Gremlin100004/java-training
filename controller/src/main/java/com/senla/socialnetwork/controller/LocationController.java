@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -47,6 +49,7 @@ public class LocationController {
     public static final String MAX_RESULTS_EXAMPLE = "10";
     public static final String LOCATION_DTO_DESCRIPTION = "DTO location";
     public static final String LOCATION_ID_DESCRIPTION = "Location id";
+    public static final String LOCATION_ID_EXAMPLE = "Location id";
     public static final String GET_LOCATIONS_DESCRIPTION = "This method is used to get locations";
     public static final String ADD_LOCATION_DESCRIPTION = "This method is used to add new location by admin";
     public static final String UPDATE_LOCATION_DESCRIPTION = "This method is used to update location by admin";
@@ -77,6 +80,7 @@ public class LocationController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
+    @ResponseStatus(HttpStatus.CREATED)
     public LocationDto addLocation(@ApiParam(value = LOCATION_DTO_DESCRIPTION)
                                    @RequestBody @Valid LocationForCreateDto locationDto) {
         return locationService.addLocation(locationDto);
@@ -104,7 +108,8 @@ public class LocationController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto deleteLocation(@ApiParam(value = LOCATION_ID_DESCRIPTION)
+    public ClientMessageDto deleteLocation(@ApiParam(value = LOCATION_ID_DESCRIPTION,
+                                                     example = LOCATION_ID_EXAMPLE)
                                            @PathVariable("id") Long locationId) {
         locationService.deleteLocation(locationId);
         return new ClientMessageDto(DELETE_LOCATION_OK_MESSAGE);

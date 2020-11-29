@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.domain.enumaration;
 
 public enum CommunityType {
-    SPORT, MUSIC, TECHNOLOGY, BUSINESS, TOURISM, MEDICINE, AUTO, GENERAL
+    SPORT, MUSIC, TECHNOLOGY, BUSINESS, TOURISM, MEDICINE, AUTO, GENERAL, NEWS
 
 }

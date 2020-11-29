@@ -20,9 +20,6 @@ public class DaoConfiguration {
     private static final String DATA_SOURCE_PACKAGE = "socialnetwork.datasource.package";
     private static final String CONNECTION_URL = "hibernate.connection.url";
     private static final String DRIVER_DATABASE = "hibernate.connection.driver_class";
-    private static final String CAPACITY = "com.senla.socialnetwork.dao.config.DaoConfiguration.capacity";
-    private static final String LOAD_FACTOR = "com.senla.socialnetwork.dao.config.DaoConfiguration.loadFactor";
-    private static final String CONCURRENCY_LEVEL = "com.senla.socialnetwork.dao.config.DaoConfiguration.concurrencyLevel";
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(final Environment environment) {
@@ -53,12 +50,5 @@ public class DaoConfiguration {
     public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
-
-//    @Bean
-//    public ConcurrentMap<String, String> logoutToken(final Environment environment) {
-//        return new ConcurrentHashMap<>(environment.getRequiredProperty(
-//            CAPACITY, int.class), environment.getRequiredProperty(
-//                LOAD_FACTOR, float.class), environment.getRequiredProperty(CONCURRENCY_LEVEL, int.class));
-//    }
 
 }

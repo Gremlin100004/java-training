@@ -45,4 +45,5 @@ public class Community extends AEntity {
     private List<Post> posts = new ArrayList<>();
     @ManyToMany(mappedBy = "communitiesSubscribedTo", fetch = FetchType.LAZY)
     private List<UserProfile> subscribers;
+
 }

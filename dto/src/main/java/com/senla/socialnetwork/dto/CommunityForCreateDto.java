@@ -16,9 +16,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @ApiModel(value = "Community for create")
 public class CommunityForCreateDto {
-    @ApiModelProperty(value = "Community author")
-    @NotNull
-    private UserProfileDto author;
     @ApiModelProperty(value = "Type of community")
     @NotNull
     private CommunityType type;
@@ -27,8 +24,8 @@ public class CommunityForCreateDto {
     @NotNull
     private String tittle;
     @ApiModelProperty(value = "Community information",
-        example = "This is the official site of Huawei Europe, communicating the cultivation of digital change, " +
-                  "affecting people & business.")
+        example = "This is the official site of Huawei Europe, communicating the cultivation of digital change, "
+                  + "affecting people & business.")
     private String information;
 
 }

@@ -15,6 +15,6 @@ public interface GenericDao <T, PK extends Serializable> {
 
     void updateRecord(T object);
 
-    void deleteRecord(PK id);
+    void deleteRecord(T entity);
 
 }

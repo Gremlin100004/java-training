@@ -1,16 +1,16 @@
 package com.senla.socialnetwork.service.util;
 
 import com.senla.socialnetwork.dao.CommunityDao;
-import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.PostCommentDao;
 import com.senla.socialnetwork.dao.PostDao;
-import com.senla.socialnetwork.dao.SchoolDao;
-import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
+import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.domain.PostComment;
+import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.dto.PostCommentForCreateDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +19,7 @@ public class PostCommentMapper {
         PostCommentDto postCommentDto = new PostCommentDto();
         postCommentDto.setId(postComment.getId());
         postCommentDto.setCreationDate(postComment.getCreationDate());
-        postCommentDto.setAuthor(UserProfileMapper.getUserProfileDto(postComment.getAuthor()));
+        postCommentDto.setAuthor(UserProfileMapper.getUserProfileForIdentificationDto(postComment.getAuthor()));
         postCommentDto.setPost(PostMapper.getPostDto(postComment.getPost()));
         postCommentDto.setContent(postComment.getContent());
         postCommentDto.setDeleted(postComment.isDeleted());
@@ -36,34 +36,25 @@ public class PostCommentMapper {
                                              final PostCommentDao postCommentDao,
                                              final PostDao postDao,
                                              final CommunityDao communityDao,
-                                             final UserProfileDao userProfileDao,
-                                             final LocationDao locationDao,
-                                             final SchoolDao schoolDao,
-                                             final UniversityDao universityDao) {
+                                             final UserProfileDao userProfileDao) {
         PostComment postComment = postCommentDao.findById(postCommentDto.getId());
         postComment.setCreationDate(postCommentDto.getCreationDate());
-        postComment.setAuthor(UserProfileMapper.getUserProfile(
-                postCommentDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
-        postComment.setPost(PostMapper.getPost(
-                postCommentDto.getPost(), postDao, communityDao, userProfileDao, locationDao, schoolDao, universityDao));
+        postComment.setAuthor(UserProfileMapper.getUserProfileFromUserProfileForIdentificationDto(
+                postCommentDto.getAuthor(), userProfileDao));
+        postComment.setPost(PostMapper.getPost(postCommentDto.getPost(), postDao, communityDao, userProfileDao));
         postComment.setContent(postCommentDto.getContent());
         postComment.setDeleted(postCommentDto.isDeleted());
         return postComment;
     }
 
     public static PostComment getPostNewComment(final PostCommentForCreateDto postCommentDto,
-                                             final PostDao postDao,
-                                             final CommunityDao communityDao,
-                                             final UserProfileDao userProfileDao,
-                                             final LocationDao locationDao,
-                                             final SchoolDao schoolDao,
-                                             final UniversityDao universityDao) {
+                                                final Post post,
+                                                final UserProfile userProfile) {
         PostComment postComment = new PostComment();
-        postComment.setAuthor(UserProfileMapper.getUserProfile(
-            postCommentDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
-        postComment.setPost(PostMapper.getPost(
-            postCommentDto.getPost(), postDao, communityDao, userProfileDao, locationDao, schoolDao, universityDao));
+        postComment.setPost(post);
         postComment.setContent(postCommentDto.getContent());
+        postComment.setAuthor(userProfile);
+        postComment.setCreationDate(new Date());
         return postComment;
     }
 

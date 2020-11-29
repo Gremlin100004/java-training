@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +21,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -52,9 +55,13 @@ public class PrivateMessageController {
     public static final String PRIVATE_MESSAGE_ID_DESCRIPTION = "Private message id";
     public static final String START_PERIOD_DATE_DESCRIPTION = "Parameter with start date";
     public static final String END_PERIOD_DATE_DESCRIPTION = "Parameter with end date";
+    public static final String START_PERIOD_DATE_EXAMPLE = "2020-11-01 12:04";
+    public static final String END_PERIOD_DATE_EXAMPLE = "2020-11-11 12:05";
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
     public static final String GET_PRIVATE_MESSAGES_DESCRIPTION = "This method is used to get private messages by admin";
     public static final String GET_PRIVATE_BY_PERIOD_MESSAGES_DESCRIPTION = "This method is used to get private "
-       + "messages filtered by date and time by this user";
+       + "messages by this user. Can be filtered by date and time.";
+    public static final String GET_UNREAD_MESSAGES_DESCRIPTION = "This method is used to get unread messages";
     public static final String ADD_PRIVATE_MESSAGE_DESCRIPTION = "This method is used to add new private message "
        + "by this user";
     public static final String UPDATE_PRIVATE_MESSAGE_DESCRIPTION = "This method is used to update private message "
@@ -74,12 +81,32 @@ public class PrivateMessageController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<PrivateMessageDto> getPrivateMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
+    public List<PrivateMessageDto> getPrivateMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                                example = FIRST_RESULT_EXAMPLE)
                                                       @RequestParam int firstResult,
-                                                      @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
+                                                      @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                                example = MAX_RESULTS_EXAMPLE)
                                                       @RequestParam int maxResults) {
         return privateMessageService.getPrivateMessages(firstResult, maxResults);
 
+    }
+
+    @GetMapping("/unreadMessages")
+    @ApiOperation(value = GET_UNREAD_MESSAGES_DESCRIPTION, response = PrivateMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = OK, message = RETURN_LIST_OF_PRIVATE_MESSAGES_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    public List<PrivateMessageDto> getUnreadMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+        example = FIRST_RESULT_EXAMPLE)
+                                                     @RequestParam int firstResult,
+                                                     @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                         example = MAX_RESULTS_EXAMPLE)
+                                                     @RequestParam int maxResults,
+                                                     HttpServletRequest request) {
+        return privateMessageService.getUnreadMessages(request, firstResult, maxResults);
     }
 
     @GetMapping
@@ -90,19 +117,27 @@ public class PrivateMessageController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<PrivateMessageDto> getPrivateMessagesByPeriod(@ApiParam(value = START_PERIOD_DATE_DESCRIPTION)
-                                                              @RequestParam Date startPeriodDate,
-                                                              @ApiParam(value = END_PERIOD_DATE_DESCRIPTION)
-                                                              @RequestParam Date endPeriodDate,
-                                                              @ApiParam(value = FIRST_RESULT_DESCRIPTION,
-                                                                        example = FIRST_RESULT_EXAMPLE)
-                                                              @RequestParam int firstResult,
-                                                              @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                                        example = MAX_RESULTS_EXAMPLE)
-                                                              @RequestParam int maxResults,
-                                                              HttpServletRequest request) {
-        return privateMessageService.getMessageFilteredByPeriod(
-            request, startPeriodDate, endPeriodDate, firstResult, maxResults);
+    public List<PrivateMessageDto> getPrivateMessages(@ApiParam(value = START_PERIOD_DATE_DESCRIPTION,
+                                                                        example = START_PERIOD_DATE_EXAMPLE)
+                                                      @DateTimeFormat(pattern = DATE_FORMAT)
+                                                      @RequestParam(required = false) Date startPeriodDate,
+                                                      @ApiParam(value = END_PERIOD_DATE_DESCRIPTION,
+                                                                example = END_PERIOD_DATE_EXAMPLE)
+                                                      @DateTimeFormat(pattern = DATE_FORMAT)
+                                                      @RequestParam(required = false) Date endPeriodDate,
+                                                      @ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                                example = FIRST_RESULT_EXAMPLE)
+                                                      @RequestParam int firstResult,
+                                                      @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                                example = MAX_RESULTS_EXAMPLE)
+                                                      @RequestParam int maxResults,
+                                                      HttpServletRequest request) {
+        if (startPeriodDate != null && endPeriodDate != null) {
+            return privateMessageService.getMessageFilteredByPeriod(
+                request, startPeriodDate, endPeriodDate, firstResult, maxResults);
+        } else {
+            return privateMessageService.getPrivateMessages(request, firstResult, maxResults);
+        }
     }
 
     @PostMapping
@@ -113,6 +148,7 @@ public class PrivateMessageController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
+    @ResponseStatus(HttpStatus.CREATED)
     public PrivateMessageDto addMessage(@ApiParam(value = PRIVATE_MESSAGE_DTO_DESCRIPTION)
                                         @RequestBody @Valid PrivateMessageForCreateDto privateMessageDto,
                                         HttpServletRequest request) {

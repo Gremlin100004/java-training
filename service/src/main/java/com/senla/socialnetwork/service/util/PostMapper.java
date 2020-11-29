@@ -1,15 +1,14 @@
 package com.senla.socialnetwork.service.util;
 
 import com.senla.socialnetwork.dao.CommunityDao;
-import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.PostDao;
-import com.senla.socialnetwork.dao.SchoolDao;
-import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
+import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.dto.PostForCreationDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,30 +37,21 @@ public class PostMapper {
     public static Post getPost(final PostDto postDto,
                                final PostDao postDao,
                                final CommunityDao communityDao,
-                               final UserProfileDao userProfileDao,
-                               final LocationDao locationDao,
-                               final SchoolDao schoolDao,
-                               final UniversityDao universityDao) {
+                               final UserProfileDao userProfileDao) {
         Post post = postDao.findById(postDto.getId());
         post.setTittle(postDto.getTittle());
         post.setContent(postDto.getContent());
-        post.setCommunity(CommunityMapper.getCommunity(
-                postDto.getCommunity(), communityDao, userProfileDao, locationDao, schoolDao, universityDao));
+        post.setCommunity(CommunityMapper.getCommunity(postDto.getCommunity(), communityDao, userProfileDao));
         post.setDeleted(postDto.isDeleted());
         return post;
     }
 
-    public static Post getNewPost(final PostForCreationDto postDto,
-                               final CommunityDao communityDao,
-                               final UserProfileDao userProfileDao,
-                               final LocationDao locationDao,
-                               final SchoolDao schoolDao,
-                               final UniversityDao universityDao) {
+    public static Post getNewPost(final PostForCreationDto postDto, final Community community) {
         Post post = new Post();
         post.setTittle(postDto.getTittle());
         post.setContent(postDto.getContent());
-        post.setCommunity(CommunityMapper.getCommunity(
-            postDto.getCommunity(), communityDao, userProfileDao, locationDao, schoolDao, universityDao));
+        post.setCommunity(community);
+        post.setCreationDate(new Date());
         return post;
     }
 

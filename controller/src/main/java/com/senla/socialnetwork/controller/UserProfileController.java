@@ -2,13 +2,13 @@ package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.dto.ClientMessageDto;
-import com.senla.socialnetwork.dto.LocationDto;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
-import com.senla.socialnetwork.dto.SchoolDto;
-import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.dto.UserProfileDto;
+import com.senla.socialnetwork.dto.UserProfileForIdentificationDto;
+import com.senla.socialnetwork.service.PublicMessageService;
 import com.senla.socialnetwork.service.UserProfileService;
+import com.senla.socialnetwork.service.enumaration.UserProfileFriendSortParameter;
 import com.senla.socialnetwork.service.enumaration.UserProfileSortParameter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,13 +48,17 @@ public class UserProfileController {
     public static final String FIRST_RESULT_EXAMPLE = "1";
     public static final String MAX_RESULTS_EXAMPLE = "10";
     public static final String START_PERIOD_DATE_DESCRIPTION = "Parameter with start date";
+    public static final String START_PERIOD_DATE_EXAMPLE = "1990-07-27";
     public static final String END_PERIOD_DATE_DESCRIPTION = "Parameter with end date";
-    public static final String UNIVERSITY_DTO_DESCRIPTION = "DTO university object";
-    public static final String SCHOOL_DTO_DESCRIPTION = " DTO school object";
-    public static final String LOCATION_DTO_DESCRIPTION = " DTO location object";
+    public static final String END_PERIOD_DATE_EXAMPLE = "2004-11-13";
+    public static final String UNIVERSITY_ID_DESCRIPTION = "University Id";
+    public static final String SCHOOL_ID_DESCRIPTION = "School Id";
+    public static final String LOCATION_ID_DESCRIPTION = "Location Id";
     public static final String USER_PROFILE_DTO_DESCRIPTION = "DTO user profile object";
     public static final String SORT_PARAMETER_DESCRIPTION = "Parameter to select sorting";
     public static final String USER_PROFILE_ID_DESCRIPTION = "User profile id";
+    public static final String USER_PROFILE_ID_EXAMPLE = "3";
+    public static final String USER_PROFILE_ID_FOR_CONFIRM_FRIEND_EXAMPLE = "2";
     public static final String RETURN_LIST_OF_USER_PROFILES_OK_MESSAGE = "Successfully retrieved list of "
        + "users profiles";
     public static final String RETURN_USER_PROFILE_OK_MESSAGE = "Successfully retrieved user profile";
@@ -76,7 +80,8 @@ public class UserProfileController {
        + "Users profiles can be sorted by surname or registration date";
     public static final String GET_FRIEND_NEAREST_DATE_OF_BIRTH_DESCRIPTION = "This method is used to get a friend "
        + "who will have a birthday soon";
-    public static final String GET_USER_PROFILE_FRIEND_DESCRIPTION = "This method is used to get a friend profile";
+    public static final String GET_USER_PROFILE_DETAILS_DESCRIPTION = "This method is used to get a details of "
+       + "user profile";
     public static final String GET_USER_PROFILE_FRIENDS_DESCRIPTION = "This method is used to get friends profiles";
     public static final String GET_SORTED_FRIENDS_OF_USER_PROFILE_DESCRIPTION = "This method is used to get friends "
        + "profiles. Friends profiles can be sorted by birthday, name or number of friends";
@@ -88,16 +93,13 @@ public class UserProfileController {
        + " friends";
     public static final String DELETE_USER_PROFILE_DESCRIPTION = "This method is used to delete a record from the "
        + "database by the admin";
-    public static final String GET_PRIVATE_MESSAGES_DESCRIPTION = "This method is used to get private messages of "
-       + "this user";
     public static final String GET_DIALOGUE_DESCRIPTION = "This method is used to get dialog with user";
-    public static final String GET_UNREAD_MESSAGES_DESCRIPTION = "This method is used to get unread messages";
     public static final String GET_FRIENDS_PUBLIC_MESSAGES_DESCRIPTION = "This method is used to get public messages "
        + "of friends";
-    public static final String GET_PUBLIC_MESSAGES_DESCRIPTION = "This method is used to get public messages of a "
-       + "given user";
     @Autowired
     private UserProfileService userProfileService;
+    @Autowired
+    private PublicMessageService publicMessageService;
 
     @GetMapping
     @ApiOperation(value = GET_USER_PROFILES_DESCRIPTION, response = UserProfileDto.class)
@@ -107,35 +109,39 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<UserProfileDto> getUserProfiles(@ApiParam(value = START_PERIOD_DATE_DESCRIPTION)
-                                                @RequestParam(required = false) Date startPeriodDate,
-                                                @ApiParam(value = END_PERIOD_DATE_DESCRIPTION)
-                                                @RequestParam(required = false) Date endPeriodDate,
-                                                @ApiParam(value = UNIVERSITY_DTO_DESCRIPTION)
-                                                @RequestBody (required = false) @Valid UniversityDto universityDto,
-                                                @ApiParam(value = SCHOOL_DTO_DESCRIPTION)
-                                                @RequestBody (required = false) @Valid SchoolDto schoolDto,
-                                                @ApiParam(value = LOCATION_DTO_DESCRIPTION)
-                                                @RequestBody (required = false) @Valid LocationDto locationDto,
-                                                @ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                                @RequestParam int firstResult,
-                                                @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                                @RequestParam int maxResults) {
-        if (startPeriodDate == null && endPeriodDate == null && universityDto == null && schoolDto == null
-            && locationDto == null) {
+    public List<UserProfileForIdentificationDto> getUserProfiles(@ApiParam(value = START_PERIOD_DATE_DESCRIPTION, 
+                                                                           example = START_PERIOD_DATE_EXAMPLE)
+                                                                 @RequestParam(required = false) Date startPeriodDate,
+                                                                 @ApiParam(value = END_PERIOD_DATE_DESCRIPTION, 
+                                                                           example = END_PERIOD_DATE_EXAMPLE)
+                                                                 @RequestParam(required = false) Date endPeriodDate,
+                                                                 @ApiParam(value = UNIVERSITY_ID_DESCRIPTION)
+                                                                 @RequestParam (required = false) Long universityId,
+                                                                 @ApiParam(value = SCHOOL_ID_DESCRIPTION)
+                                                                 @RequestParam (required = false) Long schoolId,
+                                                                 @ApiParam(value = LOCATION_ID_DESCRIPTION)
+                                                                 @RequestParam(required = false) Long locationId,
+                                                                 @ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                                           example = FIRST_RESULT_EXAMPLE)
+                                                                 @RequestParam int firstResult,
+                                                                 @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                                           example = MAX_RESULTS_EXAMPLE)
+                                                                 @RequestParam int maxResults) {
+        if (startPeriodDate == null && endPeriodDate == null && universityId == null && schoolId == null
+            && locationId == null) {
             return userProfileService.getUserProfiles(firstResult, maxResults);
-        } else if (startPeriodDate != null && endPeriodDate != null && universityDto == null && schoolDto == null
-                   && locationDto == null) {
+        } else if (startPeriodDate != null && endPeriodDate != null && universityId == null && schoolId == null
+                   && locationId == null) {
             return userProfileService.getUserProfilesFilteredByAge(
                 startPeriodDate, endPeriodDate, firstResult, maxResults);
-        } else if (startPeriodDate == null && endPeriodDate == null && universityDto != null && schoolDto == null
-                   && locationDto == null) {
-            return userProfileService.getUserProfiles(universityDto, firstResult, maxResults);
-        } else if (startPeriodDate == null && endPeriodDate == null && universityDto == null && schoolDto != null
-                   && locationDto == null) {
-            return userProfileService.getUserProfiles(schoolDto, firstResult, maxResults);
-        } else if (startPeriodDate == null && endPeriodDate == null && universityDto == null && schoolDto == null) {
-            return userProfileService.getUserProfiles(locationDto, firstResult, maxResults);
+        } else if (startPeriodDate == null && endPeriodDate == null && universityId != null && schoolId == null
+                   && locationId == null) {
+            return userProfileService.getUserProfilesByUniversityId(universityId, firstResult, maxResults);
+        } else if (startPeriodDate == null && endPeriodDate == null && universityId == null && schoolId != null
+                   && locationId == null) {
+            return userProfileService.getUserProfilesBySchoolId(schoolId, firstResult, maxResults);
+        } else if (startPeriodDate == null && endPeriodDate == null && universityId == null && schoolId == null) {
+            return userProfileService.getUserProfilesByLocationId(locationId, firstResult, maxResults);
         } else {
             throw new ControllerException("Wrong request parameters");
         }
@@ -162,8 +168,9 @@ public class UserProfileController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateUserProfile(@ApiParam(value = USER_PROFILE_DTO_DESCRIPTION)
-                                              @RequestBody @Valid UserProfileDto userProfileDto) {
-        userProfileService.updateUserProfile(userProfileDto);
+                                              @RequestBody @Valid UserProfileDto userProfileDto,
+                                              HttpServletRequest request) {
+        userProfileService.updateUserProfile(userProfileDto, request);
         return new ClientMessageDto(UPDATE_USER_PROFILE_OK_MESSAGE);
     }
 
@@ -175,14 +182,14 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<UserProfileDto> getSortUserProfiles(@ApiParam(value = SORT_PARAMETER_DESCRIPTION)
-                                                    @RequestParam UserProfileSortParameter sortParameter,
-                                                    @ApiParam(value = FIRST_RESULT_DESCRIPTION,
-                                                              example = FIRST_RESULT_EXAMPLE)
-                                                    @RequestParam int firstResult,
-                                                    @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                              example = MAX_RESULTS_EXAMPLE)
-                                                    @RequestParam int maxResults) {
+    public List<UserProfileForIdentificationDto> getSortUserProfiles(@ApiParam(value = SORT_PARAMETER_DESCRIPTION)
+                                                                     @RequestParam UserProfileSortParameter sortParameter,
+                                                                     @ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                                               example = FIRST_RESULT_EXAMPLE)
+                                                                     @RequestParam int firstResult,
+                                                                     @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                                               example = MAX_RESULTS_EXAMPLE)
+                                                                     @RequestParam int maxResults) {
         return userProfileService.getSortUserProfiles(sortParameter, firstResult, maxResults);
     }
 
@@ -194,22 +201,22 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public UserProfileDto getFriendNearestDateOfBirth(HttpServletRequest request) {
+    public UserProfileForIdentificationDto getFriendNearestDateOfBirth(HttpServletRequest request) {
         return userProfileService.getFriendNearestDateOfBirth(request);
     }
 
-    @GetMapping("/friends/{id}")
-    @ApiOperation(value = GET_USER_PROFILE_FRIEND_DESCRIPTION, response = UserProfileDto.class)
+    @GetMapping("/{id}")
+    @ApiOperation(value = GET_USER_PROFILE_DETAILS_DESCRIPTION, response = UserProfileDto.class)
     @ApiResponses(value = {
         @ApiResponse(code = OK, message = RETURN_USER_PROFILE_OK_MESSAGE),
         @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public UserProfileDto getUserProfileFriend(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION)
-                                               @PathVariable("id") Long userProfileId,
-                                               HttpServletRequest request) {
-        return userProfileService.getUserProfileFriend(request, userProfileId);
+    public UserProfileDto getUserProfileDetails(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
+                                                          example = USER_PROFILE_ID_EXAMPLE)
+                                               @PathVariable("id") Long userProfileId) {
+        return userProfileService.getUserProfileDetails(userProfileId);
     }
 
     @GetMapping("/friends")
@@ -220,13 +227,13 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<UserProfileDto> getUserProfileFriends(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
-                                                                example = FIRST_RESULT_EXAMPLE)
-                                                      @RequestParam int firstResult,
-                                                      @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                                example = MAX_RESULTS_EXAMPLE)
-                                                      @RequestParam int maxResults,
-                                                      HttpServletRequest request) {
+    public List<UserProfileForIdentificationDto> getUserProfileFriends(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                                                 example = FIRST_RESULT_EXAMPLE)
+                                                                       @RequestParam int firstResult,
+                                                                       @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                                                 example = MAX_RESULTS_EXAMPLE)
+                                                                       @RequestParam int maxResults,
+                                                                       HttpServletRequest request) {
         return userProfileService.getUserProfileFriends(request, firstResult, maxResults);
     }
 
@@ -238,15 +245,16 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<UserProfileDto> getSortedFriendsOfUserProfile(@ApiParam(value = SORT_PARAMETER_DESCRIPTION)
-                                                              @RequestParam UserProfileSortParameter sortParameter,
-                                                              @ApiParam(value = FIRST_RESULT_DESCRIPTION,
-                                                                        example = FIRST_RESULT_EXAMPLE)
-                                                              @RequestParam int firstResult,
-                                                              @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                                        example = MAX_RESULTS_EXAMPLE)
-                                                              @RequestParam int maxResults,
-                                                              HttpServletRequest request) {
+    public List<UserProfileForIdentificationDto> getSortedFriendsOfUserProfile(@ApiParam(value = SORT_PARAMETER_DESCRIPTION)
+                                                                               @RequestParam
+                                                                                       UserProfileFriendSortParameter sortParameter,
+                                                                               @ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                                                         example = FIRST_RESULT_EXAMPLE)
+                                                                               @RequestParam int firstResult,
+                                                                               @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                                                         example = MAX_RESULTS_EXAMPLE)
+                                                                               @RequestParam int maxResults,
+                                                                               HttpServletRequest request) {
         return userProfileService.getSortedFriendsOfUserProfile(request, sortParameter, firstResult, maxResults);
     }
 
@@ -258,13 +266,13 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<UserProfileDto> getUserProfileSignedFriends(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
-                                                                      example = FIRST_RESULT_EXAMPLE)
-                                                            @RequestParam int firstResult,
-                                                            @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                                      example = MAX_RESULTS_EXAMPLE)
-                                                            @RequestParam int maxResults,
-                                                            HttpServletRequest request) {
+    public List<UserProfileForIdentificationDto> getUserProfileSignedFriends(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                                                       example = FIRST_RESULT_EXAMPLE)
+                                                                             @RequestParam int firstResult,
+                                                                             @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                                                       example = MAX_RESULTS_EXAMPLE)
+                                                                             @RequestParam int maxResults,
+                                                                             HttpServletRequest request) {
         return userProfileService.getUserProfileSignedFriends(request, firstResult, maxResults);
     }
 
@@ -276,7 +284,8 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto sendAFriendRequest(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION)
+    public ClientMessageDto sendAFriendRequest(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
+                                                         example = USER_PROFILE_ID_EXAMPLE)
                                                @PathVariable("id") Long userProfileId,
                                                HttpServletRequest request) {
         userProfileService.sendAFriendRequest(request, userProfileId);
@@ -291,10 +300,11 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto confirmFriend(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION)
+    public ClientMessageDto confirmFriend(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
+                                                    example = USER_PROFILE_ID_FOR_CONFIRM_FRIEND_EXAMPLE)
                                           @PathVariable("id") Long userProfileId,
                                           HttpServletRequest request) {
-        userProfileService.sendAFriendRequest(request, userProfileId);
+        userProfileService.confirmFriend(request, userProfileId);
         return new ClientMessageDto(CONFIRM_FRIEND_OK_MESSAGE);
     }
 
@@ -306,7 +316,8 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto removeUserFromFriends(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION)
+    public ClientMessageDto removeUserFromFriends(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
+                                                            example = USER_PROFILE_ID_EXAMPLE)
                                                   @PathVariable("id") Long userProfileId,
                                                   HttpServletRequest request) {
         userProfileService.removeUserFromFriends(request, userProfileId);
@@ -321,28 +332,11 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto deleteUserProfile(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION)
+    public ClientMessageDto deleteUserProfile(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
+                                                        example = USER_PROFILE_ID_EXAMPLE)
                                               @PathVariable("id") Long userProfileId) {
         userProfileService.deleteUserProfile(userProfileId);
         return new ClientMessageDto(DELETE_USER_PROFILE_OK_MESSAGE);
-    }
-
-    @GetMapping("/privateMessages")
-    @ApiOperation(value = GET_PRIVATE_MESSAGES_DESCRIPTION, response = PrivateMessageDto.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = OK, message = RETURN_LIST_OF_PRIVATE_MESSAGES_OK_MESSAGE),
-        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
-        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
-        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
-    })
-    public List<PrivateMessageDto> getPrivateMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
-                                                                example = FIRST_RESULT_EXAMPLE)
-                                                      @RequestParam int firstResult,
-                                                      @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                                example = MAX_RESULTS_EXAMPLE)
-                                                      @RequestParam int maxResults,
-                                                      HttpServletRequest request) {
-        return userProfileService.getPrivateMessages(request, firstResult, maxResults);
     }
 
     @GetMapping("/{id}/privateMessages")
@@ -353,7 +347,8 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<PrivateMessageDto> getDialogue(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION)
+    public List<PrivateMessageDto> getDialogue(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
+                                                         example = USER_PROFILE_ID_EXAMPLE)
                                                @PathVariable("id") Long userProfileId,
                                                @ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                          example = FIRST_RESULT_EXAMPLE)
@@ -363,23 +358,6 @@ public class UserProfileController {
                                                @RequestParam int maxResults,
                                                HttpServletRequest request) {
         return userProfileService.getDialogue(request, userProfileId, firstResult, maxResults);
-    }
-    @GetMapping("/privateMessages/unreadMessages")
-    @ApiOperation(value = GET_UNREAD_MESSAGES_DESCRIPTION, response = PrivateMessageDto.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = OK, message = RETURN_LIST_OF_PRIVATE_MESSAGES_OK_MESSAGE),
-        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
-        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
-        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
-    })
-    public List<PrivateMessageDto> getUnreadMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
-                                                               example = FIRST_RESULT_EXAMPLE)
-                                                     @RequestParam int firstResult,
-                                                     @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                               example = MAX_RESULTS_EXAMPLE)
-                                                     @RequestParam int maxResults,
-                                                     HttpServletRequest request) {
-        return userProfileService.getUnreadMessages(request, firstResult, maxResults);
     }
 
     @GetMapping("/friends/publicMessages")
@@ -397,25 +375,7 @@ public class UserProfileController {
                                                                      example = MAX_RESULTS_EXAMPLE)
                                                            @RequestParam int maxResults,
                                                            HttpServletRequest request) {
-        return userProfileService.getFriendsPublicMessages(request, firstResult, maxResults);
-    }
-
-    @GetMapping("/publicMessages")
-    @ApiOperation(value = GET_PUBLIC_MESSAGES_DESCRIPTION, response = PublicMessageDto.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = OK, message = RETURN_LIST_OF_PUBLIC_MESSAGES_OK_MESSAGE),
-        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
-        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
-        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
-    })
-    public List<PublicMessageDto> getPublicMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
-                                                              example = FIRST_RESULT_EXAMPLE)
-                                                    @RequestParam int firstResult,
-                                                    @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                              example = MAX_RESULTS_EXAMPLE)
-                                                    @RequestParam int maxResults,
-                                                    HttpServletRequest request) {
-        return userProfileService.getPublicMessages(request, firstResult, maxResults);
+        return publicMessageService.getFriendsPublicMessages(request, firstResult, maxResults);
     }
 
 }

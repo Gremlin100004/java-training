@@ -14,7 +14,7 @@ import lombok.Setter;
 @ApiModel(value = "Client Message")
 public class ClientMessageDto {
     @ApiModelProperty(value = "Return message from server, may be an error message",
-        example = "Community subscription was successful")
+        example = "Subscription to community was successful")
     private String message;
 
 }

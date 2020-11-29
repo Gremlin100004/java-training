@@ -1,14 +1,13 @@
 package com.senla.socialnetwork.service.util;
 
-import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.PublicMessageDao;
-import com.senla.socialnetwork.dao.SchoolDao;
-import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessage;
+import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageForCreateDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +16,7 @@ public class PublicMessageMapper {
         PublicMessageDto publicMessageDto = new PublicMessageDto();
         publicMessageDto.setId(publicMessage.getId());
         publicMessageDto.setCreationDate(publicMessage.getCreationDate());
-        publicMessageDto.setAuthor(UserProfileMapper.getUserProfileDto(publicMessage.getAuthor()));
+        publicMessageDto.setAuthor(UserProfileMapper.getUserProfileForIdentificationDto(publicMessage.getAuthor()));
         publicMessageDto.setTittle(publicMessage.getTittle());
         publicMessageDto.setContent(publicMessage.getContent());
         publicMessageDto.setDeleted(publicMessage.isDeleted());
@@ -32,13 +31,10 @@ public class PublicMessageMapper {
 
     public static PublicMessage getPublicMessage(final PublicMessageDto publicMessageDto,
                                                  final PublicMessageDao publicMessageDao,
-                                                 final UserProfileDao userProfileDao,
-                                                 final LocationDao locationDao,
-                                                 final SchoolDao schoolDao,
-                                                 final UniversityDao universityDao) {
+                                                 final UserProfileDao userProfileDao) {
         PublicMessage publicMessage = publicMessageDao.findById(publicMessageDto.getId());
-        publicMessage.setAuthor(UserProfileMapper.getUserProfile(
-            publicMessageDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
+        publicMessage.setAuthor(UserProfileMapper.getUserProfileFromUserProfileForIdentificationDto(
+            publicMessageDto.getAuthor(), userProfileDao));
         publicMessage.setTittle(publicMessageDto.getTittle());
         publicMessage.setContent(publicMessageDto.getContent());
         publicMessage.setDeleted(publicMessageDto.isDeleted());
@@ -46,15 +42,12 @@ public class PublicMessageMapper {
     }
 
     public static PublicMessage getNewPublicMessage(final PublicMessageForCreateDto publicMessageDto,
-                                                    final UserProfileDao userProfileDao,
-                                                    final LocationDao locationDao,
-                                                    final SchoolDao schoolDao,
-                                                    final UniversityDao universityDao) {
+                                                    final UserProfile userProfile) {
         PublicMessage publicMessage = new PublicMessage();
-        publicMessage.setAuthor(UserProfileMapper.getUserProfile(
-            publicMessageDto.getAuthor(), userProfileDao, locationDao, schoolDao, universityDao));
         publicMessage.setTittle(publicMessageDto.getTittle());
         publicMessage.setContent(publicMessageDto.getContent());
+        publicMessage.setAuthor(userProfile);
+        publicMessage.setCreationDate(new Date());
         return publicMessage;
     }
 

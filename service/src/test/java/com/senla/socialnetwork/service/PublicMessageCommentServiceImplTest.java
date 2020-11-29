@@ -1,26 +1,16 @@
 package com.senla.socialnetwork.service;
 
-import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.PublicMessageCommentDao;
 import com.senla.socialnetwork.dao.PublicMessageDao;
-import com.senla.socialnetwork.dao.SchoolDao;
-import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
-import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.domain.PublicMessage;
 import com.senla.socialnetwork.domain.PublicMessageComment;
-import com.senla.socialnetwork.domain.School;
-import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
-import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
-import com.senla.socialnetwork.service.config.LocationTestData;
 import com.senla.socialnetwork.service.config.PrivateMessageTestData;
 import com.senla.socialnetwork.service.config.PublicMessageCommentTestData;
 import com.senla.socialnetwork.service.config.PublicMessageTestData;
-import com.senla.socialnetwork.service.config.SchoolTestData;
 import com.senla.socialnetwork.service.config.TestConfig;
-import com.senla.socialnetwork.service.config.UniversityTestData;
 import com.senla.socialnetwork.service.config.UserProfileTestData;
 import com.senla.socialnetwork.service.config.UserTestData;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -52,12 +42,6 @@ public class PublicMessageCommentServiceImplTest {
     @Autowired
     PublicMessageDao publicMessageDao;
     @Autowired
-    LocationDao locationDao;
-    @Autowired
-    SchoolDao schoolDao;
-    @Autowired
-    UniversityDao universityDao;
-    @Autowired
     private HttpServletRequest request;
     @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
@@ -82,54 +66,11 @@ public class PublicMessageCommentServiceImplTest {
     }
 
     @Test
-    void PublicMessageCommentServiceImpl_addComment() {
-        PublicMessageComment publicMessageComment = PublicMessageCommentTestData.getTestPublicMessageComment();
-        PublicMessageCommentForCreateDto publicMessageCommentDto = PublicMessageCommentTestData
-            .getTestPublicMessageCommentForCreationDto();
-        PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
-        UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        Location location = LocationTestData.getTestLocation();
-        School school = SchoolTestData.getTestSchool();
-        University university = UniversityTestData.getTestUniversity();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
-        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(publicMessageComment).when(publicMessageCommentDao).saveRecord(
-            ArgumentMatchers.any(PublicMessageComment.class));
-        Mockito.doReturn(publicMessage).when(publicMessageDao).findById(PublicMessageTestData.getPublicMessageId());
-        Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
-        Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
-        Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
-        Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
-
-        PublicMessageCommentDto resultPublicMessageCommentDto = publicMessageCommentService.addComment(request,
-            publicMessageCommentDto);
-        Assertions.assertNotNull(resultPublicMessageCommentDto);
-        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(publicMessageCommentDao, Mockito.times(1)).saveRecord(
-            ArgumentMatchers.any(PublicMessageComment.class));
-        Mockito.verify(publicMessageDao, Mockito.times(1)).findById(PublicMessageTestData.getPublicMessageId());
-        Mockito.verify(userProfileDao, Mockito.times(2)).findById(UserProfileTestData.getUserProfileId());
-        Mockito.verify(locationDao, Mockito.times(6)).findById(LocationTestData.getLocationId());
-        Mockito.verify(schoolDao, Mockito.times(2)).findById(SchoolTestData.getSchoolId());
-        Mockito.verify(universityDao, Mockito.times(2)).findById(UniversityTestData.getUniversityId());
-        Mockito.reset(publicMessageCommentDao);
-        Mockito.reset(publicMessageDao);
-        Mockito.reset(userProfileDao);
-        Mockito.reset(locationDao);
-        Mockito.reset(schoolDao);
-        Mockito.reset(universityDao);
-    }
-
-    @Test
     void PublicMessageCommentServiceImpl_updateComment() {
         PublicMessageComment publicMessageComment = PublicMessageCommentTestData.getTestPublicMessageComment();
         PublicMessageCommentDto publicMessageCommentDto = PublicMessageCommentTestData.getTestPublicMessageCommentDto();
         PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        Location location = LocationTestData.getTestLocation();
-        School school = SchoolTestData.getTestSchool();
-        University university = UniversityTestData.getTestUniversity();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
@@ -137,9 +78,6 @@ public class PublicMessageCommentServiceImplTest {
             PublicMessageCommentTestData.getPublicMessageCommentId());
         Mockito.doReturn(publicMessage).when(publicMessageDao).findById(PublicMessageTestData.getPublicMessageId());
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
-        Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
-        Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
-        Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
 
         Assertions.assertDoesNotThrow(() -> publicMessageCommentService.updateComment(request, publicMessageCommentDto));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -149,15 +87,9 @@ public class PublicMessageCommentServiceImplTest {
             PublicMessageCommentTestData.getPublicMessageCommentId());
         Mockito.verify(publicMessageDao, Mockito.times(1)).findById(PublicMessageTestData.getPublicMessageId());
         Mockito.verify(userProfileDao, Mockito.times(2)).findById(UserProfileTestData.getUserProfileId());
-        Mockito.verify(locationDao, Mockito.times(6)).findById(LocationTestData.getLocationId());
-        Mockito.verify(schoolDao, Mockito.times(2)).findById(SchoolTestData.getSchoolId());
-        Mockito.verify(universityDao, Mockito.times(2)).findById(UniversityTestData.getUniversityId());
         Mockito.reset(publicMessageCommentDao);
         Mockito.reset(publicMessageDao);
         Mockito.reset(userProfileDao);
-        Mockito.reset(locationDao);
-        Mockito.reset(schoolDao);
-        Mockito.reset(universityDao);
     }
 
     @Test
@@ -168,9 +100,6 @@ public class PublicMessageCommentServiceImplTest {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         UserProfile wrongUserProfile = UserProfileTestData.getTestUserProfile();
         wrongUserProfile.setId(UserProfileTestData.getUserProfileOtherId());
-        Location location = LocationTestData.getTestLocation();
-        School school = SchoolTestData.getTestSchool();
-        University university = UniversityTestData.getTestUniversity();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
@@ -178,9 +107,6 @@ public class PublicMessageCommentServiceImplTest {
             PublicMessageCommentTestData.getPublicMessageCommentId());
         Mockito.doReturn(publicMessage).when(publicMessageDao).findById(PublicMessageTestData.getPublicMessageId());
         Mockito.doReturn(wrongUserProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
-        Mockito.doReturn(location).when(locationDao).findById(LocationTestData.getLocationId());
-        Mockito.doReturn(school).when(schoolDao).findById(SchoolTestData.getSchoolId());
-        Mockito.doReturn(university).when(universityDao).findById(UniversityTestData.getUniversityId());
 
         Assertions.assertThrows(BusinessException.class, () -> publicMessageCommentService.updateComment(
             request, publicMessageCommentDto));
@@ -191,15 +117,9 @@ public class PublicMessageCommentServiceImplTest {
             PublicMessageCommentTestData.getPublicMessageCommentId());
         Mockito.verify(publicMessageDao, Mockito.times(1)).findById(PublicMessageTestData.getPublicMessageId());
         Mockito.verify(userProfileDao, Mockito.times(2)).findById(UserProfileTestData.getUserProfileId());
-        Mockito.verify(locationDao, Mockito.times(6)).findById(LocationTestData.getLocationId());
-        Mockito.verify(schoolDao, Mockito.times(2)).findById(SchoolTestData.getSchoolId());
-        Mockito.verify(universityDao, Mockito.times(2)).findById(UniversityTestData.getUniversityId());
         Mockito.reset(publicMessageCommentDao);
         Mockito.reset(publicMessageDao);
         Mockito.reset(userProfileDao);
-        Mockito.reset(locationDao);
-        Mockito.reset(schoolDao);
-        Mockito.reset(universityDao);
     }
 
     @Test
@@ -262,7 +182,7 @@ public class PublicMessageCommentServiceImplTest {
         Assertions.assertDoesNotThrow(() -> publicMessageCommentService.deleteComment(
             PublicMessageCommentTestData.getPublicMessageCommentId()));
         Mockito.verify(publicMessageCommentDao, Mockito.times(1)).deleteRecord(
-            PublicMessageCommentTestData.getPublicMessageCommentId());
+            publicMessageComment);
         Mockito.verify(publicMessageCommentDao, Mockito.times(1)).findById(
             PublicMessageCommentTestData.getPublicMessageCommentId());
         Mockito.reset(publicMessageCommentDao);
@@ -270,12 +190,15 @@ public class PublicMessageCommentServiceImplTest {
 
     @Test
     void PublicMessageCommentServiceImpl_deleteComment_publicMessageCommentDao_findById_nullObject() {
-        Mockito.doReturn(null).when(publicMessageCommentDao).findById(PublicMessageCommentTestData.getPublicMessageCommentId());
+        PublicMessageComment publicMessageComment = PublicMessageCommentTestData.getTestPublicMessageComment();
+        Mockito.doReturn(null).when(publicMessageCommentDao).findById(
+            PublicMessageCommentTestData.getPublicMessageCommentId());
 
         Assertions.assertThrows(BusinessException.class, () -> publicMessageCommentService.deleteComment(
             PublicMessageCommentTestData.getPublicMessageCommentId()));
-        Mockito.verify(publicMessageCommentDao, Mockito.times(1)).findById(PublicMessageCommentTestData.getPublicMessageCommentId());
-        Mockito.verify(publicMessageCommentDao, Mockito.never()).deleteRecord(PublicMessageCommentTestData.getPublicMessageCommentId());
+        Mockito.verify(publicMessageCommentDao, Mockito.times(1)).findById(
+            PublicMessageCommentTestData.getPublicMessageCommentId());
+        Mockito.verify(publicMessageCommentDao, Mockito.never()).deleteRecord(publicMessageComment);
         Mockito.reset(publicMessageCommentDao);
     }
 

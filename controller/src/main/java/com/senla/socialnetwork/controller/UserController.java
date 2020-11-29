@@ -152,7 +152,7 @@ public class UserController {
                                        @ApiParam(value = USERS_DTO_DESCRIPTION)
                                        @RequestBody @Valid List<UserForSecurityDto> usersDto) {
         userService.updateUser(request, usersDto);
-        return new ClientMessageDto(UPDATE_USER_DESCRIPTION);
+        return new ClientMessageDto(UPDATE_USER_OK_MESSAGE);
     }
 
     @DeleteMapping("/{id}")

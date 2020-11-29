@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -18,20 +19,23 @@ import java.util.Date;
 @ApiModel(value = "Post Comment")
 public class PostCommentDto extends GeneralDto {
     @ApiModelProperty(value = "Create community date",
-        example = "2020-09-21 10:00")
+        example = "2020-10-02 09:23")
     @Past
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date creationDate;
     @ApiModelProperty(value = "Comment author")
     @NotNull
-    private UserProfileDto author;
+    private UserProfileForIdentificationDto author;
     @ApiModelProperty(value = "Community post")
     @NotNull
     private PostDto post;
     @ApiModelProperty(value = "Comment content",
-        example = "good news!")
+        example = "Do lockdowns, we need them.")
     @NotNull
     private String content;
-    private boolean isDeleted;
+    @ApiModelProperty(value = "Is post comment deleted",
+        example = "false")
+    private boolean deleted;
 
 }

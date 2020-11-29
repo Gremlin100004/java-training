@@ -1,8 +1,5 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.Location;
-import com.senla.socialnetwork.domain.School;
-import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.domain.UserProfile;
 
 import java.util.Date;
@@ -17,11 +14,11 @@ public interface UserProfileDao extends GenericDao<UserProfile, Long> {
 
     List<UserProfile> getUserProfilesSortByRegistrationDate(int firstResult, int maxResults);
 
-    List<UserProfile> getUserProfilesFilteredByLocation(Location location, int firstResult, int maxResults);
+    List<UserProfile> getUserProfilesFilteredByLocation(Long locationId, int firstResult, int maxResults);
 
-    List<UserProfile> getUserProfilesFilteredBySchool(School school, int firstResult, int maxResults);
+    List<UserProfile> getUserProfilesFilteredBySchool(Long schoolId, int firstResult, int maxResults);
 
-    List<UserProfile> getUserProfilesFilteredByUniversity(University university, int firstResult, int maxResults);
+    List<UserProfile> getUserProfilesFilteredByUniversity(Long universityId, int firstResult, int maxResults);
 
     List<UserProfile> getUserProfilesFilteredByAge(Date startPeriodDate,
                                                    Date endPeriodDate,

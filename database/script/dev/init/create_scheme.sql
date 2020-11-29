@@ -1,7 +1,7 @@
 -- Todo don't forget to delete this line
 DROP DATABASE IF EXISTS hrinkov_social_network;
 
-CREATE SCHEMA IF NOT EXISTS hrinkov_social_network DEFAULT CHARACTER SET utf8 ;
+CREATE SCHEMA IF NOT EXISTS hrinkov_social_network DEFAULT CHARACTER SET UTF8MB4 ;
 
 USE hrinkov_social_network;
 

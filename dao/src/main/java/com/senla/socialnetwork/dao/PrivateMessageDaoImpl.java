@@ -50,7 +50,9 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
             criteriaQuery.orderBy(criteriaBuilder.asc(privateMessageRoot.get(PrivateMessage_.departureDate)));
             TypedQuery<PrivateMessage> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -94,7 +96,9 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
             criteriaQuery.orderBy(criteriaBuilder.asc(privateMessageRoot.get(PrivateMessage_.departureDate)));
             TypedQuery<PrivateMessage> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -125,7 +129,9 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
             criteriaQuery.orderBy(criteriaBuilder.asc(privateMessageRoot.get(PrivateMessage_.departureDate)));
             TypedQuery<PrivateMessage> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -166,7 +172,9 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
             criteriaQuery.orderBy(criteriaBuilder.asc(privateMessageRoot.get(PrivateMessage_.departureDate)));
             TypedQuery<PrivateMessage> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());

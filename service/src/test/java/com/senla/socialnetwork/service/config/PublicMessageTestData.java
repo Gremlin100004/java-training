@@ -34,15 +34,12 @@ public class PublicMessageTestData {
         PublicMessageDto publicMessageDto = new PublicMessageDto();
         publicMessageDto.setId(PUBLIC_MESSAGE_ID);
         publicMessageDto.setCreationDate(PUBLIC_MESSAGE_CREATION_DATE);
-        publicMessageDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
+        publicMessageDto.setAuthor(UserProfileTestData.getTestUserProfileForIdentificationDto());
         return publicMessageDto;
     }
 
     public static PublicMessageForCreateDto getTestPublicMessageForCreationDto() {
-        PublicMessageForCreateDto publicMessageDto = new PublicMessageForCreateDto();
-        publicMessageDto.setId(PUBLIC_MESSAGE_ID);
-        publicMessageDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
-        return publicMessageDto;
+        return new PublicMessageForCreateDto();
     }
 
     public static List<PublicMessage> getTestPublicMessages() {

@@ -35,16 +35,13 @@ public class PostCommentTestData {
         PostCommentDto postCommentDto = new PostCommentDto();
         postCommentDto.setId(POST_COMMENT_ID);
         postCommentDto.setCreationDate(POST_COMMENT_CREATION_DATE);
-        postCommentDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
+        postCommentDto.setAuthor(UserProfileTestData.getTestUserProfileForIdentificationDto());
         postCommentDto.setPost(PostTestData.getTestPostDto());
         return postCommentDto;
     }
 
     public static PostCommentForCreateDto getTestPostCommentForCreationDto() {
-        PostCommentForCreateDto postCommentDto = new PostCommentForCreateDto();
-        postCommentDto.setAuthor(UserProfileTestData.getTestUserProfileDto());
-        postCommentDto.setPost(PostTestData.getTestPostDto());
-        return postCommentDto;
+        return new PostCommentForCreateDto();
     }
 
     public static List<PostComment> getTestPostComments() {

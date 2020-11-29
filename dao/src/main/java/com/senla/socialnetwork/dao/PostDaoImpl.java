@@ -77,20 +77,21 @@ public class PostDaoImpl extends AbstractDao<Post, Long> implements PostDao {
         log.trace("[email: {}, firstResult: {},maxResults: {}]", email, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<Post> criteriaQuery = criteriaBuilder.createQuery(Post.class);
-            Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
+            CriteriaQuery<Post> subQuery = criteriaBuilder.createQuery(Post.class);
+            Root<UserProfile> userProfileRoot = subQuery.from(UserProfile.class);
             Join<UserProfile, Community> userProfileCommunityListJoin = userProfileRoot.join(
                 UserProfile_.communitiesSubscribedTo);
             Join<Community, Post> communityPostJoin = userProfileCommunityListJoin.join(
                 Community_.posts);
             Join<UserProfile, SystemUser> userProfileSystemUserJoin = userProfileRoot.join(UserProfile_.systemUser);
-            criteriaQuery.select(userProfileCommunityListJoin.get(Community_.POSTS));
-            criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(userProfileSystemUserJoin.get(
+            subQuery.select(userProfileCommunityListJoin.get(Community_.POSTS)).distinct(true);
+            subQuery.where(criteriaBuilder.and(criteriaBuilder.equal(userProfileSystemUserJoin.get(
                 SystemUser_.email), email), criteriaBuilder.equal(communityPostJoin.get(Post_.isDeleted), false)));
-            criteriaQuery.orderBy(criteriaBuilder.desc(communityPostJoin.get(Post_.creationDate)));
-            TypedQuery<Post> typedQuery = entityManager.createQuery(criteriaQuery);
+            TypedQuery<Post> typedQuery = entityManager.createQuery(subQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());

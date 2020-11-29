@@ -31,7 +31,7 @@ public class UserProfile extends AEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private SystemUser systemUser;
-    @Column(name = "registration_date")
+    @Column(name = "registration_date", nullable = false)
     private Date registrationDate;
     @Column(name = "date_of_birth")
     private Date dateOfBirth;

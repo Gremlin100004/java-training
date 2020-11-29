@@ -21,7 +21,7 @@ public class School extends AEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
     @ManyToOne
-    @JoinColumn(name = "location_id")
+    @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
 }

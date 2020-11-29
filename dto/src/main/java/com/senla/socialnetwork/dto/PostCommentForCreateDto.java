@@ -15,12 +15,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @ApiModel(value = "Post Comment For Create")
 public class PostCommentForCreateDto {
-    @ApiModelProperty(value = "Comment author")
-    @NotNull
-    private UserProfileDto author;
-    @ApiModelProperty(value = "Community post")
-    @NotNull
-    private PostDto post;
     @ApiModelProperty(value = "Comment content",
         example = "Let's go!")
     @NotNull

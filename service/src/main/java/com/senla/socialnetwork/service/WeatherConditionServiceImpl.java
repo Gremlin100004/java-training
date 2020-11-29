@@ -83,10 +83,11 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     public void deleteWeatherCondition(final Long weatherConditionId) {
         log.debug("[deleteWeatherCondition]");
         log.debug("[weatherConditionId: {}]", weatherConditionId);
-        if (weatherConditionDao.findById(weatherConditionId) == null) {
+        WeatherCondition weatherCondition = weatherConditionDao.findById(weatherConditionId);
+        if (weatherCondition == null) {
             throw new BusinessException("Error, there is no such weather condition");
         }
-        weatherConditionDao.deleteRecord(weatherConditionId);
+        weatherConditionDao.deleteRecord(weatherCondition);
     }
 
     private long getTimeWithoutUpdate(final long registrationDate) {

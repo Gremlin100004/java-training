@@ -3,7 +3,9 @@ package com.senla.socialnetwork.dao;
 import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.domain.Community_;
 import com.senla.socialnetwork.domain.Location;
+import com.senla.socialnetwork.domain.Location_;
 import com.senla.socialnetwork.domain.School;
+import com.senla.socialnetwork.domain.School_;
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.SystemUser_;
 import com.senla.socialnetwork.domain.University;
@@ -82,7 +84,9 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
             criteriaQuery.orderBy(criteriaBuilder.asc(userProfileRoot.get(UserProfile_.surname)));
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -102,7 +106,9 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
             criteriaQuery.orderBy(criteriaBuilder.desc(userProfileRoot.get(UserProfile_.registrationDate)));
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -111,20 +117,23 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getUserProfilesFilteredByLocation(final Location location,
+    public List<UserProfile> getUserProfilesFilteredByLocation(final Long locationId,
                                                                final int firstResult,
                                                                final int maxResults) {
         log.debug("[getUserProfilesFilteredByLocation]");
-        log.trace("[location: {}, firstResult: {}, maxResults: {}]", location, firstResult, maxResults);
+        log.trace("[locationId: {}, firstResult: {}, maxResults: {}]", locationId, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
+            Join<UserProfile, Location> userProfileLocationJoin = userProfileRoot.join(UserProfile_.location);
             criteriaQuery.select(userProfileRoot);
-            criteriaQuery.where(criteriaBuilder.equal(userProfileRoot.get(UserProfile_.location), location));
+            criteriaQuery.where(criteriaBuilder.equal(userProfileLocationJoin.get(Location_.id), locationId));
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -133,20 +142,23 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getUserProfilesFilteredBySchool(final School school,
+    public List<UserProfile> getUserProfilesFilteredBySchool(final Long schoolId,
                                                              final int firstResult,
                                                              final int maxResults) {
         log.debug("[getUserProfilesFilteredBySchool]");
-        log.trace("[school: {}, firstResult: {}, maxResults: {}]", school, firstResult, maxResults);
+        log.trace("[schoolId: {}, firstResult: {}, maxResults: {}]", schoolId, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
+            Join<UserProfile, School> userProfileSchoolJoin = userProfileRoot.join(UserProfile_.school);
             criteriaQuery.select(userProfileRoot);
-            criteriaQuery.where(criteriaBuilder.equal(userProfileRoot.get(UserProfile_.school), school));
+            criteriaQuery.where(criteriaBuilder.equal(userProfileSchoolJoin.get(School_.id), schoolId));
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -155,20 +167,23 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     }
 
     @Override
-    public List<UserProfile> getUserProfilesFilteredByUniversity(final University university,
+    public List<UserProfile> getUserProfilesFilteredByUniversity(final Long universityId,
                                                                  final int firstResult,
                                                                  final int maxResults) {
         log.debug("[getUserProfilesFilteredByUniversity]");
-        log.trace("[university: {}, firstResult: {}, maxResults: {}]", university, firstResult, maxResults);
+        log.trace("[universityId: {}, firstResult: {}, maxResults: {}]", universityId, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
+            Join<UserProfile, University> userProfileUniversityJoin = userProfileRoot.join(UserProfile_.university);
             criteriaQuery.select(userProfileRoot);
-            criteriaQuery.where(criteriaBuilder.equal(userProfileRoot.get(UserProfile_.university), university));
+            criteriaQuery.where(criteriaBuilder.equal(userProfileUniversityJoin.get(Location_.id), universityId));
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -194,7 +209,9 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
             criteriaQuery.orderBy(criteriaBuilder.asc(orderRoot.get(UserProfile_.dateOfBirth)));
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
-            typedQuery.setMaxResults(maxResults);
+            if (maxResults != 0) {
+                typedQuery.setMaxResults(maxResults);
+            }
             return typedQuery.getResultList();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
@@ -407,7 +424,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
             return null;
         }
     }
-    //ToDo check this method
+
     @Override
     public UserProfile getSignedFriend(final String email, final Long userProfileId) {
         log.debug("[getSignedFriend]");
@@ -456,17 +473,27 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
             Join<UserProfile, SystemUser> userProfileSystemUserJoin = userProfileRoot.join(UserProfile_.systemUser);
             subquery.select(userProfileUserProfileJoin.get(UserProfile_.id)).distinct(true);
             subquery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
-            Subquery<Long> subqueryOther = criteriaQuery.subquery(Long.class);
-            Root<UserProfile> profileRoot = subqueryOther.from(UserProfile.class);
-            Join<UserProfile, UserProfile> userProfileUserProfileSetJoin = profileRoot.join(UserProfile_.mappedByFriends);
-            Join<UserProfile, SystemUser> profileSystemUserJoin = profileRoot.join(UserProfile_.systemUser);
-            subqueryOther.select(userProfileUserProfileSetJoin.get(UserProfile_.id)).distinct(true);
-            subqueryOther.where(criteriaBuilder.equal(profileSystemUserJoin.get(SystemUser_.email), email));
+            Subquery<Long> subqueryFriends = criteriaQuery.subquery(Long.class);
+            Root<UserProfile> profileSubqueryFriendRoot = subqueryFriends.from(UserProfile.class);
+            Join<UserProfile, UserProfile> userProfileUserProfileSetJoin = profileSubqueryFriendRoot.join(
+                UserProfile_.mappedByFriends);
+            Join<UserProfile, SystemUser> profileSystemUserJoin = profileSubqueryFriendRoot.join(UserProfile_.systemUser);
+            subqueryFriends.select(userProfileUserProfileSetJoin.get(UserProfile_.id)).distinct(true);
+            subqueryFriends.where(criteriaBuilder.equal(profileSystemUserJoin.get(SystemUser_.email), email));
+            Subquery<Long> subqueryFriendShipRequest = criteriaQuery.subquery(Long.class);
+            Root<UserProfile> profileFriendShipRequestRoot = subqueryFriendShipRequest.from(UserProfile.class);
+            Join<UserProfile, UserProfile> userProfileUserProfileSubqueryJoin = profileFriendShipRequestRoot.join(
+                UserProfile_.mappedByFriendshipRequests);
+            subqueryFriendShipRequest.select(userProfileUserProfileSubqueryJoin.get(UserProfile_.id)).distinct(true);
+            subqueryFriendShipRequest.where(criteriaBuilder.equal(userProfileUserProfileSubqueryJoin.get(
+                UserProfile_.id), userProfileId));
             Root<UserProfile> futureFriendRoot = criteriaQuery.from(UserProfile.class);
             criteriaQuery.select(futureFriendRoot);
             criteriaQuery.where(criteriaBuilder.and(futureFriendRoot.get(UserProfile_.id).in(
-                subqueryOther).not(), criteriaBuilder.equal(futureFriendRoot.get(
-                    UserProfile_.id), userProfileId), futureFriendRoot.get(UserProfile_.id).in(subquery).not()));
+                subqueryFriends).not(), criteriaBuilder.equal(futureFriendRoot.get(
+                    UserProfile_.id), userProfileId), futureFriendRoot.get(
+                        UserProfile_.id).in(subquery).not(), futureFriendRoot.get(UserProfile_.id).in(
+                            subqueryFriendShipRequest).not()));
            return entityManager.createQuery(criteriaQuery).getSingleResult();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());

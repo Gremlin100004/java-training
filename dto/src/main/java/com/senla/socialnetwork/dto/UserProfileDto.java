@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -18,34 +19,38 @@ import java.util.Date;
 @ApiModel(value = "User Profile")
 public class UserProfileDto extends GeneralDto {
     @ApiModelProperty(value = "User registration date",
-        example = "2020-09-21 10:00")
+        example = "2020-07-11 10:00")
     @Past
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date registrationDate;
     @ApiModelProperty(value = "User birthday",
-        example = "2090-03-18")
+        example = "1990-07-28")
     @Past
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateOfBirth;
     @ApiModelProperty(value = "User name",
-        example = "Andrey")
+        example = "Petya")
     @NotNull
     private String name;
     @ApiModelProperty(value = "User name",
-        example = "Litovka")
+        example = "Buhmetovich")
     @NotNull
     private String surname;
     @ApiModelProperty(value = "User mobile number",
-        example = "+375(25)777-55-33")
+        example = "+375(29)766-54-23")
     private String telephone_number;
     @ApiModelProperty(value = "User location")
     private LocationDto location;
     @ApiModelProperty(value = "Which user graduated from school")
     private SchoolDto school;
-    @ApiModelProperty(value = "When the user finished school")
+    @ApiModelProperty(value = "When the user finished school",
+        example = "2007")
     private Integer schoolGraduationYear;
     @ApiModelProperty(value = "Which user graduated from university")
     private UniversityDto university;
-    @ApiModelProperty(value = "When the user finished university")
+    @ApiModelProperty(value = "When the user finished university",
+        example = "2013")
     private Integer universityGraduationYear;
 
 }

@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -18,21 +19,24 @@ import java.util.Date;
 @ApiModel(value = "Post")
 public class PostDto extends GeneralDto {
     @ApiModelProperty(value = "Create post date",
-        example = "2020-09-21 10:00")
+        example = "2020-10-01 20:11")
     @Past
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date creationDate;
     @ApiModelProperty(value = "Tittle of post",
-        example = "Night Hockey League Supports Support for the Women's Amateur League")
+        example = "El Paso County sees drop in COVID-19 hospitalizations")
     private String tittle;
     @ApiModelProperty(value = "Content of post",
-        example = "It is planned that the new season of the Women's Hockey League will start in early 2021, the "
-                  + "final will be held in May as part of the Night Hockey League festival in Sochi, where the "
-                  + "athletes will compete for the main women's amateur hockey trophy in the Amazon division.")
+        example = "COVID hospitalizations in El Paso have been going down for about 2 weeks now. The number of people "
+                  + "in El Paso testing positive for COVID has been declining also. The positivity rate for all of "
+                  + "Texas has declined for 14 consecutive days.")
     private String content;
     @ApiModelProperty(value = "Community")
     @NotNull
     private CommunityDto community;
-    private boolean isDeleted;
+    @ApiModelProperty(value = "Is post deleted",
+        example = "false")
+    private boolean deleted;
 
 }

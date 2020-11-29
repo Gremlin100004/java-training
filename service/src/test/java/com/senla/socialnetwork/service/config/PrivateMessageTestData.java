@@ -40,8 +40,8 @@ public class PrivateMessageTestData {
     public static PrivateMessageDto getTestPrivateMessageDto() {
         PrivateMessageDto privateMessageDto = new PrivateMessageDto();
         privateMessageDto.setId(PRIVATE_MESSAGE_ID);
-        privateMessageDto.setSender(UserProfileTestData.getTestUserProfileDto());
-        privateMessageDto.setRecipient(UserProfileTestData.getTestUserProfileDto());
+        privateMessageDto.setSender(UserProfileTestData.getTestUserProfileForIdentificationDto());
+        privateMessageDto.setRecipient(UserProfileTestData.getTestUserProfileForIdentificationDto());
         privateMessageDto.setContent(CONTENT);
         privateMessageDto.setDepartureDate(PRIVATE_MESSAGE_CREATION_DATE);
         return privateMessageDto;
@@ -49,8 +49,7 @@ public class PrivateMessageTestData {
 
     public static PrivateMessageForCreateDto getTestPrivateMessageForCreationDto() {
         PrivateMessageForCreateDto privateMessageDto = new PrivateMessageForCreateDto();
-        privateMessageDto.setSender(UserProfileTestData.getTestUserProfileDto());
-        privateMessageDto.setRecipient(UserProfileTestData.getTestUserProfileDto());
+        privateMessageDto.setRecipient(UserProfileTestData.getTestUserProfileForIdentificationDto());
         privateMessageDto.setContent(CONTENT);
         return privateMessageDto;
     }

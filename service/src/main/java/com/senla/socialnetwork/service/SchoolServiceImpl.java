@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.SchoolDao;
+import com.senla.socialnetwork.domain.School;
 import com.senla.socialnetwork.dto.SchoolDto;
 import com.senla.socialnetwork.dto.SchoolForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -53,10 +54,11 @@ public class SchoolServiceImpl implements SchoolService {
     public void deleteSchool(final Long schoolId) {
         log.debug("[deleteSchool]");
         log.debug("[schoolId: {}]", schoolId);
-        if (schoolDao.findById(schoolId) == null) {
+        School school = schoolDao.findById(schoolId);
+        if (school == null) {
             throw new BusinessException("Error, there is no such school");
         }
-        schoolDao.deleteRecord(schoolId);
+        schoolDao.deleteRecord(school);
     }
 
 }

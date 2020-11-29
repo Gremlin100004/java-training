@@ -15,12 +15,9 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @ApiModel(value = "Private Message For Create")
 public class PrivateMessageForCreateDto {
-    @ApiModelProperty(value = "User who is sending the message")
-    @NotNull
-    private UserProfileDto sender;
     @ApiModelProperty(value = "User to whom the message is addressed")
     @NotNull
-    private UserProfileDto recipient;
+    private UserProfileForIdentificationDto recipient;
     @ApiModelProperty(value = "Message content",
         example = "Hi, Bro!")
     @NotNull

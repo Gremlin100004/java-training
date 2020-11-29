@@ -6,6 +6,7 @@ import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.UserProfileDto;
+import com.senla.socialnetwork.dto.UserProfileForIdentificationDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,12 +19,8 @@ public class UserProfileMapper {
         if (userProfile.getDateOfBirth() != null) {
             userProfileDto.setDateOfBirth(userProfile.getDateOfBirth());
         }
-        if (userProfile.getName() != null) {
-            userProfileDto.setName(userProfile.getName());
-        }
-        if (userProfile.getSurname() != null) {
-            userProfileDto.setSurname(userProfile.getSurname());
-        }
+        userProfileDto.setName(userProfile.getName());
+        userProfileDto.setSurname(userProfile.getSurname());
         if (userProfile.getTelephone_number() != null) {
             userProfileDto.setTelephone_number(userProfile.getTelephone_number());
         }
@@ -45,17 +42,21 @@ public class UserProfileMapper {
         return userProfileDto;
     }
 
+    public static UserProfileForIdentificationDto getUserProfileForIdentificationDto(final UserProfile userProfile) {
+        UserProfileForIdentificationDto userProfileDto = new UserProfileForIdentificationDto();
+        userProfileDto.setId(userProfile.getId());
+        userProfileDto.setName(userProfile.getName());
+        userProfileDto.setSurname(userProfile.getSurname());
+        return userProfileDto;
+    }
+
     public static UserProfile getUserProfile(final UserProfileDto userProfileDto,
                                              final UserProfileDao userProfileDao,
+                                             final String email,
                                              final LocationDao locationDao,
                                              final SchoolDao schoolDao,
                                              final UniversityDao universityDao) {
-        UserProfile userProfile;
-        if (userProfileDto.getId() == null) {
-            userProfile = new UserProfile();
-        } else {
-            userProfile = userProfileDao.findById(userProfileDto.getId());
-        }
+        UserProfile userProfile = userProfileDao.findByEmail(email);
         userProfile.setRegistrationDate(userProfileDto.getRegistrationDate());
         if (userProfileDto.getDateOfBirth() != null) {
             userProfile.setDateOfBirth(userProfileDto.getDateOfBirth());
@@ -79,7 +80,8 @@ public class UserProfileMapper {
             userProfile.setSchoolGraduationYear(userProfileDto.getSchoolGraduationYear());
         }
         if (userProfileDto.getUniversity() != null) {
-            userProfile.setUniversity(UniversityMapper.getUniversity(userProfileDto.getUniversity(), universityDao, locationDao));
+            userProfile.setUniversity(UniversityMapper.getUniversity(
+                userProfileDto.getUniversity(), universityDao, locationDao));
         }
         if (userProfileDto.getUniversityGraduationYear() != null) {
             userProfile.setUniversityGraduationYear(userProfileDto.getUniversityGraduationYear());
@@ -91,6 +93,17 @@ public class UserProfileMapper {
         return userProfiles.stream()
             .map(UserProfileMapper::getUserProfileDto)
             .collect(Collectors.toList());
+    }
+
+    public static List<UserProfileForIdentificationDto> getUserProfileForIdentificationDto(final List<UserProfile> userProfiles) {
+        return userProfiles.stream()
+            .map(UserProfileMapper::getUserProfileForIdentificationDto)
+            .collect(Collectors.toList());
+    }
+
+    public static UserProfile getUserProfileFromUserProfileForIdentificationDto(final UserProfileForIdentificationDto userProfileDto,
+                                                                                final UserProfileDao userProfileDao) {
+        return userProfileDao.findById(userProfileDto.getId());
     }
 
 }
