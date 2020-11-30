@@ -89,12 +89,6 @@ public class UserProfileMapper {
         return userProfile;
     }
 
-    public static List<UserProfileDto> getUserProfileDto(final List<UserProfile> userProfiles) {
-        return userProfiles.stream()
-            .map(UserProfileMapper::getUserProfileDto)
-            .collect(Collectors.toList());
-    }
-
     public static List<UserProfileForIdentificationDto> getUserProfileForIdentificationDto(final List<UserProfile> userProfiles) {
         return userProfiles.stream()
             .map(UserProfileMapper::getUserProfileForIdentificationDto)

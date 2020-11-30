@@ -5,6 +5,7 @@ import com.senla.socialnetwork.dao.WeatherConditionDao;
 import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.domain.WeatherCondition;
 import com.senla.socialnetwork.dto.WeatherConditionDto;
+import com.senla.socialnetwork.dto.WeatherConditionForAdminDto;
 import com.senla.socialnetwork.service.config.LocationTestData;
 import com.senla.socialnetwork.service.config.TestConfig;
 import com.senla.socialnetwork.service.config.UserTestData;
@@ -45,7 +46,7 @@ public class WeatherConditionServiceImplTest {
         List<WeatherCondition> weatherConditions = WeatherConditionTestData.getTestWeatherConditions();
         Mockito.doReturn(weatherConditions).when(weatherConditionDao).getAllRecords(FIRST_RESULT, NORMAL_MAX_RESULTS);
 
-        List<WeatherConditionDto> resultWeatherConditionsDto = weatherConditionService.getWeatherConditions(
+        List<WeatherConditionForAdminDto> resultWeatherConditionsDto = weatherConditionService.getWeatherConditions(
             FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultWeatherConditionsDto);
         Assertions.assertEquals(

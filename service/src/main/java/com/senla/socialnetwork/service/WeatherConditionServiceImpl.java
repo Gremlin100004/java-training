@@ -7,6 +7,7 @@ import com.senla.socialnetwork.dao.WeatherConditionDao;
 import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.domain.WeatherCondition;
 import com.senla.socialnetwork.dto.WeatherConditionDto;
+import com.senla.socialnetwork.dto.WeatherConditionForAdminDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.WeatherConditionMapper;
@@ -53,7 +54,7 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
 
     @Override
     @Transactional
-    public List<WeatherConditionDto> getWeatherConditions(final int firstResult, final int maxResults) {
+    public List<WeatherConditionForAdminDto> getWeatherConditions(final int firstResult, final int maxResults) {
         log.debug("[getWeatherConditions]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return WeatherConditionMapper.getWeatherConditionDto(weatherConditionDao.getAllRecords(firstResult, maxResults));

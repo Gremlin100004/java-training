@@ -54,14 +54,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
 
     @ExceptionHandler(ControllerException.class)
     protected ResponseEntity<ClientMessageDto> handleControllerException(ControllerException controllerException) {
-        log.debug("[handleBusinessException]");
+        log.debug("[handleControllerException]");
         log.error("[{}]", controllerException.getMessage());
         return new ResponseEntity<>(new ClientMessageDto(controllerException.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
-    protected ResponseEntity<ClientMessageDto> handleAuthenticationException(AuthenticationCredentialsNotFoundException authenticationCredentialsNotFoundException) {
-        log.debug("[handleAuthenticationException]");
+    protected ResponseEntity<ClientMessageDto> handleAuthenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException authenticationCredentialsNotFoundException) {
+        log.debug("[handleAuthenticationCredentialsNotFoundException]");
         log.error("[{}]", authenticationCredentialsNotFoundException.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Error, you are not logged in"), HttpStatus.BAD_REQUEST);
     }
@@ -71,6 +71,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
         log.debug("[handleAccessDeniedException]");
         log.error("[{}]", accessDeniedException.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Error, you do not have access rights"), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<ClientMessageDto> handleAuthenticationException(AuthenticationException authenticationException) {
+        log.debug("[handleAuthenticationException]");
+        log.error("[{}]", authenticationException.getMessage());
+        return new ResponseEntity<>(new ClientMessageDto("Login or password error"), HttpStatus.BAD_REQUEST);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.WeatherConditionDto;
+import com.senla.socialnetwork.dto.WeatherConditionForAdminDto;
 import com.senla.socialnetwork.service.WeatherConditionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,7 +40,8 @@ public class WeatherConditionController {
     public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
     public static final String FIRST_RESULT_EXAMPLE = "1";
     public static final String MAX_RESULTS_EXAMPLE = "10";
-    public static final String WEATHER_CONDITION_ID_DESCRIPTION = "Location id";
+    public static final String WEATHER_CONDITION_ID_DESCRIPTION = "Weather condition id";
+    public static final String WEATHER_CONDITION_ID_EXAMPLE = "1";
     public static final String GET_WEATHER_CONDITIONS_DESCRIPTION = "This method is used to get weather conditions"
        + " by admin";
     public static final String GET_WEATHER_CONDITION_DESCRIPTION = "This method is used to get weather condition "
@@ -50,17 +52,19 @@ public class WeatherConditionController {
     private WeatherConditionService weatherConditionService;
 
     @GetMapping
-    @ApiOperation(value = GET_WEATHER_CONDITIONS_DESCRIPTION, response = WeatherConditionDto.class)
+    @ApiOperation(value = GET_WEATHER_CONDITIONS_DESCRIPTION, response = WeatherConditionForAdminDto.class)
     @ApiResponses(value = {
         @ApiResponse(code = OK, message = RETURN_LIST_OF_WEATHER_CONDITIONS_OK_MESSAGE),
         @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<WeatherConditionDto> getWeatherConditions(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                                          @RequestParam int firstResult,
-                                                          @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                                          @RequestParam int maxResults) {
+    public List<WeatherConditionForAdminDto> getWeatherConditions(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                                            example = FIRST_RESULT_EXAMPLE)
+                                                                  @RequestParam int firstResult,
+                                                                  @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                                            example = MAX_RESULTS_EXAMPLE)
+                                                                  @RequestParam int maxResults) {
         return weatherConditionService.getWeatherConditions(firstResult, maxResults);
     }
 
@@ -84,7 +88,8 @@ public class WeatherConditionController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto deleteWeatherCondition(@ApiParam(value = WEATHER_CONDITION_ID_DESCRIPTION)
+    public ClientMessageDto deleteWeatherCondition(@ApiParam(value = WEATHER_CONDITION_ID_DESCRIPTION,
+                                                             example = WEATHER_CONDITION_ID_EXAMPLE)
                                                    @RequestParam Long weatherConditionId) {
         weatherConditionService.deleteWeatherCondition(weatherConditionId);
         return new ClientMessageDto(DELETE_WEATHER_CONDITION_OK_MESSAGE);

@@ -120,6 +120,7 @@ public class UserServiceImpl implements UserService {
         if (systemUser != null) {
             throw new BusinessException("A user with this email address already exists");
         }
+        // Todo return object
         systemUser = UserMapper.getSystemUser(cryptPasswordEncoder, userDto);
         SystemUser savedSystemUser = userDao.saveRecord(systemUser);
         UserProfile userProfile = new UserProfile();
@@ -129,23 +130,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateUser(HttpServletRequest request, final List<UserForSecurityDto> usersDto) {
         log.debug("[updateUser]");
         log.debug("[request: {}, usersDto: {}]", request, usersDto);
         if (usersDto.size() != LIST_SIZE) {
             throw new BusinessException("Input data amount error");
         }
-        SystemUser currentUser = userDao.findByEmail(JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey));
-        String verifiablePasswordHash = cryptPasswordEncoder.encode(
-            usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).getPassword());
-        String verifiableEmail = usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).getEmail();
-        if (!currentUser.getEmail().equals(verifiableEmail) || !currentUser.getPassword().equals(verifiablePasswordHash)) {
-            throw new BusinessException("Wrong login or password");
+        UserForSecurityDto oldUserDto = usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA);
+        UserForSecurityDto newUserDto = usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA);
+        String controlEmail = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
+        if (!oldUserDto.getEmail().equals(controlEmail)) {
+            throw new BusinessException("login is wrong");
         }
-        currentUser.setEmail(usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getEmail());
-        currentUser.setPassword(cryptPasswordEncoder.encode(
-            usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getPassword()));
-        userDao.updateRecord(currentUser);
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(oldUserDto.getEmail(), oldUserDto.getPassword()));
+        if (!newUserDto.getEmail().equals(controlEmail) && userDao.findByEmail(newUserDto.getEmail()) != null) {
+            throw new BusinessException("A user with this email address already exists");
+        }
+        SystemUser currentSystemUser = userDao.findByEmail(controlEmail);
+        LogoutToken logoutToken = new LogoutToken();
+        logoutToken.setValue(JwtUtil.getToken(request));
+        logoutToken.setSystemUser(currentSystemUser);
+        tokenDao.saveRecord(logoutToken);
+        UserMapper.getCurrentSystemUser(cryptPasswordEncoder, newUserDto, currentSystemUser);
+        userDao.updateRecord(currentSystemUser);
     }
 
     @Override

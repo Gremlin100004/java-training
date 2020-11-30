@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dao.TokenDao;
 import com.senla.socialnetwork.dao.UserDao;
+import com.senla.socialnetwork.domain.LogoutToken;
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserForAdminDto;
@@ -167,9 +168,11 @@ public class UserServiceImplTest {
 
         Assertions.assertDoesNotThrow(() -> userService.updateUser(request, usersDto));
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(bCryptPasswordEncoder, Mockito.times(2)).encode(ArgumentMatchers.anyString());
+        Mockito.verify(tokenDao, Mockito.times(1)).saveRecord(ArgumentMatchers.any(LogoutToken.class));
+        Mockito.verify(bCryptPasswordEncoder, Mockito.times(1)).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.times(1)).updateRecord(testUser);
         Mockito.reset(userDao);
+        Mockito.reset(tokenDao);
         Mockito.reset(bCryptPasswordEncoder);
     }
 
@@ -181,6 +184,7 @@ public class UserServiceImplTest {
 
         Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
         Mockito.verify(userDao, Mockito.never()).findByEmail(UserTestData.getEmail());
+        Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
         Mockito.verify(bCryptPasswordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.never()).updateRecord(testUser);
     }
@@ -189,16 +193,30 @@ public class UserServiceImplTest {
     void UserServiceImplTest_updateUser_wrongUserData() {
         SystemUser testUser = UserTestData.getTestUser();
         List<UserForSecurityDto> usersDto = UserTestData.getTestUsersForLoginDto();
+        usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).setEmail(UserTestData.getWrongEmail());
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
-        Mockito.doReturn(testUser).when(userDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(UserTestData.getWrongPassword()).when(bCryptPasswordEncoder).encode(
-            usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).getPassword());
 
         Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
-        Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(bCryptPasswordEncoder, Mockito.times(1)).encode(
-            ArgumentMatchers.anyString());
+        Mockito.verify(userDao, Mockito.never()).findByEmail(UserTestData.getEmail());
+        Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
+        Mockito.verify(bCryptPasswordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
+        Mockito.verify(userDao, Mockito.never()).updateRecord(testUser);
+    }
+
+    @Test
+    void UserServiceImplTest_updateUser_wrongNewEmail() {
+        SystemUser testUser = UserTestData.getTestUser();
+        List<UserForSecurityDto> usersDto = UserTestData.getTestUsersForLoginDto();
+        usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).setEmail(UserTestData.getWrongEmail());
+        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
+            HttpHeaders.AUTHORIZATION);
+        Mockito.doReturn(testUser).when(userDao).findByEmail(ArgumentMatchers.anyString());
+
+        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
+        Mockito.verify(userDao, Mockito.times(1)).findByEmail(ArgumentMatchers.anyString());
+        Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
+        Mockito.verify(bCryptPasswordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.never()).updateRecord(testUser);
         Mockito.reset(userDao);
         Mockito.reset(bCryptPasswordEncoder);

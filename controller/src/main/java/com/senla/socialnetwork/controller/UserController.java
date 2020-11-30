@@ -57,6 +57,7 @@ public class UserController {
     public static final String USERS_DTO_DESCRIPTION = "List of two DTO users. First object include old login data, "
         + "the second object include new login data";
     public static final String USER_ID_DESCRIPTION = "User id";
+    public static final String USER_ID_EXAMPLE = "6";
     public static final String GET_USERS_DESCRIPTION = "This method is used to get users by admin";
     public static final String GET_USER_DESCRIPTION = "This method is used to for the user to receive their "
         + "security data";
@@ -85,18 +86,14 @@ public class UserController {
     }
 
     @GetMapping("/own")
-    @ApiOperation(value = GET_USER_DESCRIPTION, response = UserForAdminDto.class)
+    @ApiOperation(value = GET_USER_DESCRIPTION, response = UserForSecurityDto.class)
     @ApiResponses(value = {
         @ApiResponse(code = OK, message = RETURN_USER_OK_MESSAGE),
         @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public UserForSecurityDto getUser(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                           @RequestParam int firstResult,
-                                      @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                           @RequestParam int maxResults,
-                                      HttpServletRequest request) {
+    public UserForSecurityDto getUser(HttpServletRequest request) {
         return userService.getUser(request);
     }
 
@@ -137,7 +134,7 @@ public class UserController {
     })
     public ClientMessageDto logOut(HttpServletRequest request) {
         userService.logOut(request);
-        return new ClientMessageDto(LOGOUT_DESCRIPTION);
+        return new ClientMessageDto(LOGOUT_OK_MESSAGE);
     }
 
     @PutMapping
@@ -163,7 +160,8 @@ public class UserController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto deleteUser(@ApiParam(value = USER_ID_DESCRIPTION)
+    public ClientMessageDto deleteUser(@ApiParam(value = USER_ID_DESCRIPTION,
+                                                 example = USER_ID_EXAMPLE)
                                        @PathVariable("id") Long orderId) {
         userService.deleteUser(orderId);
         return new ClientMessageDto(DELETE_USER_OK_MESSAGE);

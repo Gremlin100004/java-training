@@ -2,6 +2,7 @@ package com.senla.socialnetwork.service.util;
 
 import com.senla.socialnetwork.domain.WeatherCondition;
 import com.senla.socialnetwork.dto.WeatherConditionDto;
+import com.senla.socialnetwork.dto.WeatherConditionForAdminDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,9 +15,18 @@ public class WeatherConditionMapper {
         return weatherConditionDto;
     }
 
-    public static List<WeatherConditionDto> getWeatherConditionDto(final List<WeatherCondition> weatherConditions) {
+    public static WeatherConditionForAdminDto getWeatherConditionForAdminDto(final WeatherCondition weatherCondition) {
+        WeatherConditionForAdminDto weatherConditionDto = new WeatherConditionForAdminDto();
+        weatherConditionDto.setId(weatherCondition.getId());
+        weatherConditionDto.setRegistrationDate(weatherCondition.getRegistrationDate());
+        weatherConditionDto.setLocation(LocationMapper.getLocationDto(weatherCondition.getLocation()));
+        weatherConditionDto.setStatus(weatherCondition.getStatus());
+        return weatherConditionDto;
+    }
+
+    public static List<WeatherConditionForAdminDto> getWeatherConditionDto(final List<WeatherCondition> weatherConditions) {
         return weatherConditions.stream()
-            .map(WeatherConditionMapper::getWeatherConditionDto)
+            .map(WeatherConditionMapper::getWeatherConditionForAdminDto)
             .collect(Collectors.toList());
     }
 

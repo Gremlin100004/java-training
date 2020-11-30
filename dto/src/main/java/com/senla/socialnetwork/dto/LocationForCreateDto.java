@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @ToString
 @NoArgsConstructor
-@ApiModel(value = "Location for create")
+@ApiModel(value = "Location For Create")
 public class LocationForCreateDto {
     @ApiModelProperty(value = "Country",
         example = "Belarus")

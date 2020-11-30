@@ -40,4 +40,11 @@ public class UserMapper {
         return systemUser;
     }
 
+    public static void getCurrentSystemUser(final BCryptPasswordEncoder cryptPasswordEncoder,
+                                                  final UserForSecurityDto userDto,
+                                                  final SystemUser currentSystemUser) {
+        currentSystemUser.setEmail(userDto.getEmail());
+        currentSystemUser.setPassword(cryptPasswordEncoder.encode(userDto.getPassword()));
+    }
+
 }

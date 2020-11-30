@@ -16,6 +16,7 @@ public class UserTestData {
     private static final Long ID_OTHER_USER = 2L;
     private static final Long RIGHT_NUMBER_USERS = 2L;
     private static final String EMAIL = "test@test.com";
+    private static final String WRONG_EMAIL = "test";
     private static final String PASSWORD = "test";
     private static final String WRONG_PASSWORD = "WRONG";
     private static final String TOKEN = "test";
@@ -35,8 +36,8 @@ public class UserTestData {
         return EMAIL;
     }
 
-    public static String getPassword() {
-        return PASSWORD;
+    public static String getWrongEmail() {
+        return WRONG_EMAIL;
     }
 
     public static String getToken() {
@@ -52,7 +53,7 @@ public class UserTestData {
     }
 
     public static String getAuthorizationHeader(String secretKey){
-        User user = new User(EMAIL, PASSWORD, new ArrayList<>());
+        User user = new User(EMAIL, WRONG_EMAIL, new ArrayList<>());
         return TOKEN_TYPE + JwtUtil.generateToken(user, secretKey, EXPIRATION);
     }
 

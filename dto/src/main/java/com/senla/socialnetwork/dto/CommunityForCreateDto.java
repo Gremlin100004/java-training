@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @ToString
 @NoArgsConstructor
-@ApiModel(value = "Community for create")
+@ApiModel(value = "Community For Create")
 public class CommunityForCreateDto {
     @ApiModelProperty(value = "Type of community")
     @NotNull
