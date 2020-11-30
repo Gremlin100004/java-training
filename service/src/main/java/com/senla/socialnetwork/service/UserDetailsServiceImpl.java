@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Collections;
 
 @Service
 @NoArgsConstructor
@@ -32,7 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new BusinessException("This user does not exist");
         }
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(systemUser.getRole().toString());
-        return new User(email, systemUser.getPassword(), List.of(authority));
+        return new User(email, systemUser.getPassword(), Collections.singletonList(authority));
 
     }
 

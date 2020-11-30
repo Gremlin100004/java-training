@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -90,8 +91,8 @@ public class UserServiceImpl implements UserService {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDto.getEmail(),
             userDto.getPassword());
         authenticationManager.authenticate(authentication);
-        List<SimpleGrantedAuthority> authorities = List.of(
-            new SimpleGrantedAuthority(systemUser.getRole().toString()));
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(
+            systemUser.getRole().toString()));
         User user = new User(userDto.getEmail(), userDto.getPassword(), authorities);
         return JwtUtil.generateToken(user, secretKey, expiration);
     }
