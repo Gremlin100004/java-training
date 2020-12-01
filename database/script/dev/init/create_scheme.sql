@@ -1,4 +1,3 @@
--- Todo don't forget to delete this line
 DROP DATABASE IF EXISTS hrinkov_social_network;
 
 CREATE SCHEMA IF NOT EXISTS hrinkov_social_network DEFAULT CHARACTER SET UTF8MB4 ;
@@ -158,12 +157,12 @@ CREATE TABLE IF NOT EXISTS post_comments (
 -- -----------------------------------------------------
 -- Table `friendship_requests`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS weather_condition (
+CREATE TABLE IF NOT EXISTS weather_conditions (
   id INT NOT NULL AUTO_INCREMENT,
   location_id INT NULL,
   status VARCHAR(20) NULL,
   registration_date DATETIME NOT NULL,
-  PRIMARY KEY pk_weather_condition (id)
+  PRIMARY KEY pk_weather_conditions (id)
 );
 
 -- -----------------------------------------------------
@@ -283,8 +282,8 @@ ADD CONSTRAINT fk_post_comments_posts
 FOREIGN KEY (post_id)
 REFERENCES posts (id) ON DELETE CASCADE;
 
-ALTER TABLE weather_condition
-ADD CONSTRAINT fk_weather_condition_locations
+ALTER TABLE weather_conditions
+ADD CONSTRAINT fk_weather_conditions_locations
 FOREIGN KEY (location_id)
 REFERENCES locations (id) ON DELETE CASCADE;
 
@@ -346,7 +345,7 @@ ON posts (id);
 CREATE UNIQUE INDEX post_comments_id_idx
 ON post_comments (id);
 
-CREATE UNIQUE INDEX weather_condition_id_idx
-ON weather_condition (id);
+CREATE UNIQUE INDEX weather_conditions_id_idx
+ON weather_conditions (id);
 
 COMMIT;

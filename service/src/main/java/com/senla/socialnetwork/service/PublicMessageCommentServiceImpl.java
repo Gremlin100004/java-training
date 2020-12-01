@@ -65,10 +65,10 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
             JwtUtil.getToken(request), secretKey), commentId);
         if (publicMessageComment == null) {
             throw new BusinessException("Error, there is no such comment");
-        } else if (publicMessageComment.isDeleted()) {
+        } else if (publicMessageComment.getIsDeleted()) {
             throw new BusinessException("Error, the comment has already been deleted");
         }
-        publicMessageComment.setDeleted(true);
+        publicMessageComment.setIsDeleted(true);
         publicMessageCommentDao.updateRecord(publicMessageComment);
     }
 

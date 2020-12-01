@@ -28,6 +28,7 @@ public class PostCommentTestData {
         postComment.setCreationDate(POST_COMMENT_CREATION_DATE);
         postComment.setAuthor(UserProfileTestData.getTestUserProfile());
         postComment.setPost(PostTestData.getTestPost());
+        postComment.setIsDeleted(false);
         return postComment;
     }
 

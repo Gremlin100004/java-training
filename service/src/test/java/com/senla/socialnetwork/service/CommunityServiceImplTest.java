@@ -76,7 +76,7 @@ public class CommunityServiceImplTest {
         List<CommunityDto> resultCommunities = communityService.getCommunities(FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultCommunities);
         Assertions.assertEquals(CommunityTestData.getRightNumberCommunities(), resultCommunities.size());
-        Assertions.assertFalse(resultCommunities.get(0).isDeleted());
+        Assertions.assertFalse(resultCommunities.get(0).getDeleted());
         Assertions.assertFalse(resultCommunities.isEmpty());
         Assertions.assertEquals(resultCommunities, communitiesDto);
         Mockito.verify(communityDao, Mockito.times(1)).getCommunities(
@@ -95,7 +95,7 @@ public class CommunityServiceImplTest {
             FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultCommunities);
         Assertions.assertEquals(CommunityTestData.getRightNumberCommunities(), resultCommunities.size());
-        Assertions.assertFalse(resultCommunities.get(0).isDeleted());
+        Assertions.assertFalse(resultCommunities.get(0).getDeleted());
         Assertions.assertFalse(resultCommunities.isEmpty());
         Assertions.assertEquals(resultCommunities, communitiesDto);
         Mockito.verify(communityDao, Mockito.times(
@@ -114,7 +114,7 @@ public class CommunityServiceImplTest {
             CommunityType.GENERAL, FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultCommunities);
         Assertions.assertEquals(CommunityTestData.getRightNumberCommunities(), resultCommunities.size());
-        Assertions.assertFalse(resultCommunities.get(0).isDeleted());
+        Assertions.assertFalse(resultCommunities.get(0).getDeleted());
         Assertions.assertFalse(resultCommunities.isEmpty());
         Assertions.assertEquals(resultCommunities, communitiesDto);
         Mockito.verify(communityDao, Mockito.times(1)).getCommunitiesByType(
@@ -135,7 +135,7 @@ public class CommunityServiceImplTest {
             request, FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultCommunities);
         Assertions.assertEquals(CommunityTestData.getRightNumberCommunities(), resultCommunities.size());
-        Assertions.assertFalse(resultCommunities.get(0).isDeleted());
+        Assertions.assertFalse(resultCommunities.get(0).getDeleted());
         Assertions.assertFalse(resultCommunities.isEmpty());
         Assertions.assertEquals(resultCommunities, communitiesDto);
         Mockito.verify(communityDao, Mockito.times(1)).getOwnCommunitiesByEmail(
@@ -156,7 +156,7 @@ public class CommunityServiceImplTest {
             request, FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultCommunities);
         Assertions.assertEquals(CommunityTestData.getRightNumberCommunities(), resultCommunities.size());
-        Assertions.assertFalse(resultCommunities.get(0).isDeleted());
+        Assertions.assertFalse(resultCommunities.get(0).getDeleted());
         Assertions.assertFalse(resultCommunities.isEmpty());
         Assertions.assertEquals(resultCommunities, communitiesDto);
         Mockito.verify(communityDao, Mockito.times(1)).getSubscribedCommunitiesByEmail(
@@ -205,7 +205,7 @@ public class CommunityServiceImplTest {
     @Test
     void CommunityServiceImpl_subscribeToCommunity_communityDao_findByIdAndEmail_objectDeleted() {
         Community community = CommunityTestData.getTestCommunity();
-        community.setDeleted(true);
+        community.setIsDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(communityDao).findById(CommunityTestData.getCommunityId());
@@ -260,7 +260,7 @@ public class CommunityServiceImplTest {
     @Test
     void CommunityServiceImpl_unsubscribeFromCommunity_communityDao_findByIdAndEmail_objectDeleted() {
         Community community = CommunityTestData.getTestCommunity();
-        community.setDeleted(true);
+        community.setIsDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
@@ -304,7 +304,7 @@ public class CommunityServiceImplTest {
             CommunityTestData.getCommunityId(), FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultPostsDto);
         Assertions.assertEquals(PostTestData.getRightNumberPosts(), resultPostsDto.size());
-        Assertions.assertFalse(resultPostsDto.get(0).isDeleted());
+        Assertions.assertFalse(resultPostsDto.get(0).getDeleted());
         Assertions.assertFalse(resultPostsDto.isEmpty());
         Assertions.assertEquals(resultPostsDto, postsDto);
         Mockito.verify(postDao, Mockito.times(1)).getByCommunityId(
@@ -422,7 +422,7 @@ public class CommunityServiceImplTest {
     @Test
     void CommunityServiceImpl_deleteCommunityByUser_communityDao_findByIdAndEmail_objectDeleted() {
         Community community = CommunityTestData.getTestCommunity();
-        community.setDeleted(true);
+        community.setIsDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(community).when(communityDao).findByIdAndEmail(
@@ -507,7 +507,7 @@ public class CommunityServiceImplTest {
     void CommunityServiceImpl_addPostToCommunity_communityDao_findByIdAndEmail_objectDeleted() {
         PostForCreationDto postDto = PostTestData.getTestPostForCreationDto();
         Community community = CommunityTestData.getTestCommunity();
-        community.setDeleted(true);
+        community.setIsDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(community).when(communityDao).findByIdAndEmail(

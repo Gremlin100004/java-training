@@ -66,10 +66,10 @@ public class PostCommentServiceImpl implements PostCommentService {
             JwtUtil.getToken(request), secretKey), commentId);
         if (postComment == null) {
             throw new BusinessException("Error, there is no such comment");
-        } else if (postComment.isDeleted()) {
+        } else if (postComment.getIsDeleted()) {
             throw new BusinessException("Error, the comment has already been deleted");
         }
-        postComment.setDeleted(true);
+        postComment.setIsDeleted(true);
         postCommentDao.updateRecord(postComment);
     }
 

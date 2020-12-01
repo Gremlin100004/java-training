@@ -19,7 +19,7 @@ public class PublicMessageMapper {
         publicMessageDto.setAuthor(UserProfileMapper.getUserProfileForIdentificationDto(publicMessage.getAuthor()));
         publicMessageDto.setTittle(publicMessage.getTittle());
         publicMessageDto.setContent(publicMessage.getContent());
-        publicMessageDto.setDeleted(publicMessage.isDeleted());
+        publicMessageDto.setDeleted(publicMessage.getIsDeleted());
         return publicMessageDto;
     }
 
@@ -37,7 +37,7 @@ public class PublicMessageMapper {
             publicMessageDto.getAuthor(), userProfileDao));
         publicMessage.setTittle(publicMessageDto.getTittle());
         publicMessage.setContent(publicMessageDto.getContent());
-        publicMessage.setDeleted(publicMessageDto.isDeleted());
+        publicMessage.setIsDeleted(publicMessageDto.getDeleted());
         return publicMessage;
     }
 

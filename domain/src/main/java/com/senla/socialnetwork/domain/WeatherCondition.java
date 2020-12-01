@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "weather_condition")
+@Table(name = "weather_conditions")
 @Getter
 @Setter
 @ToString

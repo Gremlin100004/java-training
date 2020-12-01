@@ -20,7 +20,7 @@ public class CommunityMapper {
         communityDto.setType(community.getType());
         communityDto.setTittle(community.getTittle());
         communityDto.setInformation(community.getInformation());
-        communityDto.setDeleted(community.isDeleted());
+        communityDto.setDeleted(community.getIsDeleted());
         return communityDto;
     }
 
@@ -39,7 +39,7 @@ public class CommunityMapper {
         community.setCreationDate(communityDto.getCreationDate());
         community.setTittle(communityDto.getTittle());
         community.setInformation(communityDto.getInformation());
-        community.setDeleted(communityDto.isDeleted());
+        community.setIsDeleted(communityDto.getDeleted());
         return community;
     }
 

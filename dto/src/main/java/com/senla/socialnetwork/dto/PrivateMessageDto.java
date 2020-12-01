@@ -36,9 +36,9 @@ public class PrivateMessageDto extends GeneralDto {
     private String content;
     @ApiModelProperty(value = "Is message read",
         example = "false")
-    private boolean read;
+    private Boolean read;
     @ApiModelProperty(value = "Is message deleted",
         example = "false")
-    private boolean deleted;
+    private Boolean deleted;
 
 }

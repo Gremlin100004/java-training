@@ -192,7 +192,7 @@ public class PublicMessageServiceImplTest {
     @Test
     void PublicMessageServiceImpl_deleteMessageByUser_publicMessageDao_findByIdAndEmail_deletedObject() {
         PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
-        publicMessage.setDeleted(true);
+        publicMessage.setIsDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(publicMessageDao).findByIdAndEmail(
@@ -302,7 +302,7 @@ public class PublicMessageServiceImplTest {
     @Test
     void PublicMessageCommentServiceImpl_addComment_publicMessageDao_findByIdAndEmail_deletedObject() {
         PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
-        publicMessage.setDeleted(true);
+        publicMessage.setIsDeleted(true);
         PublicMessageCommentForCreateDto publicMessageCommentDto = PublicMessageCommentTestData
             .getTestPublicMessageCommentForCreationDto();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(

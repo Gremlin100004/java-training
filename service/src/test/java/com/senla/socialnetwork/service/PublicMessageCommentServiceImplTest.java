@@ -158,7 +158,7 @@ public class PublicMessageCommentServiceImplTest {
     @Test
     void PublicMessageCommentServiceImpl_deleteCommentByUser_publicMessageCommentDao_findByIdAndEmail_deletedObject() {
         PublicMessageComment publicMessageComment = PublicMessageCommentTestData.getTestPublicMessageComment();
-        publicMessageComment.setDeleted(true);
+        publicMessageComment.setIsDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(publicMessageComment).when(publicMessageCommentDao).findByIdAndEmail(

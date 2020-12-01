@@ -105,14 +105,14 @@ public class PublicMessageServiceImpl implements PublicMessageService {
             JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey), messageId);
         if (publicMessage == null) {
             throw new BusinessException("Error, there is no such message");
-        } else if (publicMessage.isDeleted()) {
+        } else if (publicMessage.getIsDeleted()) {
             throw new BusinessException("Error, the message has already been deleted");
         }
         List<PublicMessageComment> comments = publicMessageCommentDao.getPublicMessageComments(
             messageId, FIRST_RESULT, MAX_RESULTS);
-        comments.forEach(publicMessageComment -> publicMessageComment.setDeleted(true));
+        comments.forEach(publicMessageComment -> publicMessageComment.setIsDeleted(true));
         publicMessage.setPublicMessageComments(comments);
-        publicMessage.setDeleted(true);
+        publicMessage.setIsDeleted(true);
         publicMessageDao.updateRecord(publicMessage);
     }
 
@@ -150,7 +150,7 @@ public class PublicMessageServiceImpl implements PublicMessageService {
         PublicMessage publicMessage = publicMessageDao.findByIdAndEmail(email, publicMessageId);
         if (publicMessage == null) {
             throw new BusinessException("Error, there is no such public message");
-        } else if (publicMessage.isDeleted()) {
+        } else if (publicMessage.getIsDeleted()) {
             throw new BusinessException("Error, the message has already been deleted");
         }
         return PublicMessageCommentMapper.getPublicMessageCommentDto(publicMessageCommentDao.saveRecord(

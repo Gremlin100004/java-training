@@ -162,7 +162,7 @@ public class PostCommentServiceImplTest {
     @Test
     void PostCommentServiceImpl_deleteCommentByUser_postCommentDao_findByIdAndEmail_deletedObject() {
         PostComment postComment = PostCommentTestData.getTestPostComment();
-        postComment.setDeleted(true);
+        postComment.setIsDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(postComment).when(postCommentDao).findByIdAndEmail(

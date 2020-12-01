@@ -36,6 +36,6 @@ public class PostCommentDto extends GeneralDto {
     private String content;
     @ApiModelProperty(value = "Is post comment deleted",
         example = "false")
-    private boolean deleted;
+    private Boolean deleted;
 
 }

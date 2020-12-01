@@ -27,6 +27,7 @@ public class PublicMessageTestData {
         publicMessage.setId(PUBLIC_MESSAGE_ID);
         publicMessage.setCreationDate(PUBLIC_MESSAGE_CREATION_DATE);
         publicMessage.setAuthor(UserProfileTestData.getTestUserProfile());
+        publicMessage.setIsDeleted(false);
         return publicMessage;
     }
 

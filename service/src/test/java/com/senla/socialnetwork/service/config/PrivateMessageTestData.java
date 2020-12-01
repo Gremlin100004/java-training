@@ -34,6 +34,8 @@ public class PrivateMessageTestData {
         privateMessage.setRecipient(UserProfileTestData.getTestUserProfile());
         privateMessage.setContent(CONTENT);
         privateMessage.setDepartureDate(PRIVATE_MESSAGE_CREATION_DATE);
+        privateMessage.setIsRead(false);
+        privateMessage.setIsDeleted(false);
         return privateMessage;
     }
 

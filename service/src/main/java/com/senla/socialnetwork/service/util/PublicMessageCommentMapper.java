@@ -23,7 +23,7 @@ public class PublicMessageCommentMapper {
         publicMessageCommentDto.setPublicMessage(
             PublicMessageMapper.getPublicMessageDto(publicMessageComment.getPublicMessage()));
         publicMessageCommentDto.setContent(publicMessageComment.getContent());
-        publicMessageCommentDto.setDeleted(publicMessageComment.isDeleted());
+        publicMessageCommentDto.setDeleted(publicMessageComment.getIsDeleted());
         return publicMessageCommentDto;
     }
 
@@ -44,7 +44,7 @@ public class PublicMessageCommentMapper {
         publicMessageComment.setPublicMessage(PublicMessageMapper.getPublicMessage(
             publicMessageCommentDto.getPublicMessage(), publicMessageDao, userProfileDao));
         publicMessageComment.setContent(publicMessageCommentDto.getContent());
-        publicMessageComment.setDeleted(publicMessageCommentDto.isDeleted());
+        publicMessageComment.setIsDeleted(publicMessageCommentDto.getDeleted());
         return publicMessageComment;
     }
 

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class LocationMapper {
+
     public static LocationDto getLocationDto(final Location location) {
         LocationDto locationDto = new LocationDto();
         locationDto.setId(location.getId());

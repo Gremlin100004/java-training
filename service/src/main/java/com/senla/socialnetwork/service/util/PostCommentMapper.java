@@ -22,7 +22,7 @@ public class PostCommentMapper {
         postCommentDto.setAuthor(UserProfileMapper.getUserProfileForIdentificationDto(postComment.getAuthor()));
         postCommentDto.setPost(PostMapper.getPostDto(postComment.getPost()));
         postCommentDto.setContent(postComment.getContent());
-        postCommentDto.setDeleted(postComment.isDeleted());
+        postCommentDto.setDeleted(postComment.getIsDeleted());
         return postCommentDto;
     }
 
@@ -43,7 +43,7 @@ public class PostCommentMapper {
                 postCommentDto.getAuthor(), userProfileDao));
         postComment.setPost(PostMapper.getPost(postCommentDto.getPost(), postDao, communityDao, userProfileDao));
         postComment.setContent(postCommentDto.getContent());
-        postComment.setDeleted(postCommentDto.isDeleted());
+        postComment.setIsDeleted(postCommentDto.getDeleted());
         return postComment;
     }
 

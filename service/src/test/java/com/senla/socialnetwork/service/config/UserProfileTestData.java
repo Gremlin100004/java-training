@@ -71,16 +71,6 @@ public class UserProfileTestData {
         return userProfiles;
     }
 
-    public static List<UserProfileDto> getTestUsersProfilesDto() {
-        UserProfileDto userProfileDtoOne = getTestUserProfileDto();
-        UserProfileDto UserProfileDtoTwo = getTestUserProfileDto();
-        UserProfileDtoTwo.setId(USER_PROFILE_OTHER_ID);
-        List<UserProfileDto> userProfilesDto = new ArrayList<>();
-        userProfilesDto.add(userProfileDtoOne);
-        userProfilesDto.add(UserProfileDtoTwo);
-        return userProfilesDto;
-    }
-
     public static List<UserProfileForIdentificationDto> getTestUsersProfilesForIdentificationDto() {
         UserProfileForIdentificationDto userProfileDtoOne = getTestUserProfileForIdentificationDto();
         UserProfileForIdentificationDto UserProfileDtoTwo = getTestUserProfileForIdentificationDto();

@@ -32,6 +32,7 @@ public class CommunityTestData {
         community.setAuthor(UserProfileTestData.getTestUserProfile());
         community.setTittle(COMMUNITY_TITTLE);
         community.setAuthor(UserProfileTestData.getTestUserProfile());
+        community.setIsDeleted(false);
         return community;
     }
 

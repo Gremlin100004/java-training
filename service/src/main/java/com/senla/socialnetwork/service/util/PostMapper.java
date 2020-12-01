@@ -24,7 +24,7 @@ public class PostMapper {
             postDto.setContent(post.getContent());
         }
         postDto.setCommunity(CommunityMapper.getCommunityDto(post.getCommunity()));
-        postDto.setDeleted(post.isDeleted());
+        postDto.setDeleted(post.getIsDeleted());
         return postDto;
     }
 
@@ -42,7 +42,7 @@ public class PostMapper {
         post.setTittle(postDto.getTittle());
         post.setContent(postDto.getContent());
         post.setCommunity(CommunityMapper.getCommunity(postDto.getCommunity(), communityDao, userProfileDao));
-        post.setDeleted(postDto.isDeleted());
+        post.setIsDeleted(postDto.getDeleted());
         return post;
     }
 

@@ -21,8 +21,8 @@ public class PrivateMessageMapper {
         privateMessageDto.setRecipient(UserProfileMapper.getUserProfileForIdentificationDto(
             privateMessage.getRecipient()));
         privateMessageDto.setContent(privateMessage.getContent());
-        privateMessageDto.setRead(privateMessage.isRead());
-        privateMessageDto.setDeleted(privateMessage.isDeleted());
+        privateMessageDto.setRead(privateMessage.getIsRead());
+        privateMessageDto.setDeleted(privateMessage.getIsDeleted());
         return privateMessageDto;
     }
 
@@ -43,8 +43,8 @@ public class PrivateMessageMapper {
         privateMessage.setRecipient(UserProfileMapper.getUserProfileFromUserProfileForIdentificationDto(
             privateMessageDto.getRecipient(), userProfileDao));
         privateMessage.setContent(privateMessageDto.getContent());
-        privateMessage.setRead(privateMessageDto.isRead());
-        privateMessage.setDeleted(privateMessageDto.isDeleted());
+        privateMessage.setIsRead(privateMessageDto.getRead());
+        privateMessage.setIsDeleted(privateMessageDto.getDeleted());
         return privateMessage;
     }
 

@@ -38,6 +38,6 @@ public class PublicMessageCommentDto extends GeneralDto {
     private String content;
     @ApiModelProperty(value = "Is comment deleted",
         example = "false")
-    private boolean deleted;
+    private Boolean deleted;
 
 }

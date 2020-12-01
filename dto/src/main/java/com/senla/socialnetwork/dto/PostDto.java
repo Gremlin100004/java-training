@@ -37,6 +37,6 @@ public class PostDto extends GeneralDto {
     private CommunityDto community;
     @ApiModelProperty(value = "Is post deleted",
         example = "false")
-    private boolean deleted;
+    private Boolean deleted;
 
 }

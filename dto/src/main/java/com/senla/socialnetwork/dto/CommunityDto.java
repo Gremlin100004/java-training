@@ -43,6 +43,6 @@ public class CommunityDto extends GeneralDto {
     private String information;
     @ApiModelProperty(value = "Is community deleted",
         example = "false")
-    private boolean deleted;
+    private Boolean deleted;
 
 }

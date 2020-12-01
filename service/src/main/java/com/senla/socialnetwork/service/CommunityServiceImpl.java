@@ -107,7 +107,7 @@ public class CommunityServiceImpl implements CommunityService {
         Community community = communityDao.findById(communityId);
         if (community == null) {
             throw new BusinessException("Error, there is no such community");
-        } else if (community.isDeleted()) {
+        } else if (community.getIsDeleted()) {
             throw new BusinessException("Error, the community has already been deleted");
         }
         List<UserProfile> userProfiles = userProfileDao.getCommunityUsers(communityId);
@@ -127,7 +127,7 @@ public class CommunityServiceImpl implements CommunityService {
         Community community = communityDao.findById(communityId);
         if (community == null) {
             throw new BusinessException("Error, there is no such community");
-        } else if (community.isDeleted()) {
+        } else if (community.getIsDeleted()) {
             throw new BusinessException("Error, the community has already been deleted");
         }
         List<UserProfile> userProfiles = userProfileDao.getCommunityUsers(communityId);
@@ -182,12 +182,12 @@ public class CommunityServiceImpl implements CommunityService {
             JwtUtil.getToken(request), secretKey), communityId);
         if (community == null) {
             throw new BusinessException("Error, there is no such message");
-        } else if (community.isDeleted()) {
+        } else if (community.getIsDeleted()) {
             throw new BusinessException("Error, the message has already been deleted");
         }
         List<Post> posts = postDao.getByCommunityId(community.getId(), FIRST_RESULT, MAX_RESULTS);
-        posts.forEach(post -> post.setDeleted(true));
-        community.setDeleted(true);
+        posts.forEach(post -> post.setIsDeleted(true));
+        community.setIsDeleted(true);
         community.setSubscribers(new ArrayList<>());
         community.setPosts(posts);
         communityDao.updateRecord(community);
@@ -216,7 +216,7 @@ public class CommunityServiceImpl implements CommunityService {
             JwtUtil.getToken(request), secretKey), communityId);
         if (community == null) {
             throw new BusinessException("Error, there is no such community");
-        } else if (community.isDeleted()) {
+        } else if (community.getIsDeleted()) {
             throw new BusinessException("Error, the community has already been deleted");
         }
         return PostMapper.getPostDto(postDao.saveRecord(PostMapper.getNewPost(postDto, community)));

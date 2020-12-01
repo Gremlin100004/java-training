@@ -145,7 +145,7 @@ public class PostServiceImplTest {
     @Test
     void PostServiceImpl_deletePostByUser_postDao_findByIdAndEmail_deletedObject() {
         Post post = PostTestData.getTestPost();
-        post.setDeleted(true);
+        post.setIsDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(postDao).findByIdAndEmail(UserTestData.getEmail(), PostTestData.getPostId());
@@ -241,7 +241,7 @@ public class PostServiceImplTest {
     @Test
     void PostCommentServiceImpl_addComment_postDao_findByIdAndEmail_deletedObject() {
         Post post = PostTestData.getTestPost();
-        post.setDeleted(true);
+        post.setIsDeleted(true);
         PostCommentForCreateDto postCommentDto = PostCommentTestData.getTestPostCommentForCreationDto();
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);

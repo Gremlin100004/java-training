@@ -37,6 +37,6 @@ public class PublicMessageDto extends GeneralDto {
     private String content;
     @ApiModelProperty(value = "Is public message deleted",
         example = "false")
-    private boolean deleted;
+    private Boolean deleted;
 
 }

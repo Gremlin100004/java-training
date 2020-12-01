@@ -40,7 +40,7 @@ public class Community extends AEntity {
     @Column(name = "information")
     private String information;
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean isDeleted;
     @OneToMany(mappedBy = "community")
     private List<Post> posts = new ArrayList<>();
     @ManyToMany(mappedBy = "communitiesSubscribedTo", fetch = FetchType.LAZY)

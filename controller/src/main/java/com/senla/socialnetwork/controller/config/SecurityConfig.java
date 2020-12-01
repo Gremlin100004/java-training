@@ -26,7 +26,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String REGISTRATION_URL = "/users/registration";
     private static final String LOGIN_URL = "/users/login";
-    private static final String SWAGGER_URL = "/swagger-ui.html";
     private final UserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
 
@@ -40,7 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, REGISTRATION_URL).permitAll()
                 .antMatchers(HttpMethod.PUT, LOGIN_URL).permitAll()
-                .antMatchers(HttpMethod.GET, SWAGGER_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

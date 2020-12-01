@@ -5,8 +5,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=hrinkov_social_network
-      - MYSQL_USER=Grinya
-      - MYSQL_PASSWORD=gremlin280790
+      - MYSQL_USER=User
+      - MYSQL_PASSWORD=Password
     ports:
       - 3306:3306
     volumes: 

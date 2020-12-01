@@ -117,10 +117,10 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
             JwtUtil.getToken(request), secretKey), messageId);
         if (privateMessage == null) {
             throw new BusinessException("Error, there is no such message");
-        } else if (privateMessage.isDeleted()) {
+        } else if (privateMessage.getIsDeleted()) {
             throw new BusinessException("Error, the message has already been deleted");
         }
-        privateMessage.setDeleted(true);
+        privateMessage.setIsDeleted(true);
         privateMessageDao.updateRecord(privateMessage);
     }
 

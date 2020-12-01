@@ -259,7 +259,7 @@ public class PrivateMessageServiceImplTest {
     @Test
     void PrivateMessageServiceImpl_deleteMessageByUser_privateMessageDao_findByIdAndEmail_deletedObject() {
         PrivateMessage privateMessage = PrivateMessageTestData.getTestPrivateMessage();
-        privateMessage.setDeleted(true);
+        privateMessage.setIsDeleted(true);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(privateMessage).when(privateMessageDao).findByIdAndEmail(

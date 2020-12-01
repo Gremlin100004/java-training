@@ -33,7 +33,7 @@ public class Post extends AEntity {
     @JoinColumn(name = "communities_id", nullable = false)
     private Community community;
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean isDeleted;
     @OneToMany(mappedBy = "post")
     private List<PostComment> postComments = new ArrayList<>();
 

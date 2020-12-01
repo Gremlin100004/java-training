@@ -28,6 +28,7 @@ public class PublicMessageCommentTestData {
         publicMessageComment.setCreationDate(PUBLIC_MESSAGE_COMMENT_CREATION_DATE);
         publicMessageComment.setAuthor(UserProfileTestData.getTestUserProfile());
         publicMessageComment.setPublicMessage(PublicMessageTestData.getTestPublicMessage());
+        publicMessageComment.setIsDeleted(false);
         return publicMessageComment;
     }
 

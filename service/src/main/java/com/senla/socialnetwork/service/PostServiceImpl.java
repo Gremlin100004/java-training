@@ -75,12 +75,12 @@ public class PostServiceImpl implements PostService {
         Post post = postDao.findByIdAndEmail(JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey), postId);
         if (post == null) {
             throw new BusinessException("Error, there is no such post");
-        } else if (post.isDeleted()) {
+        } else if (post.getIsDeleted()) {
             throw new BusinessException("Error, the post has already been deleted");
         }
-        post.setDeleted(true);
+        post.setIsDeleted(true);
         List<PostComment> comments = postCommentDao.getPostComments(postId, FIRST_RESULT, MAX_RESULTS);
-        comments.forEach(postComment -> postComment.setDeleted(true));
+        comments.forEach(postComment -> postComment.setIsDeleted(true));
         post.setPostComments(comments);
         postDao.updateRecord(post);
     }
@@ -116,7 +116,7 @@ public class PostServiceImpl implements PostService {
         Post post = postDao.findByIdAndEmail(email, postId);
         if (post == null) {
             throw new BusinessException("Error, there is no such post");
-        } else if (post.isDeleted()) {
+        } else if (post.getIsDeleted()) {
             throw new BusinessException("Error, the post has already been deleted");
         }
         return PostCommentMapper.getPostCommentDto(postCommentDao.saveRecord(PostCommentMapper.getPostNewComment(
