@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +52,7 @@ public class WeatherConditionController {
     @Autowired
     private WeatherConditionService weatherConditionService;
 
+    @Secured({"ROLE_ADMIN"})
     @GetMapping
     @ApiOperation(value = GET_WEATHER_CONDITIONS_DESCRIPTION, response = WeatherConditionForAdminDto.class)
     @ApiResponses(value = {
@@ -68,6 +70,7 @@ public class WeatherConditionController {
         return weatherConditionService.getWeatherConditions(firstResult, maxResults);
     }
 
+
     @GetMapping("/location")
     @ApiOperation(value = GET_WEATHER_CONDITION_DESCRIPTION, response = WeatherConditionDto.class)
     @ApiResponses(value = {
@@ -80,6 +83,7 @@ public class WeatherConditionController {
         return weatherConditionService.getWeatherCondition(request);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ApiOperation(value = DELETE_WEATHER_CONDITION_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {

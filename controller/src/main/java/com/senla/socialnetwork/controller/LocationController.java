@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,6 +73,7 @@ public class LocationController {
         return locationService.getLocations(firstResult, maxResults);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @PostMapping
     @ApiOperation(value = ADD_LOCATION_DESCRIPTION, response = LocationDto.class)
     @ApiResponses(value = {
@@ -86,6 +88,7 @@ public class LocationController {
         return locationService.addLocation(locationDto);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @PutMapping
     @ApiOperation(value = UPDATE_LOCATION_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {
@@ -100,6 +103,7 @@ public class LocationController {
         return new ClientMessageDto(UPDATE_LOCATION_OK_MESSAGE);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ApiOperation(value = DELETE_LOCATION_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {

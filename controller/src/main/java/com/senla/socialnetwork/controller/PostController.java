@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,6 +64,7 @@ public class PostController {
     @Autowired
     PostService postService;
 
+    @Secured({"ROLE_ADMIN"})
     @GetMapping
     @ApiOperation(value = GET_POSTS_DESCRIPTION, response = PostDto.class)
     @ApiResponses(value = {
@@ -123,6 +125,7 @@ public class PostController {
         return new ClientMessageDto(DELETE_POST_OK_MESSAGE);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ApiOperation(value = DELETE_POST_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {

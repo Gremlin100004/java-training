@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,6 +74,7 @@ public class PrivateMessageController {
     @Autowired
     private PrivateMessageService privateMessageService;
 
+    @Secured({"ROLE_ADMIN"})
     @GetMapping("/admin")
     @ApiOperation(value = GET_PRIVATE_MESSAGES_DESCRIPTION, response = PrivateMessageDto.class)
     @ApiResponses(value = {
@@ -185,6 +187,7 @@ public class PrivateMessageController {
         return new ClientMessageDto(DELETE_PRIVATE_MESSAGE_OK_MESSAGE);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ApiOperation(value = DELETE_PRIVATE_MESSAGE_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {

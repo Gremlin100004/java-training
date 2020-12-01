@@ -17,6 +17,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -92,6 +93,7 @@ public class CommunityController {
     @Autowired
     private CommunityService communityService;
 
+    @Secured({"ROLE_ADMIN"})
     @GetMapping("/all")
     @ApiOperation(value = GET_ALL_COMMUNITIES_DESCRIPTION, response = CommunityDto.class)
     @ApiResponses(value = {
@@ -268,6 +270,7 @@ public class CommunityController {
         return new ClientMessageDto(DELETE_COMMUNITY_OK_MESSAGE);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ApiOperation(value = DELETE_COMMUNITY_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {

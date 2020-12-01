@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +52,7 @@ public class PostCommentController {
     @Autowired
     private PostCommentService postCommentService;
 
+    @Secured({"ROLE_ADMIN"})
     @GetMapping
     @ApiOperation(value = GET_COMMENTS_DESCRIPTION, response = PostCommentDto.class)
     @ApiResponses(value = {
@@ -96,6 +98,7 @@ public class PostCommentController {
         return new ClientMessageDto(DELETE_COMMENT_OK_MESSAGE);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ApiOperation(value = DELETE_COMMENT_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {

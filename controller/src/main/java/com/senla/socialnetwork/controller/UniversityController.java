@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,6 +72,7 @@ public class UniversityController {
         return universityService.getUniversities(firstResult, maxResults);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @PostMapping
     @ApiOperation(value = ADD_UNIVERSITY_DESCRIPTION, response = UniversityDto.class)
     @ApiResponses(value = {
@@ -85,6 +87,7 @@ public class UniversityController {
         return universityService.addUniversity(universityDto);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @PutMapping
     @ApiOperation(value = UPDATE_UNIVERSITY_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {
@@ -99,6 +102,7 @@ public class UniversityController {
         return new ClientMessageDto(UPDATE_UNIVERSITY_OK_MESSAGE);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ApiOperation(value = DELETE_UNIVERSITY_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {

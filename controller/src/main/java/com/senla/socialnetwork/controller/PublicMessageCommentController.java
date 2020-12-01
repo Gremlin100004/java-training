@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +60,7 @@ public class PublicMessageCommentController {
     @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
 
+    @Secured({"ROLE_ADMIN"})
     @GetMapping
     @ApiOperation(value = GET_COMMENTS_DESCRIPTION, response = PublicMessageCommentDto.class)
     @ApiResponses(value = {
@@ -105,6 +107,7 @@ public class PublicMessageCommentController {
         return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
     }
 
+    @Secured({"ROLE_ADMIN"})
     @DeleteMapping("/{id}")
     @ApiOperation(value = DELETE_COMMENTS_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {
