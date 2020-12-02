@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS tokens (
   id INT NOT NULL AUTO_INCREMENT,
   user_id INT NOT NULL,
   value VARCHAR(256) NOT NULL,
+  creation_date DATETIME NOT NULL,
   PRIMARY KEY pk_tokens (id)
 );
 

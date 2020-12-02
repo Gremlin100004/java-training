@@ -51,7 +51,7 @@ public class PrivateMessageServiceImplTest {
     UniversityDao universityDao;
     @Autowired
     private HttpServletRequest request;
-    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
 
     @Test

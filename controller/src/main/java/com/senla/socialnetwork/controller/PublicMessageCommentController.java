@@ -57,7 +57,7 @@ public class PublicMessageCommentController {
        + "by admin";
     @Autowired
     private PublicMessageCommentService publicMessageCommentService;
-    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
 
     @Secured({"ROLE_ADMIN"})

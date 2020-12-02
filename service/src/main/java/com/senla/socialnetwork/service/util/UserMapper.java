@@ -4,7 +4,7 @@ import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,20 +31,21 @@ public class UserMapper {
         return userDto;
     }
 
-    public static SystemUser getSystemUser(final BCryptPasswordEncoder cryptPasswordEncoder,
-                                           final UserForSecurityDto userDto) {
+    public static SystemUser getSystemUser(final PasswordEncoder cryptPasswordEncoder,
+                                           final UserForSecurityDto userDto,
+                                           final RoleName roleName) {
         SystemUser systemUser = new SystemUser();
         systemUser.setEmail(userDto.getEmail());
-        systemUser.setRole(RoleName.ROLE_USER);
+        systemUser.setRole(roleName);
         systemUser.setPassword(cryptPasswordEncoder.encode(userDto.getPassword()));
         return systemUser;
     }
 
-    public static void getCurrentSystemUser(final BCryptPasswordEncoder cryptPasswordEncoder,
+    public static void getCurrentSystemUser(final PasswordEncoder passwordEncoder,
                                                   final UserForSecurityDto userDto,
                                                   final SystemUser currentSystemUser) {
         currentSystemUser.setEmail(userDto.getEmail());
-        currentSystemUser.setPassword(cryptPasswordEncoder.encode(userDto.getPassword()));
+        currentSystemUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
     }
 
 }

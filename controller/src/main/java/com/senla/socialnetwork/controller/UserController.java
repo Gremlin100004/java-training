@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.controller;
 
+import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
@@ -109,7 +110,22 @@ public class UserController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public ClientMessageDto addUser(@RequestBody @Valid UserForSecurityDto userDto) {
-        userService.addUser(userDto);
+        userService.addUser(userDto, RoleName.ROLE_USER);
+        return new ClientMessageDto(ADD_USER_OK_MESSAGE);
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @PostMapping("/registration/admin")
+    @ApiOperation(value = ADD_USER_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = CREATED, message = ADD_USER_OK_MESSAGE),
+        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
+        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
+        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
+    })
+    @ResponseStatus(HttpStatus.CREATED)
+    public ClientMessageDto addAdmin(@RequestBody @Valid UserForSecurityDto userDto) {
+        userService.addUser(userDto, RoleName.ROLE_ADMIN);
         return new ClientMessageDto(ADD_USER_OK_MESSAGE);
     }
 

@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.service;
 
+import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
 
@@ -17,7 +18,7 @@ public interface UserService {
 
     void logOut(HttpServletRequest request);
 
-    void addUser(UserForSecurityDto userDto);
+    void addUser(UserForSecurityDto userDto, RoleName roleName);
 
     void updateUser(HttpServletRequest request, List<UserForSecurityDto> usersDto);
 

@@ -15,7 +15,7 @@
                 <version>2.2</version>
                 <configuration>
                     <url>http://localhost:8080/manager/text</url>
-                    <path>/socialnetwork</path>
+                    <path>/api/socialnetwork</path>
                     <username>admin</username>
                     <password>sjdhbgfjs+)%gjabsvdbasj</password>
                 </configuration>

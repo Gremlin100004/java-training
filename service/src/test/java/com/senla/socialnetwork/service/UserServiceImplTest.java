@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -40,10 +40,10 @@ public class UserServiceImplTest {
     @Autowired
     private TokenDao tokenDao;
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private HttpServletRequest request;
-    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
 
 
@@ -132,13 +132,13 @@ public class UserServiceImplTest {
         Mockito.doReturn(testUser).when(userDao).saveRecord(ArgumentMatchers.any(SystemUser.class));
         Mockito.doReturn(null).when(userDao).findByEmail(UserTestData.getEmail());
 
-        Assertions.assertDoesNotThrow(() -> userService.addUser(userDto));
+        Assertions.assertDoesNotThrow(() -> userService.addUser(userDto, RoleName.ROLE_USER));
         Mockito.verify(userDao, Mockito.times(1)).saveRecord(
             ArgumentMatchers.any(SystemUser.class));
-        Mockito.verify(bCryptPasswordEncoder, Mockito.times(1)).encode(
+        Mockito.verify(passwordEncoder, Mockito.times(1)).encode(
             ArgumentMatchers.anyString());
         Mockito.reset(userDao);
-        Mockito.reset(bCryptPasswordEncoder);
+        Mockito.reset(passwordEncoder);
     }
 
     @Test
@@ -147,9 +147,9 @@ public class UserServiceImplTest {
         UserForSecurityDto userDto = UserTestData.getTestUserForSecurityDto();
         Mockito.doReturn(testUser).when(userDao).findByEmail(UserTestData.getEmail());
 
-        Assertions.assertThrows(BusinessException.class, () -> userService.addUser(userDto));
+        Assertions.assertThrows(BusinessException.class, () -> userService.addUser(userDto, RoleName.ROLE_USER));
         Mockito.verify(userDao, Mockito.never()).saveRecord(ArgumentMatchers.any(SystemUser.class));
-        Mockito.verify(bCryptPasswordEncoder, Mockito.never()).encode(
+        Mockito.verify(passwordEncoder, Mockito.never()).encode(
             ArgumentMatchers.anyString());
         Mockito.reset(userDao);
     }
@@ -161,19 +161,19 @@ public class UserServiceImplTest {
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(testUser).when(userDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(testUser.getPassword()).when(bCryptPasswordEncoder).encode(
+        Mockito.doReturn(testUser.getPassword()).when(passwordEncoder).encode(
             usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).getPassword());
         Mockito.doReturn(usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getPassword()).when(
-            bCryptPasswordEncoder).encode(usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getPassword());
+            passwordEncoder).encode(usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getPassword());
 
         Assertions.assertDoesNotThrow(() -> userService.updateUser(request, usersDto));
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(tokenDao, Mockito.times(1)).saveRecord(ArgumentMatchers.any(LogoutToken.class));
-        Mockito.verify(bCryptPasswordEncoder, Mockito.times(1)).encode(ArgumentMatchers.anyString());
+        Mockito.verify(passwordEncoder, Mockito.times(1)).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.times(1)).updateRecord(testUser);
         Mockito.reset(userDao);
         Mockito.reset(tokenDao);
-        Mockito.reset(bCryptPasswordEncoder);
+        Mockito.reset(passwordEncoder);
     }
 
     @Test
@@ -185,7 +185,7 @@ public class UserServiceImplTest {
         Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
         Mockito.verify(userDao, Mockito.never()).findByEmail(UserTestData.getEmail());
         Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
-        Mockito.verify(bCryptPasswordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
+        Mockito.verify(passwordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.never()).updateRecord(testUser);
     }
 
@@ -200,7 +200,7 @@ public class UserServiceImplTest {
         Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
         Mockito.verify(userDao, Mockito.never()).findByEmail(UserTestData.getEmail());
         Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
-        Mockito.verify(bCryptPasswordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
+        Mockito.verify(passwordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.never()).updateRecord(testUser);
     }
 
@@ -216,10 +216,10 @@ public class UserServiceImplTest {
         Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(ArgumentMatchers.anyString());
         Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
-        Mockito.verify(bCryptPasswordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
+        Mockito.verify(passwordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.never()).updateRecord(testUser);
         Mockito.reset(userDao);
-        Mockito.reset(bCryptPasswordEncoder);
+        Mockito.reset(passwordEncoder);
     }
 
     @Test

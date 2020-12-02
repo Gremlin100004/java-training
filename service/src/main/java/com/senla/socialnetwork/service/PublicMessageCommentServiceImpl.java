@@ -29,7 +29,7 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
     PublicMessageCommentDao publicMessageCommentDao;
     @Autowired
     PublicMessageDao publicMessageDao;
-    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
 
     @Override

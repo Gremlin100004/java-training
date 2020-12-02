@@ -1,12 +1,12 @@
 version: '3.3'
 services:
-  social-network-mysql:
+  db:
     image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=RootPassword
       - MYSQL_DATABASE=hrinkov_social_network
-      - MYSQL_USER=User
-      - MYSQL_PASSWORD=Password
+      - MYSQL_USER=TestUser
+      - MYSQL_PASSWORD=TestPassword
     ports:
       - 3306:3306
     volumes: 
@@ -17,6 +17,6 @@ services:
       dockerfile: dockerfile/tomcat/Dockerfile
     restart: on-failure
     depends_on:
-      - social-network-mysql
+      - db
     ports:
       - 2308:8080

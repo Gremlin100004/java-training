@@ -77,13 +77,10 @@ public class UserProfileController {
        + "profiles can be filtered by age, university, school or location";
     public static final String UPDATE_USER_PROFILE_DESCRIPTION = "This method is used to update the profile of a "
        + "given user";
-    public static final String GET_SORT_USER_PROFILES_DESCRIPTION = "This method is used to get users profiles. "
-       + "Users profiles can be sorted by surname or registration date";
     public static final String GET_FRIEND_NEAREST_DATE_OF_BIRTH_DESCRIPTION = "This method is used to get a friend "
        + "who will have a birthday soon";
     public static final String GET_USER_PROFILE_DETAILS_DESCRIPTION = "This method is used to get a details of "
        + "user profile";
-    public static final String GET_USER_PROFILE_FRIENDS_DESCRIPTION = "This method is used to get friends profiles";
     public static final String GET_SORTED_FRIENDS_OF_USER_PROFILE_DESCRIPTION = "This method is used to get friends "
        + "profiles. Friends profiles can be sorted by birthday, name or number of friends";
     public static final String GET_USER_PROFILE_SIGNED_FRIENDS_DESCRIPTION = "This method is used to get a list of "
@@ -122,6 +119,8 @@ public class UserProfileController {
                                                                  @RequestParam (required = false) Long schoolId,
                                                                  @ApiParam(value = LOCATION_ID_DESCRIPTION)
                                                                  @RequestParam(required = false) Long locationId,
+                                                                 @ApiParam(value = SORT_PARAMETER_DESCRIPTION)
+                                                                 @RequestParam(required = false) UserProfileSortParameter sortParameter,
                                                                  @ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                                            example = FIRST_RESULT_EXAMPLE)
                                                                  @RequestParam int firstResult,
@@ -129,19 +128,23 @@ public class UserProfileController {
                                                                            example = MAX_RESULTS_EXAMPLE)
                                                                  @RequestParam int maxResults) {
         if (startPeriodDate == null && endPeriodDate == null && universityId == null && schoolId == null
-            && locationId == null) {
+            && locationId == null && sortParameter == null) {
             return userProfileService.getUserProfiles(firstResult, maxResults);
         } else if (startPeriodDate != null && endPeriodDate != null && universityId == null && schoolId == null
-                   && locationId == null) {
+                   && locationId == null && sortParameter == null) {
             return userProfileService.getUserProfilesFilteredByAge(
                 startPeriodDate, endPeriodDate, firstResult, maxResults);
         } else if (startPeriodDate == null && endPeriodDate == null && universityId != null && schoolId == null
-                   && locationId == null) {
+                   && locationId == null && sortParameter == null) {
             return userProfileService.getUserProfilesByUniversityId(universityId, firstResult, maxResults);
         } else if (startPeriodDate == null && endPeriodDate == null && universityId == null && schoolId != null
-                   && locationId == null) {
+                   && locationId == null && sortParameter == null) {
             return userProfileService.getUserProfilesBySchoolId(schoolId, firstResult, maxResults);
-        } else if (startPeriodDate == null && endPeriodDate == null && universityId == null && schoolId == null) {
+        } else if (startPeriodDate == null && endPeriodDate == null && universityId == null && schoolId == null
+                   && locationId == null) {
+            return userProfileService.getSortUserProfiles(sortParameter, firstResult, maxResults);
+        } else if (startPeriodDate == null && endPeriodDate == null && universityId == null && schoolId == null
+                   && sortParameter == null) {
             return userProfileService.getUserProfilesByLocationId(locationId, firstResult, maxResults);
         } else {
             throw new ControllerException("Wrong request parameters");
@@ -175,25 +178,6 @@ public class UserProfileController {
         return new ClientMessageDto(UPDATE_USER_PROFILE_OK_MESSAGE);
     }
 
-    @GetMapping("/sorting")
-    @ApiOperation(value = GET_SORT_USER_PROFILES_DESCRIPTION, response = UserProfileDto.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = OK, message = RETURN_USER_PROFILE_OK_MESSAGE),
-        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
-        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
-        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
-    })
-    public List<UserProfileForIdentificationDto> getSortUserProfiles(@ApiParam(value = SORT_PARAMETER_DESCRIPTION)
-                                                                     @RequestParam UserProfileSortParameter sortParameter,
-                                                                     @ApiParam(value = FIRST_RESULT_DESCRIPTION,
-                                                                               example = FIRST_RESULT_EXAMPLE)
-                                                                     @RequestParam int firstResult,
-                                                                     @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                                               example = MAX_RESULTS_EXAMPLE)
-                                                                     @RequestParam int maxResults) {
-        return userProfileService.getSortUserProfiles(sortParameter, firstResult, maxResults);
-    }
-
     @GetMapping("/friends/birthday")
     @ApiOperation(value = GET_FRIEND_NEAREST_DATE_OF_BIRTH_DESCRIPTION, response = UserProfileDto.class)
     @ApiResponses(value = {
@@ -216,29 +200,11 @@ public class UserProfileController {
     })
     public UserProfileDto getUserProfileDetails(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
                                                           example = USER_PROFILE_ID_EXAMPLE)
-                                               @PathVariable("id") Long userProfileId) {
+                                                @PathVariable("id") Long userProfileId) {
         return userProfileService.getUserProfileDetails(userProfileId);
     }
 
     @GetMapping("/friends")
-    @ApiOperation(value = GET_USER_PROFILE_FRIENDS_DESCRIPTION, response = UserProfileDto.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = OK, message = RETURN_LIST_OF_USER_PROFILES_OK_MESSAGE),
-        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
-        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
-        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
-    })
-    public List<UserProfileForIdentificationDto> getUserProfileFriends(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
-                                                                                 example = FIRST_RESULT_EXAMPLE)
-                                                                       @RequestParam int firstResult,
-                                                                       @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                                                 example = MAX_RESULTS_EXAMPLE)
-                                                                       @RequestParam int maxResults,
-                                                                       HttpServletRequest request) {
-        return userProfileService.getUserProfileFriends(request, firstResult, maxResults);
-    }
-
-    @GetMapping("/friends/sorting")
     @ApiOperation(value = GET_SORTED_FRIENDS_OF_USER_PROFILE_DESCRIPTION, response = UserProfileDto.class)
     @ApiResponses(value = {
         @ApiResponse(code = OK, message = RETURN_LIST_OF_USER_PROFILES_OK_MESSAGE),
@@ -247,8 +213,7 @@ public class UserProfileController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<UserProfileForIdentificationDto> getSortedFriendsOfUserProfile(@ApiParam(value = SORT_PARAMETER_DESCRIPTION)
-                                                                               @RequestParam
-                                                                                       UserProfileFriendSortParameter sortParameter,
+                                                                               @RequestParam(required = false) UserProfileFriendSortParameter sortParameter,
                                                                                @ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                                                          example = FIRST_RESULT_EXAMPLE)
                                                                                @RequestParam int firstResult,
@@ -256,7 +221,11 @@ public class UserProfileController {
                                                                                          example = MAX_RESULTS_EXAMPLE)
                                                                                @RequestParam int maxResults,
                                                                                HttpServletRequest request) {
-        return userProfileService.getSortedFriendsOfUserProfile(request, sortParameter, firstResult, maxResults);
+        if (sortParameter == null) {
+            return userProfileService.getUserProfileFriends(request, firstResult, maxResults);
+        } else {
+            return userProfileService.getSortedFriendsOfUserProfile(request, sortParameter, firstResult, maxResults);
+        }
     }
 
     @GetMapping("/friends/requests")

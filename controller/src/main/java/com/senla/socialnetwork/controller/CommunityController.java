@@ -138,7 +138,7 @@ public class CommunityController {
         }
     }
 
-    @GetMapping("/ownCommunities")
+    @GetMapping("/own")
     @ApiOperation(value = GET_OWN_COMMUNITIES_DESCRIPTION, response = CommunityDto.class)
     @ApiResponses(value = {
         @ApiResponse(code = OK, message = RETURN_LIST_OF_COMMUNITIES_OK_MESSAGE),

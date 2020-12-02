@@ -38,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private UserService userService;
     @Autowired
     private ObjectMapper objectMapper;
-    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
     @Value("${com.senla.socialnetwork.controller.JwtUtil.expiration:3600000}")
     private Integer expiration;

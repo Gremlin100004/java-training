@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Table(name = "tokens")
@@ -24,5 +25,7 @@ public class LogoutToken extends AEntity {
     private SystemUser systemUser;
     @Column(name = "value", nullable = false)
     private String value;
+    @Column(name = "creation_date", nullable = false)
+    private Date creationDate;
 
 }

@@ -30,7 +30,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/communities/posts")
 @Api(tags = "Posts")
 @NoArgsConstructor
 public class PostController {

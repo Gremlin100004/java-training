@@ -49,7 +49,7 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     private RestTemplate restTemplate;
     @Autowired
     private ObjectMapper objectMapper;
-    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
 
     @Override

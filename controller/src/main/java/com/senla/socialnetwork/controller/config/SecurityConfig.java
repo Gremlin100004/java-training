@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
@@ -26,6 +27,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String REGISTRATION_URL = "/users/registration";
     private static final String LOGIN_URL = "/users/login";
+    private static final String API_DOCS_URL = "/v2/api-docs";
+    private static final String CONFIGURATION_URL = "/configuration/ui";
+    private static final String SWAGGER_RESOURCES_URL = "/swagger-resources/**";
+    private static final String SWAGGER_UI_URL = "/swagger-ui.html";
+    private static final String SECURITY_URL = "/configuration/security";
+    private static final String WEBJARS_URL = "/webjars/**";
     private final UserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
 
@@ -57,12 +64,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/v2/api-docs",
-                                   "/configuration/ui",
-                                   "/swagger-resources/**",
-                                   "/configuration/security",
-                                   "/swagger-ui.html",
-                                   "/webjars/**");
+        web.ignoring().antMatchers(API_DOCS_URL,
+                                   CONFIGURATION_URL,
+                                   SWAGGER_RESOURCES_URL,
+                                   SECURITY_URL,
+                                   SWAGGER_UI_URL,
+                                   WEBJARS_URL);
     }
 
     @Bean
@@ -82,7 +89,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -91,7 +98,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         log.debug("[configure]");
         log.trace("[authenticationManagerBuilder: {}]", authenticationManagerBuilder);
         try {
-            authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+            authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
         } catch (Exception exception) {
             log.error("[{}]", exception.getMessage());
             throw new ControllerException("AuthenticationManagerBuilder configuration is wrong");

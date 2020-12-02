@@ -25,7 +25,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/posts/comments")
+@RequestMapping("/communities/posts/comments")
 @Api(tags = "Posts Comments")
 @NoArgsConstructor
 public class PostCommentController {

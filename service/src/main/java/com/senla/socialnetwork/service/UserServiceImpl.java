@@ -6,6 +6,7 @@ import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.LogoutToken;
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.UserProfile;
+import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -15,11 +16,12 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +37,8 @@ public class UserServiceImpl implements UserService {
     private static final int LIST_SIZE = 2;
     private static final int ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA = 0;
     private static final int ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA = 1;
+    private static final int FIRST_RESULT = 0;
+    private static final int MAX_RESULTS = 0;
     @Autowired
     private UserDao userDao;
     @Autowired
@@ -42,10 +46,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserProfileDao userProfileDao;
     @Autowired
-    private BCryptPasswordEncoder cryptPasswordEncoder;
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private AuthenticationManager authenticationManager;
-    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
     @Value("${com.senla.socialnetwork.controller.JwtUtil.expiration:3600000}")
     private Integer expiration;
@@ -114,18 +118,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void addUser(final UserForSecurityDto userDto) {
+    public void addUser(final UserForSecurityDto userDto, final RoleName roleName) {
         log.debug("[addUser]");
         log.debug("[userDto: {}]", userDto);
         SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
         if (systemUser != null) {
             throw new BusinessException("A user with this email address already exists");
         }
-        // Todo return object
-        systemUser = UserMapper.getSystemUser(cryptPasswordEncoder, userDto);
-        SystemUser savedSystemUser = userDao.saveRecord(systemUser);
+        systemUser = UserMapper.getSystemUser(passwordEncoder, userDto, roleName);
+        systemUser = userDao.saveRecord(systemUser);
         UserProfile userProfile = new UserProfile();
-        userProfile.setSystemUser(savedSystemUser);
+        userProfile.setSystemUser(systemUser);
         userProfile.setRegistrationDate(new Date());
         userProfileDao.saveRecord(userProfile);
     }
@@ -154,7 +157,7 @@ public class UserServiceImpl implements UserService {
         logoutToken.setValue(JwtUtil.getToken(request));
         logoutToken.setSystemUser(currentSystemUser);
         tokenDao.saveRecord(logoutToken);
-        UserMapper.getCurrentSystemUser(cryptPasswordEncoder, newUserDto, currentSystemUser);
+        UserMapper.getCurrentSystemUser(passwordEncoder, newUserDto, currentSystemUser);
         userDao.updateRecord(currentSystemUser);
     }
 
@@ -168,6 +171,15 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("Error, there is no such user");
         }
         userDao.deleteRecord(user);
+    }
+
+    @Scheduled(cron = "${cron.expression:0 4 * * * ?}")
+    public void cleanLogoutTokens() {
+        Date currentDate = new Date();
+        List<LogoutToken> logoutTokens = tokenDao.getAllRecords(FIRST_RESULT, MAX_RESULTS);
+        logoutTokens.stream()
+            .filter(token -> token.getCreationDate().getTime() - currentDate.getTime() > expiration)
+            .forEach(token -> tokenDao.deleteRecord(token));
     }
 
 }

@@ -42,7 +42,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private UniversityDao universityDao;
     @Autowired
     private PrivateMessageDao privateMessageDao;
-    @Value("${com.senla.socialnetwork.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
+    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
     private String secretKey;
 
     @Override
