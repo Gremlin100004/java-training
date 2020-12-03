@@ -21,11 +21,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
@@ -51,8 +51,8 @@ public class PrivateMessageServiceImplTest {
     UniversityDao universityDao;
     @Autowired
     private HttpServletRequest request;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
+    @Autowired
+    private SecretKey secretKey;
 
     @Test
     void PrivateMessageServiceImpl_getPrivateMessages() {
@@ -63,7 +63,8 @@ public class PrivateMessageServiceImplTest {
         List<PrivateMessageDto> resultPrivateMessagesDto = privateMessageService.getPrivateMessages(
             FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultPrivateMessagesDto);
-        Assertions.assertEquals(PrivateMessageTestData.getRightNumberPrivateMessages(), resultPrivateMessagesDto.size());
+        Assertions.assertEquals(
+            PrivateMessageTestData.getRightNumberPrivateMessages(), resultPrivateMessagesDto.size());
         Assertions.assertFalse(resultPrivateMessagesDto.isEmpty());
         Assertions.assertEquals(resultPrivateMessagesDto, privateMessagesDto);
         Mockito.verify(privateMessageDao, Mockito.times(1)).getAllRecords(
@@ -83,7 +84,7 @@ public class PrivateMessageServiceImplTest {
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<PrivateMessageDto> resultPrivateMessagesDto = privateMessageService.getPrivateMessages(
-            request, FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, FIRST_RESULT, NORMAL_MAX_RESULTS, secretKey);
         Assertions.assertNotNull(resultPrivateMessagesDto);
         Assertions.assertEquals(PrivateMessageTestData.getRightNumberPrivateMessages(), resultPrivateMessagesDto.size());
         Assertions.assertFalse(resultPrivateMessagesDto.isEmpty());
@@ -102,7 +103,7 @@ public class PrivateMessageServiceImplTest {
         Mockito.doReturn(null).when(userProfileDao).findByEmail(UserTestData.getEmail());
 
         Assertions.assertThrows(BusinessException.class, () -> privateMessageService.getPrivateMessages(
-            request, FIRST_RESULT, NORMAL_MAX_RESULTS));
+            request, FIRST_RESULT, NORMAL_MAX_RESULTS, secretKey));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(privateMessageDao, Mockito.never()).getByEmail(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
@@ -119,7 +120,7 @@ public class PrivateMessageServiceImplTest {
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<PrivateMessageDto> resultPrivateMessagesDto = privateMessageService.getUnreadMessages(
-            request, FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, FIRST_RESULT, NORMAL_MAX_RESULTS, secretKey);
         Assertions.assertNotNull(resultPrivateMessagesDto);
         Assertions.assertEquals(PrivateMessageTestData.getRightNumberPrivateMessages(), resultPrivateMessagesDto.size());
         Assertions.assertFalse(resultPrivateMessagesDto.isEmpty());
@@ -140,9 +141,10 @@ public class PrivateMessageServiceImplTest {
             UserTestData.getEmail(), START_PERIOD_DATE, END_PERIOD_DATE, FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<PrivateMessageDto> resultPrivateMessagesDto = privateMessageService.getMessageFilteredByPeriod(
-            request, START_PERIOD_DATE, END_PERIOD_DATE, FIRST_RESULT, NORMAL_MAX_RESULTS);
+            request, START_PERIOD_DATE, END_PERIOD_DATE, FIRST_RESULT, NORMAL_MAX_RESULTS, secretKey);
         Assertions.assertNotNull(resultPrivateMessagesDto);
-        Assertions.assertEquals(PrivateMessageTestData.getRightNumberPrivateMessages(), resultPrivateMessagesDto.size());
+        Assertions.assertEquals(
+            PrivateMessageTestData.getRightNumberPrivateMessages(), resultPrivateMessagesDto.size());
         Assertions.assertFalse(resultPrivateMessagesDto.isEmpty());
         Assertions.assertEquals(resultPrivateMessagesDto, locationsDto);
         Mockito.verify(privateMessageDao, Mockito.times(1)).getMessageFilteredByPeriod(
@@ -160,7 +162,8 @@ public class PrivateMessageServiceImplTest {
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(privateMessage).when(privateMessageDao).saveRecord(ArgumentMatchers.any(PrivateMessage.class));
 
-        PrivateMessageDto resultPrivateMessageDto = privateMessageService.addMessage(request, privateMessageDto);
+        PrivateMessageDto resultPrivateMessageDto = privateMessageService.addMessage(
+            request, privateMessageDto, secretKey);
         Assertions.assertNotNull(resultPrivateMessageDto);
         Mockito.verify(privateMessageDao, Mockito.times(1)).saveRecord(
             ArgumentMatchers.any(PrivateMessage.class));
@@ -181,7 +184,7 @@ public class PrivateMessageServiceImplTest {
         Mockito.doReturn(privateMessage).when(privateMessageDao).findById(PrivateMessageTestData.getPrivateMessageId());
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
 
-        Assertions.assertDoesNotThrow(() -> privateMessageService.updateMessage(request, privateMessageDto));
+        Assertions.assertDoesNotThrow(() -> privateMessageService.updateMessage(request, privateMessageDto, secretKey));
         Mockito.verify(privateMessageDao, Mockito.times(1)).updateRecord(
             ArgumentMatchers.any(PrivateMessage.class));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -210,7 +213,7 @@ public class PrivateMessageServiceImplTest {
         Mockito.doReturn(wrongUserProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
 
         Assertions.assertThrows(BusinessException.class, () -> privateMessageService.updateMessage(
-            request, privateMessageDto));
+            request, privateMessageDto, secretKey));
         Mockito.verify(privateMessageDao, Mockito.never()).updateRecord(
             ArgumentMatchers.any(PrivateMessage.class));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -232,7 +235,7 @@ public class PrivateMessageServiceImplTest {
             UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
 
         Assertions.assertDoesNotThrow(() -> privateMessageService.deleteMessageByUser(
-            request, PrivateMessageTestData.getPrivateMessageId()));
+            request, PrivateMessageTestData.getPrivateMessageId(), secretKey));
         Mockito.verify(privateMessageDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
         Mockito.verify(privateMessageDao, Mockito.times(1)).updateRecord(
@@ -248,7 +251,7 @@ public class PrivateMessageServiceImplTest {
             UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
 
         Assertions.assertThrows(BusinessException.class, () -> privateMessageService.deleteMessageByUser(
-            request, PrivateMessageTestData.getPrivateMessageId()));
+            request, PrivateMessageTestData.getPrivateMessageId(), secretKey));
         Mockito.verify(privateMessageDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
         Mockito.verify(privateMessageDao, Mockito.never()).updateRecord(
@@ -266,7 +269,7 @@ public class PrivateMessageServiceImplTest {
             UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
 
         Assertions.assertThrows(BusinessException.class, () -> privateMessageService.deleteMessageByUser(
-            request, PrivateMessageTestData.getPrivateMessageId()));
+            request, PrivateMessageTestData.getPrivateMessageId(), secretKey));
         Mockito.verify(privateMessageDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
         Mockito.verify(privateMessageDao, Mockito.never()).updateRecord(
@@ -289,7 +292,8 @@ public class PrivateMessageServiceImplTest {
     @Test
     void PrivateMessageServiceImpl_deleteMessage_privateMessageDao_findById_nullObject() {
         PrivateMessage privateMessage = PrivateMessageTestData.getTestPrivateMessage();
-        Mockito.doReturn(null).when(privateMessageDao).findById(PrivateMessageTestData.getPrivateMessageId());
+        Mockito.doReturn(null).when(
+            privateMessageDao).findById(PrivateMessageTestData.getPrivateMessageId());
 
         Assertions.assertThrows(BusinessException.class, () -> privateMessageService.deleteMessage(
             PrivateMessageTestData.getPrivateMessageId()));

@@ -12,10 +12,10 @@ import com.senla.socialnetwork.service.util.PublicMessageCommentMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -29,8 +29,6 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
     PublicMessageCommentDao publicMessageCommentDao;
     @Autowired
     PublicMessageDao publicMessageDao;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
 
     @Override
     @Transactional
@@ -43,7 +41,9 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public void updateComment(final HttpServletRequest request, final PublicMessageCommentDto publicMessageCommentDto) {
+    public void updateComment(final HttpServletRequest request,
+                              final PublicMessageCommentDto publicMessageCommentDto,
+                              final SecretKey secretKey) {
         log.debug("[updateComment]");
         log.debug("[request: {}, publicMessageCommentDto: {}]", request, publicMessageCommentDto);
         UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
@@ -58,7 +58,7 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public void deleteCommentByUser(final HttpServletRequest request, final Long commentId) {
+    public void deleteCommentByUser(final HttpServletRequest request, final Long commentId, final SecretKey secretKey) {
         log.debug("[deleteCommentByUser]");
         log.debug("[request: {}, commentId: {}]", request, commentId);
         PublicMessageComment publicMessageComment = publicMessageCommentDao.findByIdAndEmail(JwtUtil.extractUsername(

@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.controller;
 
+import com.senla.socialnetwork.controller.util.SecretKeyUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.service.PostCommentService;
@@ -62,9 +63,9 @@ public class PostCommentController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<PostCommentDto> getComments(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                            @RequestParam int firstResult,
+                                            @RequestParam final int firstResult,
                                             @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                            @RequestParam int maxResults) {
+                                            @RequestParam final int maxResults) {
         return postCommentService.getComments(firstResult, maxResults);
     }
 
@@ -77,9 +78,9 @@ public class PostCommentController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateComment(@ApiParam(value = COMMENT_DTO_DESCRIPTION)
-                                          @RequestBody @Valid PostCommentDto postCommentDto,
-                                          HttpServletRequest request) {
-        postCommentService.updateComment(request, postCommentDto);
+                                          @RequestBody @Valid final PostCommentDto postCommentDto,
+                                          final HttpServletRequest request) {
+        postCommentService.updateComment(request, postCommentDto, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(UPDATE_COMMENT_OK_MESSAGE);
     }
 
@@ -92,9 +93,9 @@ public class PostCommentController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto deleteCommentByUser(@ApiParam(value = COMMENT_ID_DESCRIPTION)
-                                                @PathVariable("id") Long commentId,
-                                                HttpServletRequest request) {
-        postCommentService.deleteCommentByUser(request, commentId);
+                                                @PathVariable("id") final Long commentId,
+                                                final HttpServletRequest request) {
+        postCommentService.deleteCommentByUser(request, commentId, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(DELETE_COMMENT_OK_MESSAGE);
     }
 
@@ -108,7 +109,7 @@ public class PostCommentController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto deleteComment(@ApiParam(value = COMMENT_ID_DESCRIPTION)
-                                          @PathVariable("id") Long commentId) {
+                                          @PathVariable("id") final Long commentId) {
         postCommentService.deleteComment(commentId);
         return new ClientMessageDto(DELETE_COMMENT_OK_MESSAGE);
     }

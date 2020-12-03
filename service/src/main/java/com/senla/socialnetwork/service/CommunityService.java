@@ -6,6 +6,7 @@ import com.senla.socialnetwork.dto.CommunityForCreateDto;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.dto.PostForCreationDto;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -16,26 +17,43 @@ public interface CommunityService {
 
     List<CommunityDto> getCommunitiesSortiedByNumberOfSubscribers(int firstResult, int maxResults);
 
-    List<CommunityDto> getCommunitiesFilteredByType(CommunityType communityType, int firstResult, int maxResults);
+    List<CommunityDto> getCommunitiesFilteredByType(CommunityType communityType,
+                                                    int firstResult,
+                                                    int maxResults);
 
-    List<CommunityDto> getOwnCommunities(HttpServletRequest request, int firstResult, int maxResults);
+    List<CommunityDto> getOwnCommunities(HttpServletRequest request,
+                                         int firstResult,
+                                         int maxResults,
+                                         SecretKey secretKey);
 
-    List<CommunityDto> getSubscribedCommunities(HttpServletRequest request, int firstResult, int maxResults);
+    List<CommunityDto> getSubscribedCommunities(HttpServletRequest request,
+                                                int firstResult,
+                                                int maxResults,
+                                                SecretKey secretKey);
 
-    void subscribeToCommunity(HttpServletRequest request, Long communityId);
+    void subscribeToCommunity(HttpServletRequest request, Long communityId, SecretKey secretKey);
 
-    void unsubscribeFromCommunity(HttpServletRequest request, Long communityId);
+    void unsubscribeFromCommunity(HttpServletRequest request, Long communityId, SecretKey secretKey);
 
     List<PostDto> getCommunityPosts(Long communityId, int firstResult, int maxResults);
 
-    CommunityDto addCommunity(HttpServletRequest request, CommunityForCreateDto communityDto);
+    CommunityDto addCommunity(HttpServletRequest request,
+                              CommunityForCreateDto communityDto,
+                              SecretKey secretKey);
 
-    void updateCommunity(HttpServletRequest request, CommunityDto communityDto);
+    void updateCommunity(HttpServletRequest request,
+                         CommunityDto communityDto,
+                         SecretKey secretKey);
 
-    void deleteCommunityByUser(HttpServletRequest request, Long communityId);
+    void deleteCommunityByUser(HttpServletRequest request,
+                               Long communityId,
+                               SecretKey secretKey);
 
     void deleteCommunity(Long communityId);
 
-    PostDto addPostToCommunity(HttpServletRequest request, PostForCreationDto postDto, Long communityId);
+    PostDto addPostToCommunity(HttpServletRequest request,
+                               PostForCreationDto postDto,
+                               Long communityId,
+                               SecretKey secretKey);
 
 }

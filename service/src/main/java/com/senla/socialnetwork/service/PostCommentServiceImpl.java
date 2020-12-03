@@ -13,10 +13,10 @@ import com.senla.socialnetwork.service.util.PostCommentMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -32,8 +32,6 @@ public class PostCommentServiceImpl implements PostCommentService {
     PostCommentDao postCommentDao;
     @Autowired
     UserProfileDao userProfileDao;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
 
     @Override
     @Transactional
@@ -44,7 +42,9 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public void updateComment(final HttpServletRequest request, final PostCommentDto postCommentDto) {
+    public void updateComment(final HttpServletRequest request,
+                              final PostCommentDto postCommentDto,
+                              final SecretKey secretKey) {
         log.debug("[updateComment]");
         log.debug("[request: {}, postCommentDto: {}]", request, postCommentDto);
         UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
@@ -59,7 +59,9 @@ public class PostCommentServiceImpl implements PostCommentService {
 
     @Override
     @Transactional
-    public void deleteCommentByUser(final HttpServletRequest request, final Long commentId) {
+    public void deleteCommentByUser(final HttpServletRequest request,
+                                    final Long commentId,
+                                    final SecretKey secretKey) {
         log.debug("[deleteCommentByUser]");
         log.debug("[email: {}, commentId: {}]", request, commentId);
         PostComment postComment = postCommentDao.findByIdAndEmail(JwtUtil.extractUsername(

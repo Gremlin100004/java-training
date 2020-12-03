@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.controller;
 
+import com.senla.socialnetwork.controller.util.SecretKeyUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.service.PublicMessageCommentService;
@@ -10,7 +11,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,8 +57,6 @@ public class PublicMessageCommentController {
        + "by admin";
     @Autowired
     private PublicMessageCommentService publicMessageCommentService;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping
@@ -69,10 +67,12 @@ public class PublicMessageCommentController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<PublicMessageCommentDto> getComments(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                                     @RequestParam int firstResult,
-                                                     @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                                     @RequestParam int maxResults) {
+    public List<PublicMessageCommentDto> getComments(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                               example = FIRST_RESULT_EXAMPLE)
+                                                     @RequestParam final int firstResult,
+                                                     @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                               example = MAX_RESULTS_EXAMPLE)
+                                                     @RequestParam final int maxResults) {
         return publicMessageCommentService.getComments(firstResult, maxResults);
     }
 
@@ -85,9 +85,9 @@ public class PublicMessageCommentController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateComment(@ApiParam(value = COMMENTS_DTO_DESCRIPTION)
-                                          @RequestBody @Valid PublicMessageCommentDto publicMessageCommentDto,
-                                          HttpServletRequest request) {
-        publicMessageCommentService.updateComment(request, publicMessageCommentDto);
+                                          @RequestBody @Valid final PublicMessageCommentDto publicMessageCommentDto,
+                                          final HttpServletRequest request) {
+        publicMessageCommentService.updateComment(request, publicMessageCommentDto, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(UPDATE_MESSAGE_OK_MESSAGE);
     }
 
@@ -101,9 +101,9 @@ public class PublicMessageCommentController {
     })
     public ClientMessageDto deleteCommentByUser(@ApiParam(value = COMMENTS_ID_DESCRIPTION,
                                                           example = COMMENTS_ID_EXAMPLE)
-                                                @PathVariable("id") Long commentId,
-                                                HttpServletRequest request) {
-         publicMessageCommentService.deleteCommentByUser(request, commentId);
+                                                @PathVariable("id") final Long commentId,
+                                                final HttpServletRequest request) {
+         publicMessageCommentService.deleteCommentByUser(request, commentId, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
     }
 
@@ -118,7 +118,7 @@ public class PublicMessageCommentController {
     })
     public ClientMessageDto deleteComment(@ApiParam(value = COMMENTS_ID_DESCRIPTION,
                                                     example = COMMENTS_ID_EXAMPLE)
-                                          @PathVariable("id") Long commentId) {
+                                          @PathVariable("id") final Long commentId) {
         publicMessageCommentService.deleteComment(commentId);
         return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
     }

@@ -7,6 +7,7 @@ import com.senla.socialnetwork.dto.UserForSecurityDto;
 import com.senla.socialnetwork.service.util.JwtUtil;
 import org.springframework.security.core.userdetails.User;
 
+import javax.crypto.SecretKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +48,7 @@ public class UserTestData {
         return EMPTY_TOKEN;
     }
 
-    public static String getAuthorizationHeader(String secretKey){
+    public static String getAuthorizationHeader(SecretKey secretKey){
         User user = new User(EMAIL, WRONG_EMAIL, new ArrayList<>());
         return TOKEN_TYPE + JwtUtil.generateToken(user, secretKey, EXPIRATION);
     }

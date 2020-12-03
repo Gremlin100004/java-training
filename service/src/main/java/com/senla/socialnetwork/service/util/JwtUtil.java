@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,40 +28,40 @@ public class JwtUtil {
     }
 
     public static String generateToken(final UserDetails userDetails,
-                                       final String secretKey,
+                                       final SecretKey secretKey,
                                        final Integer expiration) {
         log.debug("[generateToken]");
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername()).setIssuedAt(
             new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + expiration))
-            .signWith(SignatureAlgorithm.HS256, secretKey).compact();
+            .signWith(secretKey, SignatureAlgorithm.HS256).compact();
     }
 
-    public static Boolean validateToken(final String token, final UserDetails userDetails, final String secretKey) {
+    public static Boolean validateToken(final String token, final UserDetails userDetails, final SecretKey secretKey) {
         log.debug("[validateToken]");
         String username = extractUsername(token, secretKey);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token, secretKey));
     }
 
-    public static String extractUsername(final String token, final String secretKey) {
+    public static String extractUsername(final String token, final SecretKey secretKey) {
         log.debug("[extractUsername]");
         return extractClaim(token, Claims::getSubject, secretKey);
     }
 
-    private static Date extractExpiration(final String token, final String secretKey) {
+    private static Date extractExpiration(final String token, final SecretKey secretKey) {
         log.debug("[extractExpiration]");
         return extractClaim(token, Claims::getExpiration, secretKey);
     }
 
     private static <T> T extractClaim(final String token,
                                       final Function<Claims, T> claimsResolver,
-                                      final String secretKey) {
+                                      final SecretKey secretKey) {
         log.debug("[extractClaim]");
         Claims claims = extractAllClaims(token, secretKey);
         return claimsResolver.apply(claims);
     }
 
-    private static Claims extractAllClaims(final String token, final String secretKey) {
+    private static Claims extractAllClaims(final String token, final SecretKey secretKey) {
         log.debug("[extractClaim]");
         try {
             return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
@@ -70,7 +71,7 @@ public class JwtUtil {
         }
     }
 
-    private static Boolean isTokenExpired(final String token, final String secretKey) {
+    private static Boolean isTokenExpired(final String token, final SecretKey secretKey) {
         return extractExpiration(token, secretKey).before(new Date());
     }
 

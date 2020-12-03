@@ -18,10 +18,10 @@ import com.senla.socialnetwork.service.util.PostMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +38,6 @@ public class CommunityServiceImpl implements CommunityService {
     PostDao postDao;
     @Autowired
     UserProfileDao userProfileDao;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
 
     @Override
     @Transactional
@@ -80,7 +78,8 @@ public class CommunityServiceImpl implements CommunityService {
     @Transactional
     public List<CommunityDto> getOwnCommunities(final HttpServletRequest request,
                                                 final int firstResult,
-                                                final int maxResults) {
+                                                final int maxResults,
+                                                final SecretKey secretKey) {
         log.debug("[getOwnCommunities]");
         log.trace("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         return CommunityMapper.getCommunityDto(communityDao.getOwnCommunitiesByEmail(JwtUtil.extractUsername(
@@ -91,7 +90,8 @@ public class CommunityServiceImpl implements CommunityService {
     @Transactional
     public List<CommunityDto> getSubscribedCommunities(final HttpServletRequest request,
                                                        final int firstResult,
-                                                       final int maxResults) {
+                                                       final int maxResults,
+                                                       final SecretKey secretKey) {
         log.debug("[getSubscribedCommunities]");
         log.trace("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
@@ -101,7 +101,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void subscribeToCommunity(final HttpServletRequest request, final Long communityId) {
+    public void subscribeToCommunity(final HttpServletRequest request,
+                                     final Long communityId,
+                                     final SecretKey secretKey) {
         log.debug("[subscribeToCommunity]");
         log.debug("[request: {}, communityId: {}]", request, communityId);
         Community community = communityDao.findById(communityId);
@@ -121,7 +123,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void unsubscribeFromCommunity(final HttpServletRequest request, final Long communityId) {
+    public void unsubscribeFromCommunity(final HttpServletRequest request,
+                                         final Long communityId,
+                                         final SecretKey secretKey) {
         log.debug("[subscribeToCommunity]");
         log.debug("[request: {}, communityId: {}]", request, communityId);
         Community community = communityDao.findById(communityId);
@@ -152,7 +156,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public CommunityDto addCommunity(final HttpServletRequest request, final CommunityForCreateDto communityDto) {
+    public CommunityDto addCommunity(final HttpServletRequest request,
+                                     final CommunityForCreateDto communityDto,
+                                     final SecretKey secretKey) {
         log.debug("[addCommunity]");
         log.debug("[request: {}, communityDto: {}]", request, communityDto);
         return CommunityMapper.getCommunityDto(communityDao.saveRecord(CommunityMapper.getNewCommunity(
@@ -161,7 +167,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void updateCommunity(final HttpServletRequest request, final CommunityDto communityDto) {
+    public void updateCommunity(final HttpServletRequest request,
+                                final CommunityDto communityDto,
+                                final SecretKey secretKey) {
         log.debug("[updateCommunity]");
         log.debug("[request: {}, communityDto: {}]", request, communityDto);
         UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
@@ -175,7 +183,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public void deleteCommunityByUser(final HttpServletRequest request, final Long communityId) {
+    public void deleteCommunityByUser(final HttpServletRequest request,
+                                      final Long communityId,
+                                      final SecretKey secretKey) {
         log.debug("[deleteMessageByUser]");
         log.debug("[request: {}, messageId: {}]", request, communityId);
         Community community = communityDao.findByIdAndEmail(JwtUtil.extractUsername(
@@ -208,8 +218,9 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public PostDto addPostToCommunity(final HttpServletRequest request,
-                                   final PostForCreationDto postDto,
-                                   final Long communityId) {
+                                      final PostForCreationDto postDto,
+                                      final Long communityId,
+                                      final SecretKey secretKey) {
         log.debug("[addPosts]");
         log.debug("[request: {}, postDto: {}, communityId: {}]", request,  postDto, communityId);
         Community community = communityDao.findByIdAndEmail(JwtUtil.extractUsername(

@@ -17,11 +17,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -38,8 +38,8 @@ public class WeatherConditionServiceImplTest {
     private WeatherConditionDao weatherConditionDao;
     @Autowired
     private HttpServletRequest request;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
+    @Autowired
+    private SecretKey secretKey;
 
     @Test
     void WeatherConditionServiceImpl_getWeatherConditions() {
@@ -66,7 +66,7 @@ public class WeatherConditionServiceImplTest {
         Mockito.doReturn(location).when(locationDao).getLocation(UserTestData.getEmail());
         Mockito.doReturn(weatherCondition).when(weatherConditionDao).findByLocation(location);
 
-        WeatherConditionDto resultWeatherConditionDto = weatherConditionService.getWeatherCondition(request);
+        WeatherConditionDto resultWeatherConditionDto = weatherConditionService.getWeatherCondition(request, secretKey);
         Assertions.assertNotNull(resultWeatherConditionDto);
         Mockito.verify(locationDao, Mockito.times(1)).getLocation(UserTestData.getEmail());
         Mockito.verify(weatherConditionDao, Mockito.times(1)).findByLocation(location);
@@ -85,7 +85,8 @@ public class WeatherConditionServiceImplTest {
         Mockito.doReturn(null).when(locationDao).getLocation(UserTestData.getEmail());
         Mockito.doReturn(weatherCondition).when(weatherConditionDao).findByLocation(location);
 
-        Assertions.assertThrows(BusinessException.class, () -> weatherConditionService.getWeatherCondition(request));
+        Assertions.assertThrows(BusinessException.class, () -> weatherConditionService.getWeatherCondition(
+            request, secretKey));
         Mockito.verify(locationDao, Mockito.times(1)).getLocation(UserTestData.getEmail());
         Mockito.verify(weatherConditionDao, Mockito.never()).findByLocation(location);
         Mockito.verify(weatherConditionDao, Mockito.never()).saveRecord(

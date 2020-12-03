@@ -13,6 +13,8 @@ import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.dao.WeatherConditionDao;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,6 +23,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 
 @Configuration
@@ -106,5 +109,11 @@ public class TestConfig {
     HttpServletRequest request() {
         return Mockito.mock(HttpServletRequest.class);
     }
+
+    @Bean
+    SecretKey secretKey() {
+        return Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    }
+
 
 }

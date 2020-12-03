@@ -2,6 +2,7 @@ package com.senla.socialnetwork.controller.config.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senla.socialnetwork.controller.exception.ControllerException;
+import com.senla.socialnetwork.controller.util.SecretKeyUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.service.UserService;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -38,8 +39,6 @@ public class JwtFilter extends OncePerRequestFilter {
     private UserService userService;
     @Autowired
     private ObjectMapper objectMapper;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
     @Value("${com.senla.socialnetwork.controller.JwtUtil.expiration:3600000}")
     private Integer expiration;
 
@@ -52,13 +51,13 @@ public class JwtFilter extends OncePerRequestFilter {
             String username = null;
             String token = JwtUtil.getToken(request);
             if (token != null) {
-                username = JwtUtil.extractUsername(token, secretKey);
+                username = JwtUtil.extractUsername(token, SecretKeyUtil.getSecretKey());
             }
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null
                 && !userService.getUserLogoutToken(username).equals(token)) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                if (JwtUtil.validateToken(token, userDetails, secretKey)) {
+                if (JwtUtil.validateToken(token, userDetails, SecretKeyUtil.getSecretKey())) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     usernamePasswordAuthenticationToken

@@ -1,6 +1,7 @@
 package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.controller.exception.ControllerException;
+import com.senla.socialnetwork.controller.util.SecretKeyUtil;
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.CommunityDto;
@@ -104,10 +105,10 @@ public class CommunityController {
     })
     public List<CommunityDto> getAllCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                           example = FIRST_RESULT_EXAMPLE)
-                                                @RequestParam int firstResult,
+                                                @RequestParam final int firstResult,
                                                 @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                           example = MAX_RESULTS_EXAMPLE)
-                                                @RequestParam int maxResults) {
+                                                @RequestParam final int maxResults) {
         return communityService.getAllCommunities(firstResult, maxResults);
     }
 
@@ -120,13 +121,13 @@ public class CommunityController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<CommunityDto> getCommunities(@ApiParam(value = SORT_PARAMETER_DESCRIPTION)
-                                             @RequestParam(required = false) CommunitySortParameter sortParameter,
+                                             @RequestParam(required = false) final CommunitySortParameter sortParameter,
                                              @ApiParam(value = COMMUNITY_TYPE_DESCRIPTION)
-                                             @RequestParam(required = false) CommunityType communityType,
+                                             @RequestParam(required = false) final CommunityType communityType,
                                              @ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                             @RequestParam int firstResult,
+                                             @RequestParam final int firstResult,
                                              @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                             @RequestParam int maxResults) {
+                                             @RequestParam final int maxResults) {
         if (sortParameter == null && communityType == null) {
             return communityService.getCommunities(firstResult, maxResults);
         } else if (sortParameter == CommunitySortParameter.NUMBER_OF_SUBSCRIBERS && communityType == null) {
@@ -148,12 +149,12 @@ public class CommunityController {
     })
     public List<CommunityDto> getOwnCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                           example = FIRST_RESULT_EXAMPLE)
-                                                @RequestParam int firstResult,
+                                                @RequestParam final int firstResult,
                                                 @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                           example = MAX_RESULTS_EXAMPLE)
-                                                @RequestParam int maxResults,
-                                                HttpServletRequest request) {
-        return communityService.getOwnCommunities(request, firstResult, maxResults);
+                                                @RequestParam final int maxResults,
+                                                final HttpServletRequest request) {
+        return communityService.getOwnCommunities(request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
     }
 
     @GetMapping("/{id}/posts")
@@ -168,9 +169,9 @@ public class CommunityController {
                                                      example = COMMUNITY_ID_FOR_GET_POSTS)
                                            @PathVariable("id") Long communityId,
                                            @ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                           @RequestParam int firstResult,
+                                           @RequestParam final int firstResult,
                                            @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                           @RequestParam int maxResults) {
+                                           @RequestParam final int maxResults) {
         return communityService.getCommunityPosts(communityId, firstResult, maxResults);
     }
 
@@ -183,13 +184,13 @@ public class CommunityController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<CommunityDto> getSubscribedCommunities(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
-        example = FIRST_RESULT_EXAMPLE)
-                                                       @RequestParam int firstResult,
+                                                                 example = FIRST_RESULT_EXAMPLE)
+                                                       @RequestParam final int firstResult,
                                                        @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                           example = MAX_RESULTS_EXAMPLE)
-                                                       @RequestParam int maxResults,
+                                                                 example = MAX_RESULTS_EXAMPLE)
+                                                       @RequestParam final int maxResults,
                                                        HttpServletRequest request) {
-        return communityService.getSubscribedCommunities(request, firstResult, maxResults);
+        return communityService.getSubscribedCommunities(request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
     }
 
     @PutMapping("/{id}/subscriptions")
@@ -202,9 +203,9 @@ public class CommunityController {
     })
     public ClientMessageDto subscribeToCommunity(@ApiParam(value = COMMUNITY_ID_DESCRIPTION,
                                                            example = COMMUNITY_ID_FOR_SUBSCRIBE_POSTS)
-                                                 @PathVariable("id") Long communityId,
-                                                 HttpServletRequest request) {
-        communityService.subscribeToCommunity(request, communityId);
+                                                 @PathVariable("id") final Long communityId,
+                                                 final HttpServletRequest request) {
+        communityService.subscribeToCommunity(request, communityId, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(SUBSCRIBE_TO_COMMUNITY_OK_MESSAGE);
     }
 
@@ -218,9 +219,9 @@ public class CommunityController {
     })
     public ClientMessageDto unsubscribeFromCommunity(@ApiParam(value = COMMUNITY_ID_DESCRIPTION,
                                                                example = COMMUNITY_ID_FOR_SUBSCRIBE_POSTS)
-                                                     @PathVariable("id") Long communityId,
-                                                     HttpServletRequest request) {
-        communityService.unsubscribeFromCommunity(request, communityId);
+                                                     @PathVariable("id") final Long communityId,
+                                                     final HttpServletRequest request) {
+        communityService.unsubscribeFromCommunity(request, communityId, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(UNSUBSCRIBE_TO_COMMUNITY_OK_MESSAGE);
     }
 
@@ -234,9 +235,9 @@ public class CommunityController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public CommunityDto addCommunity(@ApiParam(value = COMMUNITY_DTO_DESCRIPTION)
-                                     @RequestBody @Valid CommunityForCreateDto communityDto,
-                                     HttpServletRequest request) {
-        return communityService.addCommunity(request, communityDto);
+                                     @RequestBody @Valid final CommunityForCreateDto communityDto,
+                                     final HttpServletRequest request) {
+        return communityService.addCommunity(request, communityDto, SecretKeyUtil.getSecretKey());
     }
 
     @PutMapping
@@ -248,9 +249,9 @@ public class CommunityController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateCommunity(@ApiParam(value = COMMUNITY_DTO_DESCRIPTION)
-                                            @RequestBody @Valid CommunityDto communityDto,
-                                            HttpServletRequest request) {
-        communityService.updateCommunity(request, communityDto);
+                                            @RequestBody @Valid final CommunityDto communityDto,
+                                            final HttpServletRequest request) {
+        communityService.updateCommunity(request, communityDto, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(UPDATE_COMMUNITY_OK_MESSAGE);
     }
 
@@ -264,9 +265,9 @@ public class CommunityController {
     })
     public ClientMessageDto deleteCommunityByUser(@ApiParam(value = COMMUNITY_ID_DESCRIPTION,
                                                             example = COMMUNITY_ID_FOR_DELETE)
-                                                  @PathVariable("id") Long communityId,
-                                                  HttpServletRequest request) {
-        communityService.deleteCommunityByUser(request, communityId);
+                                                  @PathVariable("id") final Long communityId,
+                                                  final HttpServletRequest request) {
+        communityService.deleteCommunityByUser(request, communityId, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(DELETE_COMMUNITY_OK_MESSAGE);
     }
 
@@ -281,7 +282,7 @@ public class CommunityController {
     })
     public ClientMessageDto deleteCommunity(@ApiParam(value = COMMUNITY_ID_DESCRIPTION,
                                                       example = COMMUNITY_ID_FOR_DELETE)
-                                            @PathVariable("id") Long communityId) {
+                                            @PathVariable("id") final Long communityId) {
         communityService.deleteCommunity(communityId);
         return new ClientMessageDto(DELETE_COMMUNITY_OK_MESSAGE);
     }
@@ -296,12 +297,12 @@ public class CommunityController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public PostDto addPostToCommunity(@ApiParam(value = POST_DTO_DESCRIPTION)
-                                               @RequestBody @Valid PostForCreationDto postDto,
-                                               @ApiParam(value = COMMUNITY_ID_DESCRIPTION,
-                                                         example = COMMUNITY_ID_FOR_ADD_POST)
-                                               @PathVariable("id") Long communityId,
-                                               HttpServletRequest request) {
-        return communityService.addPostToCommunity(request, postDto, communityId);
+                                      @RequestBody @Valid final PostForCreationDto postDto,
+                                      @ApiParam(value = COMMUNITY_ID_DESCRIPTION,
+                                                example = COMMUNITY_ID_FOR_ADD_POST)
+                                      @PathVariable("id") final Long communityId,
+                                      final HttpServletRequest request) {
+        return communityService.addPostToCommunity(request, postDto, communityId, SecretKeyUtil.getSecretKey());
     }
 
 }

@@ -12,10 +12,10 @@ import com.senla.socialnetwork.service.util.PrivateMessageMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
@@ -28,8 +28,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     PrivateMessageDao privateMessageDao;
     @Autowired
     UserProfileDao userProfileDao;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
 
     @Override
     @Transactional
@@ -43,7 +41,8 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Transactional
     public List<PrivateMessageDto> getPrivateMessages(final HttpServletRequest request,
                                                       final int firstResult,
-                                                      final int maxResults) {
+                                                      final int maxResults,
+                                                      final SecretKey secretKey) {
         log.debug("[getPrivateMessages]");
         log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
@@ -59,7 +58,8 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Transactional
     public List<PrivateMessageDto> getUnreadMessages(final HttpServletRequest request,
                                                      final int firstResult,
-                                                     final int maxResults) {
+                                                     final int maxResults,
+                                                     final SecretKey secretKey) {
         log.debug("[getUnreadMessages]");
         log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
@@ -73,7 +73,8 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
                                                               final Date startPeriodDate,
                                                               final Date endPeriodDate,
                                                               final int firstResult,
-                                                              final int maxResults) {
+                                                              final int maxResults,
+                                                              final SecretKey secretKey) {
         log.debug("[getMessageFilteredByPeriod]");
         log.debug("[request: {}, startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
                   request, startPeriodDate, endPeriodDate, firstResult, maxResults);
@@ -85,7 +86,8 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Override
     @Transactional
     public PrivateMessageDto addMessage(final HttpServletRequest request,
-                                        final PrivateMessageForCreateDto privateMessageDto) {
+                                        final PrivateMessageForCreateDto privateMessageDto,
+                                        final SecretKey secretKey) {
         log.debug("[addMessage]");
         log.debug("[request: {}, privateMessageDto: {}]", request, privateMessageDto);
         return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.saveRecord(
@@ -95,7 +97,9 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public void updateMessage(final HttpServletRequest request, final PrivateMessageDto privateMessageDto) {
+    public void updateMessage(final HttpServletRequest request,
+                              final PrivateMessageDto privateMessageDto,
+                              final SecretKey secretKey) {
         log.debug("[updateMessage]");
         log.debug("[request: {}, privateMessage: {}]", request, privateMessageDto);
         UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
@@ -110,7 +114,7 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public void deleteMessageByUser(final HttpServletRequest request, final Long messageId) {
+    public void deleteMessageByUser(final HttpServletRequest request, final Long messageId, final SecretKey secretKey) {
         log.debug("[deleteMessageByUser]");
         log.debug("[request: {}, messageId: {}]", request, messageId);
         PrivateMessage privateMessage = privateMessageDao.findByIdAndEmail(JwtUtil.extractUsername(

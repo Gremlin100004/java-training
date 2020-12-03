@@ -10,20 +10,9 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <url>http://localhost:8080/manager/text</url>
-                    <path>/api/socialnetwork</path>
-                    <username>admin</username>
-                    <password>sjdhbgfjs+)%gjabsvdbasj</password>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>${maven-compiler.version}</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
@@ -32,12 +21,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>${maven-surefire.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>${maven-checkstyle.version}</version>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
                     <encoding>UTF-8</encoding>
@@ -65,31 +54,59 @@
         <module>controller</module>
     </modules>
     <properties>
-        <java.version>11</java.version>
+        <java.version>8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <spring.version>5.2.8.RELEASE</spring.version>
+        <spring-security.version>5.4.1</spring-security.version>
+        <maven-checkstyle.version>3.1.1</maven-checkstyle.version>
+        <maven-surefire.version>3.0.0-M5</maven-surefire.version>
+        <maven-compiler.version>3.6.1</maven-compiler.version>
+        <maven-war.version>2.6</maven-war.version>
+        <junit.version>5.6.2</junit.version>
+        <lombok.version>1.18.12</lombok.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <logback.version>1.0.13</logback.version>
+        <httpcore.version>4.4.13</httpcore.version>
+        <commons-io.version>2.6</commons-io.version>
+        <jackson.version>2.10.0.pr3</jackson.version>
+        <servlet.version>4.0.1</servlet.version>
+        <webjars.version>0.30</webjars.version>
+        <swagger2.version>2.9.2</swagger2.version>
+        <swagger-annotations.version>1.5.20</swagger-annotations.version>
+        <bootstrap.version>3.3.5</bootstrap.version>
+        <jakarta.version>2.3.2</jakarta.version>
+        <mysql.version>8.0.21</mysql.version>
+        <guava.version>10.0.1</guava.version>
+        <javax.version>2.2</javax.version>
+        <hibernate.version>5.4.2.Final</hibernate.version>
+        <c3p0.version>0.9.1.2</c3p0.version>
+        <hibernate-validator.version>6.0.13.Final</hibernate-validator.version>
+        <jjwt.version>0.11.2</jjwt.version>
+        <junit.version>5.6.2</junit.version>
+        <mockito.version>3.4.0</mockito.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.12</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>5.2.8.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.13</version>
+            <version>${logback.version}</version>
         </dependency>
     </dependencies>
     <reporting>

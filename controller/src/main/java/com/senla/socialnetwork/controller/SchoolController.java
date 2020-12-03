@@ -66,9 +66,9 @@ public class SchoolController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<SchoolDto> getSchools(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                      @RequestParam int firstResult,
+                                      @RequestParam final int firstResult,
                                       @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                      @RequestParam int maxResults) {
+                                      @RequestParam final int maxResults) {
         return schoolService.getSchools(firstResult, maxResults);
     }
 
@@ -82,7 +82,8 @@ public class SchoolController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public SchoolDto addSchool(@ApiParam(value = SCHOOL_DTO_DESCRIPTION) @RequestBody @Valid SchoolForCreateDto schoolDto) {
+    public SchoolDto addSchool(@ApiParam(value = SCHOOL_DTO_DESCRIPTION)
+                               @RequestBody @Valid final SchoolForCreateDto schoolDto) {
         return schoolService.addSchool(schoolDto);
     }
 
@@ -95,7 +96,8 @@ public class SchoolController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto updateSchool(@ApiParam(value = SCHOOL_DTO_DESCRIPTION) @RequestBody @Valid SchoolDto schoolDto) {
+    public ClientMessageDto updateSchool(@ApiParam(value = SCHOOL_DTO_DESCRIPTION)
+                                         @RequestBody @Valid final SchoolDto schoolDto) {
         schoolService.updateSchool(schoolDto);
         return new ClientMessageDto(UPDATE_SCHOOL_OK_MESSAGE);
     }
@@ -110,7 +112,7 @@ public class SchoolController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto deleteSchool(@ApiParam(value = SCHOOL_ID_DESCRIPTION)
-                                         @PathVariable("id") Long schoolId) {
+                                         @PathVariable("id") final Long schoolId) {
         schoolService.deleteSchool(schoolId);
         return new ClientMessageDto(DELETE_SCHOOL_OK_MESSAGE);
     }

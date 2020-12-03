@@ -16,10 +16,10 @@ import com.senla.socialnetwork.service.util.PostMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -37,8 +37,6 @@ public class PostServiceImpl implements PostService {
     CommunityDao communityDao;
     @Autowired
     UserProfileDao userProfileDao;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
 
     @Override
     @Transactional
@@ -52,7 +50,8 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public List<PostDto> getPostsFromSubscribedCommunities(final HttpServletRequest request,
                                                            final int firstResult,
-                                                           final int maxResults) {
+                                                           final int maxResults,
+                                                           final SecretKey secretKey) {
         log.debug("[getPostsFromSubscribedCommunities]");
         log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         return PostMapper.getPostDto(postDao.getByEmail(JwtUtil.extractUsername(JwtUtil.getToken(
@@ -69,7 +68,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void deletePostByUser(final HttpServletRequest request, final Long postId) {
+    public void deletePostByUser(final HttpServletRequest request, final Long postId, final SecretKey secretKey) {
         log.debug("[deleteMessageByUser]");
         log.debug("[postId: {}]", postId);
         Post post = postDao.findByIdAndEmail(JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey), postId);
@@ -109,7 +108,8 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostCommentDto addComment(final HttpServletRequest request,
                                      final Long postId,
-                                     final PostCommentForCreateDto postCommentDto) {
+                                     final PostCommentForCreateDto postCommentDto,
+                                     final SecretKey secretKey) {
         log.debug("[addComment]");
         log.debug("[request: {}, postCommentDto: {}]", request, postCommentDto);
         String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);

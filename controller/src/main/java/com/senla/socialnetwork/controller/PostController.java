@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.controller;
 
+import com.senla.socialnetwork.controller.util.SecretKeyUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.dto.PostCommentForCreateDto;
@@ -74,9 +75,9 @@ public class PostController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<PostDto> getPosts(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                  @RequestParam int firstResult,
+                                  @RequestParam final int firstResult,
                                   @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                  @RequestParam int maxResults) {
+                                  @RequestParam final int maxResults) {
         return postService.getPosts(firstResult, maxResults);
     }
 
@@ -89,11 +90,12 @@ public class PostController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<PostDto> getPostsHistory(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                         @RequestParam int firstResult,
+                                         @RequestParam final int firstResult,
                                          @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                         @RequestParam int maxResults,
-                                         HttpServletRequest request) {
-        return postService.getPostsFromSubscribedCommunities(request, firstResult, maxResults);
+                                         @RequestParam final int maxResults,
+                                         final HttpServletRequest request) {
+        return postService.getPostsFromSubscribedCommunities(
+            request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
     }
 
     @PutMapping
@@ -105,7 +107,7 @@ public class PostController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updatePost(@ApiParam(value = POST_DTO_DESCRIPTION)
-                                       @RequestBody @Valid PostDto postDto) {
+                                       @RequestBody @Valid final PostDto postDto) {
         postService.updatePost(postDto);
         return new ClientMessageDto(UPDATE_POST_OK_MESSAGE);
     }
@@ -119,9 +121,9 @@ public class PostController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto deletePostByUser(@ApiParam(value = POST_ID_DESCRIPTION)
-                                             @PathVariable("id") Long postId,
-                                             HttpServletRequest request) {
-        postService.deletePostByUser(request, postId);
+                                             @PathVariable("id") final Long postId,
+                                             final HttpServletRequest request) {
+        postService.deletePostByUser(request, postId, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(DELETE_POST_OK_MESSAGE);
     }
 
@@ -134,7 +136,7 @@ public class PostController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto deletePost(@ApiParam(value = POST_ID_DESCRIPTION) @PathVariable("id") Long postId) {
+    public ClientMessageDto deletePost(@ApiParam(value = POST_ID_DESCRIPTION) @PathVariable("id") final Long postId) {
         postService.deletePost(postId);
         return new ClientMessageDto(DELETE_POST_OK_MESSAGE);
     }
@@ -148,11 +150,13 @@ public class PostController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<PostCommentDto> getPostComments(@ApiParam(value = POST_ID_DESCRIPTION)
-                                                @PathVariable("id") Long postId,
-                                                @ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                                @RequestParam int firstResult,
-                                                @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                                @RequestParam int maxResults) {
+                                                @PathVariable("id") final Long postId,
+                                                @ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                          example = FIRST_RESULT_EXAMPLE)
+                                                @RequestParam final int firstResult,
+                                                @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                          example = MAX_RESULTS_EXAMPLE)
+                                                @RequestParam final int maxResults) {
         return postService.getPostComments(postId, firstResult, maxResults);
     }
 
@@ -166,11 +170,11 @@ public class PostController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public PostCommentDto addComment(@ApiParam(value = POST_ID_DESCRIPTION)
-                                     @PathVariable("id") Long postId,
+                                     @PathVariable("id") final Long postId,
                                      @ApiParam(value = COMMENT_DTO_DESCRIPTION)
-                                     @RequestBody @Valid PostCommentForCreateDto postCommentDto,
-                                     HttpServletRequest request) {
-        return postService.addComment(request, postId, postCommentDto);
+                                     @RequestBody @Valid final PostCommentForCreateDto postCommentDto,
+                                     final HttpServletRequest request) {
+        return postService.addComment(request, postId, postCommentDto, SecretKeyUtil.getSecretKey());
     }
 
 }

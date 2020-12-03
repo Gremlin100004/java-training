@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.controller;
 
+import com.senla.socialnetwork.controller.util.SecretKeyUtil;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.UserForAdminDto;
@@ -82,9 +83,9 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<UserForAdminDto> getUsers(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                  @RequestParam int firstResult,
+                                          @RequestParam final int firstResult,
                                           @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                  @RequestParam int maxResults) {
+                                          @RequestParam final int maxResults) {
         return userService.getUsers(firstResult, maxResults);
     }
 
@@ -96,8 +97,8 @@ public class UserController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public UserForSecurityDto getUser(HttpServletRequest request) {
-        return userService.getUser(request);
+    public UserForSecurityDto getUser(final HttpServletRequest request) {
+        return userService.getUser(request, SecretKeyUtil.getSecretKey());
     }
 
     @PostMapping("/registration")
@@ -109,7 +110,7 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public ClientMessageDto addUser(@RequestBody @Valid UserForSecurityDto userDto) {
+    public ClientMessageDto addUser(@RequestBody @Valid final UserForSecurityDto userDto) {
         userService.addUser(userDto, RoleName.ROLE_USER);
         return new ClientMessageDto(ADD_USER_OK_MESSAGE);
     }
@@ -124,7 +125,7 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public ClientMessageDto addAdmin(@RequestBody @Valid UserForSecurityDto userDto) {
+    public ClientMessageDto addAdmin(@RequestBody @Valid final UserForSecurityDto userDto) {
         userService.addUser(userDto, RoleName.ROLE_ADMIN);
         return new ClientMessageDto(ADD_USER_OK_MESSAGE);
     }
@@ -138,8 +139,8 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto logIn(@ApiParam(value = USER_DTO_DESCRIPTION)
-                                  @RequestBody @Valid UserForSecurityDto userDto) {
-        return new ClientMessageDto(userService.logIn(userDto));
+                                  @RequestBody @Valid final UserForSecurityDto userDto) {
+        return new ClientMessageDto(userService.logIn(userDto, SecretKeyUtil.getSecretKey()));
     }
 
     @PutMapping("/logout")
@@ -150,8 +151,8 @@ public class UserController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto logOut(HttpServletRequest request) {
-        userService.logOut(request);
+    public ClientMessageDto logOut(final HttpServletRequest request) {
+        userService.logOut(request, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(LOGOUT_OK_MESSAGE);
     }
 
@@ -163,10 +164,10 @@ public class UserController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto updateUser(HttpServletRequest request,
+    public ClientMessageDto updateUser(final HttpServletRequest request,
                                        @ApiParam(value = USERS_DTO_DESCRIPTION)
-                                       @RequestBody @Valid List<UserForSecurityDto> usersDto) {
-        userService.updateUser(request, usersDto);
+                                       @RequestBody @Valid final List<UserForSecurityDto> usersDto) {
+        userService.updateUser(request, usersDto, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(UPDATE_USER_OK_MESSAGE);
     }
 
@@ -181,7 +182,7 @@ public class UserController {
     })
     public ClientMessageDto deleteUser(@ApiParam(value = USER_ID_DESCRIPTION,
                                                  example = USER_ID_EXAMPLE)
-                                       @PathVariable("id") Long orderId) {
+                                       @PathVariable("id") final Long orderId) {
         userService.deleteUser(orderId);
         return new ClientMessageDto(DELETE_USER_OK_MESSAGE);
     }

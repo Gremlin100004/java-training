@@ -18,10 +18,10 @@ import com.senla.socialnetwork.service.util.UserProfileMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
@@ -42,8 +42,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     private UniversityDao universityDao;
     @Autowired
     private PrivateMessageDao privateMessageDao;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
 
     @Override
     @Transactional
@@ -56,7 +54,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public UserProfileDto getUserProfile(final HttpServletRequest request) {
+    public UserProfileDto getUserProfile(final HttpServletRequest request, final SecretKey secretKey) {
         log.debug("[getUserProfile]");
         log.trace("[request: {}]", request);
         return UserProfileMapper.getUserProfileDto(userProfileDao.findByEmail(JwtUtil.extractUsername(JwtUtil.getToken(
@@ -65,7 +63,9 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public void updateUserProfile(final UserProfileDto userProfileDto, final HttpServletRequest request) {
+    public void updateUserProfile(final UserProfileDto userProfileDto,
+                                  final HttpServletRequest request,
+                                  final SecretKey secretKey) {
         log.debug("[updateUserProfile]");
         log.trace("[userProfileDto: {}, request: {}]", userProfileDto, request);
         userProfileDao.updateRecord(UserProfileMapper.getUserProfile(
@@ -139,7 +139,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public UserProfileForIdentificationDto getFriendNearestDateOfBirth(final HttpServletRequest request) {
+    public UserProfileForIdentificationDto getFriendNearestDateOfBirth(final HttpServletRequest request,
+                                                                       final SecretKey secretKey) {
         log.debug("[getFriendNearestDateOfBirth]");
         log.trace("[request: {}]", request);
         String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
@@ -165,7 +166,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Transactional
     public List<UserProfileForIdentificationDto> getUserProfileFriends(final HttpServletRequest request,
                                                                        final int firstResult,
-                                                                       final int maxResults) {
+                                                                       final int maxResults,
+                                                                       final SecretKey secretKey) {
         log.debug("[getUserProfileFriends]");
         log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         return UserProfileMapper.getUserProfileForIdentificationDto(userProfileDao.getFriends(JwtUtil.extractUsername(
@@ -177,7 +179,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<UserProfileForIdentificationDto> getSortedFriendsOfUserProfile(final HttpServletRequest request,
                                                                                final UserProfileFriendSortParameter sortParameter,
                                                                                final int firstResult,
-                                                                               final int maxResults) {
+                                                                               final int maxResults,
+                                                                               final SecretKey secretKey) {
         log.debug("[getSortedFriendsOfUserProfile]");
         log.debug("[request: {}, email: {}, firstResult: {}, maxResults: {}]",
             request, sortParameter, firstResult, maxResults);
@@ -198,8 +201,9 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional
     public List<UserProfileForIdentificationDto> getUserProfileSignedFriends(final HttpServletRequest request,
-                                                                     final int firstResult,
-                                                                     final int maxResults) {
+                                                                             final int firstResult,
+                                                                             final int maxResults,
+                                                                             final SecretKey secretKey) {
         log.debug("[getUserProfileSignedFriends]");
         log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         return UserProfileMapper.getUserProfileForIdentificationDto(userProfileDao.getSignedFriends(
@@ -208,7 +212,9 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public void sendAFriendRequest(final HttpServletRequest request, final  Long userProfileId) {
+    public void sendAFriendRequest(final HttpServletRequest request,
+                                   final  Long userProfileId,
+                                   final SecretKey secretKey) {
         log.debug("[sendAFriendRequest]");
         log.debug("[request: {}, userProfileId: {}]", request, userProfileId);
         String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
@@ -226,7 +232,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public void confirmFriend(final HttpServletRequest request, final Long userProfileId) {
+    public void confirmFriend(final HttpServletRequest request, final Long userProfileId, final SecretKey secretKey) {
         log.debug("[confirmFriend]");
         log.debug("[request: {}, userProfileId: {}]", request, userProfileId);
         String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
@@ -245,7 +251,9 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public void removeUserFromFriends(final HttpServletRequest request, final Long userProfileId) {
+    public void removeUserFromFriends(final HttpServletRequest request,
+                                      final Long userProfileId,
+                                      final SecretKey secretKey) {
         log.debug("[removeUserFromFriends]");
         log.debug("[request: {}, userProfileId: {}]", request, userProfileId);
         String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
@@ -280,7 +288,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<PrivateMessageDto> getDialogue(final HttpServletRequest request,
                                                final Long userProfileId,
                                                final int firstResult,
-                                               final int maxResults) {
+                                               final int maxResults,
+                                               final SecretKey secretKey) {
         log.debug("[getDialogue]");
         log.debug("[request: {}, userProfileId: {}, firstResult: {}, maxResults: {}]",
             request, userProfileId, firstResult, maxResults);

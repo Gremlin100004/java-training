@@ -67,9 +67,9 @@ public class LocationController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<LocationDto> getLocations(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                          @RequestParam int firstResult,
+                                          @RequestParam final int firstResult,
                                           @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                          @RequestParam int maxResults) {
+                                          @RequestParam final int maxResults) {
         return locationService.getLocations(firstResult, maxResults);
     }
 
@@ -84,7 +84,7 @@ public class LocationController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public LocationDto addLocation(@ApiParam(value = LOCATION_DTO_DESCRIPTION)
-                                   @RequestBody @Valid LocationForCreateDto locationDto) {
+                                   @RequestBody @Valid final LocationForCreateDto locationDto) {
         return locationService.addLocation(locationDto);
     }
 
@@ -98,7 +98,7 @@ public class LocationController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateLocation(@ApiParam(value = LOCATION_DTO_DESCRIPTION)
-                                           @RequestBody @Valid LocationDto locationDto) {
+                                           @RequestBody @Valid final LocationDto locationDto) {
         locationService.updateLocation(locationDto);
         return new ClientMessageDto(UPDATE_LOCATION_OK_MESSAGE);
     }
@@ -114,7 +114,7 @@ public class LocationController {
     })
     public ClientMessageDto deleteLocation(@ApiParam(value = LOCATION_ID_DESCRIPTION,
                                                      example = LOCATION_ID_EXAMPLE)
-                                           @PathVariable("id") Long locationId) {
+                                           @PathVariable("id") final Long locationId) {
         locationService.deleteLocation(locationId);
         return new ClientMessageDto(DELETE_LOCATION_OK_MESSAGE);
     }

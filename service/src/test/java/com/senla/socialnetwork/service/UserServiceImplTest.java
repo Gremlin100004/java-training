@@ -16,12 +16,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +43,8 @@ public class UserServiceImplTest {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private HttpServletRequest request;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
+    @Autowired
+    private SecretKey secretKey;
 
 
 
@@ -72,7 +72,7 @@ public class UserServiceImplTest {
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(systemUser).when(userDao).findByEmail(UserTestData.getEmail());
 
-        UserForSecurityDto resultUserDto = userService.getUser(request);
+        UserForSecurityDto resultUserDto = userService.getUser(request, secretKey);
         Assertions.assertNotNull(resultUserDto);
         Assertions.assertEquals(userDto.getEmail(), resultUserDto.getEmail());
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -108,7 +108,7 @@ public class UserServiceImplTest {
         testUser.setRole(RoleName.ROLE_USER);
         Mockito.doReturn(testUser).when(userDao).findByEmail(UserTestData.getEmail());
 
-        Assertions.assertDoesNotThrow(() -> userService.logIn(userDto));
+        Assertions.assertDoesNotThrow(() -> userService.logIn(userDto, secretKey));
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.reset(userDao);
     }
@@ -120,7 +120,7 @@ public class UserServiceImplTest {
         testUser.setRole(RoleName.ROLE_USER);
         Mockito.doReturn(null).when(userDao).findByEmail(UserTestData.getEmail());
 
-        Assertions.assertThrows(BusinessException.class, () -> userService.logIn(userDto));
+        Assertions.assertThrows(BusinessException.class, () -> userService.logIn(userDto, secretKey));
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.reset(userDao);
     }
@@ -166,7 +166,7 @@ public class UserServiceImplTest {
         Mockito.doReturn(usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getPassword()).when(
             passwordEncoder).encode(usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getPassword());
 
-        Assertions.assertDoesNotThrow(() -> userService.updateUser(request, usersDto));
+        Assertions.assertDoesNotThrow(() -> userService.updateUser(request, usersDto, secretKey));
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(tokenDao, Mockito.times(1)).saveRecord(ArgumentMatchers.any(LogoutToken.class));
         Mockito.verify(passwordEncoder, Mockito.times(1)).encode(ArgumentMatchers.anyString());
@@ -182,7 +182,7 @@ public class UserServiceImplTest {
         List<UserForSecurityDto> usersDto = new ArrayList<>();
         usersDto.add(UserTestData.getTestUserForSecurityDto());
 
-        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
+        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto, secretKey));
         Mockito.verify(userDao, Mockito.never()).findByEmail(UserTestData.getEmail());
         Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
         Mockito.verify(passwordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
@@ -197,7 +197,7 @@ public class UserServiceImplTest {
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
 
-        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
+        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto, secretKey));
         Mockito.verify(userDao, Mockito.never()).findByEmail(UserTestData.getEmail());
         Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
         Mockito.verify(passwordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
@@ -213,7 +213,7 @@ public class UserServiceImplTest {
             HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(testUser).when(userDao).findByEmail(ArgumentMatchers.anyString());
 
-        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto));
+        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(request, usersDto, secretKey));
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(ArgumentMatchers.anyString());
         Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
         Mockito.verify(passwordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());

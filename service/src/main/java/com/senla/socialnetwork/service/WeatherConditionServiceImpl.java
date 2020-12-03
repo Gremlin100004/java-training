@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
@@ -49,20 +50,19 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     private RestTemplate restTemplate;
     @Autowired
     private ObjectMapper objectMapper;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
 
     @Override
     @Transactional
     public List<WeatherConditionForAdminDto> getWeatherConditions(final int firstResult, final int maxResults) {
         log.debug("[getWeatherConditions]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
-        return WeatherConditionMapper.getWeatherConditionDto(weatherConditionDao.getAllRecords(firstResult, maxResults));
+        return WeatherConditionMapper.getWeatherConditionDto(weatherConditionDao.getAllRecords(
+            firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public WeatherConditionDto getWeatherCondition(final HttpServletRequest request) {
+    public WeatherConditionDto getWeatherCondition(final HttpServletRequest request, final SecretKey secretKey) {
         log.debug("[getWeatherCondition]");
         log.debug("[request: {}]", request);
         Location location = locationDao.getLocation(JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey));

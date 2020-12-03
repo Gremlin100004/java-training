@@ -1,6 +1,7 @@
 package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.controller.exception.ControllerException;
+import com.senla.socialnetwork.controller.util.SecretKeyUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
@@ -107,26 +108,30 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<UserProfileForIdentificationDto> getUserProfiles(@ApiParam(value = START_PERIOD_DATE_DESCRIPTION, 
+    public List<UserProfileForIdentificationDto> getUserProfiles(@ApiParam(value = START_PERIOD_DATE_DESCRIPTION,
                                                                            example = START_PERIOD_DATE_EXAMPLE)
-                                                                 @RequestParam(required = false) Date startPeriodDate,
-                                                                 @ApiParam(value = END_PERIOD_DATE_DESCRIPTION, 
+                                                                 @RequestParam(required = false)
+                                                                 final Date startPeriodDate,
+                                                                 @ApiParam(value = END_PERIOD_DATE_DESCRIPTION,
                                                                            example = END_PERIOD_DATE_EXAMPLE)
-                                                                 @RequestParam(required = false) Date endPeriodDate,
+                                                                 @RequestParam(required = false)
+                                                                 final Date endPeriodDate,
                                                                  @ApiParam(value = UNIVERSITY_ID_DESCRIPTION)
-                                                                 @RequestParam (required = false) Long universityId,
+                                                                 @RequestParam (required = false)
+                                                                 final Long universityId,
                                                                  @ApiParam(value = SCHOOL_ID_DESCRIPTION)
-                                                                 @RequestParam (required = false) Long schoolId,
+                                                                 @RequestParam (required = false) final Long schoolId,
                                                                  @ApiParam(value = LOCATION_ID_DESCRIPTION)
-                                                                 @RequestParam(required = false) Long locationId,
+                                                                 @RequestParam(required = false) final Long locationId,
                                                                  @ApiParam(value = SORT_PARAMETER_DESCRIPTION)
-                                                                 @RequestParam(required = false) UserProfileSortParameter sortParameter,
+                                                                 @RequestParam(required = false)
+                                                                 final UserProfileSortParameter sortParameter,
                                                                  @ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                                            example = FIRST_RESULT_EXAMPLE)
-                                                                 @RequestParam int firstResult,
+                                                                 @RequestParam final int firstResult,
                                                                  @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                                            example = MAX_RESULTS_EXAMPLE)
-                                                                 @RequestParam int maxResults) {
+                                                                 @RequestParam final int maxResults) {
         if (startPeriodDate == null && endPeriodDate == null && universityId == null && schoolId == null
             && locationId == null && sortParameter == null) {
             return userProfileService.getUserProfiles(firstResult, maxResults);
@@ -159,8 +164,8 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public UserProfileDto getUserProfile(HttpServletRequest request) {
-        return userProfileService.getUserProfile(request);
+    public UserProfileDto getUserProfile(final HttpServletRequest request) {
+        return userProfileService.getUserProfile(request, SecretKeyUtil.getSecretKey());
     }
 
     @PutMapping
@@ -172,9 +177,9 @@ public class UserProfileController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateUserProfile(@ApiParam(value = USER_PROFILE_DTO_DESCRIPTION)
-                                              @RequestBody @Valid UserProfileDto userProfileDto,
-                                              HttpServletRequest request) {
-        userProfileService.updateUserProfile(userProfileDto, request);
+                                              @RequestBody @Valid final UserProfileDto userProfileDto,
+                                              final HttpServletRequest request) {
+        userProfileService.updateUserProfile(userProfileDto, request, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(UPDATE_USER_PROFILE_OK_MESSAGE);
     }
 
@@ -186,8 +191,8 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public UserProfileForIdentificationDto getFriendNearestDateOfBirth(HttpServletRequest request) {
-        return userProfileService.getFriendNearestDateOfBirth(request);
+    public UserProfileForIdentificationDto getFriendNearestDateOfBirth(final HttpServletRequest request) {
+        return userProfileService.getFriendNearestDateOfBirth(request, SecretKeyUtil.getSecretKey());
     }
 
     @GetMapping("/{id}")
@@ -200,7 +205,7 @@ public class UserProfileController {
     })
     public UserProfileDto getUserProfileDetails(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
                                                           example = USER_PROFILE_ID_EXAMPLE)
-                                                @PathVariable("id") Long userProfileId) {
+                                                @PathVariable("id") final Long userProfileId) {
         return userProfileService.getUserProfileDetails(userProfileId);
     }
 
@@ -213,18 +218,21 @@ public class UserProfileController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<UserProfileForIdentificationDto> getSortedFriendsOfUserProfile(@ApiParam(value = SORT_PARAMETER_DESCRIPTION)
-                                                                               @RequestParam(required = false) UserProfileFriendSortParameter sortParameter,
+                                                                               @RequestParam(required = false)
+                                                                               final UserProfileFriendSortParameter sortParameter,
                                                                                @ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                                                          example = FIRST_RESULT_EXAMPLE)
-                                                                               @RequestParam int firstResult,
+                                                                               @RequestParam final int firstResult,
                                                                                @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                                                          example = MAX_RESULTS_EXAMPLE)
-                                                                               @RequestParam int maxResults,
-                                                                               HttpServletRequest request) {
+                                                                               @RequestParam final int maxResults,
+                                                                               final HttpServletRequest request) {
         if (sortParameter == null) {
-            return userProfileService.getUserProfileFriends(request, firstResult, maxResults);
+            return userProfileService.getUserProfileFriends(
+                request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
         } else {
-            return userProfileService.getSortedFriendsOfUserProfile(request, sortParameter, firstResult, maxResults);
+            return userProfileService.getSortedFriendsOfUserProfile(
+                request, sortParameter, firstResult, maxResults, SecretKeyUtil.getSecretKey());
         }
     }
 
@@ -238,12 +246,13 @@ public class UserProfileController {
     })
     public List<UserProfileForIdentificationDto> getUserProfileSignedFriends(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                                                        example = FIRST_RESULT_EXAMPLE)
-                                                                             @RequestParam int firstResult,
+                                                                             @RequestParam final int firstResult,
                                                                              @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                                                        example = MAX_RESULTS_EXAMPLE)
-                                                                             @RequestParam int maxResults,
-                                                                             HttpServletRequest request) {
-        return userProfileService.getUserProfileSignedFriends(request, firstResult, maxResults);
+                                                                             @RequestParam final int maxResults,
+                                                                             final HttpServletRequest request) {
+        return userProfileService.getUserProfileSignedFriends(
+            request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
     }
 
     @PutMapping("/friends/requests/{id}")
@@ -256,9 +265,9 @@ public class UserProfileController {
     })
     public ClientMessageDto sendAFriendRequest(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
                                                          example = USER_PROFILE_ID_EXAMPLE)
-                                               @PathVariable("id") Long userProfileId,
-                                               HttpServletRequest request) {
-        userProfileService.sendAFriendRequest(request, userProfileId);
+                                               @PathVariable("id") final Long userProfileId,
+                                               final HttpServletRequest request) {
+        userProfileService.sendAFriendRequest(request, userProfileId, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(SEND_A_FRIEND_REQUEST_OK_MESSAGE);
     }
 
@@ -272,9 +281,9 @@ public class UserProfileController {
     })
     public ClientMessageDto confirmFriend(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
                                                     example = USER_PROFILE_ID_FOR_CONFIRM_FRIEND_EXAMPLE)
-                                          @PathVariable("id") Long userProfileId,
-                                          HttpServletRequest request) {
-        userProfileService.confirmFriend(request, userProfileId);
+                                          @PathVariable("id") final Long userProfileId,
+                                          final HttpServletRequest request) {
+        userProfileService.confirmFriend(request, userProfileId, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(CONFIRM_FRIEND_OK_MESSAGE);
     }
 
@@ -288,9 +297,9 @@ public class UserProfileController {
     })
     public ClientMessageDto removeUserFromFriends(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
                                                             example = USER_PROFILE_ID_EXAMPLE)
-                                                  @PathVariable("id") Long userProfileId,
-                                                  HttpServletRequest request) {
-        userProfileService.removeUserFromFriends(request, userProfileId);
+                                                  @PathVariable("id") final Long userProfileId,
+                                                  final HttpServletRequest request) {
+        userProfileService.removeUserFromFriends(request, userProfileId, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(REMOVE_USER_FROM_FRIENDS_OK_MESSAGE);
     }
 
@@ -305,7 +314,7 @@ public class UserProfileController {
     })
     public ClientMessageDto deleteUserProfile(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
                                                         example = USER_PROFILE_ID_EXAMPLE)
-                                              @PathVariable("id") Long userProfileId) {
+                                              @PathVariable("id") final Long userProfileId) {
         userProfileService.deleteUserProfile(userProfileId);
         return new ClientMessageDto(DELETE_USER_PROFILE_OK_MESSAGE);
     }
@@ -320,15 +329,16 @@ public class UserProfileController {
     })
     public List<PrivateMessageDto> getDialogue(@ApiParam(value = USER_PROFILE_ID_DESCRIPTION,
                                                          example = USER_PROFILE_ID_EXAMPLE)
-                                               @PathVariable("id") Long userProfileId,
+                                               @PathVariable("id") final Long userProfileId,
                                                @ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                          example = FIRST_RESULT_EXAMPLE)
-                                               @RequestParam int firstResult,
+                                               @RequestParam final int firstResult,
                                                @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                          example = MAX_RESULTS_EXAMPLE)
-                                               @RequestParam int maxResults,
-                                               HttpServletRequest request) {
-        return userProfileService.getDialogue(request, userProfileId, firstResult, maxResults);
+                                               @RequestParam final int maxResults,
+                                               final HttpServletRequest request) {
+        return userProfileService.getDialogue(
+            request, userProfileId, firstResult, maxResults, SecretKeyUtil.getSecretKey());
     }
 
     @GetMapping("/friends/publicMessages")
@@ -341,12 +351,13 @@ public class UserProfileController {
     })
     public List<PublicMessageDto> getFriendsPublicMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                                      example = FIRST_RESULT_EXAMPLE)
-                                                           @RequestParam int firstResult,
+                                                           @RequestParam final int firstResult,
                                                            @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                                      example = MAX_RESULTS_EXAMPLE)
-                                                           @RequestParam int maxResults,
-                                                           HttpServletRequest request) {
-        return publicMessageService.getFriendsPublicMessages(request, firstResult, maxResults);
+                                                           @RequestParam final int maxResults,
+                                                           final HttpServletRequest request) {
+        return publicMessageService.getFriendsPublicMessages(
+            request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
     }
 
 }

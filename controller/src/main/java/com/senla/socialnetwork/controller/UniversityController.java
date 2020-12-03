@@ -65,10 +65,12 @@ public class UniversityController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public List<UniversityDto> getUniversities(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
-                                               @RequestParam int firstResult,
-                                               @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                               @RequestParam int maxResults) {
+    public List<UniversityDto> getUniversities(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
+                                                         example = FIRST_RESULT_EXAMPLE)
+                                               @RequestParam final int firstResult,
+                                               @ApiParam(value = MAX_RESULTS_DESCRIPTION,
+                                                         example = MAX_RESULTS_EXAMPLE)
+                                               @RequestParam final int maxResults) {
         return universityService.getUniversities(firstResult, maxResults);
     }
 
@@ -83,7 +85,7 @@ public class UniversityController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public UniversityDto addUniversity(@ApiParam(value = LOCATION_DTO_DESCRIPTION)
-                                       @RequestBody @Valid UniversityForCreateDto universityDto) {
+                                       @RequestBody @Valid final UniversityForCreateDto universityDto) {
         return universityService.addUniversity(universityDto);
     }
 
@@ -97,7 +99,7 @@ public class UniversityController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateUniversity(@ApiParam(value = LOCATION_DTO_DESCRIPTION)
-                                             @RequestBody @Valid UniversityDto universityDto) {
+                                             @RequestBody @Valid final UniversityDto universityDto) {
         universityService.updateUniversity(universityDto);
         return new ClientMessageDto(UPDATE_UNIVERSITY_OK_MESSAGE);
     }
@@ -112,7 +114,7 @@ public class UniversityController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto deleteUniversity(@ApiParam(value = LOCATION_ID_DESCRIPTION)
-                                             @PathVariable("id") Long universityId) {
+                                             @PathVariable("id") final Long universityId) {
         universityService.deleteUniversity(universityId);
         return new ClientMessageDto(DELETE_UNIVERSITY_OK_MESSAGE);
     }

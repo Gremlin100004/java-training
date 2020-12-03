@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.controller;
 
+import com.senla.socialnetwork.controller.util.SecretKeyUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.WeatherConditionDto;
 import com.senla.socialnetwork.dto.WeatherConditionForAdminDto;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,10 +65,10 @@ public class WeatherConditionController {
     })
     public List<WeatherConditionForAdminDto> getWeatherConditions(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                                             example = FIRST_RESULT_EXAMPLE)
-                                                                  @RequestParam int firstResult,
+                                                                  @RequestParam final int firstResult,
                                                                   @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                                             example = MAX_RESULTS_EXAMPLE)
-                                                                  @RequestParam int maxResults) {
+                                                                  @RequestParam final int maxResults) {
         return weatherConditionService.getWeatherConditions(firstResult, maxResults);
     }
 
@@ -79,8 +81,8 @@ public class WeatherConditionController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public WeatherConditionDto getWeatherCondition(HttpServletRequest request) {
-        return weatherConditionService.getWeatherCondition(request);
+    public WeatherConditionDto getWeatherCondition(final HttpServletRequest request) {
+        return weatherConditionService.getWeatherCondition(request, SecretKeyUtil.getSecretKey());
     }
 
     @Secured({"ROLE_ADMIN"})
@@ -94,7 +96,7 @@ public class WeatherConditionController {
     })
     public ClientMessageDto deleteWeatherCondition(@ApiParam(value = WEATHER_CONDITION_ID_DESCRIPTION,
                                                              example = WEATHER_CONDITION_ID_EXAMPLE)
-                                                   @RequestParam Long weatherConditionId) {
+                                                   @PathVariable("id") final Long weatherConditionId) {
         weatherConditionService.deleteWeatherCondition(weatherConditionId);
         return new ClientMessageDto(DELETE_WEATHER_CONDITION_OK_MESSAGE);
     }

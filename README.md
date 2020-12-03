@@ -4,12 +4,6 @@
 
 This repository includes a basic REST API built with Spring framework and for demonstration purposes.
 
-# Features:
-
-  - dfbgdfg
-  - asfasdfsd
-
-
 ### Installation
 
 #### Java
@@ -164,20 +158,16 @@ Open controller/src/main/resources/application.properties (in any text editor).
 ```sh
 socialnetwork.source.package=com.senla.socialnetwork
 socialnetwork.datasource.package=com.senla.socialnetwork.domain
-hibernate.connection.driver_class=com.mysql.cj.jdbc.Driver
-hibernate.connection.url=jdbc:mysql://social-network-mysql:3306/hrinkov_social_network
-com.senla.socialnetwork.service.WeatherConditionServiceImpl.weatherKey=apikey
+hibernate.connection.driver_class=com.mysql.cj.jdbc.Driver 
+hibernate.connection.url=jdbc:mysql://db:3306/hrinkov_social_network
+com.senla.socialnetwork.service.WeatherConditionServiceImpl.weatherKey=b68b4778fdca71f0acfc8b78bb3bb162
 com.senla.socialnetwork.service.WeatherConditionServiceImpl.updateTime=1800
 com.senla.socialnetwork.controller.JwtUtil.expiration=20000000
-com.senla.socialnetwork.service.util.JwtUtil.secret-key=F+y2GSLQ0BOFa96kjS9a6+gNw0CDpif+aw+Eezo9HDs=
+cron.expression=0 4 * * * ?
 ```
 Register on the site https://openweathermap.org/, get the api key and save it in the settings:
 ```sh
 "hibernate.connection.username= "
-```
-Come up with or better generate your secret key and save it in the settings
-```sh
-"com.senla.socialnetwork.service.util.JwtUtil.secret-key= "
 ```
 Save file.
 Open tomcat-users.xml (in any text editor).
@@ -191,15 +181,38 @@ Open tomcat-users.xml (in any text editor).
     <user username="admin" password="sjdhbgfjs+)%gjabsvdbasj" roles="manager-gui,manager-script"/>
 </tomcat-users>
 ```
-Сhange the following fields:
+Change the following fields:
 ```sh
 "username= " - tomcat username;
 "password= " - tomcat password;
 ```
 Save file.
+Open database/script/prod/init/data_filling_for_prod.sql (in any text editor).
+```sh
+USE hrinkov_social_network;
 
+ALTER TABLE users AUTO_INCREMENT = 1;
 
-### Assembly of the project and Server start
+INSERT INTO users VALUES
+(NULL, 'admin@test.com', '$2a$10$ehU.2fP2fFtcFB9Fti8u2unzBrCIzQRvUei8r/ppUzxlBxSP86eH2', 'ROLE_ADMIN');
+
+COMMIT;
+```
+You need to come up with a password and get a hash function from it, for this enter the following command in the terminal:
+```sh
+$ ./password YourPassword
+```
+```sh
+$2a$10$OToP0F8iLtqiiLmYlwMmnuVOQPGFs772u73jQRcJhChL1rjPZx2kq
+```
+Сhange email and hash function from password of admin:
+```sh
+        "username"                   "hash function from password"
+            |                                    |
+(NULL, 'admin@test.com', '$2a$10$ehU.2fP2fFtcFB9Fti8u2unzBrCIzQRvUei8r/ppUzxlBxSP86eH2', 'ROLE_ADMIN');
+```
+Save file.
+### Building the project and starting the Server
 The project is built using the maven tool, the application is launched using the docker compose tool, 
 for this enter the following command in the root directory of the project:
 ```sh

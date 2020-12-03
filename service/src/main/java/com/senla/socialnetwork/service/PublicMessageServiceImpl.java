@@ -17,10 +17,10 @@ import com.senla.socialnetwork.service.util.PublicMessageMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -36,8 +36,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     PublicMessageCommentDao publicMessageCommentDao;
     @Autowired
     UserProfileDao userProfileDao;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
 
     @Override
     @Transactional
@@ -51,7 +49,8 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Transactional
     public List<PublicMessageDto> getFriendsPublicMessages(final HttpServletRequest request,
                                                            final int firstResult,
-                                                           final int maxResults) {
+                                                           final int maxResults,
+                                                           final SecretKey secretKey) {
         log.debug("[getFriendsPublicMessages]");
         log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         return PublicMessageMapper.getPublicMessageDto(
@@ -63,7 +62,8 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Transactional
     public List<PublicMessageDto> getPublicMessages(final HttpServletRequest request,
                                                     final int firstResult,
-                                                    final int maxResults) {
+                                                    final int maxResults,
+                                                    final SecretKey secretKey) {
         log.debug("[getPublicMessages]");
         log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
         return PublicMessageMapper.getPublicMessageDto(publicMessageDao.getByEmail(JwtUtil.extractUsername(
@@ -73,7 +73,8 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Override
     @Transactional
     public PublicMessageDto addMessage(final HttpServletRequest request,
-                                       final PublicMessageForCreateDto publicMessageDto) {
+                                       final PublicMessageForCreateDto publicMessageDto,
+                                       final SecretKey secretKey) {
         log.debug("[addMessage]");
         log.debug("[request: {}, publicMessageDto: {}]", request, publicMessageDto);
         return PublicMessageMapper.getPublicMessageDto(publicMessageDao.saveRecord(
@@ -83,7 +84,9 @@ public class PublicMessageServiceImpl implements PublicMessageService {
 
     @Override
     @Transactional
-    public void updateMessage(final HttpServletRequest request, final PublicMessageDto publicMessageDto) {
+    public void updateMessage(final HttpServletRequest request,
+                              final PublicMessageDto publicMessageDto,
+                              final SecretKey secretKey) {
         log.debug("[updateMessage]");
         log.debug("[request: {}, publicMessageDto: {}]", request, publicMessageDto);
         UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
@@ -98,7 +101,7 @@ public class PublicMessageServiceImpl implements PublicMessageService {
 
     @Override
     @Transactional
-    public void deleteMessageByUser(final Long messageId, final HttpServletRequest request) {
+    public void deleteMessageByUser(final Long messageId, final HttpServletRequest request, final SecretKey secretKey) {
         log.debug("[deleteMessageByUser]");
         log.debug("[request: {}, messageId: {}]", request, messageId);
         PublicMessage publicMessage = publicMessageDao.findByIdAndEmail(
@@ -143,7 +146,8 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Transactional
     public PublicMessageCommentDto addComment(final HttpServletRequest request,
                                               final Long publicMessageId,
-                                              final PublicMessageCommentForCreateDto publicMessageCommentDto) {
+                                              final PublicMessageCommentForCreateDto publicMessageCommentDto,
+                                              final SecretKey secretKey) {
         log.debug("[addComment]");
         log.debug("[request: {}, publicMessageCommentDto: {}]", request, publicMessageCommentDto);
         String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);

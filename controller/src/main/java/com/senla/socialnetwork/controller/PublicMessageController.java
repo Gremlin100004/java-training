@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.controller;
 
+import com.senla.socialnetwork.controller.util.SecretKeyUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
@@ -89,10 +90,10 @@ public class PublicMessageController {
     })
     public List<PublicMessageDto> getMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                         example = FIRST_RESULT_EXAMPLE)
-                                              @RequestParam int firstResult,
+                                              @RequestParam final int firstResult,
                                               @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                         example = MAX_RESULTS_EXAMPLE)
-                                              @RequestParam int maxResults) {
+                                              @RequestParam final int maxResults) {
         return publicMessageService.getMessages(firstResult, maxResults);
     }
 
@@ -105,13 +106,13 @@ public class PublicMessageController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public List<PublicMessageDto> getPublicMessages(@ApiParam(value = FIRST_RESULT_DESCRIPTION,
-        example = FIRST_RESULT_EXAMPLE)
-                                                    @RequestParam int firstResult,
+                                                              example = FIRST_RESULT_EXAMPLE)
+                                                    @RequestParam final int firstResult,
                                                     @ApiParam(value = MAX_RESULTS_DESCRIPTION,
-                                                        example = MAX_RESULTS_EXAMPLE)
-                                                    @RequestParam int maxResults,
-                                                    HttpServletRequest request) {
-        return publicMessageService.getPublicMessages(request, firstResult, maxResults);
+                                                              example = MAX_RESULTS_EXAMPLE)
+                                                    @RequestParam final int maxResults,
+                                                    final HttpServletRequest request) {
+        return publicMessageService.getPublicMessages(request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
     }
 
     @PostMapping
@@ -124,9 +125,9 @@ public class PublicMessageController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public PublicMessageDto addMessage(@ApiParam(value = PUBLIC_MESSAGE_DTO_DESCRIPTION)
-                                       @RequestBody @Valid PublicMessageForCreateDto publicMessageDto,
-                                       HttpServletRequest request) {
-        return publicMessageService.addMessage(request, publicMessageDto);
+                                       @RequestBody @Valid final PublicMessageForCreateDto publicMessageDto,
+                                       final HttpServletRequest request) {
+        return publicMessageService.addMessage(request, publicMessageDto, SecretKeyUtil.getSecretKey());
     }
 
     @PutMapping
@@ -138,9 +139,9 @@ public class PublicMessageController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateMessage(@ApiParam(value = PUBLIC_MESSAGE_DTO_DESCRIPTION)
-                                          @RequestBody @Valid PublicMessageDto publicMessageDto,
-                                          HttpServletRequest request) {
-        publicMessageService.updateMessage(request, publicMessageDto);
+                                          @RequestBody @Valid final PublicMessageDto publicMessageDto,
+                                          final HttpServletRequest request) {
+        publicMessageService.updateMessage(request, publicMessageDto, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(UPDATE_MESSAGE_OK_MESSAGE);
     }
 
@@ -154,10 +155,10 @@ public class PublicMessageController {
     })
     public ClientMessageDto deleteMessageByUser(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
                                                           example = PUBLIC_MESSAGE_ID_EXAMPLE)
-                                                @PathVariable("id") Long messageId,
-                                                HttpServletRequest request) {
+                                                @PathVariable("id") final Long messageId,
+                                                final HttpServletRequest request) {
 
-        publicMessageService.deleteMessageByUser(messageId, request);
+        publicMessageService.deleteMessageByUser(messageId, request, SecretKeyUtil.getSecretKey());
         return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
     }
 
@@ -172,7 +173,7 @@ public class PublicMessageController {
     })
     public ClientMessageDto deleteMessage(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
                                                     example = PUBLIC_MESSAGE_ID_EXAMPLE)
-                                          @PathVariable("id") Long messageId) {
+                                          @PathVariable("id") final Long messageId) {
         publicMessageService.deleteMessage(messageId);
         return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
     }
@@ -187,13 +188,13 @@ public class PublicMessageController {
     })
     public List<PublicMessageCommentDto> getPublicMessageComments(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
                                                                             example = PUBLIC_MESSAGE_ID_EXAMPLE)
-                                                                  @PathVariable("id") Long publicMessageId,
+                                                                  @PathVariable("id") final Long publicMessageId,
                                                                   @ApiParam(value = FIRST_RESULT_DESCRIPTION,
                                                                             example = FIRST_RESULT_EXAMPLE)
-                                                                  @RequestParam int firstResult,
+                                                                  @RequestParam final int firstResult,
                                                                   @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                                             example = MAX_RESULTS_EXAMPLE)
-                                                                  @RequestParam int maxResults) {
+                                                                  @RequestParam final int maxResults) {
         return publicMessageService.getPublicMessageComments(publicMessageId, firstResult, maxResults);
     }
 
@@ -208,12 +209,13 @@ public class PublicMessageController {
     @ResponseStatus(HttpStatus.CREATED)
     public PublicMessageCommentDto addComment(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
                                                         example = PUBLIC_MESSAGE_ID_EXAMPLE)
-                                              @PathVariable("id") Long publicMessageId,
+                                              @PathVariable("id") final Long publicMessageId,
                                               @ApiParam(value = COMMENTS_DTO_DESCRIPTION)
-                                              @RequestBody
-                                              @Valid PublicMessageCommentForCreateDto publicMessageCommentDto,
-                                              HttpServletRequest request) {
-        return publicMessageService.addComment(request, publicMessageId, publicMessageCommentDto);
+                                              @RequestBody @Valid
+                                              final PublicMessageCommentForCreateDto publicMessageCommentDto,
+                                              final HttpServletRequest request) {
+        return publicMessageService.addComment(
+            request, publicMessageId, publicMessageCommentDto, SecretKeyUtil.getSecretKey());
     }
 
 }

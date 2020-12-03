@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Date;
@@ -49,8 +50,6 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private AuthenticationManager authenticationManager;
-    @Value("${com.senla.socialnetwork.service.util.JwtUtil.secret-key:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq}")
-    private String secretKey;
     @Value("${com.senla.socialnetwork.controller.JwtUtil.expiration:3600000}")
     private Integer expiration;
 
@@ -64,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserForSecurityDto getUser(final HttpServletRequest request) {
+    public UserForSecurityDto getUser(final HttpServletRequest request, final SecretKey secretKey) {
         log.debug("[getUser]");
         log.debug("[request: {}]", request);
         return UserMapper.getUserForSecurityDto(userDao.findByEmail(JwtUtil.extractUsername(
@@ -85,7 +84,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public String logIn(final UserForSecurityDto userDto) {
+    public String logIn(final UserForSecurityDto userDto, final SecretKey secretKey) {
         log.debug("[logIn]");
         log.debug("[userDto: {}]", userDto);
         SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
@@ -103,7 +102,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void logOut(final HttpServletRequest request) {
+    public void logOut(final HttpServletRequest request, final SecretKey secretKey) {
         log.debug("[logOut]");
         log.debug("[request: {}]", request);
         String token = JwtUtil.getToken(request);
@@ -135,7 +134,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateUser(HttpServletRequest request, final List<UserForSecurityDto> usersDto) {
+    public void updateUser(final HttpServletRequest request,
+                           final List<UserForSecurityDto> usersDto,
+                           final SecretKey secretKey) {
         log.debug("[updateUser]");
         log.debug("[request: {}, usersDto: {}]", request, usersDto);
         if (usersDto.size() != LIST_SIZE) {
