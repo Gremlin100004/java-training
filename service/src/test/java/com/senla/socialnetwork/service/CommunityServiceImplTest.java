@@ -24,6 +24,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -126,13 +127,11 @@ public class CommunityServiceImplTest {
     void CommunityServiceImpl_getOwnCommunities() {
         List<Community> communities = CommunityTestData.getTestCommunities();
         List<CommunityDto> communitiesDto = CommunityTestData.getTestCommunitiesDto();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(communities).when(communityDao).getOwnCommunitiesByEmail(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
-        List<CommunityDto> resultCommunities = communityService.getOwnCommunities(
-            request, FIRST_RESULT, NORMAL_MAX_RESULTS, secretKey);
+        List<CommunityDto> resultCommunities = communityService.getOwnCommunities(FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultCommunities);
         Assertions.assertEquals(CommunityTestData.getRightNumberCommunities(), resultCommunities.size());
         Assertions.assertFalse(resultCommunities.get(0).getDeleted());
@@ -147,13 +146,14 @@ public class CommunityServiceImplTest {
     void CommunityServiceImpl_getSubscribedCommunities() {
         List<Community> communities = CommunityTestData.getTestCommunities();
         List<CommunityDto> communitiesDto = CommunityTestData.getTestCommunitiesDto();
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(communities).when(communityDao).getSubscribedCommunitiesByEmail(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
         Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
             HttpHeaders.AUTHORIZATION);
 
         List<CommunityDto> resultCommunities = communityService.getSubscribedCommunities(
-            request, FIRST_RESULT, NORMAL_MAX_RESULTS, secretKey);
+            FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultCommunities);
         Assertions.assertEquals(CommunityTestData.getRightNumberCommunities(), resultCommunities.size());
         Assertions.assertFalse(resultCommunities.get(0).getDeleted());
@@ -170,14 +170,12 @@ public class CommunityServiceImplTest {
         List<UserProfile> userProfiles = UserProfileTestData.getTestUsersProfiles();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         userProfile.setCommunitiesSubscribedTo(new ArrayList<>());
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(userProfiles).when(userProfileDao).getCommunityUsers(CommunityTestData.getCommunityId());
 
-        Assertions.assertDoesNotThrow(() -> communityService.subscribeToCommunity(
-            request, CommunityTestData.getCommunityId(), secretKey));
+        Assertions.assertDoesNotThrow(() -> communityService.subscribeToCommunity(CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findById(
             CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.times(1)).getCommunityUsers(
@@ -189,12 +187,10 @@ public class CommunityServiceImplTest {
 
     @Test
     void CommunityServiceImpl_subscribeToCommunity_communityDao_findByIdAndEmail_nullObject() {
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(communityDao).findById(CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.subscribeToCommunity(
-            request, CommunityTestData.getCommunityId(), secretKey));
+            CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findById(
             CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).getCommunityUsers(CommunityTestData.getCommunityId());
@@ -206,12 +202,11 @@ public class CommunityServiceImplTest {
     void CommunityServiceImpl_subscribeToCommunity_communityDao_findByIdAndEmail_objectDeleted() {
         Community community = CommunityTestData.getTestCommunity();
         community.setIsDeleted(true);
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(null).when(communityDao).findById(CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.subscribeToCommunity(
-            request, CommunityTestData.getCommunityId(), secretKey));
+            CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findById(
             CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).getCommunityUsers(CommunityTestData.getCommunityId());
@@ -225,14 +220,13 @@ public class CommunityServiceImplTest {
         List<UserProfile> userProfiles = UserProfileTestData.getTestUsersProfiles();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         userProfile.setCommunitiesSubscribedTo(new ArrayList<>());
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(userProfiles).when(userProfileDao).getCommunityUsers(CommunityTestData.getCommunityId());
 
         Assertions.assertDoesNotThrow(() -> communityService.unsubscribeFromCommunity(
-            request, CommunityTestData.getCommunityId(), secretKey));
+            CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findById(
             CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.times(1)).getCommunityUsers(
@@ -244,12 +238,10 @@ public class CommunityServiceImplTest {
 
     @Test
     void CommunityServiceImpl_unsubscribeFromCommunity_communityDao_findByIdAndEmail_nullObject() {
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(communityDao).findById(CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.unsubscribeFromCommunity(
-            request, CommunityTestData.getCommunityId(), secretKey));
+            CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findById(
             CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).getCommunityUsers(CommunityTestData.getCommunityId());
@@ -261,12 +253,10 @@ public class CommunityServiceImplTest {
     void CommunityServiceImpl_unsubscribeFromCommunity_communityDao_findByIdAndEmail_objectDeleted() {
         Community community = CommunityTestData.getTestCommunity();
         community.setIsDeleted(true);
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.unsubscribeFromCommunity(
-            request, CommunityTestData.getCommunityId(), secretKey));
+            CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findById(
             CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.never()).getCommunityUsers(CommunityTestData.getCommunityId());
@@ -277,13 +267,12 @@ public class CommunityServiceImplTest {
     @Test
     void CommunityServiceImpl_unsubscribeFromCommunity_userProfileDao_getCommunityUsers_emptyList() {
         Community community = CommunityTestData.getTestCommunity();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(new ArrayList<>()).when(userProfileDao).getCommunityUsers(CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.unsubscribeFromCommunity(
-            request, CommunityTestData.getCommunityId(), secretKey));
+            CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findById(
             CommunityTestData.getCommunityId());
         Mockito.verify(userProfileDao, Mockito.times(1)).getCommunityUsers(
@@ -317,12 +306,11 @@ public class CommunityServiceImplTest {
         CommunityForCreateDto communityDto = CommunityTestData.getTestCommunityForCreationDto();
         Community community = CommunityTestData.getTestCommunity();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(community).when(communityDao).saveRecord(ArgumentMatchers.any(Community.class));
 
-        CommunityDto resultCommunityDto = communityService.addCommunity(request, communityDto, secretKey);
+        CommunityDto resultCommunityDto = communityService.addCommunity(communityDto);
         Assertions.assertNotNull(resultCommunityDto);
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(communityDao, Mockito.times(1)).saveRecord(
@@ -336,13 +324,12 @@ public class CommunityServiceImplTest {
         CommunityDto communityDto = CommunityTestData.getTestCommunityDto();
         Community community = CommunityTestData.getTestCommunity();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
 
-        Assertions.assertDoesNotThrow(() -> communityService.updateCommunity(request, communityDto, secretKey));
+        Assertions.assertDoesNotThrow(() -> communityService.updateCommunity(communityDto));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(
             UserTestData.getEmail());
         Mockito.verify(communityDao, Mockito.times(1)).updateRecord(
@@ -360,14 +347,12 @@ public class CommunityServiceImplTest {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         UserProfile wrongUserProfile = UserProfileTestData.getTestUserProfile();
         wrongUserProfile.setId(UserProfileTestData.getUserProfileOtherId());
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(wrongUserProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
 
-        Assertions.assertThrows(BusinessException.class, () -> communityService.updateCommunity(
-            request, communityDto, secretKey));
+        Assertions.assertThrows(BusinessException.class, () -> communityService.updateCommunity(communityDto));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(
             UserTestData.getEmail());
         Mockito.verify(userProfileDao, Mockito.times(1)).findById(
@@ -382,15 +367,13 @@ public class CommunityServiceImplTest {
     void CommunityServiceImpl_deleteCommunityByUser() {
         Community community = CommunityTestData.getTestCommunity();
         List<Post> posts = PostTestData.getTestPosts();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(community).when(communityDao).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
         Mockito.doReturn(posts).when(postDao).getByCommunityId(
             CommunityTestData.getCommunityId(), FIRST_RESULT, MAX_RESULTS);
 
-        Assertions.assertDoesNotThrow(() -> communityService.deleteCommunityByUser(
-            request, CommunityTestData.getCommunityId(), secretKey));
+        Assertions.assertDoesNotThrow(() -> communityService.deleteCommunityByUser(CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
         Mockito.verify(postDao, Mockito.times(1)).getByCommunityId(
@@ -403,13 +386,11 @@ public class CommunityServiceImplTest {
 
     @Test
     void CommunityServiceImpl_deleteCommunityByUser_communityDao_findByIdAndEmail_nullObject() {
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(communityDao).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.deleteCommunityByUser(
-            request, CommunityTestData.getCommunityId(), secretKey));
+            CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
         Mockito.verify(postDao, Mockito.never()).getByCommunityId(
@@ -424,13 +405,12 @@ public class CommunityServiceImplTest {
     void CommunityServiceImpl_deleteCommunityByUser_communityDao_findByIdAndEmail_objectDeleted() {
         Community community = CommunityTestData.getTestCommunity();
         community.setIsDeleted(true);
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(community).when(communityDao).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.deleteCommunityByUser(
-            request, CommunityTestData.getCommunityId(), secretKey));
+            CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
         Mockito.verify(postDao, Mockito.never()).getByCommunityId(
@@ -470,14 +450,13 @@ public class CommunityServiceImplTest {
         PostForCreationDto postDto = PostTestData.getTestPostForCreationDto();
         Post post = PostTestData.getTestPost();
         Community community = CommunityTestData.getTestCommunity();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(community).when(communityDao).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
         Mockito.doReturn(post).when(postDao).saveRecord(ArgumentMatchers.any(Post.class));
 
         Assertions.assertDoesNotThrow(() -> communityService.addPostToCommunity(
-            request, postDto, CommunityTestData.getCommunityId(), secretKey));
+            postDto, CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
         Mockito.verify(postDao, Mockito.times(1)).saveRecord(ArgumentMatchers.any(Post.class));
@@ -488,13 +467,12 @@ public class CommunityServiceImplTest {
     @Test
     void CommunityServiceImpl_addPostToCommunity_communityDao_findByIdAndEmail_nullObject() {
         PostForCreationDto postDto = PostTestData.getTestPostForCreationDto();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(null).when(communityDao).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.addPostToCommunity(
-            request, postDto, CommunityTestData.getCommunityId(), secretKey));
+            postDto, CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
         Mockito.verify(postDao, Mockito.never()).getByCommunityId(
@@ -509,13 +487,12 @@ public class CommunityServiceImplTest {
         PostForCreationDto postDto = PostTestData.getTestPostForCreationDto();
         Community community = CommunityTestData.getTestCommunity();
         community.setIsDeleted(true);
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(community).when(communityDao).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
 
         Assertions.assertThrows(BusinessException.class, () -> communityService.addPostToCommunity(
-            request, postDto, CommunityTestData.getCommunityId(), secretKey));
+            postDto, CommunityTestData.getCommunityId()));
         Mockito.verify(communityDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), CommunityTestData.getCommunityId());
         Mockito.verify(postDao, Mockito.never()).getByCommunityId(
