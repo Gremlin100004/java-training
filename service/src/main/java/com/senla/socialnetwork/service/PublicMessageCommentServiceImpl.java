@@ -7,16 +7,15 @@ import com.senla.socialnetwork.domain.PublicMessageComment;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
-import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.mapper.PublicMessageCommentMapper;
+import com.senla.socialnetwork.service.security.UserPrincipal;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -41,13 +40,10 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public void updateComment(final HttpServletRequest request,
-                              final PublicMessageCommentDto publicMessageCommentDto,
-                              final SecretKey secretKey) {
+    public void updateComment(final PublicMessageCommentDto publicMessageCommentDto) {
         log.debug("[updateComment]");
-        log.debug("[request: {}, publicMessageCommentDto: {}]", request, publicMessageCommentDto);
-        UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
-            JwtUtil.getToken(request), secretKey));
+        log.debug("[publicMessageCommentDto: {}]", publicMessageCommentDto);
+        UserProfile userProfile = userProfileDao.findByEmail(getUserName());
         PublicMessageComment publicMessageComment = PublicMessageCommentMapper.getPublicMessageComment(
             publicMessageCommentDto, publicMessageCommentDao, publicMessageDao,  userProfileDao);
         if (publicMessageComment.getAuthor() != userProfile) {
@@ -58,11 +54,10 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
 
     @Override
     @Transactional
-    public void deleteCommentByUser(final HttpServletRequest request, final Long commentId, final SecretKey secretKey) {
+    public void deleteCommentByUser(final Long commentId) {
         log.debug("[deleteCommentByUser]");
-        log.debug("[request: {}, commentId: {}]", request, commentId);
-        PublicMessageComment publicMessageComment = publicMessageCommentDao.findByIdAndEmail(JwtUtil.extractUsername(
-            JwtUtil.getToken(request), secretKey), commentId);
+        log.debug("[commentId: {}]", commentId);
+        PublicMessageComment publicMessageComment = publicMessageCommentDao.findByIdAndEmail(getUserName(), commentId);
         if (publicMessageComment == null) {
             throw new BusinessException("Error, there is no such comment");
         } else if (publicMessageComment.getIsDeleted()) {
@@ -82,5 +77,11 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
             throw new BusinessException("Error, there is no such comment");
         }
         publicMessageCommentDao.deleteRecord(publicMessageComment);
+    }
+
+    private String getUserName() {
+        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
+        return userPrincipal.getUsername();
     }
 }

@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -94,10 +93,8 @@ public class PostController {
     public List<PostDto> getPostsHistory(@ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
                                          @RequestParam final int firstResult,
                                          @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)
-                                         @RequestParam final int maxResults,
-                                         final HttpServletRequest request) {
-        return postService.getPostsFromSubscribedCommunities(
-            request, firstResult, maxResults, signingKey.getSecretKey());
+                                         @RequestParam final int maxResults) {
+        return postService.getPostsFromSubscribedCommunities(firstResult, maxResults);
     }
 
     @PutMapping
@@ -123,9 +120,8 @@ public class PostController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto deletePostByUser(@ApiParam(value = POST_ID_DESCRIPTION)
-                                             @PathVariable("id") final Long postId,
-                                             final HttpServletRequest request) {
-        postService.deletePostByUser(request, postId, signingKey.getSecretKey());
+                                             @PathVariable("id") final Long postId) {
+        postService.deletePostByUser(postId);
         return new ClientMessageDto(DELETE_POST_OK_MESSAGE);
     }
 
@@ -174,9 +170,8 @@ public class PostController {
     public PostCommentDto addComment(@ApiParam(value = POST_ID_DESCRIPTION)
                                      @PathVariable("id") final Long postId,
                                      @ApiParam(value = COMMENT_DTO_DESCRIPTION)
-                                     @RequestBody @Valid final PostCommentForCreateDto postCommentDto,
-                                     final HttpServletRequest request) {
-        return postService.addComment(request, postId, postCommentDto, signingKey.getSecretKey());
+                                     @RequestBody @Valid final PostCommentForCreateDto postCommentDto) {
+        return postService.addComment(postId, postCommentDto);
     }
 
 }

@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
@@ -109,9 +108,8 @@ public class PrivateMessageController {
                                                      @RequestParam final int firstResult,
                                                      @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                                example = MAX_RESULTS_EXAMPLE)
-                                                     @RequestParam final int maxResults,
-                                                     final HttpServletRequest request) {
-        return privateMessageService.getUnreadMessages(request, firstResult, maxResults, signingKey.getSecretKey());
+                                                     @RequestParam final int maxResults) {
+        return privateMessageService.getUnreadMessages(firstResult, maxResults);
     }
 
     @GetMapping
@@ -137,14 +135,12 @@ public class PrivateMessageController {
                                                       @RequestParam final int firstResult,
                                                       @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                                 example = MAX_RESULTS_EXAMPLE)
-                                                      @RequestParam final int maxResults,
-                                                      final HttpServletRequest request) {
+                                                      @RequestParam final int maxResults) {
         if (startPeriodDate != null && endPeriodDate != null) {
             return privateMessageService.getMessageFilteredByPeriod(
-                request, startPeriodDate, endPeriodDate, firstResult, maxResults, signingKey.getSecretKey());
+                startPeriodDate, endPeriodDate, firstResult, maxResults);
         } else {
-            return privateMessageService.getPrivateMessages(
-                request, firstResult, maxResults, signingKey.getSecretKey());
+            return privateMessageService.getPrivateMessagesByUser(firstResult, maxResults);
         }
     }
 
@@ -158,9 +154,8 @@ public class PrivateMessageController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public PrivateMessageDto addMessage(@ApiParam(value = PRIVATE_MESSAGE_DTO_DESCRIPTION)
-                                        @RequestBody @Valid final PrivateMessageForCreateDto privateMessageDto,
-                                        final HttpServletRequest request) {
-        return privateMessageService.addMessage(request, privateMessageDto, signingKey.getSecretKey());
+                                        @RequestBody @Valid final PrivateMessageForCreateDto privateMessageDto) {
+        return privateMessageService.addMessage(privateMessageDto);
     }
 
     @PutMapping
@@ -172,9 +167,8 @@ public class PrivateMessageController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateMessage(@ApiParam(value = PRIVATE_MESSAGE_DTO_DESCRIPTION)
-                                          @RequestBody @Valid final PrivateMessageDto privateMessageDto,
-                                          final HttpServletRequest request) {
-        privateMessageService.updateMessage(request, privateMessageDto, signingKey.getSecretKey());
+                                          @RequestBody @Valid final PrivateMessageDto privateMessageDto) {
+        privateMessageService.updateMessage(privateMessageDto);
         return new ClientMessageDto(UPDATE_PRIVATE_MESSAGE_OK_MESSAGE);
     }
 
@@ -187,9 +181,8 @@ public class PrivateMessageController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto deleteMessageByUser(@ApiParam(value = PRIVATE_MESSAGE_ID_DESCRIPTION)
-                                                @PathVariable("id") final Long messageId,
-                                                final HttpServletRequest request) {
-        privateMessageService.deleteMessageByUser(request, messageId, signingKey.getSecretKey());
+                                                @PathVariable("id") final Long messageId) {
+        privateMessageService.deleteMessageByUser(messageId);
         return new ClientMessageDto(DELETE_PRIVATE_MESSAGE_OK_MESSAGE);
     }
 

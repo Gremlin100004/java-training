@@ -10,17 +10,16 @@ import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.dto.PostCommentForCreateDto;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
-import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.mapper.PostCommentMapper;
 import com.senla.socialnetwork.service.mapper.PostMapper;
+import com.senla.socialnetwork.service.security.UserPrincipal;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -48,14 +47,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostDto> getPostsFromSubscribedCommunities(final HttpServletRequest request,
-                                                           final int firstResult,
-                                                           final int maxResults,
-                                                           final SecretKey secretKey) {
+    public List<PostDto> getPostsFromSubscribedCommunities(final int firstResult, final int maxResults) {
         log.debug("[getPostsFromSubscribedCommunities]");
-        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
-        return PostMapper.getPostDto(postDao.getByEmail(JwtUtil.extractUsername(JwtUtil.getToken(
-            request), secretKey), firstResult, maxResults));
+        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        return PostMapper.getPostDto(postDao.getByEmail(getUserName(), firstResult, maxResults));
     }
 
     @Override
@@ -68,10 +63,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void deletePostByUser(final HttpServletRequest request, final Long postId, final SecretKey secretKey) {
+    public void deletePostByUser(final Long postId) {
         log.debug("[deleteMessageByUser]");
         log.debug("[postId: {}]", postId);
-        Post post = postDao.findByIdAndEmail(JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey), postId);
+        Post post = postDao.findByIdAndEmail(getUserName(), postId);
         if (post == null) {
             throw new BusinessException("Error, there is no such post");
         } else if (post.getIsDeleted()) {
@@ -106,13 +101,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostCommentDto addComment(final HttpServletRequest request,
-                                     final Long postId,
-                                     final PostCommentForCreateDto postCommentDto,
-                                     final SecretKey secretKey) {
+    public PostCommentDto addComment(final Long postId, final PostCommentForCreateDto postCommentDto) {
         log.debug("[addComment]");
-        log.debug("[request: {}, postCommentDto: {}]", request, postCommentDto);
-        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
+        log.debug("[postCommentDto: {}]", postCommentDto);
+        String email = getUserName();
         Post post = postDao.findByIdAndEmail(email, postId);
         if (post == null) {
             throw new BusinessException("Error, there is no such post");
@@ -121,6 +113,12 @@ public class PostServiceImpl implements PostService {
         }
         return PostCommentMapper.getPostCommentDto(postCommentDao.saveRecord(PostCommentMapper.getPostNewComment(
             postCommentDto, post, userProfileDao.findByEmail(email))));
+    }
+
+    private String getUserName() {
+        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
+        return userPrincipal.getUsername();
     }
 
 }

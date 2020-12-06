@@ -26,8 +26,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -45,10 +43,6 @@ public class PostCommentServiceImplTest {
     PostCommentDao postCommentDao;
     @Autowired
     UserProfileDao userProfileDao;
-    @Autowired
-    private HttpServletRequest request;
-    @Autowired
-    private SecretKey secretKey;
 
     @Test
     void PostCommentServiceImpl_getComments() {

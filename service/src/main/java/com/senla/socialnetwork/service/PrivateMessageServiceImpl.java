@@ -7,16 +7,15 @@ import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
-import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.mapper.PrivateMessageMapper;
+import com.senla.socialnetwork.service.security.UserPrincipal;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -39,13 +38,10 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public List<PrivateMessageDto> getPrivateMessages(final HttpServletRequest request,
-                                                      final int firstResult,
-                                                      final int maxResults,
-                                                      final SecretKey secretKey) {
+    public List<PrivateMessageDto> getPrivateMessagesByUser(final int firstResult, final int maxResults) {
         log.debug("[getPrivateMessages]");
-        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
-        String email = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
+        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        String email = getUserName();
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
             throw new BusinessException("Error, user with this email does not exist");
@@ -56,54 +52,42 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public List<PrivateMessageDto> getUnreadMessages(final HttpServletRequest request,
-                                                     final int firstResult,
-                                                     final int maxResults,
-                                                     final SecretKey secretKey) {
+    public List<PrivateMessageDto> getUnreadMessages(final int firstResult, final int maxResults) {
         log.debug("[getUnreadMessages]");
-        log.debug("[request: {}, firstResult: {}, maxResults: {}]", request, firstResult, maxResults);
+        log.debug("[ firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
-            privateMessageDao.getUnreadMessages(JwtUtil.extractUsername(JwtUtil.getToken(
-                request), secretKey), firstResult, maxResults));
+            privateMessageDao.getUnreadMessages(getUserName(), firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public List<PrivateMessageDto> getMessageFilteredByPeriod(final HttpServletRequest request,
-                                                              final Date startPeriodDate,
+    public List<PrivateMessageDto> getMessageFilteredByPeriod(final Date startPeriodDate,
                                                               final Date endPeriodDate,
                                                               final int firstResult,
-                                                              final int maxResults,
-                                                              final SecretKey secretKey) {
+                                                              final int maxResults) {
         log.debug("[getMessageFilteredByPeriod]");
-        log.debug("[request: {}, startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
-                  request, startPeriodDate, endPeriodDate, firstResult, maxResults);
+        log.debug("[startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
+                  startPeriodDate, endPeriodDate, firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
-            privateMessageDao.getMessageFilteredByPeriod(JwtUtil.extractUsername(JwtUtil.getToken(
-                request), secretKey), startPeriodDate, endPeriodDate, firstResult, maxResults));
+            privateMessageDao.getMessageFilteredByPeriod(
+                getUserName(), startPeriodDate, endPeriodDate, firstResult, maxResults));
     }
 
     @Override
     @Transactional
-    public PrivateMessageDto addMessage(final HttpServletRequest request,
-                                        final PrivateMessageForCreateDto privateMessageDto,
-                                        final SecretKey secretKey) {
+    public PrivateMessageDto addMessage(final PrivateMessageForCreateDto privateMessageDto) {
         log.debug("[addMessage]");
-        log.debug("[request: {}, privateMessageDto: {}]", request, privateMessageDto);
+        log.debug("[privateMessageDto: {}]", privateMessageDto);
         return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.saveRecord(
-            PrivateMessageMapper.getNewPrivateMessage(privateMessageDto, userProfileDao.findByEmail(
-                JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey)))));
+            PrivateMessageMapper.getNewPrivateMessage(privateMessageDto, userProfileDao.findByEmail(getUserName()))));
     }
 
     @Override
     @Transactional
-    public void updateMessage(final HttpServletRequest request,
-                              final PrivateMessageDto privateMessageDto,
-                              final SecretKey secretKey) {
+    public void updateMessage(final PrivateMessageDto privateMessageDto) {
         log.debug("[updateMessage]");
-        log.debug("[request: {}, privateMessage: {}]", request, privateMessageDto);
-        UserProfile userProfile = userProfileDao.findByEmail(JwtUtil.extractUsername(
-            JwtUtil.getToken(request), secretKey));
+        log.debug("[privateMessage: {}]", privateMessageDto);
+        UserProfile userProfile = userProfileDao.findByEmail(getUserName());
         PrivateMessage privateMessage = PrivateMessageMapper.getPrivateMessage(
             privateMessageDto, privateMessageDao, userProfileDao);
         if (privateMessage.getSender() != userProfile) {
@@ -114,11 +98,10 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
 
     @Override
     @Transactional
-    public void deleteMessageByUser(final HttpServletRequest request, final Long messageId, final SecretKey secretKey) {
+    public void deleteMessageByUser(final Long messageId) {
         log.debug("[deleteMessageByUser]");
-        log.debug("[request: {}, messageId: {}]", request, messageId);
-        PrivateMessage privateMessage = privateMessageDao.findByIdAndEmail(JwtUtil.extractUsername(
-            JwtUtil.getToken(request), secretKey), messageId);
+        log.debug("[messageId: {}]", messageId);
+        PrivateMessage privateMessage = privateMessageDao.findByIdAndEmail(getUserName(), messageId);
         if (privateMessage == null) {
             throw new BusinessException("Error, there is no such message");
         } else if (privateMessage.getIsDeleted()) {
@@ -138,6 +121,12 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
             throw new BusinessException("Error, there is no such message");
         }
         privateMessageDao.deleteRecord(privateMessage);
+    }
+
+    private String getUserName() {
+        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
+        return userPrincipal.getUsername();
     }
 
 }
