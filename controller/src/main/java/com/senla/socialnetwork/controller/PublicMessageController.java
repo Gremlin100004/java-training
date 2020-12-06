@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -112,9 +111,8 @@ public class PublicMessageController {
                                                     @RequestParam final int firstResult,
                                                     @ApiParam(value = MAX_RESULTS_DESCRIPTION,
                                                               example = MAX_RESULTS_EXAMPLE)
-                                                    @RequestParam final int maxResults,
-                                                    final HttpServletRequest request) {
-        return publicMessageService.getPublicMessages(request, firstResult, maxResults, signingKey.getSecretKey());
+                                                    @RequestParam final int maxResults) {
+        return publicMessageService.getPublicMessages(firstResult, maxResults);
     }
 
     @PostMapping
@@ -127,9 +125,8 @@ public class PublicMessageController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public PublicMessageDto addMessage(@ApiParam(value = PUBLIC_MESSAGE_DTO_DESCRIPTION)
-                                       @RequestBody @Valid final PublicMessageForCreateDto publicMessageDto,
-                                       final HttpServletRequest request) {
-        return publicMessageService.addMessage(request, publicMessageDto, signingKey.getSecretKey());
+                                       @RequestBody @Valid final PublicMessageForCreateDto publicMessageDto) {
+        return publicMessageService.addMessage(publicMessageDto);
     }
 
     @PutMapping
@@ -141,9 +138,8 @@ public class PublicMessageController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateMessage(@ApiParam(value = PUBLIC_MESSAGE_DTO_DESCRIPTION)
-                                          @RequestBody @Valid final PublicMessageDto publicMessageDto,
-                                          final HttpServletRequest request) {
-        publicMessageService.updateMessage(request, publicMessageDto, signingKey.getSecretKey());
+                                          @RequestBody @Valid final PublicMessageDto publicMessageDto) {
+        publicMessageService.updateMessage(publicMessageDto);
         return new ClientMessageDto(UPDATE_MESSAGE_OK_MESSAGE);
     }
 
@@ -157,10 +153,9 @@ public class PublicMessageController {
     })
     public ClientMessageDto deleteMessageByUser(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
                                                           example = PUBLIC_MESSAGE_ID_EXAMPLE)
-                                                @PathVariable("id") final Long messageId,
-                                                final HttpServletRequest request) {
+                                                @PathVariable("id") final Long messageId) {
 
-        publicMessageService.deleteMessageByUser(messageId, request, signingKey.getSecretKey());
+        publicMessageService.deleteMessageByUser(messageId);
         return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
     }
 
@@ -214,10 +209,8 @@ public class PublicMessageController {
                                               @PathVariable("id") final Long publicMessageId,
                                               @ApiParam(value = COMMENTS_DTO_DESCRIPTION)
                                               @RequestBody @Valid
-                                              final PublicMessageCommentForCreateDto publicMessageCommentDto,
-                                              final HttpServletRequest request) {
-        return publicMessageService.addComment(
-            request, publicMessageId, publicMessageCommentDto, signingKey.getSecretKey());
+                                              final PublicMessageCommentForCreateDto publicMessageCommentDto) {
+        return publicMessageService.addComment(publicMessageId, publicMessageCommentDto);
     }
 
 }

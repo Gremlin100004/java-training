@@ -23,12 +23,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -44,10 +42,6 @@ public class PublicMessageServiceImplTest {
     PublicMessageCommentDao publicMessageCommentDao;
     @Autowired
     UserProfileDao userProfileDao;
-    @Autowired
-    private HttpServletRequest request;
-    @Autowired
-    private SecretKey secretKey;
 
     @Test
     void PublicMessageServiceImpl_getAllMessages() {
@@ -70,13 +64,12 @@ public class PublicMessageServiceImplTest {
     void PublicMessageServiceImpl_getPublicMessages() {
         List<PublicMessage> publicMessages = PublicMessageTestData.getTestPublicMessages();
         List<PublicMessageDto> publicMessagesDto = PublicMessageTestData.getTestPublicMessagesDto();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(publicMessages).when(publicMessageDao).getByEmail(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<PublicMessageDto> resultProfilesDto = publicMessageService.getPublicMessages(
-            request, FIRST_RESULT, NORMAL_MAX_RESULTS, secretKey);
+            FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultProfilesDto);
         Assertions.assertEquals(PublicMessageTestData.getRightNumberPublicMessages(), resultProfilesDto.size());
         Assertions.assertFalse(resultProfilesDto.isEmpty());
@@ -91,12 +84,11 @@ public class PublicMessageServiceImplTest {
         PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
         PublicMessageForCreateDto publicMessageDto = PublicMessageTestData.getTestPublicMessageForCreationDto();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(publicMessage).when(publicMessageDao).saveRecord(ArgumentMatchers.any(PublicMessage.class));
 
-        PublicMessageDto resultPublicMessageDto = publicMessageService.addMessage(request, publicMessageDto, secretKey);
+        PublicMessageDto resultPublicMessageDto = publicMessageService.addMessage(publicMessageDto);
         Assertions.assertNotNull(resultPublicMessageDto);
         Mockito.verify(publicMessageDao, Mockito.never()).findById(PublicMessageTestData.getPublicMessageId());
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -111,13 +103,12 @@ public class PublicMessageServiceImplTest {
         PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
         PublicMessageDto publicMessageDto = PublicMessageTestData.getTestPublicMessageDto();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(publicMessage).when(publicMessageDao).findById(PublicMessageTestData.getPublicMessageId());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
 
-        Assertions.assertDoesNotThrow(() -> publicMessageService.updateMessage(request, publicMessageDto, secretKey));
+        Assertions.assertDoesNotThrow(() -> publicMessageService.updateMessage(publicMessageDto));
         Mockito.verify(publicMessageDao, Mockito.times(1)).findById(
             PublicMessageTestData.getPublicMessageId());
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -136,14 +127,12 @@ public class PublicMessageServiceImplTest {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         UserProfile wrongUserProfile = UserProfileTestData.getTestUserProfile();
         wrongUserProfile.setId(UserProfileTestData.getUserProfileOtherId());
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(publicMessage).when(publicMessageDao).findById(PublicMessageTestData.getPublicMessageId());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(wrongUserProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
 
-        Assertions.assertThrows(BusinessException.class, () -> publicMessageService.updateMessage(
-            request, publicMessageDto, secretKey));
+        Assertions.assertThrows(BusinessException.class, () -> publicMessageService.updateMessage(publicMessageDto));
         Mockito.verify(publicMessageDao, Mockito.times(1)).findById(
             PublicMessageTestData.getPublicMessageId());
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
@@ -159,13 +148,12 @@ public class PublicMessageServiceImplTest {
     @Test
     void PublicMessageServiceImpl_deleteMessageByUser() {
         PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(publicMessage).when(publicMessageDao).findByIdAndEmail(
             UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
 
         Assertions.assertDoesNotThrow(() -> publicMessageService.deleteMessageByUser(
-            PublicMessageTestData.getPublicMessageId(), request, secretKey));
+            PublicMessageTestData.getPublicMessageId()));
         Mockito.verify(publicMessageDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
         Mockito.verify(publicMessageDao, Mockito.times(1)).updateRecord(
@@ -175,13 +163,12 @@ public class PublicMessageServiceImplTest {
 
     @Test
     void PublicMessageServiceImpl_deleteMessageByUser_publicMessageDao_findByIdAndEmail_nullObject() {
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(null).when(publicMessageDao).findByIdAndEmail(
             UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
 
         Assertions.assertThrows(BusinessException.class, () -> publicMessageService.deleteMessageByUser(
-            PublicMessageTestData.getPublicMessageId(), request, secretKey));
+            PublicMessageTestData.getPublicMessageId()));
         Mockito.verify(publicMessageDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
         Mockito.verify(publicMessageDao, Mockito.never()).updateRecord(
@@ -193,13 +180,12 @@ public class PublicMessageServiceImplTest {
     void PublicMessageServiceImpl_deleteMessageByUser_publicMessageDao_findByIdAndEmail_deletedObject() {
         PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
         publicMessage.setIsDeleted(true);
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(null).when(publicMessageDao).findByIdAndEmail(
             UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
 
         Assertions.assertThrows(BusinessException.class, () -> publicMessageService.deleteMessageByUser(
-            PublicMessageTestData.getPublicMessageId(), request, secretKey));
+            PublicMessageTestData.getPublicMessageId()));
         Mockito.verify(publicMessageDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
         Mockito.verify(publicMessageDao, Mockito.never()).updateRecord(
@@ -259,8 +245,7 @@ public class PublicMessageServiceImplTest {
             .getTestPublicMessageCommentForCreationDto();
         PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(publicMessageComment).when(publicMessageCommentDao).saveRecord(
             ArgumentMatchers.any(PublicMessageComment.class));
@@ -268,7 +253,7 @@ public class PublicMessageServiceImplTest {
             UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
 
         PublicMessageCommentDto resultPublicMessageCommentDto = publicMessageService.addComment(
-            request, PublicMessageTestData.getPublicMessageId(), publicMessageCommentDto, secretKey);
+            PublicMessageTestData.getPublicMessageId(), publicMessageCommentDto);
         Assertions.assertNotNull(resultPublicMessageCommentDto);
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(publicMessageCommentDao, Mockito.times(1)).saveRecord(
@@ -284,13 +269,12 @@ public class PublicMessageServiceImplTest {
     void PublicMessageCommentServiceImpl_addComment_publicMessageDao_findByIdAndEmail_nullObject() {
         PublicMessageCommentForCreateDto publicMessageCommentDto = PublicMessageCommentTestData
             .getTestPublicMessageCommentForCreationDto();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(null).when(publicMessageDao).findByIdAndEmail(
             UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
 
         Assertions.assertThrows(BusinessException.class, () -> publicMessageService.addComment(
-            request, PublicMessageTestData.getPublicMessageId(), publicMessageCommentDto, secretKey));
+            PublicMessageTestData.getPublicMessageId(), publicMessageCommentDto));
         Mockito.verify(userProfileDao, Mockito.never()).findByEmail(UserTestData.getEmail());
         Mockito.verify(publicMessageCommentDao, Mockito.never()).saveRecord(
             ArgumentMatchers.any(PublicMessageComment.class));
@@ -305,13 +289,12 @@ public class PublicMessageServiceImplTest {
         publicMessage.setIsDeleted(true);
         PublicMessageCommentForCreateDto publicMessageCommentDto = PublicMessageCommentTestData
             .getTestPublicMessageCommentForCreationDto();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(publicMessage).when(publicMessageDao).findByIdAndEmail(
             UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
 
         Assertions.assertThrows(BusinessException.class, () -> publicMessageService.addComment(
-            request, PublicMessageTestData.getPublicMessageId(), publicMessageCommentDto, secretKey));
+            PublicMessageTestData.getPublicMessageId(), publicMessageCommentDto));
         Mockito.verify(userProfileDao, Mockito.never()).findByEmail(UserTestData.getEmail());
         Mockito.verify(publicMessageCommentDao, Mockito.never()).saveRecord(
             ArgumentMatchers.any(PublicMessageComment.class));

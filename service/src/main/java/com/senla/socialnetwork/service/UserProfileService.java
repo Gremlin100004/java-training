@@ -6,17 +6,13 @@ import com.senla.socialnetwork.dto.UserProfileForIdentificationDto;
 import com.senla.socialnetwork.service.enumaration.UserProfileFriendSortParameter;
 import com.senla.socialnetwork.service.enumaration.UserProfileSortParameter;
 
-import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
 public interface UserProfileService {
-    UserProfileDto getUserProfile(HttpServletRequest request, SecretKey secretKey);
+    UserProfileDto getUserProfile();
 
-    void updateUserProfile(UserProfileDto userProfileDto,
-                           HttpServletRequest request,
-                           SecretKey secretKey);
+    void updateUserProfile(UserProfileDto userProfileDto);
 
     List<UserProfileForIdentificationDto> getUserProfiles(int firstResult, int maxResults);
 
@@ -24,13 +20,9 @@ public interface UserProfileService {
                                                               int firstResult,
                                                               int maxResults);
 
-    List<UserProfileForIdentificationDto> getUserProfilesByLocationId(Long locationId,
-                                                                      int firstResult,
-                                                                      int maxResults);
+    List<UserProfileForIdentificationDto> getUserProfilesByLocationId(Long locationId, int firstResult, int maxResults);
 
-    List<UserProfileForIdentificationDto> getUserProfilesBySchoolId(Long schoolId,
-                                                                    int firstResult,
-                                                                    int maxResults);
+    List<UserProfileForIdentificationDto> getUserProfilesBySchoolId(Long schoolId, int firstResult, int maxResults);
 
     List<UserProfileForIdentificationDto> getUserProfilesByUniversityId(Long universityId,
                                                                         int firstResult,
@@ -41,39 +33,26 @@ public interface UserProfileService {
                                                                        int firstResult,
                                                                        int maxResults);
 
-    UserProfileForIdentificationDto getFriendNearestDateOfBirth(HttpServletRequest request,
-                                                                SecretKey secretKey);
+    UserProfileForIdentificationDto getFriendNearestDateOfBirth();
 
     UserProfileDto getUserProfileDetails(Long userProfileId);
 
-    List<UserProfileForIdentificationDto> getUserProfileFriends(HttpServletRequest request,
-                                                                int firstResult,
-                                                                int maxResults,
-                                                                SecretKey secretKey);
+    List<UserProfileForIdentificationDto> getUserProfileFriends(int firstResult, int maxResults);
 
-    List<UserProfileForIdentificationDto> getSortedFriendsOfUserProfile(HttpServletRequest request,
-                                                                        UserProfileFriendSortParameter sortParameter,
+    List<UserProfileForIdentificationDto> getSortedFriendsOfUserProfile(UserProfileFriendSortParameter sortParameter,
                                                                         int firstResult,
-                                                                        int maxResults,
-                                                                        SecretKey secretKey);
+                                                                        int maxResults);
 
-    List<UserProfileForIdentificationDto> getUserProfileSignedFriends(HttpServletRequest request,
-                                                                      int firstResult,
-                                                                      int maxResults,
-                                                                      SecretKey secretKey);
+    List<UserProfileForIdentificationDto> getUserProfileSignedFriends(int firstResult, int maxResults);
 
-    void sendAFriendRequest(HttpServletRequest request, Long userProfileId, SecretKey secretKey);
+    void sendAFriendRequest(Long userProfileId);
 
-    void confirmFriend(HttpServletRequest request, Long userProfileId, SecretKey secretKey);
+    void confirmFriend(Long userProfileId);
 
-    void removeUserFromFriends(HttpServletRequest request, Long userProfileId, SecretKey secretKey);
+    void removeUserFromFriends(Long userProfileId);
 
     void deleteUserProfile(Long userProfileId);
 
-    List<PrivateMessageDto> getDialogue(HttpServletRequest request,
-                                        Long userProfileId,
-                                        int firstResult,
-                                        int maxResults,
-                                        SecretKey secretKey);
+    List<PrivateMessageDto> getDialogue(Long userProfileId, int firstResult, int maxResults);
 
 }
