@@ -10,7 +10,7 @@ import java.util.List;
 public interface WeatherConditionService {
     List<WeatherConditionForAdminDto> getWeatherConditions(int firstResult, int maxResults);
 
-    WeatherConditionDto getWeatherCondition(HttpServletRequest request, SecretKey secretKey);
+    WeatherConditionDto getWeatherCondition();
 
     void deleteWeatherCondition(Long weatherConditionId);
 

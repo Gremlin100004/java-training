@@ -149,9 +149,6 @@ public class CommunityServiceImplTest {
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(communities).when(communityDao).getSubscribedCommunitiesByEmail(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
-
         List<CommunityDto> resultCommunities = communityService.getSubscribedCommunities(
             FIRST_RESULT, NORMAL_MAX_RESULTS);
         Assertions.assertNotNull(resultCommunities);

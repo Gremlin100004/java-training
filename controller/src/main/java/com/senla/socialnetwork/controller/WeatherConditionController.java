@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -83,8 +82,8 @@ public class WeatherConditionController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public WeatherConditionDto getWeatherCondition(final HttpServletRequest request) {
-        return weatherConditionService.getWeatherCondition(request, signingKey.getSecretKey());
+    public WeatherConditionDto getWeatherCondition() {
+        return weatherConditionService.getWeatherCondition();
     }
 
     @Secured({"ROLE_ADMIN"})
