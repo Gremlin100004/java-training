@@ -1,7 +1,7 @@
 package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.controller.exception.ControllerException;
-import com.senla.socialnetwork.controller.util.SigningKey;
+import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;

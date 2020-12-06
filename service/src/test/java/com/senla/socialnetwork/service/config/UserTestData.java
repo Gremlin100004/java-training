@@ -4,7 +4,9 @@ import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
+import com.senla.socialnetwork.service.security.UserPrincipal;
 import com.senla.socialnetwork.service.util.JwtUtil;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
 
 import javax.crypto.SecretKey;
@@ -95,6 +97,11 @@ public class UserTestData {
         UserForSecurityDto userDtoOne = getTestUserForSecurityDto();
         UserForSecurityDto userDtoTwo = getTestUserForSecurityDto();
         return Arrays.asList(userDtoOne, userDtoTwo);
+    }
+
+    public static UsernamePasswordAuthenticationToken getUsernamePasswordAuthenticationToken() {
+        return new UsernamePasswordAuthenticationToken(
+            new UserPrincipal(UserTestData.getTestUser()), null, null);
     }
 
 }

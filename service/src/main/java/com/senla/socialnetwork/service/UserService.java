@@ -5,25 +5,22 @@ import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
 
 import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface UserService {
     List<UserForAdminDto> getUsers(int firstResult, int maxResults);
 
-    UserForSecurityDto getUser(HttpServletRequest request, SecretKey secretKey);
+    UserForSecurityDto getUser();
 
     String getUserLogoutToken(String email);
 
     String logIn(UserForSecurityDto userDto, SecretKey secretKey);
 
-    void logOut(HttpServletRequest request, SecretKey secretKey);
+    void logOut(String token);
 
     void addUser(UserForSecurityDto userDto, RoleName roleName);
 
-    void updateUser(HttpServletRequest request,
-                    List<UserForSecurityDto> usersDto,
-                    SecretKey secretKey);
+    void updateUser(List<UserForSecurityDto> usersDto, String token);
 
     void deleteUser(Long userId);
 

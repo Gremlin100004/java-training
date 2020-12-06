@@ -20,12 +20,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -61,18 +61,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserForSecurityDto getUser(final HttpServletRequest request, final SecretKey secretKey) {
+    public UserForSecurityDto getUser() {
         log.debug("[getUser]");
-        log.debug("[request: {}]", request);
-        return UserMapper.getUserForSecurityDto(userDao.findByEmail(JwtUtil.extractUsername(
-            JwtUtil.getToken(request), secretKey)));
+        return UserMapper.getUserForSecurityDto(userDao.findByEmail(getUserName()));
     }
 
     @Override
     @Transactional
-    public String getUserLogoutToken(final String email) {
+    public String getUserLogoutToken(String email) {
         log.debug("[getUserLogoutToken]");
-        log.debug("[email: {}]", email);
         String token = tokenDao.getLogoutToken(email);
         if (token == null) {
             token = "";
@@ -97,16 +94,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void logOut(final HttpServletRequest request, final SecretKey secretKey) {
+    public void logOut(final String token) {
         log.debug("[logOut]");
-        log.debug("[request: {}]", request);
-        String token = JwtUtil.getToken(request);
-        if (token == null) {
-            throw new BusinessException("Logout error");
-        }
+        log.debug("[token: {}]", token);
         LogoutToken logoutToken = new LogoutToken();
         logoutToken.setValue(token);
-        logoutToken.setSystemUser(userDao.findByEmail(JwtUtil.extractUsername(token, secretKey)));
+        logoutToken.setSystemUser(userDao.findByEmail(getUserName()));
         tokenDao.saveRecord(logoutToken);
     }
 
@@ -129,17 +122,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateUser(final HttpServletRequest request,
-                           final List<UserForSecurityDto> usersDto,
-                           final SecretKey secretKey) {
+    public void updateUser(final List<UserForSecurityDto> usersDto, String token) {
         log.debug("[updateUser]");
-        log.debug("[request: {}, usersDto: {}]", request, usersDto);
+        log.debug("[usersDto: {}]", usersDto);
         if (usersDto.size() != LIST_SIZE) {
             throw new BusinessException("Input data amount error");
         }
         UserForSecurityDto oldUserDto = usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA);
         UserForSecurityDto newUserDto = usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA);
-        String controlEmail = JwtUtil.extractUsername(JwtUtil.getToken(request), secretKey);
+        String controlEmail = getUserName();
         if (!oldUserDto.getEmail().equals(controlEmail)) {
             throw new BusinessException("login is wrong");
         }
@@ -150,7 +141,7 @@ public class UserServiceImpl implements UserService {
         }
         SystemUser currentSystemUser = userDao.findByEmail(controlEmail);
         LogoutToken logoutToken = new LogoutToken();
-        logoutToken.setValue(JwtUtil.getToken(request));
+        logoutToken.setValue(token);
         logoutToken.setSystemUser(currentSystemUser);
         tokenDao.saveRecord(logoutToken);
         UserMapper.getCurrentSystemUser(passwordEncoder, newUserDto, currentSystemUser);
@@ -176,6 +167,12 @@ public class UserServiceImpl implements UserService {
         logoutTokens.stream()
             .filter(token -> token.getCreationDate().getTime() - currentDate.getTime() > expiration)
             .forEach(token -> tokenDao.deleteRecord(token));
+    }
+
+    private String getUserName() {
+        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
+        return userPrincipal.getUsername();
     }
 
 }

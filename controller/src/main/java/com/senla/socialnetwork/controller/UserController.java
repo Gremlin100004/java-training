@@ -1,11 +1,12 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.util.SigningKey;
+import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
 import com.senla.socialnetwork.service.UserService;
+import com.senla.socialnetwork.service.util.JwtUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -69,7 +70,6 @@ public class UserController {
     public static final String LOGOUT_DESCRIPTION = "This method is used to log out the user";
     public static final String UPDATE_USER_DESCRIPTION = "This method is used to update security data by this user";
     public static final String DELETE_USER_DESCRIPTION = "This method is used to delete user by admin";
-
     @Autowired
     private UserService userService;
     @Autowired
@@ -99,8 +99,8 @@ public class UserController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public UserForSecurityDto getUser(final HttpServletRequest request) {
-        return userService.getUser(request, signingKey.getSecretKey());
+    public UserForSecurityDto getUser() {
+        return userService.getUser();
     }
 
     @PostMapping("/registration")
@@ -154,7 +154,8 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto logOut(final HttpServletRequest request) {
-        userService.logOut(request, signingKey.getSecretKey());
+
+        userService.logOut(JwtUtil.getToken(request));
         return new ClientMessageDto(LOGOUT_OK_MESSAGE);
     }
 
@@ -166,10 +167,10 @@ public class UserController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto updateUser(final HttpServletRequest request,
-                                       @ApiParam(value = USERS_DTO_DESCRIPTION)
-                                       @RequestBody @Valid final List<UserForSecurityDto> usersDto) {
-        userService.updateUser(request, usersDto, signingKey.getSecretKey());
+    public ClientMessageDto updateUser(@ApiParam(value = USERS_DTO_DESCRIPTION)
+                                       @RequestBody @Valid final List<UserForSecurityDto> usersDto,
+                                       final HttpServletRequest request) {
+        userService.updateUser(usersDto, JwtUtil.getToken(request));
         return new ClientMessageDto(UPDATE_USER_OK_MESSAGE);
     }
 

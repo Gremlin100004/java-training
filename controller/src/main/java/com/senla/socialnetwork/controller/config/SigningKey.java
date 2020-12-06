@@ -1,4 +1,4 @@
-package com.senla.socialnetwork.controller.util;
+package com.senla.socialnetwork.controller.config;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;

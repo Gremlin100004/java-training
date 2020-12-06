@@ -2,7 +2,7 @@ package com.senla.socialnetwork.controller.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senla.socialnetwork.controller.exception.ControllerException;
-import com.senla.socialnetwork.controller.util.SigningKey;
+import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.service.UserService;
 import com.senla.socialnetwork.service.exception.BusinessException;
