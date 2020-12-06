@@ -22,7 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -73,16 +73,14 @@ public class PostCommentServiceImplTest {
         Post post = PostTestData.getTestPost();
         Community community = CommunityTestData.getTestCommunity();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(postComment).when(postCommentDao).findById(PostCommentTestData.getPostCommentId());
         Mockito.doReturn(post).when(postDao).findById(PostTestData.getPostId());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
 
-        Assertions.assertDoesNotThrow(() -> postCommentService.updateComment(
-            request, postCommentDto, secretKey));
+        Assertions.assertDoesNotThrow(() -> postCommentService.updateComment(postCommentDto));
         Mockito.verify(postCommentDao, Mockito.times(1)).updateRecord(
             ArgumentMatchers.any(PostComment.class));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -105,16 +103,14 @@ public class PostCommentServiceImplTest {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         UserProfile wrongUserProfile = UserProfileTestData.getTestUserProfile();
         wrongUserProfile.setId(UserProfileTestData.getUserProfileOtherId());
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(postComment).when(postCommentDao).findById(PostCommentTestData.getPostCommentId());
         Mockito.doReturn(post).when(postDao).findById(PostTestData.getPostId());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(wrongUserProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
 
-        Assertions.assertThrows(BusinessException.class, () -> postCommentService.updateComment(
-            request, postCommentDto, secretKey));
+        Assertions.assertThrows(BusinessException.class, () -> postCommentService.updateComment(postCommentDto));
         Mockito.verify(postCommentDao, Mockito.never()).updateRecord(
             ArgumentMatchers.any(PostComment.class));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
@@ -131,13 +127,12 @@ public class PostCommentServiceImplTest {
     @Test
     void PostCommentServiceImpl_deleteCommentByUser() {
         PostComment postComment = PostCommentTestData.getTestPostComment();
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(postComment).when(postCommentDao).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
 
         Assertions.assertDoesNotThrow(() -> postCommentService.deleteCommentByUser(
-            request, PostCommentTestData.getPostCommentId(), secretKey));
+            PostCommentTestData.getPostCommentId()));
         Mockito.verify(postCommentDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
         Mockito.verify(postCommentDao, Mockito.times(1)).updateRecord(
@@ -147,13 +142,11 @@ public class PostCommentServiceImplTest {
 
     @Test
     void PostCommentServiceImpl_deleteCommentByUser_postCommentDao_findByIdAndEmail_nullObject() {
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
         Mockito.doReturn(null).when(postCommentDao).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
 
         Assertions.assertThrows(BusinessException.class, () -> postCommentService.deleteCommentByUser(
-            request, PostCommentTestData.getPostCommentId(), secretKey));
+            PostCommentTestData.getPostCommentId()));
         Mockito.verify(postCommentDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
         Mockito.verify(postCommentDao, Mockito.never()).updateRecord(
@@ -165,13 +158,12 @@ public class PostCommentServiceImplTest {
     void PostCommentServiceImpl_deleteCommentByUser_postCommentDao_findByIdAndEmail_deletedObject() {
         PostComment postComment = PostCommentTestData.getTestPostComment();
         postComment.setIsDeleted(true);
-        Mockito.doReturn(UserTestData.getAuthorizationHeader(secretKey)).when(request).getHeader(
-            HttpHeaders.AUTHORIZATION);
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(postComment).when(postCommentDao).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
 
         Assertions.assertThrows(BusinessException.class, () -> postCommentService.deleteCommentByUser(
-            request, PostCommentTestData.getPostCommentId(), secretKey));
+            PostCommentTestData.getPostCommentId()));
         Mockito.verify(postCommentDao, Mockito.times(1)).findByIdAndEmail(
             UserTestData.getEmail(), PostCommentTestData.getPostCommentId());
         Mockito.verify(postCommentDao, Mockito.never()).updateRecord(ArgumentMatchers.any(PostComment.class));

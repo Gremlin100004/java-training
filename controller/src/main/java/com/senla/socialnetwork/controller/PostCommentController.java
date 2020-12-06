@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -80,9 +79,8 @@ public class PostCommentController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateComment(@ApiParam(value = COMMENT_DTO_DESCRIPTION)
-                                          @RequestBody @Valid final PostCommentDto postCommentDto,
-                                          final HttpServletRequest request) {
-        postCommentService.updateComment(request, postCommentDto, signingKey.getSecretKey());
+                                          @RequestBody @Valid final PostCommentDto postCommentDto) {
+        postCommentService.updateComment(postCommentDto);
         return new ClientMessageDto(UPDATE_COMMENT_OK_MESSAGE);
     }
 
@@ -95,9 +93,8 @@ public class PostCommentController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto deleteCommentByUser(@ApiParam(value = COMMENT_ID_DESCRIPTION)
-                                                @PathVariable("id") final Long commentId,
-                                                final HttpServletRequest request) {
-        postCommentService.deleteCommentByUser(request, commentId, signingKey.getSecretKey());
+                                                @PathVariable("id") final Long commentId) {
+        postCommentService.deleteCommentByUser(commentId);
         return new ClientMessageDto(DELETE_COMMENT_OK_MESSAGE);
     }
 
