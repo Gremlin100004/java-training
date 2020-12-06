@@ -20,8 +20,7 @@ public class WeatherConditionDaoImpl extends AbstractDao<WeatherCondition, Long>
 
     @Override
     public WeatherCondition findByLocation(final Location location) {
-        log.debug("[findByLocation]");
-        log.trace("[location: {}]", location);
+        log.debug("[location: {}]", location);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<WeatherCondition> criteriaQuery = criteriaBuilder.createQuery(WeatherCondition.class);

@@ -41,23 +41,20 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public List<CommunityDto> getAllCommunities(final int firstResult, final int maxResults) {
-        log.debug("[getOwnCommunities]");
         return CommunityMapper.getCommunityDto(communityDao.getAllRecords(firstResult, maxResults));
     }
 
     @Override
     @Transactional
     public List<CommunityDto> getCommunities(final int firstResult, final int maxResults) {
-        log.debug("[getCommunities]");
-        log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(communityDao.getCommunities(firstResult, maxResults));
     }
 
     @Override
     @Transactional
     public List<CommunityDto> getCommunitiesSortiedByNumberOfSubscribers(final int firstResult, final int maxResults) {
-        log.debug("[NumberOfSubscribers]");
-        log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
             communityDao.getCommunitiesSortiedByNumberOfSubscribers(firstResult, maxResults));
     }
@@ -67,8 +64,7 @@ public class CommunityServiceImpl implements CommunityService {
     public List<CommunityDto> getCommunitiesFilteredByType(final CommunityType communityType,
                                                            final int firstResult,
                                                            final int maxResults) {
-        log.debug("[getCommunityFilteredByType]");
-        log.trace("[communityType: {}, firstResult: {}, maxResults: {}]", communityType, firstResult, maxResults);
+        log.debug("[communityType: {}, firstResult: {}, maxResults: {}]", communityType, firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
             communityDao.getCommunitiesByType(communityType, firstResult, maxResults));
     }
@@ -76,8 +72,7 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public List<CommunityDto> getOwnCommunities(final int firstResult, final int maxResults) {
-        log.debug("[getOwnCommunities]");
-        log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
             communityDao.getOwnCommunitiesByEmail(getUserName(), firstResult, maxResults));
     }
@@ -85,8 +80,7 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public List<CommunityDto> getSubscribedCommunities(final int firstResult, final int maxResults) {
-        log.debug("[getSubscribedCommunities]");
-        log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
+        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
             communityDao.getSubscribedCommunitiesByEmail(getUserName(), firstResult, maxResults));
     }
@@ -94,7 +88,6 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public void subscribeToCommunity(final Long communityId) {
-        log.debug("[subscribeToCommunity]");
         log.debug("[communityId: {}]", communityId);
         Community community = communityDao.findById(communityId);
         if (community == null) {
@@ -113,7 +106,6 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public void unsubscribeFromCommunity(final Long communityId) {
-        log.debug("[subscribeToCommunity]");
         log.debug("[communityId: {}]", communityId);
         Community community = communityDao.findById(communityId);
         if (community == null) {
@@ -135,7 +127,6 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public List<PostDto> getCommunityPosts(final Long communityId, final int firstResult, final int maxResults) {
-        log.debug("[getUserProfileMessages]");
         log.debug("[communityId: {}, firstResult: {}, maxResults: {}]", communityId, firstResult, maxResults);
         return PostMapper.getPostDto(postDao.getByCommunityId(communityId, firstResult, maxResults));
     }
@@ -143,7 +134,6 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public CommunityDto addCommunity(final CommunityForCreateDto communityDto) {
-        log.debug("[addCommunity]");
         log.debug("[communityDto: {}]", communityDto);
         return CommunityMapper.getCommunityDto(communityDao.saveRecord(CommunityMapper.getNewCommunity(
             communityDto, userProfileDao.findByEmail(getUserName()))));
@@ -152,7 +142,6 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public void updateCommunity(final CommunityDto communityDto) {
-        log.debug("[updateCommunity]");
         log.debug("[communityDto: {}]", communityDto);
         UserProfile userProfile = userProfileDao.findByEmail(getUserName());
         Community community = CommunityMapper.getCommunity(communityDto, communityDao, userProfileDao);
@@ -165,7 +154,6 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public void deleteCommunityByUser(final Long communityId) {
-        log.debug("[deleteMessageByUser]");
         log.debug("[messageId: {}]", communityId);
         Community community = communityDao.findByIdAndEmail(getUserName(), communityId);
         if (community == null) {
@@ -184,7 +172,6 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public void deleteCommunity(final Long communityId) {
-        log.debug("[deleteCommunity]");
         log.debug("[communityId: {}]", communityId);
         Community community = communityDao.findById(communityId);
         if (community == null) {
@@ -196,7 +183,6 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public PostDto addPostToCommunity(final PostForCreationDto postDto, final Long communityId) {
-        log.debug("[addPosts]");
         log.debug("[postDto: {}, communityId: {}]", postDto, communityId);
         Community community = communityDao.findByIdAndEmail(getUserName(), communityId);
         if (community == null) {

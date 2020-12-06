@@ -53,7 +53,6 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     @Override
     @Transactional
     public List<WeatherConditionForAdminDto> getWeatherConditions(final int firstResult, final int maxResults) {
-        log.debug("[getWeatherConditions]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return WeatherConditionMapper.getWeatherConditionDto(weatherConditionDao.getAllRecords(
             firstResult, maxResults));
@@ -62,7 +61,6 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     @Override
     @Transactional
     public WeatherConditionDto getWeatherCondition() {
-        log.debug("[getWeatherCondition]");
         UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
             .getAuthentication().getPrincipal();
         Location location = locationDao.getLocation(userPrincipal.getUsername());
@@ -82,7 +80,6 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     @Override
     @Transactional
     public void deleteWeatherCondition(final Long weatherConditionId) {
-        log.debug("[deleteWeatherCondition]");
         log.debug("[weatherConditionId: {}]", weatherConditionId);
         WeatherCondition weatherCondition = weatherConditionDao.findById(weatherConditionId);
         if (weatherCondition == null) {

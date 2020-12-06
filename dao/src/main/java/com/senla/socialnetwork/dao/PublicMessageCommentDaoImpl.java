@@ -28,8 +28,7 @@ public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageCommen
 
     @Override
     public PublicMessageComment findByIdAndEmail(final String email, final Long commentId) {
-        log.debug("[findByIdAndEmail]");
-        log.trace("[email: {}, commentId: {}]", email, commentId);
+        log.debug("[email: {}, commentId: {}]", email, commentId);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessageComment> criteriaQuery = criteriaBuilder.createQuery(PublicMessageComment.class);
@@ -53,8 +52,7 @@ public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageCommen
     public List<PublicMessageComment> getPublicMessageComments(final Long publicMessageId,
                                                                final int firstResult,
                                                                final int maxResults) {
-        log.debug("[getPublicMessageComments]");
-        log.trace("[publicMessageId: {}]", publicMessageId);
+        log.debug("[publicMessageId: {}]", publicMessageId);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessageComment> criteriaQuery = criteriaBuilder.createQuery(PublicMessageComment.class);

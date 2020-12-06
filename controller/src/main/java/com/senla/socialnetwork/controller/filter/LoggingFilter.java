@@ -42,7 +42,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             log.info("[response][status: {}] [body: {}]", responseCopier.getStatus(),
                 new String(responseCopier.getCopy(), httpServletResponse.getCharacterEncoding()));
         } catch (Exception exception) {
-            log.error("[{}]", exception.getMessage());
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             throw new ControllerException("Request error");
         }
     }

@@ -27,14 +27,12 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     @Transactional
     public List<UniversityDto> getUniversities(final int firstResult, final int maxResults) {
-        log.debug("[getUniversity]");
         return UniversityMapper.getUniversityDto(universityDao.getAllRecords(firstResult, maxResults));
     }
 
     @Override
     @Transactional
     public UniversityDto addUniversity(final UniversityForCreateDto universityDto) {
-        log.debug("[addUniversity]");
         log.debug("[universityDto: {}]", universityDto);
         return UniversityMapper.getUniversityDto(universityDao.saveRecord(
             UniversityMapper.getNewUniversity(universityDto, locationDao)));
@@ -43,7 +41,6 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     @Transactional
     public void updateUniversity(final UniversityDto universityDto) {
-        log.debug("[updateUniversity]");
         log.debug("[universityDto: {}]", universityDto);
         universityDao.updateRecord(UniversityMapper.getUniversity(universityDto, universityDao, locationDao));
     }
@@ -51,7 +48,6 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     @Transactional
     public void deleteUniversity(final Long universityId) {
-        log.debug("[deleteUniversity]");
         log.debug("[universityId: {}]", universityId);
         University university = universityDao.findById(universityId);
         if (university == null) {

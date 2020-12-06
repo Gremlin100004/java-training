@@ -28,8 +28,7 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
 
     @Override
     public List<PrivateMessage> getByEmail(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getByUserProfile]");
-        log.trace("[email: {}, firstResult: {},maxResults: {}]", email, firstResult, maxResults);
+        log.debug("[email: {}, firstResult: {},maxResults: {}]", email, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PrivateMessage> criteriaQuery = criteriaBuilder.createQuery(PrivateMessage.class);
@@ -65,8 +64,7 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
                                             final Long idUser,
                                             final int firstResult,
                                             final int maxResults) {
-        log.debug("[getDialogue]");
-        log.trace("[email: {}, idUser: {}, firstResult: {},maxResults: {}]", email, idUser, firstResult, maxResults);
+        log.debug("[email: {}, idUser: {}, firstResult: {},maxResults: {}]", email, idUser, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PrivateMessage> criteriaQuery = criteriaBuilder.createQuery(PrivateMessage.class);
@@ -108,8 +106,7 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
 
     @Override
     public List<PrivateMessage> getUnreadMessages(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getUnreadMessages]");
-        log.trace("[email: {}]", email);
+        log.trace("[debug: {}]", email);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PrivateMessage> criteriaQuery = criteriaBuilder.createQuery(PrivateMessage.class);
@@ -145,8 +142,7 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
                                                            final Date endPeriodDate,
                                                            final int firstResult,
                                                            final int maxResults) {
-        log.debug("[getMessageFilteredByPeriod]");
-        log.trace("[email: {}, startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
+        log.debug("[email: {}, startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
                   email, startPeriodDate, endPeriodDate, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -184,8 +180,7 @@ public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> imp
 
     @Override
     public PrivateMessage findByIdAndEmail(final String email, final Long messageId) {
-        log.debug("[findByIdAndEmail]");
-        log.trace("[email: {}, messageId: {}]", email, messageId);
+        log.debug("[email: {}, messageId: {}]", email, messageId);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PrivateMessage> criteriaQuery = criteriaBuilder.createQuery(PrivateMessage.class);

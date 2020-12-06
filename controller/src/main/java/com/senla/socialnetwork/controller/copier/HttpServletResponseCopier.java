@@ -12,7 +12,6 @@ import java.io.PrintWriter;
 
 @Slf4j
 public class HttpServletResponseCopier extends HttpServletResponseWrapper {
-
     private ServletOutputStream outputStream;
     private PrintWriter writer;
     private ServletOutputStreamCopier copier;
@@ -23,7 +22,6 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
 
     @Override
     public ServletOutputStream getOutputStream() {
-        log.debug("[getOutputStream]");
         if (writer != null) {
             throw new ControllerException("PrintWriter is exist");
         }
@@ -32,7 +30,7 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
                 outputStream = getResponse().getOutputStream();
                 copier = new ServletOutputStreamCopier(outputStream);
             } catch (IOException exception) {
-                log.error("[{}]", exception.getMessage());
+                log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
                 throw new ControllerException("Error getting data from stream");
             }
         }
@@ -41,7 +39,6 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
 
     @Override
     public PrintWriter getWriter() {
-        log.debug("[getWriter]");
         if (outputStream != null) {
             throw new ControllerException("ServletOutputStream is null");
         }
@@ -50,7 +47,7 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
                 copier = new ServletOutputStreamCopier(getResponse().getOutputStream());
                 writer = new PrintWriter(new OutputStreamWriter(copier, getResponse().getCharacterEncoding()), true);
             } catch (IOException exception) {
-                log.error("[{}]", exception.getMessage());
+                log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
                 throw new ControllerException("Error getting data from stream");
             }
         }
@@ -59,21 +56,19 @@ public class HttpServletResponseCopier extends HttpServletResponseWrapper {
 
     @Override
     public void flushBuffer() {
-        log.debug("[flushBuffer]");
         if (writer != null) {
             writer.flush();
         } else if (outputStream != null) {
             try {
                 copier.flush();
             } catch (IOException exception) {
-                log.error("[{}]", exception.getMessage());
+                log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
                 throw new ControllerException("Error flushing");
             }
         }
     }
 
     public byte[] getCopy() {
-        log.debug("[getCopy]");
         if (copier != null) {
             return copier.getCopy();
         } else {

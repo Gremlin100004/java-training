@@ -31,7 +31,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Override
     @Transactional
     public List<PrivateMessageDto> getPrivateMessages(final int firstResult, final int maxResults) {
-        log.debug("[getPrivateMessages]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.getAllRecords(firstResult, maxResults));
     }
@@ -39,7 +38,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Override
     @Transactional
     public List<PrivateMessageDto> getPrivateMessagesByUser(final int firstResult, final int maxResults) {
-        log.debug("[getPrivateMessages]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         String email = getUserName();
         UserProfile ownProfile = userProfileDao.findByEmail(email);
@@ -53,7 +51,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Override
     @Transactional
     public List<PrivateMessageDto> getUnreadMessages(final int firstResult, final int maxResults) {
-        log.debug("[getUnreadMessages]");
         log.debug("[ firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
             privateMessageDao.getUnreadMessages(getUserName(), firstResult, maxResults));
@@ -65,7 +62,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
                                                               final Date endPeriodDate,
                                                               final int firstResult,
                                                               final int maxResults) {
-        log.debug("[getMessageFilteredByPeriod]");
         log.debug("[startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
                   startPeriodDate, endPeriodDate, firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
@@ -76,7 +72,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Override
     @Transactional
     public PrivateMessageDto addMessage(final PrivateMessageForCreateDto privateMessageDto) {
-        log.debug("[addMessage]");
         log.debug("[privateMessageDto: {}]", privateMessageDto);
         return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.saveRecord(
             PrivateMessageMapper.getNewPrivateMessage(privateMessageDto, userProfileDao.findByEmail(getUserName()))));
@@ -85,7 +80,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Override
     @Transactional
     public void updateMessage(final PrivateMessageDto privateMessageDto) {
-        log.debug("[updateMessage]");
         log.debug("[privateMessage: {}]", privateMessageDto);
         UserProfile userProfile = userProfileDao.findByEmail(getUserName());
         PrivateMessage privateMessage = PrivateMessageMapper.getPrivateMessage(
@@ -99,7 +93,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Override
     @Transactional
     public void deleteMessageByUser(final Long messageId) {
-        log.debug("[deleteMessageByUser]");
         log.debug("[messageId: {}]", messageId);
         PrivateMessage privateMessage = privateMessageDao.findByIdAndEmail(getUserName(), messageId);
         if (privateMessage == null) {
@@ -114,7 +107,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Override
     @Transactional
     public void deleteMessage(final Long messageId) {
-        log.debug("[deleteMessage]");
         log.debug("[messageId: {}]", messageId);
         PrivateMessage privateMessage = privateMessageDao.findById(messageId);
         if (privateMessage == null) {

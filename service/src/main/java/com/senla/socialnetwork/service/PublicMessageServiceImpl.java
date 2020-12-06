@@ -39,7 +39,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Override
     @Transactional
     public List<PublicMessageDto> getMessages(final int firstResult, final int maxResults) {
-        log.debug("[getSchools]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PublicMessageMapper.getPublicMessageDto(publicMessageDao.getAllRecords(firstResult, maxResults));
     }
@@ -47,7 +46,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Override
     @Transactional
     public List<PublicMessageDto> getFriendsPublicMessages(final int firstResult, final int maxResults) {
-        log.debug("[getFriendsPublicMessages]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PublicMessageMapper.getPublicMessageDto(
             publicMessageDao.getFriendsMessages(getUserName(), firstResult, maxResults));
@@ -56,7 +54,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Override
     @Transactional
     public List<PublicMessageDto> getPublicMessages(final int firstResult, final int maxResults) {
-        log.debug("[getPublicMessages]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PublicMessageMapper.getPublicMessageDto(publicMessageDao.getByEmail(
             getUserName(), firstResult, maxResults));
@@ -65,7 +62,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Override
     @Transactional
     public PublicMessageDto addMessage(final PublicMessageForCreateDto publicMessageDto) {
-        log.debug("[addMessage]");
         log.debug("[publicMessageDto: {}]", publicMessageDto);
         return PublicMessageMapper.getPublicMessageDto(publicMessageDao.saveRecord(
             PublicMessageMapper.getNewPublicMessage(
@@ -75,7 +71,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Override
     @Transactional
     public void updateMessage(final PublicMessageDto publicMessageDto) {
-        log.debug("[updateMessage]");
         log.debug("[publicMessageDto: {}]", publicMessageDto);
         UserProfile userProfile = userProfileDao.findByEmail(getUserName());
         PublicMessage publicMessage = PublicMessageMapper.getPublicMessage(
@@ -89,7 +84,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Override
     @Transactional
     public void deleteMessageByUser(final Long messageId) {
-        log.debug("[deleteMessageByUser]");
         log.debug("[messageId: {}]", messageId);
         PublicMessage publicMessage = publicMessageDao.findByIdAndEmail(getUserName(), messageId);
         if (publicMessage == null) {
@@ -108,7 +102,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Override
     @Transactional
     public void deleteMessage(final Long messageId) {
-        log.debug("[deleteMessage]");
         log.debug("[messageId: {}]", messageId);
         PublicMessage publicMessage = publicMessageDao.findById(messageId);
         if (publicMessage == null) {
@@ -122,8 +115,7 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     public List<PublicMessageCommentDto> getPublicMessageComments(final Long publicMessageId,
                                                                   final int firstResult,
                                                                   final int maxResults) {
-        log.debug("[getPublicMessageComments]");
-        log.trace("[publicMessageId: {}]", publicMessageId);
+        log.debug("[publicMessageId: {}]", publicMessageId);
         return PublicMessageCommentMapper.getPublicMessageCommentDto(
             publicMessageCommentDao.getPublicMessageComments(publicMessageId, firstResult, maxResults));
     }
@@ -132,7 +124,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     @Transactional
     public PublicMessageCommentDto addComment(final Long publicMessageId,
                                               final PublicMessageCommentForCreateDto publicMessageCommentDto) {
-        log.debug("[addComment]");
         log.debug("[publicMessageCommentDto: {}]", publicMessageCommentDto);
         String email = getUserName();
         PublicMessage publicMessage = publicMessageDao.findByIdAndEmail(email, publicMessageId);

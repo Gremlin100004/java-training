@@ -30,7 +30,6 @@ public class JwtUtil {
     public static String generateToken(final UserDetails userDetails,
                                        final SecretKey secretKey,
                                        final Integer expiration) {
-        log.debug("[generateToken]");
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername()).setIssuedAt(
             new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + expiration))
@@ -38,31 +37,26 @@ public class JwtUtil {
     }
 
     public static Boolean validateToken(final String token, final UserDetails userDetails, final SecretKey secretKey) {
-        log.debug("[validateToken]");
         String username = extractUsername(token, secretKey);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token, secretKey));
     }
 
     public static String extractUsername(final String token, final SecretKey secretKey) {
-        log.debug("[extractUsername]");
         return extractClaim(token, Claims::getSubject, secretKey);
     }
 
     private static Date extractExpiration(final String token, final SecretKey secretKey) {
-        log.debug("[extractExpiration]");
         return extractClaim(token, Claims::getExpiration, secretKey);
     }
 
     private static <T> T extractClaim(final String token,
                                       final Function<Claims, T> claimsResolver,
                                       final SecretKey secretKey) {
-        log.debug("[extractClaim]");
         Claims claims = extractAllClaims(token, secretKey);
         return claimsResolver.apply(claims);
     }
 
     private static Claims extractAllClaims(final String token, final SecretKey secretKey) {
-        log.debug("[extractClaim]");
         try {
             return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
         } catch (Exception exception) {

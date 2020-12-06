@@ -27,7 +27,6 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     @Transactional
     public List<SchoolDto> getSchools(final int firstResult, final int maxResults) {
-        log.debug("[getSchools]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return SchoolMapper.getSchoolDto(schoolDao.getAllRecords(firstResult, maxResults));
     }
@@ -35,7 +34,6 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     @Transactional
     public SchoolDto addSchool(final SchoolForCreateDto schoolDto) {
-        log.debug("[addSchool]");
         log.debug("[schoolDto: {}]", schoolDto);
         return SchoolMapper.getSchoolDto(schoolDao.saveRecord(
             SchoolMapper.getNewSchool(schoolDto, locationDao)));
@@ -44,7 +42,6 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     @Transactional
     public void updateSchool(final SchoolDto schoolDto) {
-        log.debug("[updateSchool]");
         log.debug("[schoolDto: {}]", schoolDto);
         schoolDao.updateRecord(SchoolMapper.getSchool(schoolDto, schoolDao, locationDao));
     }
@@ -52,7 +49,6 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     @Transactional
     public void deleteSchool(final Long schoolId) {
-        log.debug("[deleteSchool]");
         log.debug("[schoolId: {}]", schoolId);
         School school = schoolDao.findById(schoolId);
         if (school == null) {

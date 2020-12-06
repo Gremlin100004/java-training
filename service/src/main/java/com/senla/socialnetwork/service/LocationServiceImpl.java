@@ -24,14 +24,12 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional
     public List<LocationDto> getLocations(final int firstResult, final int maxResults) {
-        log.debug("[getLocations]");
         return LocationMapper.getLocationDto(locationDao.getAllRecords(firstResult, maxResults));
     }
 
     @Override
     @Transactional
     public LocationDto addLocation(final LocationForCreateDto locationDto) {
-        log.debug("[addLocation]");
         log.debug("[locationDto: {}]", locationDto);
         return LocationMapper.getLocationDto(locationDao.saveRecord(
             LocationMapper.getNewLocation(locationDto)));
@@ -40,7 +38,6 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional
     public void updateLocation(final LocationDto locationDto) {
-        log.debug("[updateLocation]");
         log.debug("[locationDto: {}]", locationDto);
         locationDao.updateRecord(LocationMapper.getLocation(locationDto, locationDao));
     }
@@ -48,7 +45,6 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional
     public void deleteLocation(final Long locationId) {
-        log.debug("[deleteLocation]");
         log.debug("[locationId: {}]", locationId);
         Location location = locationDao.findById(locationId);
         if (location == null) {

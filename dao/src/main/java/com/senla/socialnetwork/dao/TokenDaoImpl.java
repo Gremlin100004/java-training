@@ -22,8 +22,7 @@ public class TokenDaoImpl extends AbstractDao<LogoutToken, Long> implements Toke
 
     @Override
     public String getLogoutToken(final String email) {
-        log.debug("[getLogoutToken]");
-        log.trace("[email: {}]", email);
+        log.debug("[email: {}]", email);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<String> criteriaQuery = criteriaBuilder.createQuery(String.class);

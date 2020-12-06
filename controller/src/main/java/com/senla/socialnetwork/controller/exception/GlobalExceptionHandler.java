@@ -46,37 +46,32 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     private ObjectMapper objectMapper;
 
     @ExceptionHandler(BusinessException.class)
-    protected ResponseEntity<ClientMessageDto> handleBusinessException(final BusinessException businessException) {
-        log.debug("[handleBusinessException]");
-        log.error("[{}]", businessException.getMessage());
-        return new ResponseEntity<>(new ClientMessageDto(businessException.getMessage()), HttpStatus.BAD_REQUEST);
+    protected ResponseEntity<ClientMessageDto> handleBusinessException(final BusinessException exception) {
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
+        return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ControllerException.class)
-    protected ResponseEntity<ClientMessageDto> handleControllerException(ControllerException controllerException) {
-        log.debug("[handleControllerException]");
-        log.error("[{}]", controllerException.getMessage());
-        return new ResponseEntity<>(new ClientMessageDto(controllerException.getMessage()), HttpStatus.BAD_REQUEST);
+    protected ResponseEntity<ClientMessageDto> handleControllerException(ControllerException exception) {
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
+        return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
-    protected ResponseEntity<ClientMessageDto> handleAuthenticationCredentialsNotFoundException(final AuthenticationCredentialsNotFoundException authenticationCredentialsNotFoundException) {
-        log.debug("[handleAuthenticationCredentialsNotFoundException]");
-        log.error("[{}]", authenticationCredentialsNotFoundException.getMessage());
+    protected ResponseEntity<ClientMessageDto> handleAuthenticationCredentialsNotFoundException(final AuthenticationCredentialsNotFoundException exception) {
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Error, you are not logged in"), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    protected ResponseEntity<ClientMessageDto> handleAccessDeniedException(final AccessDeniedException accessDeniedException) {
-        log.debug("[handleAccessDeniedException]");
-        log.error("[{}]", accessDeniedException.getMessage());
+    protected ResponseEntity<ClientMessageDto> handleAccessDeniedException(final AccessDeniedException exception) {
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Error, you do not have access rights"), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    protected ResponseEntity<ClientMessageDto> handleAuthenticationException(final AuthenticationException authenticationException) {
-        log.debug("[handleAuthenticationException]");
-        log.error("[{}]", authenticationException.getMessage());
+    protected ResponseEntity<ClientMessageDto> handleAuthenticationException(final AuthenticationException exception) {
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Login or password error"), HttpStatus.BAD_REQUEST);
     }
 
@@ -85,8 +80,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                          final HttpHeaders headers,
                                                                          final HttpStatus status,
                                                                          final WebRequest request) {
-        log.debug("[handleHttpRequestMethodNotSupported]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Method not supported"), status);
     }
 
@@ -95,8 +89,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                      final HttpHeaders headers,
                                                                      final HttpStatus status,
                                                                      final WebRequest request) {
-        log.debug("[handleHttpMediaTypeNotSupported]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("MediaType not supported"), status);
     }
 
@@ -105,8 +98,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                       final HttpHeaders headers,
                                                                       final HttpStatus status,
                                                                       final WebRequest request) {
-        log.debug("[handleHttpMediaTypeNotAcceptable]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("MediaType not acceptable"), status);
     }
 
@@ -115,8 +107,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                final HttpHeaders headers,
                                                                final HttpStatus status,
                                                                final WebRequest request) {
-        log.debug("[handleMissingPathVariable]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Missing path variable"), status);
     }
 
@@ -125,8 +116,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                           final HttpHeaders headers,
                                                                           final HttpStatus status,
                                                                           final WebRequest request) {
-        log.debug("[handleMissingServletRequestParameter]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Missing request parameter"), status);
     }
 
@@ -135,8 +125,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                           final HttpHeaders headers,
                                                                           final HttpStatus status,
                                                                           final WebRequest request) {
-        log.debug("[handleServletRequestBindingException]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Request binding error"), status);
     }
 
@@ -145,8 +134,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                   final HttpHeaders headers,
                                                                   final HttpStatus status,
                                                                   final WebRequest request) {
-        log.debug("[handleConversionNotSupported]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Conversion not supported"), status);
     }
 
@@ -155,8 +143,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                         final HttpHeaders headers,
                                                         final HttpStatus status,
                                                         final WebRequest request) {
-        log.debug("[handleTypeMismatch]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("The entered data is incorrect"), status);
     }
 
@@ -165,8 +152,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                   final HttpHeaders headers,
                                                                   final HttpStatus status,
                                                                   final WebRequest request) {
-        log.debug("[handleHttpMessageNotReadable]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("The message cannot be read"), status);
     }
 
@@ -175,8 +161,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                   final HttpHeaders headers,
                                                                   final HttpStatus status,
                                                                   final WebRequest request) {
-        log.debug("[handleHttpMessageNotWritable]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Message not available for writing"), status);
     }
 
@@ -185,8 +170,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                   final HttpHeaders headers,
                                                                   final HttpStatus status,
                                                                   final WebRequest request) {
-        log.debug("[handleMethodArgumentNotValid]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("The entered data is incorrect"), status);
     }
 
@@ -195,8 +179,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                      final HttpHeaders headers,
                                                                      final HttpStatus status,
                                                                      final WebRequest request) {
-        log.debug("[handleMissingServletRequestPart]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("The request error"), status);
     }
 
@@ -205,8 +188,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                          final HttpHeaders headers,
                                                          final HttpStatus status,
                                                          final WebRequest request) {
-        log.debug("[handleBindException]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("The request error"), status);
     }
 
@@ -215,8 +197,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                    final HttpHeaders headers,
                                                                    final HttpStatus status,
                                                                    final WebRequest request) {
-        log.debug("[handleNoHandlerFoundException]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("The request error"), status);
     }
 
@@ -225,8 +206,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                                         final HttpHeaders headers,
                                                                         final HttpStatus status,
                                                                         final WebRequest webRequest) {
-        log.debug("[handleAsyncRequestTimeoutException]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("Async request timeout"), status);
     }
 
@@ -235,8 +215,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                                                              final HttpHeaders headers,
                                                              final HttpStatus status,
                                                              final WebRequest request) {
-        log.debug("[handleExceptionInternal]");
-        log.error("[{}]", exception.getMessage());
+        log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto("The request error"), status);
     }
 
@@ -244,30 +223,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     public void commence(final HttpServletRequest httpServletRequest,
                          final HttpServletResponse httpServletResponse,
                          final AuthenticationException authException) {
-        log.debug("[commence]");
         try {
             httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
             httpServletResponse.setStatus(org.apache.http.HttpStatus.SC_FORBIDDEN);
             httpServletResponse.getWriter().write(objectMapper.writeValueAsString(
                 new ClientMessageDto("Permission denied")));
         } catch (IOException exception) {
-            log.error("[{}]", exception.getMessage());
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             throw new ControllerException("Response error");
         }
     }
 
     @Override
-    public void handle(HttpServletRequest httpServletRequest,
-                       HttpServletResponse httpServletResponse,
-                       AccessDeniedException e) {
-        log.debug("[handle]");
+    public void handle(final HttpServletRequest httpServletRequest,
+                       final HttpServletResponse httpServletResponse,
+                       final AccessDeniedException deniedException) {
         try {
             httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
             httpServletResponse.setStatus(org.apache.http.HttpStatus.SC_FORBIDDEN);
             httpServletResponse.getWriter().write(objectMapper.writeValueAsString(
                 new ClientMessageDto("Authorisation error")));
         } catch (IOException exception) {
-            log.error("[{}]", exception.getMessage());
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             throw new ControllerException("Response error");
         }
     }

@@ -1,8 +1,8 @@
 package com.senla.socialnetwork.controller.config;
 
-import com.senla.socialnetwork.controller.filter.JwtFilter;
 import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.controller.exception.GlobalExceptionHandler;
+import com.senla.socialnetwork.controller.filter.JwtFilter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -38,8 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) {
-        log.debug("[configure]");
-        log.trace("[httpSecurity: {}]", httpSecurity);
+        log.debug("[httpSecurity: {}]", httpSecurity);
         try {
             httpSecurity
                 .csrf().disable()
@@ -57,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         } catch (Exception exception) {
-            log.error("[{}]", exception.getMessage());
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             throw new ControllerException("HttpSecurity configuration is wrong");
         }
     }
@@ -95,12 +94,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) {
-        log.debug("[configure]");
-        log.trace("[authenticationManagerBuilder: {}]", authenticationManagerBuilder);
+        log.debug("[authenticationManagerBuilder: {}]", authenticationManagerBuilder);
         try {
             authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
         } catch (Exception exception) {
-            log.error("[{}]", exception.getMessage());
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             throw new ControllerException("AuthenticationManagerBuilder configuration is wrong");
         }
     }

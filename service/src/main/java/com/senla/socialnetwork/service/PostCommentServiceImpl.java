@@ -35,14 +35,12 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Override
     @Transactional
     public List<PostCommentDto> getComments(final int firstResult, final int maxResults) {
-        log.debug("[getComments]");
         return PostCommentMapper.getPostCommentDto(postCommentDao.getAllRecords(firstResult, maxResults));
     }
 
     @Override
     @Transactional
     public void updateComment(final PostCommentDto postCommentDto) {
-        log.debug("[updateComment]");
         log.debug("[postCommentDto: {}]", postCommentDto);
         UserProfile userProfile = userProfileDao.findByEmail(getUserName());
         PostComment postComment = PostCommentMapper.getPostComment(
@@ -56,7 +54,6 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Override
     @Transactional
     public void deleteCommentByUser(final Long commentId) {
-        log.debug("[deleteCommentByUser]");
         log.debug("[commentId: {}]", commentId);
         PostComment postComment = postCommentDao.findByIdAndEmail(getUserName(), commentId);
         if (postComment == null) {
@@ -71,7 +68,6 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Override
     @Transactional
     public void deleteComment(final Long commentId) {
-        log.debug("[deleteComment]");
         log.debug("[commentId: {}]", commentId);
         PostComment postComment = postCommentDao.findById(commentId);
         if (postComment == null) {

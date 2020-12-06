@@ -28,8 +28,7 @@ public class PostDaoImpl extends AbstractDao<Post, Long> implements PostDao {
 
     @Override
     public Post findByIdAndEmail(final String email, final Long postId) {
-        log.debug("[findByIdAndEmail]");
-        log.trace("[email: {}, postId: {}]", email, postId);
+        log.debug("[email: {}, postId: {}]", email, postId);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Post> criteriaQuery = criteriaBuilder.createQuery(Post.class);
@@ -49,8 +48,7 @@ public class PostDaoImpl extends AbstractDao<Post, Long> implements PostDao {
 
     @Override
     public List<Post> getByCommunityId(final Long communityId, final int firstResult, final int maxResults) {
-        log.debug("[getByCommunityId]");
-        log.trace("[communityId: {}, firstResult: {}, maxResults: {}]", communityId, firstResult,  maxResults);
+        log.debug("[communityId: {}, firstResult: {}, maxResults: {}]", communityId, firstResult,  maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Post> criteriaQuery = criteriaBuilder.createQuery(Post.class);
@@ -73,8 +71,7 @@ public class PostDaoImpl extends AbstractDao<Post, Long> implements PostDao {
 
     @Override
     public List<Post> getByEmail(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getPostsFromSubscribedCommunities]");
-        log.trace("[email: {}, firstResult: {},maxResults: {}]", email, firstResult, maxResults);
+        log.debug("[email: {}, firstResult: {},maxResults: {}]", email, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Post> subQuery = criteriaBuilder.createQuery(Post.class);

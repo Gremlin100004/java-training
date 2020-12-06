@@ -32,7 +32,6 @@ public class ServletOutputStreamCopier extends ServletOutputStream {
     }
 
     public byte[] getCopy() {
-        log.debug("[getCopy]");
         return copy.toByteArray();
     }
 
@@ -43,7 +42,6 @@ public class ServletOutputStreamCopier extends ServletOutputStream {
 
     @Override
     public void setWriteListener(final WriteListener writeListener) {
-        log.debug("[setWriteListener]");
         if (writeListener == null) {
             throw new ControllerException("Input WriteListener is null");
         }

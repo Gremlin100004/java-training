@@ -27,8 +27,7 @@ public class PublicMessageDaoImpl extends AbstractDao<PublicMessage, Long> imple
 
     @Override
     public List<PublicMessage> getFriendsMessages(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getFriendsMessages]");
-        log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessage> criteriaQuery = criteriaBuilder.createQuery(PublicMessage.class);
@@ -59,8 +58,7 @@ public class PublicMessageDaoImpl extends AbstractDao<PublicMessage, Long> imple
 
     @Override
     public List<PublicMessage> getByEmail(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getByEmail]");
-        log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
+        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessage> criteriaQuery = criteriaBuilder.createQuery(PublicMessage.class);
@@ -86,8 +84,7 @@ public class PublicMessageDaoImpl extends AbstractDao<PublicMessage, Long> imple
 
     @Override
     public PublicMessage findByIdAndEmail(final String email, final Long messageId) {
-        log.debug("[findByIdAndEmail]");
-        log.trace("[email: {}, messageId: {}]", email, messageId);
+        log.debug("[email: {}, messageId: {}]", email, messageId);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessage> criteriaQuery = criteriaBuilder.createQuery(PublicMessage.class);

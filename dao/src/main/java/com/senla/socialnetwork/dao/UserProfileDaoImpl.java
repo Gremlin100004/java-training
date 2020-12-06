@@ -39,8 +39,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
 
     @Override
     public UserProfile findByEmail(final String email) {
-        log.debug("[findByEmail]");
-        log.trace("[email: {}]", email);
+        log.debug("[email: {}]", email);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);

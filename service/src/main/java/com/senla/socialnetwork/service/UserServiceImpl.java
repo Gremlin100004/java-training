@@ -54,7 +54,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public List<UserForAdminDto> getUsers(final int firstResult, final int maxResults) {
-        log.debug("[getUsers]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return UserMapper.getUserForAdminDto(userDao.getAllRecords(firstResult, maxResults));
     }
@@ -62,14 +61,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserForSecurityDto getUser() {
-        log.debug("[getUser]");
         return UserMapper.getUserForSecurityDto(userDao.findByEmail(getUserName()));
     }
 
     @Override
     @Transactional
     public String getUserLogoutToken(String email) {
-        log.debug("[getUserLogoutToken]");
+        log.debug("[email: {}]", email);
         String token = tokenDao.getLogoutToken(email);
         if (token == null) {
             token = "";
@@ -80,7 +78,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public String logIn(final UserForSecurityDto userDto, final SecretKey secretKey) {
-        log.debug("[logIn]");
         log.debug("[userDto: {}]", userDto);
         SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
         if (systemUser == null) {
@@ -95,7 +92,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void logOut(final String token) {
-        log.debug("[logOut]");
         log.debug("[token: {}]", token);
         LogoutToken logoutToken = new LogoutToken();
         logoutToken.setValue(token);
@@ -106,8 +102,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addUser(final UserForSecurityDto userDto, final RoleName roleName) {
-        log.debug("[addUser]");
-        log.debug("[userDto: {}]", userDto);
+        log.debug("[userDto: {}, roleName: {}]", userDto, roleName);
         SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
         if (systemUser != null) {
             throw new BusinessException("A user with this email address already exists");
@@ -123,8 +118,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUser(final List<UserForSecurityDto> usersDto, String token) {
-        log.debug("[updateUser]");
-        log.debug("[usersDto: {}]", usersDto);
+        log.debug("[usersDto: {}, token: {}]", usersDto, token);
         if (usersDto.size() != LIST_SIZE) {
             throw new BusinessException("Input data amount error");
         }
@@ -151,7 +145,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(final Long userId) {
-        log.debug("[deleteUser]");
         log.debug("[userId: {}]", userId);
         SystemUser user = userDao.findById(userId);
         if (user == null) {
@@ -162,6 +155,7 @@ public class UserServiceImpl implements UserService {
 
     @Scheduled(cron = "${cron.expression:0 4 * * * ?}")
     public void cleanLogoutTokens() {
+        log.info("[clean table with tokens]");
         Date currentDate = new Date();
         List<LogoutToken> logoutTokens = tokenDao.getAllRecords(FIRST_RESULT, MAX_RESULTS);
         logoutTokens.stream()

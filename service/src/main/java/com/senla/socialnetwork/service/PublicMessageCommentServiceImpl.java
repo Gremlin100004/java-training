@@ -32,7 +32,6 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
     @Override
     @Transactional
     public List<PublicMessageCommentDto> getComments(final int firstResult, final int maxResults) {
-        log.debug("[Comments]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PublicMessageCommentMapper.getPublicMessageCommentDto(
             publicMessageCommentDao.getAllRecords(firstResult, maxResults));
@@ -41,7 +40,6 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
     @Override
     @Transactional
     public void updateComment(final PublicMessageCommentDto publicMessageCommentDto) {
-        log.debug("[updateComment]");
         log.debug("[publicMessageCommentDto: {}]", publicMessageCommentDto);
         UserProfile userProfile = userProfileDao.findByEmail(getUserName());
         PublicMessageComment publicMessageComment = PublicMessageCommentMapper.getPublicMessageComment(
@@ -55,7 +53,6 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
     @Override
     @Transactional
     public void deleteCommentByUser(final Long commentId) {
-        log.debug("[deleteCommentByUser]");
         log.debug("[commentId: {}]", commentId);
         PublicMessageComment publicMessageComment = publicMessageCommentDao.findByIdAndEmail(getUserName(), commentId);
         if (publicMessageComment == null) {
@@ -70,7 +67,6 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
     @Override
     @Transactional
     public void deleteComment(final Long commentId) {
-        log.debug("[deleteComment]");
         log.debug("[commentId: {}]", commentId);
         PublicMessageComment publicMessageComment = publicMessageCommentDao.findById(commentId);
         if (publicMessageComment == null) {

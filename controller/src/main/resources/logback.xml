@@ -8,7 +8,7 @@
         </layout>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>log/socialnetwork.log</file>
+        <file>logs/socialnetwork.log</file>
         <encoder>
             <pattern>%d{HH:mm} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
@@ -17,7 +17,7 @@
     <logger name="org.springframework" level="debug" additivity="false">
         <appender-ref ref="FILE"/>
     </logger>
-    <logger name="com.senla.socialnetwork" level="trace" additivity="false">
+    <logger name="com.senla.socialnetwork" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 

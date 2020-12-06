@@ -6,4 +6,5 @@
 *.log
 out/
 target/
-log/
+logs/
+database/mysql

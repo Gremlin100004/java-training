@@ -29,8 +29,7 @@ public class PostCommentDaoImpl extends AbstractDao<PostComment, Long> implement
 
     @Override
     public PostComment findByIdAndEmail(final String email, final Long commentId) {
-        log.debug("[findByIdAndEmail]");
-        log.trace("[email: {}, commentId: {}]", email, commentId);
+        log.debug("[email: {}, commentId: {}]", email, commentId);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PostComment> criteriaQuery = criteriaBuilder.createQuery(PostComment.class);
@@ -51,8 +50,7 @@ public class PostCommentDaoImpl extends AbstractDao<PostComment, Long> implement
 
     @Override
     public List<PostComment> getPostComments(final Long postId, final int firstResult, final int maxResults) {
-        log.debug("[getPostComments]");
-        log.trace("[postId: {}, firstResult: {}, maxResults: {}]", postId, firstResult, maxResults);
+        log.debug("[postId: {}, firstResult: {}, maxResults: {}]", postId, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PostComment> criteriaQuery = criteriaBuilder.createQuery(PostComment.class);

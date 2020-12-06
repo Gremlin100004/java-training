@@ -23,8 +23,7 @@ public class LocationDaoImpl extends AbstractDao<Location, Long> implements Loca
 
     @Override
     public Location getLocation(final String email) {
-        log.debug("[getLocation]");
-        log.trace("[email: {}]", email);
+        log.debug("[email: {}]", email);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Location> criteriaQuery = criteriaBuilder.createQuery(Location.class);

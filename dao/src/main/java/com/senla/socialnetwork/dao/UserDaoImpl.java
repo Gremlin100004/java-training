@@ -19,8 +19,7 @@ public class UserDaoImpl extends AbstractDao<SystemUser, Long> implements UserDa
 
     @Override
     public SystemUser findByEmail(final String email) {
-        log.debug("[findByEmail]");
-        log.trace("[email: {}]", email);
+        log.debug("[email: {}]", email);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<SystemUser> criteriaQuery = criteriaBuilder.createQuery(SystemUser.class);

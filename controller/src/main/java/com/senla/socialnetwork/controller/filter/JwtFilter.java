@@ -45,7 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) {
-        log.debug("[doFilterInternal]");
+        log.info("[security check]");
         try {
             String username = null;
             String token = JwtUtil.getToken(request);
@@ -66,13 +66,13 @@ public class JwtFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
 
         } catch (BusinessException exception) {
-            log.error("[{}]", exception.getMessage());
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             fillResponse(exception.getMessage(), response);
         } catch (IncorrectResultSizeDataAccessException exception) {
-            log.error("[{}]", exception.getMessage());
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             fillResponse(INCORRECT_RESULT_SIZE_DATA_ACCESS_EXCEPTION_MESSAGE, response);
         } catch (Exception exception) {
-            log.error("[{}]", exception.getMessage());
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             fillResponse(EXCEPTION_MESSAGE, response);
         }
     }
@@ -82,8 +82,8 @@ public class JwtFilter extends OncePerRequestFilter {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.getWriter().write(objectMapper.writeValueAsString(new ClientMessageDto(forClientMessage)));
-        } catch (IOException ioException) {
-            log.error("[{}]", ioException.getMessage());
+        } catch (IOException exception) {
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             throw new ControllerException("Response error");
         }
     }

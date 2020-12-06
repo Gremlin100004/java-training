@@ -9,8 +9,10 @@ services:
       - MYSQL_PASSWORD=TestPassword
     ports:
       - 3306:3306
-    volumes: 
-     - ./database/script/dev/init:/docker-entrypoint-initdb.d
+    volumes:
+      - ./database/mysql:/var/lib/mysql
+      - ./database/script/dev/init:/docker-entrypoint-initdb.d
+
   web:
     build:
       context: .
@@ -20,3 +22,5 @@ services:
       - db
     ports:
       - 2308:8080
+    volumes:
+      - ./logs:/usr/local/tomcat/logs

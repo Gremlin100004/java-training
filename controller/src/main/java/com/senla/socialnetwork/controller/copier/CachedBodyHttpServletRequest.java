@@ -20,25 +20,22 @@ public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
 
     public CachedBodyHttpServletRequest(HttpServletRequest request) {
         super(request);
-        log.debug("[request]");
         try {
             InputStream requestInputStream = request.getInputStream();
             this.cachedBody = StreamUtils.copyToByteArray(requestInputStream);
         } catch (IOException exception) {
-            log.error("[{}]", exception.getMessage());
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             throw new ControllerException("HttpServletRequest copy error");
         }
     }
 
     @Override
     public ServletInputStream getInputStream() {
-        log.debug("[getInputStream]");
         return new CachedBodyServletInputStream(this.cachedBody);
     }
 
     @Override
     public BufferedReader getReader() {
-        log.debug("[getReader]");
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(this.cachedBody);
         return new BufferedReader(new InputStreamReader(byteArrayInputStream));
     }
