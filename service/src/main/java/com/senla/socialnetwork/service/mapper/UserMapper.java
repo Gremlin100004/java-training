@@ -1,4 +1,4 @@
-package com.senla.socialnetwork.service.util;
+package com.senla.socialnetwork.service.mapper;
 
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.enumaration.RoleName;

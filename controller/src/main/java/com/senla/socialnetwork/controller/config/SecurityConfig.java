@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.controller.config;
 
-import com.senla.socialnetwork.controller.config.filter.JwtFilter;
+import com.senla.socialnetwork.controller.filter.JwtFilter;
 import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.controller.exception.GlobalExceptionHandler;
 import lombok.AllArgsConstructor;

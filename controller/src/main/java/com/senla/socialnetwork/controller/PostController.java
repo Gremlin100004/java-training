@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.util.SecretKeyUtil;
+import com.senla.socialnetwork.controller.util.SigningKey;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.dto.PostCommentForCreateDto;
@@ -64,6 +64,8 @@ public class PostController {
     public static final String ADD_COMMENT_DESCRIPTION = "This method is used to add new comment to post by this user";
     @Autowired
     PostService postService;
+    @Autowired
+    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping
@@ -95,7 +97,7 @@ public class PostController {
                                          @RequestParam final int maxResults,
                                          final HttpServletRequest request) {
         return postService.getPostsFromSubscribedCommunities(
-            request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+            request, firstResult, maxResults, signingKey.getSecretKey());
     }
 
     @PutMapping
@@ -123,7 +125,7 @@ public class PostController {
     public ClientMessageDto deletePostByUser(@ApiParam(value = POST_ID_DESCRIPTION)
                                              @PathVariable("id") final Long postId,
                                              final HttpServletRequest request) {
-        postService.deletePostByUser(request, postId, SecretKeyUtil.getSecretKey());
+        postService.deletePostByUser(request, postId, signingKey.getSecretKey());
         return new ClientMessageDto(DELETE_POST_OK_MESSAGE);
     }
 
@@ -174,7 +176,7 @@ public class PostController {
                                      @ApiParam(value = COMMENT_DTO_DESCRIPTION)
                                      @RequestBody @Valid final PostCommentForCreateDto postCommentDto,
                                      final HttpServletRequest request) {
-        return postService.addComment(request, postId, postCommentDto, SecretKeyUtil.getSecretKey());
+        return postService.addComment(request, postId, postCommentDto, signingKey.getSecretKey());
     }
 
 }

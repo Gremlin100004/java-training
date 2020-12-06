@@ -1,4 +1,4 @@
 #!/bin/bash
 
-mvn clean install;
+mvn clean install
 docker-compose -f dev.yml up --build

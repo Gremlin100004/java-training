@@ -1,7 +1,7 @@
-package com.senla.socialnetwork.controller.config.filter;
+package com.senla.socialnetwork.controller.filter;
 
-import com.senla.socialnetwork.controller.config.copier.CachedBodyHttpServletRequest;
-import com.senla.socialnetwork.controller.config.copier.HttpServletResponseCopier;
+import com.senla.socialnetwork.controller.copier.CachedBodyHttpServletRequest;
+import com.senla.socialnetwork.controller.copier.HttpServletResponseCopier;
 import com.senla.socialnetwork.controller.exception.ControllerException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;

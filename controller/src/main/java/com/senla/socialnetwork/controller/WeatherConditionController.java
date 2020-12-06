@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.util.SecretKeyUtil;
+import com.senla.socialnetwork.controller.util.SigningKey;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.WeatherConditionDto;
 import com.senla.socialnetwork.dto.WeatherConditionForAdminDto;
@@ -53,6 +53,8 @@ public class WeatherConditionController {
        + "condition by admin";
     @Autowired
     private WeatherConditionService weatherConditionService;
+    @Autowired
+    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping
@@ -82,7 +84,7 @@ public class WeatherConditionController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public WeatherConditionDto getWeatherCondition(final HttpServletRequest request) {
-        return weatherConditionService.getWeatherCondition(request, SecretKeyUtil.getSecretKey());
+        return weatherConditionService.getWeatherCondition(request, signingKey.getSecretKey());
     }
 
     @Secured({"ROLE_ADMIN"})

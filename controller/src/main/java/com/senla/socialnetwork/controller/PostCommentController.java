@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.util.SecretKeyUtil;
+import com.senla.socialnetwork.controller.util.SigningKey;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.service.PostCommentService;
@@ -52,6 +52,8 @@ public class PostCommentController {
     public static final String DELETE_COMMENT_DESCRIPTION = "This method is used to delete comment by admin";
     @Autowired
     private PostCommentService postCommentService;
+    @Autowired
+    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping
@@ -80,7 +82,7 @@ public class PostCommentController {
     public ClientMessageDto updateComment(@ApiParam(value = COMMENT_DTO_DESCRIPTION)
                                           @RequestBody @Valid final PostCommentDto postCommentDto,
                                           final HttpServletRequest request) {
-        postCommentService.updateComment(request, postCommentDto, SecretKeyUtil.getSecretKey());
+        postCommentService.updateComment(request, postCommentDto, signingKey.getSecretKey());
         return new ClientMessageDto(UPDATE_COMMENT_OK_MESSAGE);
     }
 
@@ -95,7 +97,7 @@ public class PostCommentController {
     public ClientMessageDto deleteCommentByUser(@ApiParam(value = COMMENT_ID_DESCRIPTION)
                                                 @PathVariable("id") final Long commentId,
                                                 final HttpServletRequest request) {
-        postCommentService.deleteCommentByUser(request, commentId, SecretKeyUtil.getSecretKey());
+        postCommentService.deleteCommentByUser(request, commentId, signingKey.getSecretKey());
         return new ClientMessageDto(DELETE_COMMENT_OK_MESSAGE);
     }
 

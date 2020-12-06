@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.util.SecretKeyUtil;
+import com.senla.socialnetwork.controller.util.SigningKey;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.UserForAdminDto;
@@ -72,6 +72,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping
@@ -98,7 +100,7 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public UserForSecurityDto getUser(final HttpServletRequest request) {
-        return userService.getUser(request, SecretKeyUtil.getSecretKey());
+        return userService.getUser(request, signingKey.getSecretKey());
     }
 
     @PostMapping("/registration")
@@ -140,7 +142,7 @@ public class UserController {
     })
     public ClientMessageDto logIn(@ApiParam(value = USER_DTO_DESCRIPTION)
                                   @RequestBody @Valid final UserForSecurityDto userDto) {
-        return new ClientMessageDto(userService.logIn(userDto, SecretKeyUtil.getSecretKey()));
+        return new ClientMessageDto(userService.logIn(userDto, signingKey.getSecretKey()));
     }
 
     @PutMapping("/logout")
@@ -152,7 +154,7 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto logOut(final HttpServletRequest request) {
-        userService.logOut(request, SecretKeyUtil.getSecretKey());
+        userService.logOut(request, signingKey.getSecretKey());
         return new ClientMessageDto(LOGOUT_OK_MESSAGE);
     }
 
@@ -167,7 +169,7 @@ public class UserController {
     public ClientMessageDto updateUser(final HttpServletRequest request,
                                        @ApiParam(value = USERS_DTO_DESCRIPTION)
                                        @RequestBody @Valid final List<UserForSecurityDto> usersDto) {
-        userService.updateUser(request, usersDto, SecretKeyUtil.getSecretKey());
+        userService.updateUser(request, usersDto, signingKey.getSecretKey());
         return new ClientMessageDto(UPDATE_USER_OK_MESSAGE);
     }
 

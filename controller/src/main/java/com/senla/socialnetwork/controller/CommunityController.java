@@ -1,7 +1,7 @@
 package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.controller.exception.ControllerException;
-import com.senla.socialnetwork.controller.util.SecretKeyUtil;
+import com.senla.socialnetwork.controller.util.SigningKey;
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.CommunityDto;
@@ -93,6 +93,8 @@ public class CommunityController {
     public static final String POST_DTO_DESCRIPTION = " DTO community post object";
     @Autowired
     private CommunityService communityService;
+    @Autowired
+    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping("/all")
@@ -154,7 +156,7 @@ public class CommunityController {
                                                           example = MAX_RESULTS_EXAMPLE)
                                                 @RequestParam final int maxResults,
                                                 final HttpServletRequest request) {
-        return communityService.getOwnCommunities(request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+        return communityService.getOwnCommunities(request, firstResult, maxResults, signingKey.getSecretKey());
     }
 
     @GetMapping("/{id}/posts")
@@ -190,7 +192,7 @@ public class CommunityController {
                                                                  example = MAX_RESULTS_EXAMPLE)
                                                        @RequestParam final int maxResults,
                                                        HttpServletRequest request) {
-        return communityService.getSubscribedCommunities(request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+        return communityService.getSubscribedCommunities(request, firstResult, maxResults, signingKey.getSecretKey());
     }
 
     @PutMapping("/{id}/subscriptions")
@@ -205,7 +207,7 @@ public class CommunityController {
                                                            example = COMMUNITY_ID_FOR_SUBSCRIBE_POSTS)
                                                  @PathVariable("id") final Long communityId,
                                                  final HttpServletRequest request) {
-        communityService.subscribeToCommunity(request, communityId, SecretKeyUtil.getSecretKey());
+        communityService.subscribeToCommunity(request, communityId, signingKey.getSecretKey());
         return new ClientMessageDto(SUBSCRIBE_TO_COMMUNITY_OK_MESSAGE);
     }
 
@@ -221,7 +223,7 @@ public class CommunityController {
                                                                example = COMMUNITY_ID_FOR_SUBSCRIBE_POSTS)
                                                      @PathVariable("id") final Long communityId,
                                                      final HttpServletRequest request) {
-        communityService.unsubscribeFromCommunity(request, communityId, SecretKeyUtil.getSecretKey());
+        communityService.unsubscribeFromCommunity(request, communityId, signingKey.getSecretKey());
         return new ClientMessageDto(UNSUBSCRIBE_TO_COMMUNITY_OK_MESSAGE);
     }
 
@@ -237,7 +239,7 @@ public class CommunityController {
     public CommunityDto addCommunity(@ApiParam(value = COMMUNITY_DTO_DESCRIPTION)
                                      @RequestBody @Valid final CommunityForCreateDto communityDto,
                                      final HttpServletRequest request) {
-        return communityService.addCommunity(request, communityDto, SecretKeyUtil.getSecretKey());
+        return communityService.addCommunity(request, communityDto, signingKey.getSecretKey());
     }
 
     @PutMapping
@@ -251,7 +253,7 @@ public class CommunityController {
     public ClientMessageDto updateCommunity(@ApiParam(value = COMMUNITY_DTO_DESCRIPTION)
                                             @RequestBody @Valid final CommunityDto communityDto,
                                             final HttpServletRequest request) {
-        communityService.updateCommunity(request, communityDto, SecretKeyUtil.getSecretKey());
+        communityService.updateCommunity(request, communityDto, signingKey.getSecretKey());
         return new ClientMessageDto(UPDATE_COMMUNITY_OK_MESSAGE);
     }
 
@@ -267,7 +269,7 @@ public class CommunityController {
                                                             example = COMMUNITY_ID_FOR_DELETE)
                                                   @PathVariable("id") final Long communityId,
                                                   final HttpServletRequest request) {
-        communityService.deleteCommunityByUser(request, communityId, SecretKeyUtil.getSecretKey());
+        communityService.deleteCommunityByUser(request, communityId, signingKey.getSecretKey());
         return new ClientMessageDto(DELETE_COMMUNITY_OK_MESSAGE);
     }
 
@@ -302,7 +304,7 @@ public class CommunityController {
                                                 example = COMMUNITY_ID_FOR_ADD_POST)
                                       @PathVariable("id") final Long communityId,
                                       final HttpServletRequest request) {
-        return communityService.addPostToCommunity(request, postDto, communityId, SecretKeyUtil.getSecretKey());
+        return communityService.addPostToCommunity(request, postDto, communityId, signingKey.getSecretKey());
     }
 
 }

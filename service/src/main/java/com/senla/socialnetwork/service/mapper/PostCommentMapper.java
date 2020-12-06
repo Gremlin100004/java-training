@@ -1,4 +1,4 @@
-package com.senla.socialnetwork.service.util;
+package com.senla.socialnetwork.service.mapper;
 
 import com.senla.socialnetwork.dao.CommunityDao;
 import com.senla.socialnetwork.dao.PostCommentDao;

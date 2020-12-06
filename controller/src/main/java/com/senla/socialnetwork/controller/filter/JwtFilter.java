@@ -1,8 +1,8 @@
-package com.senla.socialnetwork.controller.config.filter;
+package com.senla.socialnetwork.controller.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senla.socialnetwork.controller.exception.ControllerException;
-import com.senla.socialnetwork.controller.util.SecretKeyUtil;
+import com.senla.socialnetwork.controller.util.SigningKey;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.service.UserService;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -10,7 +10,6 @@ import com.senla.socialnetwork.service.util.JwtUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,8 +38,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private UserService userService;
     @Autowired
     private ObjectMapper objectMapper;
-    @Value("${com.senla.socialnetwork.controller.JwtUtil.expiration:3600000}")
-    private Integer expiration;
+    @Autowired
+    SigningKey signingKey;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -51,13 +50,12 @@ public class JwtFilter extends OncePerRequestFilter {
             String username = null;
             String token = JwtUtil.getToken(request);
             if (token != null) {
-                username = JwtUtil.extractUsername(token, SecretKeyUtil.getSecretKey());
+                username = JwtUtil.extractUsername(token, signingKey.getSecretKey());
             }
-
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null
                 && !userService.getUserLogoutToken(username).equals(token)) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                if (JwtUtil.validateToken(token, userDetails, SecretKeyUtil.getSecretKey())) {
+                if (JwtUtil.validateToken(token, userDetails, signingKey.getSecretKey())) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     usernamePasswordAuthenticationToken

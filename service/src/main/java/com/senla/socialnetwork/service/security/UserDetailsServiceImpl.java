@@ -1,4 +1,4 @@
-package com.senla.socialnetwork.service;
+package com.senla.socialnetwork.service.security;
 
 import com.senla.socialnetwork.dao.UserDao;
 import com.senla.socialnetwork.domain.SystemUser;
@@ -6,15 +6,11 @@ import com.senla.socialnetwork.service.exception.BusinessException;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collections;
 
 @Service
 @NoArgsConstructor
@@ -31,9 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (systemUser == null) {
             throw new BusinessException("This user does not exist");
         }
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(systemUser.getRole().toString());
-        return new User(email, systemUser.getPassword(), Collections.singletonList(authority));
-
+        return new UserPrincipal(systemUser);
     }
 
 }

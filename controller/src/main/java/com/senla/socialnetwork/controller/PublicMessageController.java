@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.util.SecretKeyUtil;
+import com.senla.socialnetwork.controller.util.SigningKey;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
@@ -78,6 +78,8 @@ public class PublicMessageController {
        + "by this user";
     @Autowired
     private PublicMessageService publicMessageService;
+    @Autowired
+    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping("/admin")
@@ -112,7 +114,7 @@ public class PublicMessageController {
                                                               example = MAX_RESULTS_EXAMPLE)
                                                     @RequestParam final int maxResults,
                                                     final HttpServletRequest request) {
-        return publicMessageService.getPublicMessages(request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+        return publicMessageService.getPublicMessages(request, firstResult, maxResults, signingKey.getSecretKey());
     }
 
     @PostMapping
@@ -127,7 +129,7 @@ public class PublicMessageController {
     public PublicMessageDto addMessage(@ApiParam(value = PUBLIC_MESSAGE_DTO_DESCRIPTION)
                                        @RequestBody @Valid final PublicMessageForCreateDto publicMessageDto,
                                        final HttpServletRequest request) {
-        return publicMessageService.addMessage(request, publicMessageDto, SecretKeyUtil.getSecretKey());
+        return publicMessageService.addMessage(request, publicMessageDto, signingKey.getSecretKey());
     }
 
     @PutMapping
@@ -141,7 +143,7 @@ public class PublicMessageController {
     public ClientMessageDto updateMessage(@ApiParam(value = PUBLIC_MESSAGE_DTO_DESCRIPTION)
                                           @RequestBody @Valid final PublicMessageDto publicMessageDto,
                                           final HttpServletRequest request) {
-        publicMessageService.updateMessage(request, publicMessageDto, SecretKeyUtil.getSecretKey());
+        publicMessageService.updateMessage(request, publicMessageDto, signingKey.getSecretKey());
         return new ClientMessageDto(UPDATE_MESSAGE_OK_MESSAGE);
     }
 
@@ -158,7 +160,7 @@ public class PublicMessageController {
                                                 @PathVariable("id") final Long messageId,
                                                 final HttpServletRequest request) {
 
-        publicMessageService.deleteMessageByUser(messageId, request, SecretKeyUtil.getSecretKey());
+        publicMessageService.deleteMessageByUser(messageId, request, signingKey.getSecretKey());
         return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
     }
 
@@ -215,7 +217,7 @@ public class PublicMessageController {
                                               final PublicMessageCommentForCreateDto publicMessageCommentDto,
                                               final HttpServletRequest request) {
         return publicMessageService.addComment(
-            request, publicMessageId, publicMessageCommentDto, SecretKeyUtil.getSecretKey());
+            request, publicMessageId, publicMessageCommentDto, signingKey.getSecretKey());
     }
 
 }

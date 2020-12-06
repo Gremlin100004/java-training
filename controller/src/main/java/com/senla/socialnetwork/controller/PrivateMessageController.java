@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.util.SecretKeyUtil;
+import com.senla.socialnetwork.controller.util.SigningKey;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
@@ -74,6 +74,8 @@ public class PrivateMessageController {
        + "by admin";
     @Autowired
     private PrivateMessageService privateMessageService;
+    @Autowired
+    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping("/admin")
@@ -109,7 +111,7 @@ public class PrivateMessageController {
                                                                example = MAX_RESULTS_EXAMPLE)
                                                      @RequestParam final int maxResults,
                                                      final HttpServletRequest request) {
-        return privateMessageService.getUnreadMessages(request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+        return privateMessageService.getUnreadMessages(request, firstResult, maxResults, signingKey.getSecretKey());
     }
 
     @GetMapping
@@ -139,10 +141,10 @@ public class PrivateMessageController {
                                                       final HttpServletRequest request) {
         if (startPeriodDate != null && endPeriodDate != null) {
             return privateMessageService.getMessageFilteredByPeriod(
-                request, startPeriodDate, endPeriodDate, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+                request, startPeriodDate, endPeriodDate, firstResult, maxResults, signingKey.getSecretKey());
         } else {
             return privateMessageService.getPrivateMessages(
-                request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+                request, firstResult, maxResults, signingKey.getSecretKey());
         }
     }
 
@@ -158,7 +160,7 @@ public class PrivateMessageController {
     public PrivateMessageDto addMessage(@ApiParam(value = PRIVATE_MESSAGE_DTO_DESCRIPTION)
                                         @RequestBody @Valid final PrivateMessageForCreateDto privateMessageDto,
                                         final HttpServletRequest request) {
-        return privateMessageService.addMessage(request, privateMessageDto, SecretKeyUtil.getSecretKey());
+        return privateMessageService.addMessage(request, privateMessageDto, signingKey.getSecretKey());
     }
 
     @PutMapping
@@ -172,7 +174,7 @@ public class PrivateMessageController {
     public ClientMessageDto updateMessage(@ApiParam(value = PRIVATE_MESSAGE_DTO_DESCRIPTION)
                                           @RequestBody @Valid final PrivateMessageDto privateMessageDto,
                                           final HttpServletRequest request) {
-        privateMessageService.updateMessage(request, privateMessageDto, SecretKeyUtil.getSecretKey());
+        privateMessageService.updateMessage(request, privateMessageDto, signingKey.getSecretKey());
         return new ClientMessageDto(UPDATE_PRIVATE_MESSAGE_OK_MESSAGE);
     }
 
@@ -187,7 +189,7 @@ public class PrivateMessageController {
     public ClientMessageDto deleteMessageByUser(@ApiParam(value = PRIVATE_MESSAGE_ID_DESCRIPTION)
                                                 @PathVariable("id") final Long messageId,
                                                 final HttpServletRequest request) {
-        privateMessageService.deleteMessageByUser(request, messageId, SecretKeyUtil.getSecretKey());
+        privateMessageService.deleteMessageByUser(request, messageId, signingKey.getSecretKey());
         return new ClientMessageDto(DELETE_PRIVATE_MESSAGE_OK_MESSAGE);
     }
 

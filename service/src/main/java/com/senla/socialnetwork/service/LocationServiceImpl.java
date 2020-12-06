@@ -5,7 +5,7 @@ import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.dto.LocationDto;
 import com.senla.socialnetwork.dto.LocationForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
-import com.senla.socialnetwork.service.util.LocationMapper;
+import com.senla.socialnetwork.service.mapper.LocationMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

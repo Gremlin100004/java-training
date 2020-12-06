@@ -10,8 +10,9 @@ import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
+import com.senla.socialnetwork.service.mapper.UserMapper;
+import com.senla.socialnetwork.service.security.UserPrincipal;
 import com.senla.socialnetwork.service.util.JwtUtil;
-import com.senla.socialnetwork.service.util.UserMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +20,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -94,10 +92,7 @@ public class UserServiceImpl implements UserService {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDto.getEmail(),
             userDto.getPassword());
         authenticationManager.authenticate(authentication);
-        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(
-            systemUser.getRole().toString()));
-        User user = new User(userDto.getEmail(), userDto.getPassword(), authorities);
-        return JwtUtil.generateToken(user, secretKey, expiration);
+        return JwtUtil.generateToken(new UserPrincipal(systemUser), secretKey, expiration);
     }
 
     @Override

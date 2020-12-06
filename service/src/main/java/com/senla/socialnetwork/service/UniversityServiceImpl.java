@@ -6,7 +6,7 @@ import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.dto.UniversityForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
-import com.senla.socialnetwork.service.util.UniversityMapper;
+import com.senla.socialnetwork.service.mapper.UniversityMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.controller.exception.ControllerException;
-import com.senla.socialnetwork.controller.util.SecretKeyUtil;
+import com.senla.socialnetwork.controller.util.SigningKey;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
@@ -99,6 +99,8 @@ public class UserProfileController {
     private UserProfileService userProfileService;
     @Autowired
     private PublicMessageService publicMessageService;
+    @Autowired
+    private SigningKey signingKey;
 
     @GetMapping
     @ApiOperation(value = GET_USER_PROFILES_DESCRIPTION, response = UserProfileDto.class)
@@ -165,7 +167,7 @@ public class UserProfileController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public UserProfileDto getUserProfile(final HttpServletRequest request) {
-        return userProfileService.getUserProfile(request, SecretKeyUtil.getSecretKey());
+        return userProfileService.getUserProfile(request, signingKey.getSecretKey());
     }
 
     @PutMapping
@@ -179,7 +181,7 @@ public class UserProfileController {
     public ClientMessageDto updateUserProfile(@ApiParam(value = USER_PROFILE_DTO_DESCRIPTION)
                                               @RequestBody @Valid final UserProfileDto userProfileDto,
                                               final HttpServletRequest request) {
-        userProfileService.updateUserProfile(userProfileDto, request, SecretKeyUtil.getSecretKey());
+        userProfileService.updateUserProfile(userProfileDto, request, signingKey.getSecretKey());
         return new ClientMessageDto(UPDATE_USER_PROFILE_OK_MESSAGE);
     }
 
@@ -192,7 +194,7 @@ public class UserProfileController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public UserProfileForIdentificationDto getFriendNearestDateOfBirth(final HttpServletRequest request) {
-        return userProfileService.getFriendNearestDateOfBirth(request, SecretKeyUtil.getSecretKey());
+        return userProfileService.getFriendNearestDateOfBirth(request, signingKey.getSecretKey());
     }
 
     @GetMapping("/{id}")
@@ -229,10 +231,10 @@ public class UserProfileController {
                                                                                final HttpServletRequest request) {
         if (sortParameter == null) {
             return userProfileService.getUserProfileFriends(
-                request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+                request, firstResult, maxResults, signingKey.getSecretKey());
         } else {
             return userProfileService.getSortedFriendsOfUserProfile(
-                request, sortParameter, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+                request, sortParameter, firstResult, maxResults, signingKey.getSecretKey());
         }
     }
 
@@ -252,7 +254,7 @@ public class UserProfileController {
                                                                              @RequestParam final int maxResults,
                                                                              final HttpServletRequest request) {
         return userProfileService.getUserProfileSignedFriends(
-            request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+            request, firstResult, maxResults, signingKey.getSecretKey());
     }
 
     @PutMapping("/friends/requests/{id}")
@@ -267,7 +269,7 @@ public class UserProfileController {
                                                          example = USER_PROFILE_ID_EXAMPLE)
                                                @PathVariable("id") final Long userProfileId,
                                                final HttpServletRequest request) {
-        userProfileService.sendAFriendRequest(request, userProfileId, SecretKeyUtil.getSecretKey());
+        userProfileService.sendAFriendRequest(request, userProfileId, signingKey.getSecretKey());
         return new ClientMessageDto(SEND_A_FRIEND_REQUEST_OK_MESSAGE);
     }
 
@@ -283,7 +285,7 @@ public class UserProfileController {
                                                     example = USER_PROFILE_ID_FOR_CONFIRM_FRIEND_EXAMPLE)
                                           @PathVariable("id") final Long userProfileId,
                                           final HttpServletRequest request) {
-        userProfileService.confirmFriend(request, userProfileId, SecretKeyUtil.getSecretKey());
+        userProfileService.confirmFriend(request, userProfileId, signingKey.getSecretKey());
         return new ClientMessageDto(CONFIRM_FRIEND_OK_MESSAGE);
     }
 
@@ -299,7 +301,7 @@ public class UserProfileController {
                                                             example = USER_PROFILE_ID_EXAMPLE)
                                                   @PathVariable("id") final Long userProfileId,
                                                   final HttpServletRequest request) {
-        userProfileService.removeUserFromFriends(request, userProfileId, SecretKeyUtil.getSecretKey());
+        userProfileService.removeUserFromFriends(request, userProfileId, signingKey.getSecretKey());
         return new ClientMessageDto(REMOVE_USER_FROM_FRIENDS_OK_MESSAGE);
     }
 
@@ -338,7 +340,7 @@ public class UserProfileController {
                                                @RequestParam final int maxResults,
                                                final HttpServletRequest request) {
         return userProfileService.getDialogue(
-            request, userProfileId, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+            request, userProfileId, firstResult, maxResults, signingKey.getSecretKey());
     }
 
     @GetMapping("/friends/publicMessages")
@@ -357,7 +359,7 @@ public class UserProfileController {
                                                            @RequestParam final int maxResults,
                                                            final HttpServletRequest request) {
         return publicMessageService.getFriendsPublicMessages(
-            request, firstResult, maxResults, SecretKeyUtil.getSecretKey());
+            request, firstResult, maxResults, signingKey.getSecretKey());
     }
 
 }

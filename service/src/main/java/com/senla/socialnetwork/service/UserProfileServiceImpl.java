@@ -13,8 +13,8 @@ import com.senla.socialnetwork.service.enumaration.UserProfileFriendSortParamete
 import com.senla.socialnetwork.service.enumaration.UserProfileSortParameter;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.JwtUtil;
-import com.senla.socialnetwork.service.util.PrivateMessageMapper;
-import com.senla.socialnetwork.service.util.UserProfileMapper;
+import com.senla.socialnetwork.service.mapper.PrivateMessageMapper;
+import com.senla.socialnetwork.service.mapper.UserProfileMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
