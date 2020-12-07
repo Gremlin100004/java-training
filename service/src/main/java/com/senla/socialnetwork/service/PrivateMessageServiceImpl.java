@@ -8,11 +8,10 @@ import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.mapper.PrivateMessageMapper;
-import com.senla.socialnetwork.service.security.UserPrincipal;
+import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +38,7 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Transactional
     public List<PrivateMessageDto> getPrivateMessagesByUser(final int firstResult, final int maxResults) {
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
-        String email = getUserName();
+        String email = PrincipalUtil.getUserName();
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
             throw new BusinessException("Error, user with this email does not exist");
@@ -53,7 +52,7 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     public List<PrivateMessageDto> getUnreadMessages(final int firstResult, final int maxResults) {
         log.debug("[ firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
-            privateMessageDao.getUnreadMessages(getUserName(), firstResult, maxResults));
+            privateMessageDao.getUnreadMessages(PrincipalUtil.getUserName(), firstResult, maxResults));
     }
 
     @Override
@@ -66,7 +65,7 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
                   startPeriodDate, endPeriodDate, firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
             privateMessageDao.getMessageFilteredByPeriod(
-                getUserName(), startPeriodDate, endPeriodDate, firstResult, maxResults));
+                PrincipalUtil.getUserName(), startPeriodDate, endPeriodDate, firstResult, maxResults));
     }
 
     @Override
@@ -74,27 +73,23 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
     public PrivateMessageDto addMessage(final PrivateMessageForCreateDto privateMessageDto) {
         log.debug("[privateMessageDto: {}]", privateMessageDto);
         return PrivateMessageMapper.getPrivateMessageDto(privateMessageDao.saveRecord(
-            PrivateMessageMapper.getNewPrivateMessage(privateMessageDto, userProfileDao.findByEmail(getUserName()))));
+            PrivateMessageMapper.getNewPrivateMessage(privateMessageDto, userProfileDao.findByEmail(
+                PrincipalUtil.getUserName()), userProfileDao)));
     }
 
     @Override
     @Transactional
     public void updateMessage(final PrivateMessageDto privateMessageDto) {
         log.debug("[privateMessage: {}]", privateMessageDto);
-        UserProfile userProfile = userProfileDao.findByEmail(getUserName());
-        PrivateMessage privateMessage = PrivateMessageMapper.getPrivateMessage(
-            privateMessageDto, privateMessageDao, userProfileDao);
-        if (privateMessage.getSender() != userProfile) {
-            throw new BusinessException("Error, this message does not belong to this profile");
-        }
-        privateMessageDao.updateRecord(privateMessage);
+        privateMessageDao.updateRecord(PrivateMessageMapper.getPrivateMessage(
+            privateMessageDto, privateMessageDao, PrincipalUtil.getUserName()));
     }
 
     @Override
     @Transactional
     public void deleteMessageByUser(final Long messageId) {
         log.debug("[messageId: {}]", messageId);
-        PrivateMessage privateMessage = privateMessageDao.findByIdAndEmail(getUserName(), messageId);
+        PrivateMessage privateMessage = privateMessageDao.findByIdAndEmail(PrincipalUtil.getUserName(), messageId);
         if (privateMessage == null) {
             throw new BusinessException("Error, there is no such message");
         } else if (privateMessage.getIsDeleted()) {
@@ -113,12 +108,6 @@ public class PrivateMessageServiceImpl implements PrivateMessageService {
             throw new BusinessException("Error, there is no such message");
         }
         privateMessageDao.deleteRecord(privateMessage);
-    }
-
-    private String getUserName() {
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
-            .getAuthentication().getPrincipal();
-        return userPrincipal.getUsername();
     }
 
 }

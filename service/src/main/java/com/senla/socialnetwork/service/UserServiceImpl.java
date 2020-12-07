@@ -13,6 +13,7 @@ import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.mapper.UserMapper;
 import com.senla.socialnetwork.service.security.UserPrincipal;
 import com.senla.socialnetwork.service.util.JwtUtil;
+import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserForSecurityDto getUser() {
-        return UserMapper.getUserForSecurityDto(userDao.findByEmail(getUserName()));
+        return UserMapper.getUserForSecurityDto(userDao.findByEmail(PrincipalUtil.getUserName()));
     }
 
     @Override
@@ -83,8 +83,8 @@ public class UserServiceImpl implements UserService {
         if (systemUser == null) {
             throw new BusinessException("This email does not exist");
         }
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDto.getEmail(),
-            userDto.getPassword());
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+            userDto.getEmail(), userDto.getPassword());
         authenticationManager.authenticate(authentication);
         return JwtUtil.generateToken(new UserPrincipal(systemUser), secretKey, expiration);
     }
@@ -93,10 +93,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void logOut(final String token) {
         log.debug("[token: {}]", token);
-        LogoutToken logoutToken = new LogoutToken();
-        logoutToken.setValue(token);
-        logoutToken.setSystemUser(userDao.findByEmail(getUserName()));
-        tokenDao.saveRecord(logoutToken);
+        tokenDao.saveRecord(getLogoutToken(token, userDao.findByEmail(PrincipalUtil.getUserName())));
     }
 
     @Override
@@ -124,7 +121,7 @@ public class UserServiceImpl implements UserService {
         }
         UserForSecurityDto oldUserDto = usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA);
         UserForSecurityDto newUserDto = usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA);
-        String controlEmail = getUserName();
+        String controlEmail = PrincipalUtil.getUserName();
         if (!oldUserDto.getEmail().equals(controlEmail)) {
             throw new BusinessException("login is wrong");
         }
@@ -134,10 +131,7 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("A user with this email address already exists");
         }
         SystemUser currentSystemUser = userDao.findByEmail(controlEmail);
-        LogoutToken logoutToken = new LogoutToken();
-        logoutToken.setValue(token);
-        logoutToken.setSystemUser(currentSystemUser);
-        tokenDao.saveRecord(logoutToken);
+        tokenDao.saveRecord(getLogoutToken(token, currentSystemUser));
         UserMapper.getCurrentSystemUser(passwordEncoder, newUserDto, currentSystemUser);
         userDao.updateRecord(currentSystemUser);
     }
@@ -163,10 +157,12 @@ public class UserServiceImpl implements UserService {
             .forEach(token -> tokenDao.deleteRecord(token));
     }
 
-    private String getUserName() {
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
-            .getAuthentication().getPrincipal();
-        return userPrincipal.getUsername();
+    private LogoutToken getLogoutToken(String token, SystemUser user) {
+        LogoutToken logoutToken = new LogoutToken();
+        logoutToken.setValue(token);
+        logoutToken.setCreationDate(new Date());
+        logoutToken.setSystemUser(user);
+        return logoutToken;
     }
 
 }

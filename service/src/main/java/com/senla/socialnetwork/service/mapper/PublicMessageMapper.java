@@ -1,11 +1,11 @@
 package com.senla.socialnetwork.service.mapper;
 
 import com.senla.socialnetwork.dao.PublicMessageDao;
-import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessage;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageForCreateDto;
+import com.senla.socialnetwork.service.exception.BusinessException;
 
 import java.util.Date;
 import java.util.List;
@@ -31,13 +31,13 @@ public class PublicMessageMapper {
 
     public static PublicMessage getPublicMessage(final PublicMessageDto publicMessageDto,
                                                  final PublicMessageDao publicMessageDao,
-                                                 final UserProfileDao userProfileDao) {
-        PublicMessage publicMessage = publicMessageDao.findById(publicMessageDto.getId());
-        publicMessage.setAuthor(UserProfileMapper.getUserProfileFromUserProfileForIdentificationDto(
-            publicMessageDto.getAuthor(), userProfileDao));
+                                                 final String email) {
+        PublicMessage publicMessage = publicMessageDao.findByIdAndEmail(email, publicMessageDto.getId());
+        if (publicMessage == null) {
+            throw new BusinessException("Error, this message does not belong to this profile");
+        }
         publicMessage.setTittle(publicMessageDto.getTittle());
         publicMessage.setContent(publicMessageDto.getContent());
-        publicMessage.setIsDeleted(publicMessageDto.getDeleted());
         return publicMessage;
     }
 
@@ -48,6 +48,7 @@ public class PublicMessageMapper {
         publicMessage.setContent(publicMessageDto.getContent());
         publicMessage.setAuthor(userProfile);
         publicMessage.setCreationDate(new Date());
+        publicMessage.setIsDeleted(false);
         return publicMessage;
     }
 

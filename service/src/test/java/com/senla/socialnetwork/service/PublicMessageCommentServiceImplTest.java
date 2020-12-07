@@ -63,55 +63,32 @@ public class PublicMessageCommentServiceImplTest {
     void PublicMessageCommentServiceImpl_updateComment() {
         PublicMessageComment publicMessageComment = PublicMessageCommentTestData.getTestPublicMessageComment();
         PublicMessageCommentDto publicMessageCommentDto = PublicMessageCommentTestData.getTestPublicMessageCommentDto();
-        PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
-        UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
-        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(publicMessageComment).when(publicMessageCommentDao).findById(
-            PublicMessageCommentTestData.getPublicMessageCommentId());
-        Mockito.doReturn(publicMessage).when(publicMessageDao).findById(PublicMessageTestData.getPublicMessageId());
-        Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
+        Mockito.doReturn(publicMessageComment).when(publicMessageCommentDao).findByIdAndEmail(
+            UserTestData.getEmail(), PublicMessageCommentTestData.getPublicMessageCommentId());
 
         Assertions.assertDoesNotThrow(() -> publicMessageCommentService.updateComment(publicMessageCommentDto));
-        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(publicMessageCommentDao, Mockito.times(1)).updateRecord(
             ArgumentMatchers.any(PublicMessageComment.class));
-        Mockito.verify(publicMessageCommentDao, Mockito.times(1)).findById(
-            PublicMessageCommentTestData.getPublicMessageCommentId());
-        Mockito.verify(publicMessageDao, Mockito.times(1)).findById(PublicMessageTestData.getPublicMessageId());
-        Mockito.verify(userProfileDao, Mockito.times(2)).findById(UserProfileTestData.getUserProfileId());
+        Mockito.verify(publicMessageCommentDao, Mockito.times(1)).findByIdAndEmail(
+            UserTestData.getEmail(), PublicMessageCommentTestData.getPublicMessageCommentId());
         Mockito.reset(publicMessageCommentDao);
-        Mockito.reset(publicMessageDao);
-        Mockito.reset(userProfileDao);
     }
 
     @Test
-    void PublicMessageCommentServiceImpl_updateComment_someoneElseComment() {
-        PublicMessageComment publicMessageComment = PublicMessageCommentTestData.getTestPublicMessageComment();
+    void PublicMessageCommentServiceImpl_updateComment_publicMessageCommentDao_findByIdAndEmail_nullObject() {
         PublicMessageCommentDto publicMessageCommentDto = PublicMessageCommentTestData.getTestPublicMessageCommentDto();
-        PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
-        UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        UserProfile wrongUserProfile = UserProfileTestData.getTestUserProfile();
-        wrongUserProfile.setId(UserProfileTestData.getUserProfileOtherId());
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
-        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(publicMessageComment).when(publicMessageCommentDao).findById(
-            PublicMessageCommentTestData.getPublicMessageCommentId());
-        Mockito.doReturn(publicMessage).when(publicMessageDao).findById(PublicMessageTestData.getPublicMessageId());
-        Mockito.doReturn(wrongUserProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
+        Mockito.doReturn(null).when(publicMessageCommentDao).findByIdAndEmail(
+            UserTestData.getEmail(), PublicMessageCommentTestData.getPublicMessageCommentId());
 
         Assertions.assertThrows(BusinessException.class, () -> publicMessageCommentService.updateComment(
             publicMessageCommentDto));
-        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.verify(publicMessageCommentDao, Mockito.never()).updateRecord(
             ArgumentMatchers.any(PublicMessageComment.class));
-        Mockito.verify(publicMessageCommentDao, Mockito.times(1)).findById(
-            PublicMessageCommentTestData.getPublicMessageCommentId());
-        Mockito.verify(publicMessageDao, Mockito.times(1)).findById(PublicMessageTestData.getPublicMessageId());
-        Mockito.verify(userProfileDao, Mockito.times(2)).findById(UserProfileTestData.getUserProfileId());
+        Mockito.verify(publicMessageCommentDao, Mockito.times(1)).findByIdAndEmail(
+            UserTestData.getEmail(), PublicMessageCommentTestData.getPublicMessageCommentId());
         Mockito.reset(publicMessageCommentDao);
-        Mockito.reset(publicMessageDao);
-        Mockito.reset(userProfileDao);
     }
 
     @Test

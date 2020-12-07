@@ -1,11 +1,11 @@
 package com.senla.socialnetwork.service.mapper;
 
 import com.senla.socialnetwork.dao.CommunityDao;
-import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.CommunityDto;
 import com.senla.socialnetwork.dto.CommunityForCreateDto;
+import com.senla.socialnetwork.service.exception.BusinessException;
 
 import java.util.Date;
 import java.util.List;
@@ -32,14 +32,13 @@ public class CommunityMapper {
 
     public static Community getCommunity(final CommunityDto communityDto,
                                          final CommunityDao communityDao,
-                                         final UserProfileDao userProfileDao) {
-        Community community = communityDao.findById(communityDto.getId());
-        community.setAuthor(UserProfileMapper.getUserProfileFromUserProfileForIdentificationDto(
-                communityDto.getAuthor(), userProfileDao));
-        community.setCreationDate(communityDto.getCreationDate());
+                                         final String email) {
+        Community community = communityDao.findByIdAndEmail(email, communityDto.getId());
+        if (community == null) {
+            throw new BusinessException("Error, this community does not belong to this profile");
+        }
         community.setTittle(communityDto.getTittle());
         community.setInformation(communityDto.getInformation());
-        community.setIsDeleted(communityDto.getDeleted());
         return community;
     }
 
@@ -54,6 +53,7 @@ public class CommunityMapper {
         }
         community.setCreationDate(new Date());
         community.setAuthor(userProfile);
+        community.setIsDeleted(false);
         return community;
     }
     

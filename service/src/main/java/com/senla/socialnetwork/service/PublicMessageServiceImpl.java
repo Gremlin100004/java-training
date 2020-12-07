@@ -5,7 +5,6 @@ import com.senla.socialnetwork.dao.PublicMessageDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessage;
 import com.senla.socialnetwork.domain.PublicMessageComment;
-import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
@@ -13,11 +12,10 @@ import com.senla.socialnetwork.dto.PublicMessageForCreateDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.mapper.PublicMessageCommentMapper;
 import com.senla.socialnetwork.service.mapper.PublicMessageMapper;
-import com.senla.socialnetwork.service.security.UserPrincipal;
+import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +46,7 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     public List<PublicMessageDto> getFriendsPublicMessages(final int firstResult, final int maxResults) {
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PublicMessageMapper.getPublicMessageDto(
-            publicMessageDao.getFriendsMessages(getUserName(), firstResult, maxResults));
+            publicMessageDao.getFriendsMessages(PrincipalUtil.getUserName(), firstResult, maxResults));
     }
 
     @Override
@@ -56,7 +54,7 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     public List<PublicMessageDto> getPublicMessages(final int firstResult, final int maxResults) {
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return PublicMessageMapper.getPublicMessageDto(publicMessageDao.getByEmail(
-            getUserName(), firstResult, maxResults));
+            PrincipalUtil.getUserName(), firstResult, maxResults));
     }
 
     @Override
@@ -65,27 +63,22 @@ public class PublicMessageServiceImpl implements PublicMessageService {
         log.debug("[publicMessageDto: {}]", publicMessageDto);
         return PublicMessageMapper.getPublicMessageDto(publicMessageDao.saveRecord(
             PublicMessageMapper.getNewPublicMessage(
-                publicMessageDto, userProfileDao.findByEmail(getUserName()))));
+                publicMessageDto, userProfileDao.findByEmail(PrincipalUtil.getUserName()))));
     }
 
     @Override
     @Transactional
     public void updateMessage(final PublicMessageDto publicMessageDto) {
         log.debug("[publicMessageDto: {}]", publicMessageDto);
-        UserProfile userProfile = userProfileDao.findByEmail(getUserName());
-        PublicMessage publicMessage = PublicMessageMapper.getPublicMessage(
-            publicMessageDto, publicMessageDao, userProfileDao);
-        if (publicMessage.getAuthor() != userProfile) {
-            throw new BusinessException("Error, this message does not belong to this profile");
-        }
-        publicMessageDao.updateRecord(publicMessage);
+        publicMessageDao.updateRecord(PublicMessageMapper.getPublicMessage(
+            publicMessageDto, publicMessageDao, PrincipalUtil.getUserName()));
     }
 
     @Override
     @Transactional
     public void deleteMessageByUser(final Long messageId) {
         log.debug("[messageId: {}]", messageId);
-        PublicMessage publicMessage = publicMessageDao.findByIdAndEmail(getUserName(), messageId);
+        PublicMessage publicMessage = publicMessageDao.findByIdAndEmail(PrincipalUtil.getUserName(), messageId);
         if (publicMessage == null) {
             throw new BusinessException("Error, there is no such message");
         } else if (publicMessage.getIsDeleted()) {
@@ -125,7 +118,7 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     public PublicMessageCommentDto addComment(final Long publicMessageId,
                                               final PublicMessageCommentForCreateDto publicMessageCommentDto) {
         log.debug("[publicMessageCommentDto: {}]", publicMessageCommentDto);
-        String email = getUserName();
+        String email = PrincipalUtil.getUserName();
         PublicMessage publicMessage = publicMessageDao.findByIdAndEmail(email, publicMessageId);
         if (publicMessage == null) {
             throw new BusinessException("Error, there is no such public message");
@@ -135,12 +128,6 @@ public class PublicMessageServiceImpl implements PublicMessageService {
         return PublicMessageCommentMapper.getPublicMessageCommentDto(publicMessageCommentDao.saveRecord(
             PublicMessageCommentMapper.getNewPublicMessageComment(
                 publicMessageCommentDto, publicMessage, userProfileDao.findByEmail(email))));
-    }
-
-    private String getUserName() {
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
-            .getAuthentication().getPrincipal();
-        return userPrincipal.getUsername();
     }
 
 }

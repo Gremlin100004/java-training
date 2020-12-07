@@ -1,14 +1,12 @@
 package com.senla.socialnetwork.service.mapper;
 
-import com.senla.socialnetwork.dao.CommunityDao;
 import com.senla.socialnetwork.dao.PostCommentDao;
-import com.senla.socialnetwork.dao.PostDao;
-import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.domain.PostComment;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.dto.PostCommentForCreateDto;
+import com.senla.socialnetwork.service.exception.BusinessException;
 
 import java.util.Date;
 import java.util.List;
@@ -34,16 +32,12 @@ public class PostCommentMapper {
 
     public static PostComment getPostComment(final PostCommentDto postCommentDto,
                                              final PostCommentDao postCommentDao,
-                                             final PostDao postDao,
-                                             final CommunityDao communityDao,
-                                             final UserProfileDao userProfileDao) {
-        PostComment postComment = postCommentDao.findById(postCommentDto.getId());
-        postComment.setCreationDate(postCommentDto.getCreationDate());
-        postComment.setAuthor(UserProfileMapper.getUserProfileFromUserProfileForIdentificationDto(
-                postCommentDto.getAuthor(), userProfileDao));
-        postComment.setPost(PostMapper.getPost(postCommentDto.getPost(), postDao, communityDao, userProfileDao));
+                                             final String email) {
+        PostComment postComment = postCommentDao.findByIdAndEmail(email, postCommentDto.getId());
+        if (postComment == null) {
+            throw new BusinessException("Error, this comment does not belong to this profile");
+        }
         postComment.setContent(postCommentDto.getContent());
-        postComment.setIsDeleted(postCommentDto.getDeleted());
         return postComment;
     }
 
@@ -55,6 +49,7 @@ public class PostCommentMapper {
         postComment.setContent(postCommentDto.getContent());
         postComment.setAuthor(userProfile);
         postComment.setCreationDate(new Date());
+        postComment.setIsDeleted(false);
         return postComment;
     }
 

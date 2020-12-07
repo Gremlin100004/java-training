@@ -59,13 +59,14 @@ public class UserController {
     public static final String MAX_RESULTS_EXAMPLE = "10";
     public static final String USER_DTO_DESCRIPTION = "DTO user";
     public static final String USERS_DTO_DESCRIPTION = "List of two DTO users. First object include old login data, "
-        + "the second object include new login data";
+       + "the second object include new login data";
     public static final String USER_ID_DESCRIPTION = "User id";
     public static final String USER_ID_EXAMPLE = "6";
     public static final String GET_USERS_DESCRIPTION = "This method is used to get users by admin";
-    public static final String GET_USER_DESCRIPTION = "This method is used to for the user to receive their "
-        + "security data";
+    public static final String GET_USER_DESCRIPTION = "This method is used to enable the user to get their"
+       + " security data.";
     public static final String ADD_USER_DESCRIPTION = "This method is used to add new user";
+    public static final String ADD_ADMIN_DESCRIPTION = "This method is used to add new admin";
     public static final String LOGIN_DESCRIPTION = "This method is used to authorize the user";
     public static final String LOGOUT_DESCRIPTION = "This method is used to log out the user";
     public static final String UPDATE_USER_DESCRIPTION = "This method is used to update security data by this user";
@@ -119,7 +120,7 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN"})
     @PostMapping("/registration/admin")
-    @ApiOperation(value = ADD_USER_DESCRIPTION, response = ClientMessageDto.class)
+    @ApiOperation(value = ADD_ADMIN_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {
         @ApiResponse(code = CREATED, message = ADD_USER_OK_MESSAGE),
         @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),

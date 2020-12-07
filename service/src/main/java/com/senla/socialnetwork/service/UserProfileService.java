@@ -33,7 +33,7 @@ public interface UserProfileService {
                                                                        int firstResult,
                                                                        int maxResults);
 
-    UserProfileForIdentificationDto getFriendNearestDateOfBirth();
+    UserProfileDto getFriendNearestDateOfBirth();
 
     UserProfileDto getUserProfileDetails(Long userProfileId);
 

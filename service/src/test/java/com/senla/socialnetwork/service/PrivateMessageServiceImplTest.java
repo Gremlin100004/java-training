@@ -164,51 +164,31 @@ public class PrivateMessageServiceImplTest {
     void PrivateMessageServiceImpl_updateMessage() {
         PrivateMessage privateMessage = PrivateMessageTestData.getTestPrivateMessage();
         PrivateMessageDto privateMessageDto = PrivateMessageTestData.getTestPrivateMessageDto();
-        UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
-        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(privateMessage).when(privateMessageDao).findById(PrivateMessageTestData.getPrivateMessageId());
-        Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
+        Mockito.doReturn(privateMessage).when(privateMessageDao).findByIdAndEmail(
+            UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
 
         Assertions.assertDoesNotThrow(() -> privateMessageService.updateMessage(privateMessageDto));
         Mockito.verify(privateMessageDao, Mockito.times(1)).updateRecord(
             ArgumentMatchers.any(PrivateMessage.class));
-        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(privateMessageDao, Mockito.times(1)).findById(
-            PrivateMessageTestData.getPrivateMessageId());
-        Mockito.verify(userProfileDao, Mockito.times(2)).findById(
-            UserProfileTestData.getUserProfileId());
+        Mockito.verify(privateMessageDao, Mockito.times(1)).findByIdAndEmail(
+            UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
         Mockito.reset(privateMessageDao);
-        Mockito.reset(userProfileDao);
-        Mockito.reset(locationDao);
-        Mockito.reset(schoolDao);
-        Mockito.reset(universityDao);
     }
 
     @Test
-    void PrivateMessageServiceImpl_updateMessage_someoneElseMessage() {
-        PrivateMessage privateMessage = PrivateMessageTestData.getTestPrivateMessage();
+    void PrivateMessageServiceImpl_updateMessage_privateMessageDao_findByIdAndEmail_nullObject() {
         PrivateMessageDto privateMessageDto = PrivateMessageTestData.getTestPrivateMessageDto();
-        UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        UserProfile wrongUserProfile = UserProfileTestData.getTestUserProfile();
-        wrongUserProfile.setId(UserProfileTestData.getUserProfileOtherId());
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
-        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(privateMessage).when(privateMessageDao).findById(PrivateMessageTestData.getPrivateMessageId());
-        Mockito.doReturn(wrongUserProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
+        Mockito.doReturn(null).when(privateMessageDao).findByIdAndEmail(
+            UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
 
         Assertions.assertThrows(BusinessException.class, () -> privateMessageService.updateMessage(privateMessageDto));
         Mockito.verify(privateMessageDao, Mockito.never()).updateRecord(
             ArgumentMatchers.any(PrivateMessage.class));
-        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(privateMessageDao, Mockito.times(1)).findById(
-            PrivateMessageTestData.getPrivateMessageId());
-        Mockito.verify(userProfileDao, Mockito.times(2)).findById(UserProfileTestData.getUserProfileId());
+        Mockito.verify(privateMessageDao, Mockito.times(1)).findByIdAndEmail(
+            UserTestData.getEmail(), PrivateMessageTestData.getPrivateMessageId());
         Mockito.reset(privateMessageDao);
-        Mockito.reset(userProfileDao);
-        Mockito.reset(locationDao);
-        Mockito.reset(schoolDao);
-        Mockito.reset(universityDao);
     }
 
     @Test

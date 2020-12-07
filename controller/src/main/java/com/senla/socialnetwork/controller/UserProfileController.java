@@ -74,7 +74,7 @@ public class UserProfileController {
     public static final String DELETE_USER_PROFILE_OK_MESSAGE = "User deleted successfully";
     public static final String GET_USER_PROFILE_DESCRIPTION = "This method is used to get the profile of a given user";
     public static final String GET_USER_PROFILES_DESCRIPTION = "This method is used to get users profiles. Users "
-       + "profiles can be filtered by age, university, school or location";
+       + "profiles can be filtered by age, university, school, location and sorted by registration date, surname";
     public static final String UPDATE_USER_PROFILE_DESCRIPTION = "This method is used to update the profile of a "
        + "given user";
     public static final String GET_FRIEND_NEAREST_DATE_OF_BIRTH_DESCRIPTION = "This method is used to get a friend "
@@ -191,7 +191,7 @@ public class UserProfileController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public UserProfileForIdentificationDto getFriendNearestDateOfBirth() {
+    public UserProfileDto getFriendNearestDateOfBirth() {
         return userProfileService.getFriendNearestDateOfBirth();
     }
 

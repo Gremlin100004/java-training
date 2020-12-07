@@ -1,6 +1,5 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
@@ -59,6 +58,7 @@ public class PublicMessageController {
     public static final String COMMENTS_DTO_DESCRIPTION = "DTO public message comment";
     public static final String PUBLIC_MESSAGE_ID_DESCRIPTION = "Public message id";
     public static final String PUBLIC_MESSAGE_ID_EXAMPLE = "1";
+    public static final String PUBLIC_MESSAGE_TO_DELETE_ID_EXAMPLE = "9";
     public static final String GET_PUBLIC_MESSAGES_ALL_DESCRIPTION = "This method is used to get public messages "
        + "by admin";
     public static final String GET_PUBLIC_MESSAGES_DESCRIPTION = "This method is used to get public messages of a "
@@ -77,8 +77,6 @@ public class PublicMessageController {
        + "by this user";
     @Autowired
     private PublicMessageService publicMessageService;
-    @Autowired
-    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping("/admin")
@@ -152,7 +150,7 @@ public class PublicMessageController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto deleteMessageByUser(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
-                                                          example = PUBLIC_MESSAGE_ID_EXAMPLE)
+                                                          example = PUBLIC_MESSAGE_TO_DELETE_ID_EXAMPLE)
                                                 @PathVariable("id") final Long messageId) {
 
         publicMessageService.deleteMessageByUser(messageId);
@@ -169,7 +167,7 @@ public class PublicMessageController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto deleteMessage(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
-                                                    example = PUBLIC_MESSAGE_ID_EXAMPLE)
+                                                    example = PUBLIC_MESSAGE_TO_DELETE_ID_EXAMPLE)
                                           @PathVariable("id") final Long messageId) {
         publicMessageService.deleteMessage(messageId);
         return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);

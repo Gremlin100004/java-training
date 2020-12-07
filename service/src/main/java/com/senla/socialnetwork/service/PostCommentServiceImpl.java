@@ -5,15 +5,13 @@ import com.senla.socialnetwork.dao.PostCommentDao;
 import com.senla.socialnetwork.dao.PostDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PostComment;
-import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.mapper.PostCommentMapper;
-import com.senla.socialnetwork.service.security.UserPrincipal;
+import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,20 +40,15 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Transactional
     public void updateComment(final PostCommentDto postCommentDto) {
         log.debug("[postCommentDto: {}]", postCommentDto);
-        UserProfile userProfile = userProfileDao.findByEmail(getUserName());
-        PostComment postComment = PostCommentMapper.getPostComment(
-            postCommentDto, postCommentDao, postDao, communityDao, userProfileDao);
-        if (postComment.getAuthor() != userProfile) {
-            throw new BusinessException("Error, this comment does not belong to this profile");
-        }
-        postCommentDao.updateRecord(postComment);
+        postCommentDao.updateRecord(PostCommentMapper.getPostComment(
+            postCommentDto, postCommentDao, PrincipalUtil.getUserName()));
     }
 
     @Override
     @Transactional
     public void deleteCommentByUser(final Long commentId) {
         log.debug("[commentId: {}]", commentId);
-        PostComment postComment = postCommentDao.findByIdAndEmail(getUserName(), commentId);
+        PostComment postComment = postCommentDao.findByIdAndEmail(PrincipalUtil.getUserName(), commentId);
         if (postComment == null) {
             throw new BusinessException("Error, there is no such comment");
         } else if (postComment.getIsDeleted()) {
@@ -74,12 +67,6 @@ public class PostCommentServiceImpl implements PostCommentService {
             throw new BusinessException("Error, there is no such comment");
         }
         postCommentDao.deleteRecord(postComment);
-    }
-
-    private String getUserName() {
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
-            .getAuthentication().getPrincipal();
-        return userPrincipal.getUsername();
     }
 
 }

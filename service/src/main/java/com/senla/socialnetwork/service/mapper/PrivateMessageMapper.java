@@ -6,6 +6,7 @@ import com.senla.socialnetwork.domain.PrivateMessage;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
+import com.senla.socialnetwork.service.exception.BusinessException;
 
 import java.util.Date;
 import java.util.List;
@@ -34,26 +35,25 @@ public class PrivateMessageMapper {
 
     public static PrivateMessage getPrivateMessage(final PrivateMessageDto privateMessageDto,
                                                    final PrivateMessageDao privateMessageDao,
-                                                   final UserProfileDao userProfileDao) {
-        PrivateMessage privateMessage = privateMessageDao.findById(privateMessageDto.getId());
-        privateMessage.setId(privateMessageDto.getId());
-        privateMessage.setDepartureDate(privateMessageDto.getDepartureDate());
-        privateMessage.setSender(UserProfileMapper.getUserProfileFromUserProfileForIdentificationDto(
-            privateMessageDto.getSender(), userProfileDao));
-        privateMessage.setRecipient(UserProfileMapper.getUserProfileFromUserProfileForIdentificationDto(
-            privateMessageDto.getRecipient(), userProfileDao));
+                                                   final String email) {
+        PrivateMessage privateMessage = privateMessageDao.findByIdAndEmail(email, privateMessageDto.getId());
+        if (privateMessage == null) {
+            throw new BusinessException("Error, this message does not belong to this profile");
+        }
         privateMessage.setContent(privateMessageDto.getContent());
-        privateMessage.setIsRead(privateMessageDto.getRead());
-        privateMessage.setIsDeleted(privateMessageDto.getDeleted());
         return privateMessage;
     }
 
     public static PrivateMessage getNewPrivateMessage(final PrivateMessageForCreateDto privateMessageDto,
-                                                      final UserProfile userProfile) {
+                                                      final UserProfile sender,
+                                                      final UserProfileDao userProfileDao) {
         PrivateMessage privateMessage = new PrivateMessage();
-        privateMessage.setRecipient(userProfile);
+        privateMessage.setRecipient(userProfileDao.findById(privateMessageDto.getRecipient().getId()));
+        privateMessage.setSender(sender);
         privateMessage.setDepartureDate(new Date());
         privateMessage.setContent(privateMessageDto.getContent());
+        privateMessage.setIsDeleted(false);
+        privateMessage.setIsRead(false);
         return privateMessage;
     }
 

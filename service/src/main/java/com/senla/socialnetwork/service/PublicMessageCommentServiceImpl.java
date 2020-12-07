@@ -1,18 +1,15 @@
 package com.senla.socialnetwork.service;
 
 import com.senla.socialnetwork.dao.PublicMessageCommentDao;
-import com.senla.socialnetwork.dao.PublicMessageDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessageComment;
-import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.mapper.PublicMessageCommentMapper;
-import com.senla.socialnetwork.service.security.UserPrincipal;
+import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +23,6 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
     UserProfileDao userProfileDao;
     @Autowired
     PublicMessageCommentDao publicMessageCommentDao;
-    @Autowired
-    PublicMessageDao publicMessageDao;
 
     @Override
     @Transactional
@@ -41,20 +36,16 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
     @Transactional
     public void updateComment(final PublicMessageCommentDto publicMessageCommentDto) {
         log.debug("[publicMessageCommentDto: {}]", publicMessageCommentDto);
-        UserProfile userProfile = userProfileDao.findByEmail(getUserName());
-        PublicMessageComment publicMessageComment = PublicMessageCommentMapper.getPublicMessageComment(
-            publicMessageCommentDto, publicMessageCommentDao, publicMessageDao,  userProfileDao);
-        if (publicMessageComment.getAuthor() != userProfile) {
-            throw new BusinessException("Error, this comment does not belong to this profile");
-        }
-        publicMessageCommentDao.updateRecord(publicMessageComment);
+        publicMessageCommentDao.updateRecord(PublicMessageCommentMapper.getPublicMessageComment(
+            publicMessageCommentDto, publicMessageCommentDao, PrincipalUtil.getUserName()));
     }
 
     @Override
     @Transactional
     public void deleteCommentByUser(final Long commentId) {
         log.debug("[commentId: {}]", commentId);
-        PublicMessageComment publicMessageComment = publicMessageCommentDao.findByIdAndEmail(getUserName(), commentId);
+        PublicMessageComment publicMessageComment = publicMessageCommentDao.findByIdAndEmail(
+            PrincipalUtil.getUserName(), commentId);
         if (publicMessageComment == null) {
             throw new BusinessException("Error, there is no such comment");
         } else if (publicMessageComment.getIsDeleted()) {
@@ -75,9 +66,4 @@ public class PublicMessageCommentServiceImpl implements PublicMessageCommentServ
         publicMessageCommentDao.deleteRecord(publicMessageComment);
     }
 
-    private String getUserName() {
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
-            .getAuthentication().getPrincipal();
-        return userPrincipal.getUsername();
-    }
 }

@@ -102,47 +102,31 @@ public class PublicMessageServiceImplTest {
     void PublicMessageServiceImpl_updateMessage() {
         PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
         PublicMessageDto publicMessageDto = PublicMessageTestData.getTestPublicMessageDto();
-        UserProfile userProfile = UserProfileTestData.getTestUserProfile();
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
-        Mockito.doReturn(publicMessage).when(publicMessageDao).findById(PublicMessageTestData.getPublicMessageId());
-        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
+        Mockito.doReturn(publicMessage).when(publicMessageDao).findByIdAndEmail(
+            UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
 
         Assertions.assertDoesNotThrow(() -> publicMessageService.updateMessage(publicMessageDto));
-        Mockito.verify(publicMessageDao, Mockito.times(1)).findById(
-            PublicMessageTestData.getPublicMessageId());
-        Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(userProfileDao, Mockito.times(1)).findById(
-            UserProfileTestData.getUserProfileId());
+        Mockito.verify(publicMessageDao, Mockito.times(1)).findByIdAndEmail(
+            UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
         Mockito.verify(publicMessageDao, Mockito.times(1)).updateRecord(
             ArgumentMatchers.any(PublicMessage.class));
         Mockito.reset(publicMessageDao);
-        Mockito.reset(userProfileDao);
     }
 
     @Test
-    void PublicMessageServiceImpl_updateMessage_someoneElseMessage() {
-        PublicMessage publicMessage = PublicMessageTestData.getTestPublicMessage();
+    void PublicMessageServiceImpl_updateMessage_publicMessageDao_findByIdAndEmail_nullObject() {
         PublicMessageDto publicMessageDto = PublicMessageTestData.getTestPublicMessageDto();
-        UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        UserProfile wrongUserProfile = UserProfileTestData.getTestUserProfile();
-        wrongUserProfile.setId(UserProfileTestData.getUserProfileOtherId());
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
-        Mockito.doReturn(publicMessage).when(publicMessageDao).findById(PublicMessageTestData.getPublicMessageId());
-        Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
-        Mockito.doReturn(wrongUserProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
+        Mockito.doReturn(null).when(publicMessageDao).findByIdAndEmail(
+            UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
 
         Assertions.assertThrows(BusinessException.class, () -> publicMessageService.updateMessage(publicMessageDto));
-        Mockito.verify(publicMessageDao, Mockito.times(1)).findById(
-            PublicMessageTestData.getPublicMessageId());
-        Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
-        Mockito.verify(userProfileDao, Mockito.times(1)).findById(
-            UserProfileTestData.getUserProfileId());
+        Mockito.verify(publicMessageDao, Mockito.times(1)).findByIdAndEmail(
+            UserTestData.getEmail(), PublicMessageTestData.getPublicMessageId());
         Mockito.verify(publicMessageDao, Mockito.never()).updateRecord(
             ArgumentMatchers.any(PublicMessage.class));
         Mockito.reset(publicMessageDao);
-        Mockito.reset(userProfileDao);
-
     }
 
     @Test

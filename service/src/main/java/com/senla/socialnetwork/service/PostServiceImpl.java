@@ -12,11 +12,10 @@ import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.mapper.PostCommentMapper;
 import com.senla.socialnetwork.service.mapper.PostMapper;
-import com.senla.socialnetwork.service.security.UserPrincipal;
+import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,21 +47,21 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public List<PostDto> getPostsFromSubscribedCommunities(final int firstResult, final int maxResults) {
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
-        return PostMapper.getPostDto(postDao.getByEmail(getUserName(), firstResult, maxResults));
+        return PostMapper.getPostDto(postDao.getByEmail(PrincipalUtil.getUserName(), firstResult, maxResults));
     }
 
     @Override
     @Transactional
     public void updatePost(final PostDto postDto) {
         log.debug("[postDto: {}]", postDto);
-        postDao.updateRecord(PostMapper.getPost(postDto, postDao, communityDao, userProfileDao));
+        postDao.updateRecord(PostMapper.getPost(postDto, postDao, PrincipalUtil.getUserName()));
     }
 
     @Override
     @Transactional
     public void deletePostByUser(final Long postId) {
         log.debug("[postId: {}]", postId);
-        Post post = postDao.findByIdAndEmail(getUserName(), postId);
+        Post post = postDao.findByIdAndEmail(PrincipalUtil.getUserName(), postId);
         if (post == null) {
             throw new BusinessException("Error, there is no such post");
         } else if (post.getIsDeleted()) {
@@ -97,21 +96,14 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostCommentDto addComment(final Long postId, final PostCommentForCreateDto postCommentDto) {
         log.debug("[postCommentDto: {}]", postCommentDto);
-        String email = getUserName();
-        Post post = postDao.findByIdAndEmail(email, postId);
+        Post post = postDao.findById(postId);
         if (post == null) {
             throw new BusinessException("Error, there is no such post");
         } else if (post.getIsDeleted()) {
             throw new BusinessException("Error, the post has already been deleted");
         }
         return PostCommentMapper.getPostCommentDto(postCommentDao.saveRecord(PostCommentMapper.getPostNewComment(
-            postCommentDto, post, userProfileDao.findByEmail(email))));
-    }
-
-    private String getUserName() {
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
-            .getAuthentication().getPrincipal();
-        return userPrincipal.getUsername();
+            postCommentDto, post, userProfileDao.findByEmail(PrincipalUtil.getUserName()))));
     }
 
 }

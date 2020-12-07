@@ -46,7 +46,7 @@ public class PublicMessageCommentController {
     public static final String MAX_RESULTS_EXAMPLE = "10";
     public static final String COMMENTS_DTO_DESCRIPTION = "DTO public message comment";
     public static final String COMMENTS_ID_DESCRIPTION = "Public message comment id";
-    public static final String COMMENTS_ID_EXAMPLE = "1";
+    public static final String COMMENTS_ID_EXAMPLE = "17";
     public static final String GET_COMMENTS_DESCRIPTION = "This method is used to get public messages comments by admin";
     public static final String UPDATE_COMMENTS_DESCRIPTION = "This method is used to update public message comment "
        + "by this user";

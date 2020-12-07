@@ -85,19 +85,17 @@ public class PostServiceImplTest {
         PostDto postDto = PostTestData.getTestPostDto();
         Community community = CommunityTestData.getTestCommunity();
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        Mockito.doReturn(post).when(postDao).findById(PostTestData.getPostId());
+        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
+        Mockito.doReturn(post).when(postDao).findByIdAndEmail(UserTestData.getEmail(), PostTestData.getPostId());
         Mockito.doReturn(community).when(communityDao).findById(CommunityTestData.getCommunityId());
         Mockito.doReturn(userProfile).when(userProfileDao).findById(UserProfileTestData.getUserProfileId());
 
         Assertions.assertDoesNotThrow(() -> postService.updatePost(postDto));
         Mockito.verify(postDao, Mockito.times(1)).updateRecord(
             ArgumentMatchers.any(Post.class));
-        Mockito.verify(postDao, Mockito.times(1)).findById(PostTestData.getPostId());
-        Mockito.verify(communityDao, Mockito.times(1)).findById(CommunityTestData.getCommunityId());
-        Mockito.verify(userProfileDao, Mockito.times(1)).findById(UserProfileTestData.getUserProfileId());
+        Mockito.verify(postDao, Mockito.times(1)).findByIdAndEmail(
+            UserTestData.getEmail(), PostTestData.getPostId());
         Mockito.reset(postDao);
-        Mockito.reset(communityDao);
-        Mockito.reset(userProfileDao);
     }
 
     @Test
@@ -203,7 +201,7 @@ public class PostServiceImplTest {
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(userProfile).when(userProfileDao).findByEmail(UserTestData.getEmail());
         Mockito.doReturn(postComment).when(postCommentDao).saveRecord(ArgumentMatchers.any(PostComment.class));
-        Mockito.doReturn(post).when(postDao).findByIdAndEmail(UserTestData.getEmail(), PostTestData.getPostId());
+        Mockito.doReturn(post).when(postDao).findById( PostTestData.getPostId());
 
         PostCommentDto resultPostCommentDto = postService.addComment(
             PostCommentTestData.getPostCommentId(), postCommentDto);
@@ -211,8 +209,7 @@ public class PostServiceImplTest {
         Mockito.verify(postCommentDao, Mockito.times(1)).saveRecord(
             ArgumentMatchers.any(PostComment.class));
         Mockito.verify(userProfileDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(postDao, Mockito.times(1)).findByIdAndEmail(
-            UserTestData.getEmail(), PostTestData.getPostId());
+        Mockito.verify(postDao, Mockito.times(1)).findById(PostTestData.getPostId());
         Mockito.reset(postCommentDao);
         Mockito.reset(postDao);
         Mockito.reset(userProfileDao);
@@ -222,15 +219,13 @@ public class PostServiceImplTest {
     void PostCommentServiceImpl_addComment_postDao_findByIdAndEmail_nullObject() {
         PostCommentForCreateDto postCommentDto = PostCommentTestData.getTestPostCommentForCreationDto();
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
-        Mockito.doReturn(null).when(postDao).findByIdAndEmail(
-            UserTestData.getEmail(), PostTestData.getPostId());
+        Mockito.doReturn(null).when(postDao).findById(PostTestData.getPostId());
 
         Assertions.assertThrows(BusinessException.class, () -> postService.addComment(
             PostCommentTestData.getPostCommentId(), postCommentDto));
         Mockito.verify(postCommentDao, Mockito.never()).saveRecord(ArgumentMatchers.any(PostComment.class));
         Mockito.verify(userProfileDao, Mockito.never()).findByEmail(UserTestData.getEmail());
-        Mockito.verify(postDao, Mockito.times(1)).findByIdAndEmail(
-            UserTestData.getEmail(), PostTestData.getPostId());
+        Mockito.verify(postDao, Mockito.times(1)).findById(PostTestData.getPostId());
         Mockito.reset(postDao);
     }
 
@@ -240,14 +235,13 @@ public class PostServiceImplTest {
         post.setIsDeleted(true);
         PostCommentForCreateDto postCommentDto = PostCommentTestData.getTestPostCommentForCreationDto();
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
-        Mockito.doReturn(post).when(postDao).findByIdAndEmail(UserTestData.getEmail(), PostTestData.getPostId());
+        Mockito.doReturn(post).when(postDao).findById(PostTestData.getPostId());
 
         Assertions.assertThrows(BusinessException.class, () -> postService.addComment(
             PostCommentTestData.getPostCommentId(), postCommentDto));
         Mockito.verify(postCommentDao, Mockito.never()).saveRecord(ArgumentMatchers.any(PostComment.class));
         Mockito.verify(userProfileDao, Mockito.never()).findByEmail(UserTestData.getEmail());
-        Mockito.verify(postDao, Mockito.times(1)).findByIdAndEmail(
-            UserTestData.getEmail(), PostTestData.getPostId());
+        Mockito.verify(postDao, Mockito.times(1)).findById(PostTestData.getPostId());
         Mockito.reset(postDao);
     }
 

@@ -241,11 +241,11 @@ public class UserProfileServiceImplTest {
     @Test
     void UserProfileServiceImpl_getFriendNearestDateOfBirth_userProfileDao_getNearestBirthdayByCurrentDate() {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        UserProfileForIdentificationDto userProfileDto = UserProfileTestData.getTestUserProfileForIdentificationDto();
+        UserProfileDto userProfileDto = UserProfileTestData.getTestUserProfileDto();
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(userProfile).when(userProfileDao).getNearestBirthdayByCurrentDate(UserTestData.getEmail());
 
-        UserProfileForIdentificationDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth();
+        UserProfileDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth();
         Assertions.assertEquals(resultProfileDto, userProfileDto);
         Mockito.verify(userProfileDao, Mockito.times(1)).getNearestBirthdayByCurrentDate(
             UserTestData.getEmail());
@@ -257,14 +257,14 @@ public class UserProfileServiceImplTest {
     @Test
     void UserProfileServiceImpl_getFriendNearestDateOfBirth_userProfileDao_getNearestBirthdayFromTheBeginningOfTheYear() {
         UserProfile userProfile = UserProfileTestData.getTestUserProfile();
-        UserProfileForIdentificationDto userProfileDto = UserProfileTestData.getTestUserProfileForIdentificationDto();
+        UserProfileDto userProfileDto = UserProfileTestData.getTestUserProfileDto();
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(null).when(userProfileDao).getNearestBirthdayByCurrentDate(
             UserTestData.getEmail());
         Mockito.doReturn(userProfile).when(userProfileDao).getNearestBirthdayFromTheBeginningOfTheYear(
             UserTestData.getEmail());
 
-        UserProfileForIdentificationDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth();
+        UserProfileDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth();
         Assertions.assertEquals(resultProfileDto, userProfileDto);
         Mockito.verify(userProfileDao, Mockito.times(1)).getNearestBirthdayByCurrentDate(
             UserTestData.getEmail());
@@ -281,7 +281,7 @@ public class UserProfileServiceImplTest {
         Mockito.doReturn(null).when(userProfileDao).getNearestBirthdayFromTheBeginningOfTheYear(
             UserTestData.getEmail());
 
-        UserProfileForIdentificationDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth();
+        UserProfileDto resultProfileDto = userProfileService.getFriendNearestDateOfBirth();
         Assertions.assertNull(resultProfileDto);
         Mockito.verify(userProfileDao, Mockito.times(1)).getNearestBirthdayByCurrentDate(
             UserTestData.getEmail());

@@ -1,13 +1,12 @@
 package com.senla.socialnetwork.service.mapper;
 
 import com.senla.socialnetwork.dao.PublicMessageCommentDao;
-import com.senla.socialnetwork.dao.PublicMessageDao;
-import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.PublicMessage;
 import com.senla.socialnetwork.domain.PublicMessageComment;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
+import com.senla.socialnetwork.service.exception.BusinessException;
 
 import java.util.Date;
 import java.util.List;
@@ -35,16 +34,13 @@ public class PublicMessageCommentMapper {
 
     public static PublicMessageComment getPublicMessageComment(final PublicMessageCommentDto publicMessageCommentDto,
                                                                final PublicMessageCommentDao publicMessageCommentDao,
-                                                               final PublicMessageDao publicMessageDao,
-                                                               final UserProfileDao userProfileDao) {
-        PublicMessageComment publicMessageComment = publicMessageCommentDao.findById(publicMessageCommentDto.getId());
-        publicMessageComment.setCreationDate(publicMessageCommentDto.getCreationDate());
-        publicMessageComment.setAuthor(UserProfileMapper.getUserProfileFromUserProfileForIdentificationDto(
-            publicMessageCommentDto.getAuthor(), userProfileDao));
-        publicMessageComment.setPublicMessage(PublicMessageMapper.getPublicMessage(
-            publicMessageCommentDto.getPublicMessage(), publicMessageDao, userProfileDao));
+                                                               final String email) {
+        PublicMessageComment publicMessageComment = publicMessageCommentDao.findByIdAndEmail(
+            email, publicMessageCommentDto.getId());
+        if (publicMessageComment == null) {
+            throw new BusinessException("Error, this comment does not belong to this profile");
+        }
         publicMessageComment.setContent(publicMessageCommentDto.getContent());
-        publicMessageComment.setIsDeleted(publicMessageCommentDto.getDeleted());
         return publicMessageComment;
     }
 
@@ -55,7 +51,8 @@ public class PublicMessageCommentMapper {
         publicMessageComment.setPublicMessage(publicMessage);
         publicMessageComment.setContent(publicMessageCommentDto.getContent());
         publicMessageComment.setAuthor(userProfile);
-        publicMessage.setCreationDate(new Date());
+        publicMessageComment.setCreationDate(new Date());
+        publicMessageComment.setIsDeleted(false);
         return publicMessageComment;
     }
 

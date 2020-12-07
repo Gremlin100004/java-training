@@ -10,13 +10,12 @@ import com.senla.socialnetwork.dto.WeatherConditionDto;
 import com.senla.socialnetwork.dto.WeatherConditionForAdminDto;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.mapper.WeatherConditionMapper;
-import com.senla.socialnetwork.service.security.UserPrincipal;
+import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -61,9 +60,7 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     @Override
     @Transactional
     public WeatherConditionDto getWeatherCondition() {
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
-            .getAuthentication().getPrincipal();
-        Location location = locationDao.getLocation(userPrincipal.getUsername());
+        Location location = locationDao.getLocation(PrincipalUtil.getUserName());
         if (location == null) {
             throw new BusinessException("There is no location");
         }

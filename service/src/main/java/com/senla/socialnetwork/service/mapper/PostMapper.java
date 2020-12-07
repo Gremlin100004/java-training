@@ -1,8 +1,6 @@
 package com.senla.socialnetwork.service.mapper;
 
-import com.senla.socialnetwork.dao.CommunityDao;
 import com.senla.socialnetwork.dao.PostDao;
-import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.dto.PostDto;
@@ -36,13 +34,10 @@ public class PostMapper {
 
     public static Post getPost(final PostDto postDto,
                                final PostDao postDao,
-                               final CommunityDao communityDao,
-                               final UserProfileDao userProfileDao) {
-        Post post = postDao.findById(postDto.getId());
+                               final String email) {
+        Post post = postDao.findByIdAndEmail(email, postDto.getId());
         post.setTittle(postDto.getTittle());
         post.setContent(postDto.getContent());
-        post.setCommunity(CommunityMapper.getCommunity(postDto.getCommunity(), communityDao, userProfileDao));
-        post.setIsDeleted(postDto.getDeleted());
         return post;
     }
 
@@ -52,6 +47,7 @@ public class PostMapper {
         post.setContent(postDto.getContent());
         post.setCommunity(community);
         post.setCreationDate(new Date());
+        post.setIsDeleted(false);
         return post;
     }
 

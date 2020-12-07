@@ -14,11 +14,10 @@ import com.senla.socialnetwork.service.enumaration.UserProfileSortParameter;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.mapper.PrivateMessageMapper;
 import com.senla.socialnetwork.service.mapper.UserProfileMapper;
-import com.senla.socialnetwork.service.security.UserPrincipal;
+import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +52,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional
     public UserProfileDto getUserProfile() {
-        return UserProfileMapper.getUserProfileDto(userProfileDao.findByEmail(getUserName()));
+        return UserProfileMapper.getUserProfileDto(userProfileDao.findByEmail(PrincipalUtil.getUserName()));
     }
 
     @Override
@@ -61,7 +60,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     public void updateUserProfile(final UserProfileDto userProfileDto) {
         log.debug("[userProfileDto: {}]", userProfileDto);
         userProfileDao.updateRecord(UserProfileMapper.getUserProfile(
-            userProfileDto, userProfileDao, getUserName(),  locationDao, schoolDao, universityDao));
+            userProfileDto, userProfileDao, PrincipalUtil.getUserName(),  locationDao, schoolDao, universityDao));
     }
 
     @Override
@@ -126,8 +125,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public UserProfileForIdentificationDto getFriendNearestDateOfBirth() {
-        String email = getUserName();
+    public UserProfileDto getFriendNearestDateOfBirth() {
+        String email = PrincipalUtil.getUserName();
         UserProfile userProfile = userProfileDao.getNearestBirthdayByCurrentDate(email);
         if (userProfile == null) {
             userProfile = userProfileDao.getNearestBirthdayFromTheBeginningOfTheYear(email);
@@ -135,7 +134,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (userProfile == null) {
             return null;
         }
-        return UserProfileMapper.getUserProfileForIdentificationDto(userProfile);
+        return UserProfileMapper.getUserProfileDto(userProfile);
     }
 
     @Override
@@ -150,7 +149,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<UserProfileForIdentificationDto> getUserProfileFriends(final int firstResult, final int maxResults) {
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return UserProfileMapper.getUserProfileForIdentificationDto(userProfileDao.getFriends(
-            getUserName(), firstResult, maxResults));
+            PrincipalUtil.getUserName(), firstResult, maxResults));
     }
 
     @Override
@@ -160,7 +159,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                                                                                final int maxResults) {
         log.debug("[sortParameter: {}, firstResult: {}, maxResults: {}]",
                   sortParameter, firstResult, maxResults);
-        String email = getUserName();
+        String email = PrincipalUtil.getUserName();
         List<UserProfile> userProfiles;
         if (sortParameter.equals(UserProfileFriendSortParameter.BY_BIRTHDAY)) {
             userProfiles = userProfileDao.getFriendsSortByAge(email, firstResult, maxResults);
@@ -180,14 +179,14 @@ public class UserProfileServiceImpl implements UserProfileService {
                                                                              final int maxResults) {
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return UserProfileMapper.getUserProfileForIdentificationDto(userProfileDao.getSignedFriends(
-            getUserName(), firstResult, maxResults));
+            PrincipalUtil.getUserName(), firstResult, maxResults));
     }
 
     @Override
     @Transactional
     public void sendAFriendRequest(final  Long userProfileId) {
         log.debug("[userProfileId: {}]", userProfileId);
-        String email = getUserName();
+        String email = PrincipalUtil.getUserName();
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
             throw new BusinessException("Error, this user is not exist");
@@ -204,7 +203,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Transactional
     public void confirmFriend(final Long userProfileId) {
         log.debug("[userProfileId: {}]", userProfileId);
-        String email = getUserName();
+        String email = PrincipalUtil.getUserName();
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
             throw new BusinessException("Error, this user is not exist");
@@ -222,7 +221,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Transactional
     public void removeUserFromFriends(final Long userProfileId) {
         log.debug("[userProfileId: {}]", userProfileId);
-        String email = getUserName();
+        String email = PrincipalUtil.getUserName();
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
             throw new BusinessException("Error, this user is not exist");
@@ -254,13 +253,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         log.debug("[userProfileId: {}, firstResult: {}, maxResults: {}]",
                   userProfileId, firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
-            privateMessageDao.getDialogue(getUserName(), userProfileId, firstResult, maxResults));
-    }
-
-    private String getUserName() {
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext()
-            .getAuthentication().getPrincipal();
-        return userPrincipal.getUsername();
+            privateMessageDao.getDialogue(PrincipalUtil.getUserName(), userProfileId, firstResult, maxResults));
     }
 
 }
