@@ -83,9 +83,8 @@ public class UserServiceImpl implements UserService {
         if (systemUser == null) {
             throw new BusinessException("This email does not exist");
         }
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-            userDto.getEmail(), userDto.getPassword());
-        authenticationManager.authenticate(authentication);
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+            userDto.getEmail(), userDto.getPassword()));
         return JwtUtil.generateToken(new UserPrincipal(systemUser), secretKey, expiration);
     }
 
@@ -125,11 +124,11 @@ public class UserServiceImpl implements UserService {
         if (!oldUserDto.getEmail().equals(controlEmail)) {
             throw new BusinessException("login is wrong");
         }
-        authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(oldUserDto.getEmail(), oldUserDto.getPassword()));
         if (!newUserDto.getEmail().equals(controlEmail) && userDao.findByEmail(newUserDto.getEmail()) != null) {
             throw new BusinessException("A user with this email address already exists");
         }
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+            oldUserDto.getEmail(), oldUserDto.getPassword()));
         SystemUser currentSystemUser = userDao.findByEmail(controlEmail);
         tokenDao.saveRecord(getLogoutToken(token, currentSystemUser));
         UserMapper.getCurrentSystemUser(passwordEncoder, newUserDto, currentSystemUser);

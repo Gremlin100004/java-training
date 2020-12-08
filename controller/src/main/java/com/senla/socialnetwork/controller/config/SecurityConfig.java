@@ -62,6 +62,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) {
+        log.debug("[authenticationManagerBuilder: {}]", authenticationManagerBuilder);
+        try {
+            authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        } catch (Exception exception) {
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
+            throw new ControllerException("AuthenticationManagerBuilder configuration is wrong");
+        }
+    }
+
+    @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers(API_DOCS_URL,
                                    CONFIGURATION_URL,
@@ -76,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         try {
             return authenticationManager();
         } catch (Exception exception) {
-            log.error("[{}]", exception.getMessage());
+            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             throw new ControllerException("The authentication of the passed authentication object is wrong");
         }
     }
@@ -86,21 +97,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new GlobalExceptionHandler();
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) {
-        log.debug("[authenticationManagerBuilder: {}]", authenticationManagerBuilder);
-        try {
-            authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-        } catch (Exception exception) {
-            log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
-            throw new ControllerException("AuthenticationManagerBuilder configuration is wrong");
-        }
     }
 
 }
