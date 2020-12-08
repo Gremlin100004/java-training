@@ -1,8 +1,8 @@
 package com.senla.socialnetwork.controller.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.controller.config.SigningKey;
+import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.service.UserService;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -29,7 +29,7 @@ import java.io.IOException;
 @Component
 @NoArgsConstructor
 @Slf4j
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private static final String INCORRECT_RESULT_SIZE_DATA_ACCESS_EXCEPTION_MESSAGE = "User is not logged in";
     private static final String EXCEPTION_MESSAGE = "Server error";
     @Autowired
@@ -42,29 +42,16 @@ public class JwtFilter extends OncePerRequestFilter {
     SigningKey signingKey;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain) {
+    protected void doFilterInternal(final HttpServletRequest request,
+                                    final HttpServletResponse response,
+                                    final FilterChain chain) {
         log.info("[security check]");
         try {
-            String username = null;
-            String token = JwtUtil.getToken(request);
-            if (token != null) {
-                username = JwtUtil.extractUsername(token, signingKey.getSecretKey());
-            }
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null
-                && !userService.getUserLogoutToken(username).equals(token)) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                if (JwtUtil.validateToken(token, userDetails, signingKey.getSecretKey())) {
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                }
+            UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
+            if (authentication != null) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             chain.doFilter(request, response);
-
         } catch (BusinessException exception) {
             log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             fillResponse(exception.getMessage(), response);
@@ -75,6 +62,26 @@ public class JwtFilter extends OncePerRequestFilter {
             log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             fillResponse(EXCEPTION_MESSAGE, response);
         }
+    }
+
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+        String token = JwtUtil.getToken(request);
+        if (token == null) {
+            return null;
+        }
+        String username = JwtUtil.extractUsername(token, signingKey.getSecretKey());
+        if (username == null || SecurityContextHolder.getContext().getAuthentication() != null
+            || userService.getUserLogoutToken(username).equals(token)) {
+            return null;
+        }
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (!JwtUtil.validateToken(token, userDetails, signingKey.getSecretKey())) {
+            return null;
+        }
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+            userDetails, null, userDetails.getAuthorities());
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        return authenticationToken;
     }
 
     private void fillResponse(String forClientMessage,  HttpServletResponse response) {

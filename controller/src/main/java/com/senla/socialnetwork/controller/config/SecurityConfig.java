@@ -2,7 +2,7 @@ package com.senla.socialnetwork.controller.config;
 
 import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.controller.exception.GlobalExceptionHandler;
-import com.senla.socialnetwork.controller.filter.JwtFilter;
+import com.senla.socialnetwork.controller.filter.JwtAuthorizationFilter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String SECURITY_URL = "/configuration/security";
     private static final String WEBJARS_URL = "/webjars/**";
     private final UserDetailsService userDetailsService;
-    private final JwtFilter jwtFilter;
+    private final JwtAuthorizationFilter jwtFilter;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) {

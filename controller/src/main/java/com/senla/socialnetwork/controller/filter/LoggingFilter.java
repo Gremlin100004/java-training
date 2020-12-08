@@ -56,9 +56,9 @@ public class LoggingFilter extends OncePerRequestFilter {
                 if (posted.length() > NUMBER_PARAMETERS) {
                     posted.append(COMBINING_PARAMETERS);
                 }
-                String curr = (String) parameterNames.nextElement();
-                posted.append(curr).append(VALUE_PARAMETER_SYMBOL);
-                posted.append(request.getParameter(curr));
+                String nextElement = (String) parameterNames.nextElement();
+                posted.append(nextElement).append(VALUE_PARAMETER_SYMBOL);
+                posted.append(request.getParameter(nextElement));
             }
         }
         String ip = request.getHeader(HTTP_HEADER_CLIENT_IP_ADDRESS);
