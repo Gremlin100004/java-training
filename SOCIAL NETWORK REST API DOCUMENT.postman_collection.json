@@ -5108,26 +5108,6 @@
 				{
 					"name": "This method is used to update comment by this user",
 					"request": {
-						"auth": {
-							"type": "apikey",
-							"apikey": [
-								{
-									"key": "key",
-									"value": "Authorization",
-									"type": "string"
-								},
-								{
-									"key": "value",
-									"value": true,
-									"type": "boolean"
-								},
-								{
-									"key": "in",
-									"value": "header",
-									"type": "string"
-								}
-							]
-						},
 						"method": "PUT",
 						"header": [
 							{
@@ -5137,7 +5117,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"author\": {\n        \"id\": -4784533,\n        \"name\": \"nostrud dolore laboris \",\n        \"surname\": \"cupidatat non consequat nostrud dolore\"\n    },\n    \"content\": \"<string>\",\n    \"creationDate\": \"<string>\",\n    \"deleted\": \"<boolean>\",\n    \"id\": \"<integer>\",\n    \"post\": {\n        \"community\": {\n            \"author\": {\n                \"id\": -25000727,\n                \"name\": \"fugiat Ut dolor sit tempor\",\n                \"surname\": \"eiusmod officia commodo elit\"\n            },\n            \"creationDate\": \"<string>\",\n            \"deleted\": \"<boolean>\",\n            \"id\": \"<integer>\",\n            \"information\": \"<string>\",\n            \"tittle\": \"<string>\",\n            \"type\": \"<string>\"\n        },\n        \"content\": \"<string>\",\n        \"creationDate\": \"<string>\",\n        \"deleted\": \"<boolean>\",\n        \"id\": \"<integer>\",\n        \"tittle\": \"<string>\"\n    }\n}",
+							"raw": "{\n        \"id\": 9,\n        \"creationDate\": \"2020-10-06 04:23\",\n        \"author\": {\n            \"id\": 1,\n            \"name\": \"Petya\",\n            \"surname\": \"Buhmetovich\"\n        },\n        \"post\": {\n            \"id\": 5,\n            \"creationDate\": \"2020-10-05 11:34\",\n            \"tittle\": \"When Lineker Met Maradona\",\n            \"content\": \"At 22:00, we'll be showing our documentary with @GaryLineker from 2006. @GaryLineker talks to Diego Maradona about football, genius and *that* 1986 World Cup quarter-final.\",\n            \"community\": {\n                \"id\": 2,\n                \"creationDate\": \"2020-10-02 12:00\",\n                \"author\": {\n                    \"id\": 2,\n                    \"name\": \"Artem\",\n                    \"surname\": \"Karchevskiy\"\n                },\n                \"type\": \"SPORT\",\n                \"tittle\": \"BBC Sport\",\n                \"information\": \"Official http://bbc.co.uk/sport account. Also follow @bbcmotd and @bbctms.\",\n                \"deleted\": false\n            },\n            \"deleted\": false\n        },\n        \"content\": \"Very noisy!!!\",\n        \"deleted\": false\n}",
 							"options": {
 								"raw": {}
 							}
@@ -5370,26 +5350,6 @@
 				{
 					"name": "This method is used to delete comment by admin",
 					"request": {
-						"auth": {
-							"type": "apikey",
-							"apikey": [
-								{
-									"key": "key",
-									"value": "Authorization",
-									"type": "string"
-								},
-								{
-									"key": "value",
-									"value": true,
-									"type": "boolean"
-								},
-								{
-									"key": "in",
-									"value": "header",
-									"type": "string"
-								}
-							]
-						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -5405,9 +5365,8 @@
 							],
 							"variable": [
 								{
-									"id": "61776839-9ef3-4894-b144-82dd751950f3",
 									"key": "id",
-									"value": "<long>",
+									"value": "33",
 									"type": "string",
 									"description": "(Required) Post comment id"
 								}
@@ -5640,26 +5599,6 @@
 				{
 					"name": "This method is used to delete comment by this user",
 					"request": {
-						"auth": {
-							"type": "apikey",
-							"apikey": [
-								{
-									"key": "key",
-									"value": "Authorization",
-									"type": "string"
-								},
-								{
-									"key": "value",
-									"value": true,
-									"type": "boolean"
-								},
-								{
-									"key": "in",
-									"value": "header",
-									"type": "string"
-								}
-							]
-						},
 						"method": "PUT",
 						"header": [],
 						"url": {
@@ -5676,9 +5615,8 @@
 							],
 							"variable": [
 								{
-									"id": "c98fb521-1da2-4913-b72a-4c107479924e",
 									"key": "id",
-									"value": "<long>",
+									"value": "33",
 									"type": "string",
 									"description": "(Required) Post comment id"
 								}
@@ -15024,346 +14962,6 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "This method is used to get users profiles. Users profiles can be filtered by age, university, school or location Copy",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/userProfiles?endPeriodDate=2004-11-13&firstResult=0&locationId=2&maxResults=0&schoolId=1&sortParameter=BY_REGISTARTION_DATE&startPeriodDate=1990-07-27&universityId=3",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"userProfiles"
-							],
-							"query": [
-								{
-									"key": "endPeriodDate",
-									"value": "2004-11-13",
-									"description": "Parameter with end date"
-								},
-								{
-									"key": "firstResult",
-									"value": "0",
-									"description": "The number of the first element of the expected list"
-								},
-								{
-									"key": "locationId",
-									"value": "2",
-									"description": "Location Id"
-								},
-								{
-									"key": "maxResults",
-									"value": "0",
-									"description": "Maximum number of list elements"
-								},
-								{
-									"key": "schoolId",
-									"value": "1",
-									"description": "School Id"
-								},
-								{
-									"key": "sortParameter",
-									"value": "BY_REGISTARTION_DATE",
-									"description": "Parameter to select sorting"
-								},
-								{
-									"key": "startPeriodDate",
-									"value": "1990-07-27",
-									"description": "Parameter with start date"
-								},
-								{
-									"key": "universityId",
-									"value": "3",
-									"description": "University Id"
-								}
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "You are not authorized to view the resource",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"description": {
-											"content": "Added as a part of security scheme: apikey",
-											"type": "text/plain"
-										},
-										"key": "Authorization",
-										"value": "<API Key>"
-									}
-								],
-								"url": {
-									"raw": "{{baseUrl}}/userProfiles?endPeriodDate=<date>&firstResult=<integer>&locationId=<long>&maxResults=<integer>&schoolId=<long>&sortParameter=<string>&startPeriodDate=<date>&universityId=<long>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"userProfiles"
-									],
-									"query": [
-										{
-											"key": "endPeriodDate",
-											"value": "<date>"
-										},
-										{
-											"key": "firstResult",
-											"value": "<integer>"
-										},
-										{
-											"key": "locationId",
-											"value": "<long>"
-										},
-										{
-											"key": "maxResults",
-											"value": "<integer>"
-										},
-										{
-											"key": "schoolId",
-											"value": "<long>"
-										},
-										{
-											"key": "sortParameter",
-											"value": "<string>"
-										},
-										{
-											"key": "startPeriodDate",
-											"value": "<date>"
-										},
-										{
-											"key": "universityId",
-											"value": "<long>"
-										}
-									]
-								}
-							},
-							"status": "Unauthorized",
-							"code": 401,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "text/plain"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						},
-						{
-							"name": "Accessing the resource you were trying to reach is forbidden",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"description": {
-											"content": "Added as a part of security scheme: apikey",
-											"type": "text/plain"
-										},
-										"key": "Authorization",
-										"value": "<API Key>"
-									}
-								],
-								"url": {
-									"raw": "{{baseUrl}}/userProfiles?endPeriodDate=<date>&firstResult=<integer>&locationId=<long>&maxResults=<integer>&schoolId=<long>&sortParameter=<string>&startPeriodDate=<date>&universityId=<long>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"userProfiles"
-									],
-									"query": [
-										{
-											"key": "endPeriodDate",
-											"value": "<date>"
-										},
-										{
-											"key": "firstResult",
-											"value": "<integer>"
-										},
-										{
-											"key": "locationId",
-											"value": "<long>"
-										},
-										{
-											"key": "maxResults",
-											"value": "<integer>"
-										},
-										{
-											"key": "schoolId",
-											"value": "<long>"
-										},
-										{
-											"key": "sortParameter",
-											"value": "<string>"
-										},
-										{
-											"key": "startPeriodDate",
-											"value": "<date>"
-										},
-										{
-											"key": "universityId",
-											"value": "<long>"
-										}
-									]
-								}
-							},
-							"status": "Forbidden",
-							"code": 403,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "text/plain"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						},
-						{
-							"name": "The resource you were trying to reach is not found",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"description": {
-											"content": "Added as a part of security scheme: apikey",
-											"type": "text/plain"
-										},
-										"key": "Authorization",
-										"value": "<API Key>"
-									}
-								],
-								"url": {
-									"raw": "{{baseUrl}}/userProfiles?endPeriodDate=<date>&firstResult=<integer>&locationId=<long>&maxResults=<integer>&schoolId=<long>&sortParameter=<string>&startPeriodDate=<date>&universityId=<long>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"userProfiles"
-									],
-									"query": [
-										{
-											"key": "endPeriodDate",
-											"value": "<date>"
-										},
-										{
-											"key": "firstResult",
-											"value": "<integer>"
-										},
-										{
-											"key": "locationId",
-											"value": "<long>"
-										},
-										{
-											"key": "maxResults",
-											"value": "<integer>"
-										},
-										{
-											"key": "schoolId",
-											"value": "<long>"
-										},
-										{
-											"key": "sortParameter",
-											"value": "<string>"
-										},
-										{
-											"key": "startPeriodDate",
-											"value": "<date>"
-										},
-										{
-											"key": "universityId",
-											"value": "<long>"
-										}
-									]
-								}
-							},
-							"status": "Not Found",
-							"code": 404,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "text/plain"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						},
-						{
-							"name": "Successfully retrieved list of users profiles",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"description": {
-											"content": "Added as a part of security scheme: apikey",
-											"type": "text/plain"
-										},
-										"key": "Authorization",
-										"value": "<API Key>"
-									}
-								],
-								"url": {
-									"raw": "{{baseUrl}}/userProfiles?endPeriodDate=<date>&firstResult=<integer>&locationId=<long>&maxResults=<integer>&schoolId=<long>&sortParameter=<string>&startPeriodDate=<date>&universityId=<long>",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"userProfiles"
-									],
-									"query": [
-										{
-											"key": "endPeriodDate",
-											"value": "<date>"
-										},
-										{
-											"key": "firstResult",
-											"value": "<integer>"
-										},
-										{
-											"key": "locationId",
-											"value": "<long>"
-										},
-										{
-											"key": "maxResults",
-											"value": "<integer>"
-										},
-										{
-											"key": "schoolId",
-											"value": "<long>"
-										},
-										{
-											"key": "sortParameter",
-											"value": "<string>"
-										},
-										{
-											"key": "startPeriodDate",
-											"value": "<date>"
-										},
-										{
-											"key": "universityId",
-											"value": "<long>"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "*/*"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						}
-					]
-				},
-				{
 					"name": "This method is used to get users profiles, sorted by registartion date",
 					"request": {
 						"method": "GET",
@@ -20733,7 +20331,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMUB0ZXN0LmNvbSIsImlhdCI6MTYwNzM4MzM0NCwiZXhwIjoxNjA3NDAzMzQ0fQ.q3CQR9Lmarl7yYmYFA6b6NqTPLy7-gZVKWs8TSCD2Qo",
+				"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMUB0ZXN0LmNvbSIsImlhdCI6MTYwNzQ0ODU4MSwiZXhwIjoxNjA3NDY4NTgxfQ.eVoU4VKzoHsiaCH9QanBxUE19ktcG7vH1-gGL78I1Ko",
 				"type": "string"
 			}
 		]
@@ -20762,7 +20360,7 @@
 	],
 	"variable": [
 		{
-			"id": "5383902c-cd8f-47ba-a2f0-dc61a43e6512",
+			"id": "0c92ec29-f981-4fa0-921c-7707871b7bbb",
 			"key": "baseUrl",
 			"value": "localhost:2308/socialnetwork"
 		}
