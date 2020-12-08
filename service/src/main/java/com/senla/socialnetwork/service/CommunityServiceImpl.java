@@ -94,11 +94,11 @@ public class CommunityServiceImpl implements CommunityService {
         } else if (community.getIsDeleted()) {
             throw new BusinessException("Error, the community has already been deleted");
         }
-        List<UserProfile> userProfiles = userProfileDao.getCommunityUsers(communityId);
         UserProfile userProfile = userProfileDao.findByEmail(PrincipalUtil.getUserName());
+        if (userProfile.getCommunitiesSubscribedTo().contains(community)) {
+            throw new BusinessException("Error, the user is already subscribed to this community");
+        }
         userProfile.getCommunitiesSubscribedTo().add(community);
-        userProfiles.add(userProfile);
-        community.setSubscribers(userProfiles);
         communityDao.updateRecord(community);
     }
 
@@ -112,14 +112,12 @@ public class CommunityServiceImpl implements CommunityService {
         } else if (community.getIsDeleted()) {
             throw new BusinessException("Error, the community has already been deleted");
         }
-        List<UserProfile> userProfiles = userProfileDao.getCommunityUsers(communityId);
-        if (userProfiles.isEmpty()) {
+        UserProfile userProfile = userProfileDao.findByEmail(PrincipalUtil.getUserName());
+        if (!community.getSubscribers().contains(userProfile)) {
             throw new BusinessException("Error, this user is not subscribed to the community");
         }
-        UserProfile userProfile = userProfileDao.findByEmail(PrincipalUtil.getUserName());
         userProfile.getCommunitiesSubscribedTo().remove(community);
-        userProfiles.remove(userProfile);
-        community.setSubscribers(userProfiles);
+        community.getSubscribers().remove(userProfile);
         communityDao.updateRecord(community);
     }
 

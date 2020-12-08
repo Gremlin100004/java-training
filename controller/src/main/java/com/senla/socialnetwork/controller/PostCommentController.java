@@ -45,6 +45,7 @@ public class PostCommentController {
     public static final String MAX_RESULTS_EXAMPLE = "10";
     public static final String COMMENT_DTO_DESCRIPTION = "DTO post comment";
     public static final String COMMENT_ID_DESCRIPTION = "Post comment id";
+    public static final String COMMENT_ID_EXAMPLE = "33";
     public static final String GET_COMMENTS_DESCRIPTION = "This method is used to get comments by admin";
     public static final String UPDATE_COMMENT_DESCRIPTION = "This method is used to update comment by this user";
     public static final String DELETE_COMMENT_BY_USER_DESCRIPTION = "This method is used to delete comment by this user";
@@ -92,7 +93,7 @@ public class PostCommentController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto deleteCommentByUser(@ApiParam(value = COMMENT_ID_DESCRIPTION)
+    public ClientMessageDto deleteCommentByUser(@ApiParam(value = COMMENT_ID_DESCRIPTION, example = COMMENT_ID_EXAMPLE)
                                                 @PathVariable("id") final Long commentId) {
         postCommentService.deleteCommentByUser(commentId);
         return new ClientMessageDto(DELETE_COMMENT_OK_MESSAGE);
@@ -107,7 +108,7 @@ public class PostCommentController {
         @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
-    public ClientMessageDto deleteComment(@ApiParam(value = COMMENT_ID_DESCRIPTION)
+    public ClientMessageDto deleteComment(@ApiParam(value = COMMENT_ID_DESCRIPTION, example = COMMENT_ID_EXAMPLE)
                                           @PathVariable("id") final Long commentId) {
         postCommentService.deleteComment(commentId);
         return new ClientMessageDto(DELETE_COMMENT_OK_MESSAGE);
