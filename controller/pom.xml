@@ -87,6 +87,11 @@
             <version>${swagger2.version}</version>
         </dependency>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${servlet.jstl}</version>
+        </dependency>
+        <dependency>
             <groupId>com.senla.socialnetwork</groupId>
             <artifactId>service</artifactId>
             <version>1.0.0-SNAPSHOT</version>
