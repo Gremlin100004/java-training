@@ -17,12 +17,12 @@ import javax.validation.constraints.NotNull;
 @ApiModel(value = "Community For Create")
 public class CommunityForCreateDto {
     @ApiModelProperty(value = "Type of community")
-    @NotNull
+    @NotNull(message = "type must be selected")
     private CommunityType type;
-    @ApiModelProperty(value = "Tittle of community",
+    @ApiModelProperty(value = "Title of community",
         example = "Huawei Europe")
-    @NotNull
-    private String tittle;
+    @NotNull(message = "title must be specified")
+    private String title;
     @ApiModelProperty(value = "Community information",
         example = "This is the official site of Huawei Europe, communicating the cultivation of digital change, "
                   + "affecting people & business.")

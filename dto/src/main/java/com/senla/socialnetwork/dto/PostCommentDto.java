@@ -21,18 +21,18 @@ public class PostCommentDto extends GeneralDto {
     @ApiModelProperty(value = "Create community date",
         example = "2020-10-02 09:23")
     @Past
-    @NotNull
+    @NotNull(message = "date must be specified")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date creationDate;
     @ApiModelProperty(value = "Comment author")
-    @NotNull
+    @NotNull(message = "user must be specified")
     private UserProfileForIdentificationDto author;
     @ApiModelProperty(value = "Community post")
-    @NotNull
+    @NotNull(message = "post must be specified")
     private PostDto post;
     @ApiModelProperty(value = "Comment content",
         example = "Do lockdowns, we need them.")
-    @NotNull
+    @NotNull(message = "content must be specified")
     private String content;
     @ApiModelProperty(value = "Is post comment deleted",
         example = "false")

@@ -15,7 +15,7 @@ import lombok.ToString;
 public class PostForCreationDto {
     @ApiModelProperty(value = "Tittle of post",
         example = "Join to us")
-    private String tittle;
+    private String title;
     @ApiModelProperty(value = "Content of post",
         example = "Join us to hear from Huawei Corporate Senior Vice President Catherine Chen, on how gender "
                   + "balance is crucial for building a diverse and inclusive digital economy, and education is a key"

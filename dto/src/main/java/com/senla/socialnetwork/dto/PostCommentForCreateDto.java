@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 public class PostCommentForCreateDto {
     @ApiModelProperty(value = "Comment content",
         example = "Let's go!")
-    @NotNull
+    @NotNull(message = "content must be specified")
     private String content;
 
 }

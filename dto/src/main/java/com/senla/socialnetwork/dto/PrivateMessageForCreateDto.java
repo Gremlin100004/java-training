@@ -16,11 +16,11 @@ import javax.validation.constraints.NotNull;
 @ApiModel(value = "Private Message For Create")
 public class PrivateMessageForCreateDto {
     @ApiModelProperty(value = "User to whom the message is addressed")
-    @NotNull
+    @NotNull(message = "user must be specified")
     private UserProfileForIdentificationDto recipient;
     @ApiModelProperty(value = "Message content",
         example = "Hi, Bro!")
-    @NotNull
+    @NotNull(message = "content must be specified")
     private String content;
 
 }

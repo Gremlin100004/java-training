@@ -22,20 +22,20 @@ public class CommunityDto extends GeneralDto {
     @ApiModelProperty(value = "Create community date",
         example = "2020-09-21 10:00")
     @Past
-    @NotNull
+    @NotNull(message = "date must be specified")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date creationDate;
     @ApiModelProperty(value = "Community author")
-    @NotNull
+    @NotNull(message = "title must be specified")
     private UserProfileForIdentificationDto author;
     @ApiModelProperty(value = "Type of community",
         example = "MEDICINE")
-    @NotNull
+    @NotNull(message = "type must be selected")
     private CommunityType type;
     @ApiModelProperty(value = "Tittle of community",
         example = "COVID-19: Updates for the US")
-    @NotNull
-    private String tittle;
+    @NotNull(message = "title must be specified")
+    private String title;
     @ApiModelProperty(value = "Community information",
         example = "This page is a timeline of Tweets with the latest information and advice from the CDC, HHS, "
                   + "NIH and public health authorities across the country. For more, visit "

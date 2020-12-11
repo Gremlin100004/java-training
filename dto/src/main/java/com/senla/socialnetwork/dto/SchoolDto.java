@@ -17,9 +17,10 @@ import javax.validation.constraints.NotNull;
 public class SchoolDto extends GeneralDto {
     @ApiModelProperty(value = "School name",
         example = "Secondary school number 104")
-    @NotNull
+    @NotNull(message = "name must be specified")
     private String name;
     @ApiModelProperty(value = "School location")
+    @NotNull(message = "location must be specified")
     private LocationDto location;
 
 }

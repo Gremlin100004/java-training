@@ -17,11 +17,11 @@ import javax.validation.constraints.NotNull;
 public class LocationDto extends GeneralDto {
     @ApiModelProperty(value = "Country",
         example = "Belarus")
-    @NotNull
+    @NotNull(message = "country must be specified")
     private String country;
     @ApiModelProperty(value = "City",
         example = "Minsk")
-    @NotNull
+    @NotNull(message = "city must be specified")
     private String city;
 
 }

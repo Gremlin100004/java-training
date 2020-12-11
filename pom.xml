@@ -85,7 +85,6 @@
         <jjwt.version>0.11.2</jjwt.version>
         <junit.version>5.6.2</junit.version>
         <mockito.version>3.4.0</mockito.version>
-        <servlet.jstl>1.2</servlet.jstl>
         <build-helper-maven.version>3.0.0</build-helper-maven.version>
     </properties>
     <dependencies>
@@ -116,7 +115,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>${maven-checkstyle.version}</version>
                 <reportSets>
                     <reportSet>
                         <reports>

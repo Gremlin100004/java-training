@@ -17,11 +17,11 @@ import javax.validation.constraints.NotNull;
 public class UserProfileForIdentificationDto extends GeneralDto {
     @ApiModelProperty(value = "User name",
         example = "Petya")
-    @NotNull
+    @NotNull(message = "name must be specified")
     private String name;
     @ApiModelProperty(value = "User name",
         example = "Buhmetovich")
-    @NotNull
+    @NotNull(message = "surname must be specified")
     private String surname;
 
 }

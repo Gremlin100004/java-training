@@ -40,14 +40,14 @@ public class CommunityTestData {
         CommunityDto communityDto = new CommunityDto();
         communityDto.setId(COMMUNITY_ID);
         communityDto.setAuthor(UserProfileTestData.getTestUserProfileForIdentificationDto());
-        communityDto.setTittle(COMMUNITY_TITTLE);
+        communityDto.setTitle(COMMUNITY_TITTLE);
         communityDto.setAuthor(UserProfileTestData.getTestUserProfileForIdentificationDto());
         return communityDto;
     }
 
     public static CommunityForCreateDto getTestCommunityForCreationDto() {
         CommunityForCreateDto communityDto = new CommunityForCreateDto();
-        communityDto.setTittle(COMMUNITY_TITTLE);
+        communityDto.setTitle(COMMUNITY_TITTLE);
         return communityDto;
     }
 

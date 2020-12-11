@@ -10,6 +10,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 @Getter
@@ -21,7 +22,7 @@ public class UserProfileDto extends GeneralDto {
     @ApiModelProperty(value = "User registration date",
         example = "2020-07-11 10:00")
     @Past
-    @NotNull
+    @NotNull(message = "date must be specified")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date registrationDate;
     @ApiModelProperty(value = "User birthday",
@@ -31,14 +32,15 @@ public class UserProfileDto extends GeneralDto {
     private Date dateOfBirth;
     @ApiModelProperty(value = "User name",
         example = "Petya")
-    @NotNull
+    @NotNull(message = "name must be specified")
     private String name;
     @ApiModelProperty(value = "User name",
         example = "Buhmetovich")
-    @NotNull
+    @NotNull(message = "surname must be specified")
     private String surname;
     @ApiModelProperty(value = "User mobile number",
         example = "+375(29)766-54-23")
+    @Pattern(regexp = "^(\\+375\\(|80)(29|25|44|33)\\)-(\\d{3})-(\\d{2})-(\\d{2})")
     private String telephone_number;
     @ApiModelProperty(value = "User location")
     private LocationDto location;

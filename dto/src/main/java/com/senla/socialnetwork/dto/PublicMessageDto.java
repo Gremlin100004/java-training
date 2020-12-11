@@ -21,11 +21,11 @@ public class PublicMessageDto extends GeneralDto {
     @ApiModelProperty(value = "Create public message date",
         example = "2020-07-21 10:00")
     @Past
-    @NotNull
+    @NotNull(message = "date must be specified")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date creationDate;
     @ApiModelProperty(value = "Public message author")
-    @NotNull
+    @NotNull(message = "user must be specified")
     private UserProfileForIdentificationDto author;
     @ApiModelProperty(value = "Tittle of public message",
         example = "I deleted everything.")

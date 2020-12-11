@@ -21,19 +21,19 @@ public class PostDto extends GeneralDto {
     @ApiModelProperty(value = "Create post date",
         example = "2020-10-01 20:11")
     @Past
-    @NotNull
+    @NotNull(message = "date must be specified")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date creationDate;
-    @ApiModelProperty(value = "Tittle of post",
+    @ApiModelProperty(value = "Title of post",
         example = "El Paso County sees drop in COVID-19 hospitalizations")
-    private String tittle;
+    private String title;
     @ApiModelProperty(value = "Content of post",
         example = "COVID hospitalizations in El Paso have been going down for about 2 weeks now. The number of people "
                   + "in El Paso testing positive for COVID has been declining also. The positivity rate for all of "
                   + "Texas has declined for 14 consecutive days.")
     private String content;
     @ApiModelProperty(value = "Community")
-    @NotNull
+    @NotNull(message = "community must be specified")
     private CommunityDto community;
     @ApiModelProperty(value = "Is post deleted",
         example = "false")

@@ -16,7 +16,7 @@ public class PostMapper {
         postDto.setId(post.getId());
         postDto.setCreationDate(post.getCreationDate());
         if (post.getTittle() != null) {
-            postDto.setTittle(post.getTittle());
+            postDto.setTitle(post.getTittle());
         }
         if (post.getContent() != null) {
             postDto.setContent(post.getContent());
@@ -36,14 +36,14 @@ public class PostMapper {
                                final PostDao postDao,
                                final String email) {
         Post post = postDao.findByIdAndEmail(email, postDto.getId());
-        post.setTittle(postDto.getTittle());
+        post.setTittle(postDto.getTitle());
         post.setContent(postDto.getContent());
         return post;
     }
 
     public static Post getNewPost(final PostForCreationDto postDto, final Community community) {
         Post post = new Post();
-        post.setTittle(postDto.getTittle());
+        post.setTittle(postDto.getTitle());
         post.setContent(postDto.getContent());
         post.setCommunity(community);
         post.setCreationDate(new Date());

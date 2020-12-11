@@ -4402,7 +4402,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "6",
+									"value": "17",
 									"type": "string",
 									"description": "(Required) Post id"
 								}
@@ -4650,7 +4650,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "6",
+									"value": "17",
 									"type": "string",
 									"description": "(Required) Post id"
 								}
@@ -20331,7 +20331,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMUB0ZXN0LmNvbSIsImlhdCI6MTYwNzQ0ODU4MSwiZXhwIjoxNjA3NDY4NTgxfQ.eVoU4VKzoHsiaCH9QanBxUE19ktcG7vH1-gGL78I1Ko",
+				"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMUB0ZXN0LmNvbSIsImlhdCI6MTYwNzQ2NTQ3OSwiZXhwIjoxNjA3NDg1NDc5fQ.bx7ydWFahcXFK8OgjrJ-rmjNv9lYcElSLyb4ZpB3V34",
 				"type": "string"
 			}
 		]
@@ -20360,7 +20360,7 @@
 	],
 	"variable": [
 		{
-			"id": "0c92ec29-f981-4fa0-921c-7707871b7bbb",
+			"id": "e03c879b-a081-4639-b50a-2b4eb6f0e048",
 			"key": "baseUrl",
 			"value": "localhost:2308/socialnetwork"
 		}
