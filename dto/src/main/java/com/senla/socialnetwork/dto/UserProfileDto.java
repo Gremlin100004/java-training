@@ -40,7 +40,8 @@ public class UserProfileDto extends GeneralDto {
     private String surname;
     @ApiModelProperty(value = "User mobile number",
         example = "+375(29)766-54-23")
-    @Pattern(regexp = "^(\\+375\\(|80)(29|25|44|33)\\)-(\\d{3})-(\\d{2})-(\\d{2})")
+    @Pattern(regexp = "^(\\+375\\(|80)(29|25|44|33)\\)(\\d{3})-(\\d{2})-(\\d{2})$",
+        message = "must match +375(29)111-22-33")
     private String telephone_number;
     @ApiModelProperty(value = "User location")
     private LocationDto location;

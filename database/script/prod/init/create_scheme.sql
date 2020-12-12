@@ -317,8 +317,8 @@ ON schools (id);
 CREATE UNIQUE INDEX universities_id_idx
 ON universities (id);
 
-CREATE UNIQUE INDEX users_id_idx
-ON users (id);
+CREATE UNIQUE INDEX users_email_idx
+ON users (email);
 
 CREATE UNIQUE INDEX user_profiles_id_idx
 ON user_profiles (id);

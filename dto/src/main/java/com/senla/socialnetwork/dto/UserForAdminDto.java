@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -25,9 +26,9 @@ public class UserForAdminDto extends GeneralDto {
     private String email;
     @ApiModelProperty(value = "user password",
         example = "example")
-    @NotNull(message = "password must be specified")
+    @NotBlank(message = "password must be specified")
     private String password;
-    @Size(min = 5, message = "name must be specified")
+    @Size(min = 4, message = "name must be specified")
     @ApiModelProperty(value = "User role")
     private RoleName role;
 

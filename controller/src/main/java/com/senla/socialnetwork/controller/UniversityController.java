@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.controller;
 
+import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.dto.UniversityForCreateDto;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -85,7 +85,8 @@ public class UniversityController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public UniversityDto addUniversity(@ApiParam(value = LOCATION_DTO_DESCRIPTION)
-                                       @RequestBody @Valid final UniversityForCreateDto universityDto) {
+                                       @RequestBody final UniversityForCreateDto universityDto) {
+        ValidationUtil.validate(universityDto);
         return universityService.addUniversity(universityDto);
     }
 
@@ -99,7 +100,8 @@ public class UniversityController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateUniversity(@ApiParam(value = LOCATION_DTO_DESCRIPTION)
-                                             @RequestBody @Valid final UniversityDto universityDto) {
+                                             @RequestBody final UniversityDto universityDto) {
+        ValidationUtil.validate(universityDto);
         universityService.updateUniversity(universityDto);
         return new ClientMessageDto(UPDATE_UNIVERSITY_OK_MESSAGE);
     }

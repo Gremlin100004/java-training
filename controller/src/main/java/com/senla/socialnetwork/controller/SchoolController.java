@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.controller;
 
+import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.SchoolDto;
 import com.senla.socialnetwork.dto.SchoolForCreateDto;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -83,7 +83,8 @@ public class SchoolController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public SchoolDto addSchool(@ApiParam(value = SCHOOL_DTO_DESCRIPTION)
-                               @RequestBody @Valid final SchoolForCreateDto schoolDto) {
+                               @RequestBody final SchoolForCreateDto schoolDto) {
+        ValidationUtil.validate(schoolDto);
         return schoolService.addSchool(schoolDto);
     }
 
@@ -97,7 +98,8 @@ public class SchoolController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateSchool(@ApiParam(value = SCHOOL_DTO_DESCRIPTION)
-                                         @RequestBody @Valid final SchoolDto schoolDto) {
+                                         @RequestBody final SchoolDto schoolDto) {
+        ValidationUtil.validate(schoolDto);
         schoolService.updateSchool(schoolDto);
         return new ClientMessageDto(UPDATE_SCHOOL_OK_MESSAGE);
     }

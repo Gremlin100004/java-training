@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.util.Date;
@@ -32,7 +33,7 @@ public class PrivateMessageDto extends GeneralDto {
     private UserProfileForIdentificationDto recipient;
     @ApiModelProperty(value = "Message content",
         example = "Your great aunt just passed away. LOL")
-    @NotNull(message = "content must be specified")
+    @NotBlank(message = "content must be specified")
     private String content;
     @ApiModelProperty(value = "Is message read",
         example = "false")

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.util.Date;
@@ -34,7 +35,7 @@ public class PublicMessageCommentDto extends GeneralDto {
         example = "I know I’m a couple months late but everyone saying Shane the same person he was when he started "
                   + "YouTube, can you see his transformed into this caring youtuber, yeah he made funny sketches "
                   + "which may offend some people but at the time he was posting it to make people laugh")
-    @NotNull(message = "content must be specified")
+    @NotBlank(message = "content must be specified")
     private String content;
     @ApiModelProperty(value = "Is comment deleted",
         example = "false")

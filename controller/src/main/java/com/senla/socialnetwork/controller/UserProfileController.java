@@ -1,7 +1,8 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.controller.config.SigningKey;
+import com.senla.socialnetwork.controller.exception.ControllerException;
+import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageDto;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.sql.Date;
 import java.util.List;
 
@@ -178,7 +178,8 @@ public class UserProfileController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateUserProfile(@ApiParam(value = USER_PROFILE_DTO_DESCRIPTION)
-                                              @RequestBody @Valid final UserProfileDto userProfileDto) {
+                                              @RequestBody final UserProfileDto userProfileDto) {
+        ValidationUtil.validate(userProfileDto);
         userProfileService.updateUserProfile(userProfileDto);
         return new ClientMessageDto(UPDATE_USER_PROFILE_OK_MESSAGE);
     }

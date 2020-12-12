@@ -1,6 +1,7 @@
 package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.controller.config.SigningKey;
+import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.UserForAdminDto;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -113,7 +113,8 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public ClientMessageDto addUser(@RequestBody @Valid final UserForSecurityDto userDto) {
+    public ClientMessageDto addUser(@RequestBody final UserForSecurityDto userDto) {
+        ValidationUtil.validate(userDto);
         userService.addUser(userDto, RoleName.ROLE_USER);
         return new ClientMessageDto(ADD_USER_OK_MESSAGE);
     }
@@ -128,7 +129,8 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public ClientMessageDto addAdmin(@RequestBody @Valid final UserForSecurityDto userDto) {
+    public ClientMessageDto addAdmin(@RequestBody final UserForSecurityDto userDto) {
+        ValidationUtil.validate(userDto);
         userService.addUser(userDto, RoleName.ROLE_ADMIN);
         return new ClientMessageDto(ADD_USER_OK_MESSAGE);
     }
@@ -142,7 +144,8 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto logIn(@ApiParam(value = USER_DTO_DESCRIPTION)
-                                  @RequestBody @Valid final UserForSecurityDto userDto) {
+                                  @RequestBody final UserForSecurityDto userDto) {
+        ValidationUtil.validate(userDto);
         return new ClientMessageDto(userService.logIn(userDto, signingKey.getSecretKey()));
     }
 
@@ -169,8 +172,9 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateUser(@ApiParam(value = USERS_DTO_DESCRIPTION)
-                                       @RequestBody @Valid final List<UserForSecurityDto> usersDto,
+                                       @RequestBody final List<UserForSecurityDto> usersDto,
                                        final HttpServletRequest request) {
+        ValidationUtil.validate(usersDto);
         userService.updateUser(usersDto, JwtUtil.getToken(request));
         return new ClientMessageDto(UPDATE_USER_OK_MESSAGE);
     }

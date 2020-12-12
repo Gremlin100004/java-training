@@ -1,6 +1,7 @@
 package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.controller.config.SigningKey;
+import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
@@ -154,7 +154,8 @@ public class PrivateMessageController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public PrivateMessageDto addMessage(@ApiParam(value = PRIVATE_MESSAGE_DTO_DESCRIPTION)
-                                        @RequestBody @Valid final PrivateMessageForCreateDto privateMessageDto) {
+                                        @RequestBody final PrivateMessageForCreateDto privateMessageDto) {
+        ValidationUtil.validate(privateMessageDto);
         return privateMessageService.addMessage(privateMessageDto);
     }
 
@@ -167,7 +168,8 @@ public class PrivateMessageController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateMessage(@ApiParam(value = PRIVATE_MESSAGE_DTO_DESCRIPTION)
-                                          @RequestBody @Valid final PrivateMessageDto privateMessageDto) {
+                                          @RequestBody final PrivateMessageDto privateMessageDto) {
+        ValidationUtil.validate(privateMessageDto);
         privateMessageService.updateMessage(privateMessageDto);
         return new ClientMessageDto(UPDATE_PRIVATE_MESSAGE_OK_MESSAGE);
     }

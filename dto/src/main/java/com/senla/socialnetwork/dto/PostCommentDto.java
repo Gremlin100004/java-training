@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.util.Date;
@@ -32,7 +33,7 @@ public class PostCommentDto extends GeneralDto {
     private PostDto post;
     @ApiModelProperty(value = "Comment content",
         example = "Do lockdowns, we need them.")
-    @NotNull(message = "content must be specified")
+    @NotBlank(message = "content must be specified")
     private String content;
     @ApiModelProperty(value = "Is post comment deleted",
         example = "false")

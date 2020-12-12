@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
@@ -17,11 +17,11 @@ import javax.validation.constraints.NotNull;
 public class LocationDto extends GeneralDto {
     @ApiModelProperty(value = "Country",
         example = "Belarus")
-    @NotNull(message = "country must be specified")
+    @NotBlank(message = "country must be specified")
     private String country;
     @ApiModelProperty(value = "City",
         example = "Minsk")
-    @NotNull(message = "city must be specified")
+    @NotBlank(message = "city must be specified")
     private String city;
 
 }

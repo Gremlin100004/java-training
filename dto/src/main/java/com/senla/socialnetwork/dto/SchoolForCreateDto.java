@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -17,7 +18,7 @@ import javax.validation.constraints.NotNull;
 public class SchoolForCreateDto {
     @ApiModelProperty(value = "School name",
         example = "Gymnasium number 29")
-    @NotNull(message = "name must be specified")
+    @NotBlank(message = "name must be specified")
     private String name;
     @ApiModelProperty(value = "School location")
     @NotNull(message = "location must be specified")

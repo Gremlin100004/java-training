@@ -1,7 +1,8 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.controller.config.SigningKey;
+import com.senla.socialnetwork.controller.exception.ControllerException;
+import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.CommunityDto;
@@ -30,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -232,7 +232,8 @@ public class CommunityController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public CommunityDto addCommunity(@ApiParam(value = COMMUNITY_DTO_DESCRIPTION)
-                                     @RequestBody @Valid final CommunityForCreateDto communityDto) {
+                                     @RequestBody final CommunityForCreateDto communityDto) {
+        ValidationUtil.validate(communityDto);
         return communityService.addCommunity(communityDto);
     }
 
@@ -245,7 +246,8 @@ public class CommunityController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateCommunity(@ApiParam(value = COMMUNITY_DTO_DESCRIPTION)
-                                            @RequestBody @Valid final CommunityDto communityDto) {
+                                            @RequestBody final CommunityDto communityDto) {
+        ValidationUtil.validate(communityDto);
         communityService.updateCommunity(communityDto);
         return new ClientMessageDto(UPDATE_COMMUNITY_OK_MESSAGE);
     }
@@ -291,10 +293,11 @@ public class CommunityController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public PostDto addPostToCommunity(@ApiParam(value = POST_DTO_DESCRIPTION)
-                                      @RequestBody @Valid final PostForCreationDto postDto,
+                                      @RequestBody final PostForCreationDto postDto,
                                       @ApiParam(value = COMMUNITY_ID_DESCRIPTION,
                                                 example = COMMUNITY_ID_FOR_ADD_POST)
                                       @PathVariable("id") final Long communityId) {
+        ValidationUtil.validate(postDto);
         return communityService.addPostToCommunity(postDto, communityId);
     }
 

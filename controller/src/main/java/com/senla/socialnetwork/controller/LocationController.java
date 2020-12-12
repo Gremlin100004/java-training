@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.controller;
 
+import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.LocationDto;
 import com.senla.socialnetwork.dto.LocationForCreateDto;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -84,7 +84,8 @@ public class LocationController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public LocationDto addLocation(@ApiParam(value = LOCATION_DTO_DESCRIPTION)
-                                   @RequestBody @Valid final LocationForCreateDto locationDto) {
+                                   @RequestBody final LocationForCreateDto locationDto) {
+        ValidationUtil.validate(locationDto);
         return locationService.addLocation(locationDto);
     }
 
@@ -98,7 +99,8 @@ public class LocationController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateLocation(@ApiParam(value = LOCATION_DTO_DESCRIPTION)
-                                           @RequestBody @Valid final LocationDto locationDto) {
+                                           @RequestBody final LocationDto locationDto) {
+        ValidationUtil.validate(locationDto);
         locationService.updateLocation(locationDto);
         return new ClientMessageDto(UPDATE_LOCATION_OK_MESSAGE);
     }

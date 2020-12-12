@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -21,7 +22,7 @@ public class CommunityForCreateDto {
     private CommunityType type;
     @ApiModelProperty(value = "Title of community",
         example = "Huawei Europe")
-    @NotNull(message = "title must be specified")
+    @NotBlank(message = "title must be specified")
     private String title;
     @ApiModelProperty(value = "Community information",
         example = "This is the official site of Huawei Europe, communicating the cultivation of digital change, "

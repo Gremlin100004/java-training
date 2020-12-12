@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,8 +25,8 @@ public class UserForSecurityDto {
     private String email;
     @ApiModelProperty(value = "user password",
         example = "test")
-    @NotNull(message = "password must be specified")
-    @Size(min = 5, message = "name must be specified")
+    @NotBlank(message = "password must be specified")
+    @Size(min = 4, message = "name must be specified")
     private String password;
 
 }

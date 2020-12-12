@@ -12,6 +12,8 @@ services:
     volumes:
       - ./database/mysql:/var/lib/mysql
       - ./database/script/prod/init:/docker-entrypoint-initdb.d
+    cap_add:
+      - SYS_NICE
   web:
     build:
       context: .

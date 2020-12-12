@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -20,7 +21,7 @@ public class PrivateMessageForCreateDto {
     private UserProfileForIdentificationDto recipient;
     @ApiModelProperty(value = "Message content",
         example = "Hi, Bro!")
-    @NotNull(message = "content must be specified")
+    @NotBlank(message = "content must be specified")
     private String content;
 
 }

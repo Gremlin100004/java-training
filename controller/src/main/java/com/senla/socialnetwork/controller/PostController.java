@@ -1,6 +1,7 @@
 package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.controller.config.SigningKey;
+import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.dto.PostCommentForCreateDto;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -106,7 +106,8 @@ public class PostController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updatePost(@ApiParam(value = POST_DTO_DESCRIPTION)
-                                       @RequestBody @Valid final PostDto postDto) {
+                                       @RequestBody final PostDto postDto) {
+        ValidationUtil.validate(postDto);
         postService.updatePost(postDto);
         return new ClientMessageDto(UPDATE_POST_OK_MESSAGE);
     }
@@ -170,7 +171,8 @@ public class PostController {
     public PostCommentDto addComment(@ApiParam(value = POST_ID_DESCRIPTION)
                                      @PathVariable("id") final Long postId,
                                      @ApiParam(value = COMMENT_DTO_DESCRIPTION)
-                                     @RequestBody @Valid final PostCommentForCreateDto postCommentDto) {
+                                     @RequestBody final PostCommentForCreateDto postCommentDto) {
+        ValidationUtil.validate(postCommentDto);
         return postService.addComment(postId, postCommentDto);
     }
 

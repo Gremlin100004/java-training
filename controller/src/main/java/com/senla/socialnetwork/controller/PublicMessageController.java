@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.controller;
 
+import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
@@ -123,7 +124,8 @@ public class PublicMessageController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public PublicMessageDto addMessage(@ApiParam(value = PUBLIC_MESSAGE_DTO_DESCRIPTION)
-                                       @RequestBody @Valid final PublicMessageForCreateDto publicMessageDto) {
+                                       @RequestBody final PublicMessageForCreateDto publicMessageDto) {
+        ValidationUtil.validate(publicMessageDto);
         return publicMessageService.addMessage(publicMessageDto);
     }
 
@@ -136,7 +138,8 @@ public class PublicMessageController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateMessage(@ApiParam(value = PUBLIC_MESSAGE_DTO_DESCRIPTION)
-                                          @RequestBody @Valid final PublicMessageDto publicMessageDto) {
+                                          @RequestBody final PublicMessageDto publicMessageDto) {
+        ValidationUtil.validate(publicMessageDto);
         publicMessageService.updateMessage(publicMessageDto);
         return new ClientMessageDto(UPDATE_MESSAGE_OK_MESSAGE);
     }
@@ -152,7 +155,6 @@ public class PublicMessageController {
     public ClientMessageDto deleteMessageByUser(@ApiParam(value = PUBLIC_MESSAGE_ID_DESCRIPTION,
                                                           example = PUBLIC_MESSAGE_TO_DELETE_ID_EXAMPLE)
                                                 @PathVariable("id") final Long messageId) {
-
         publicMessageService.deleteMessageByUser(messageId);
         return new ClientMessageDto(DELETE_MESSAGE_OK_MESSAGE);
     }
@@ -208,6 +210,7 @@ public class PublicMessageController {
                                               @ApiParam(value = COMMENTS_DTO_DESCRIPTION)
                                               @RequestBody @Valid
                                               final PublicMessageCommentForCreateDto publicMessageCommentDto) {
+        ValidationUtil.validate(publicMessageCommentDto);
         return publicMessageService.addComment(publicMessageId, publicMessageCommentDto);
     }
 

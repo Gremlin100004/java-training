@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 public class PublicMessageCommentForCreateDto {
     @ApiModelProperty(value = "Comment content",
         example = "Bro why P40 doesn't have google?")
-    @NotNull(message = "content must be specified")
+    @NotBlank(message = "content must be specified")
     private String content;
 
 }

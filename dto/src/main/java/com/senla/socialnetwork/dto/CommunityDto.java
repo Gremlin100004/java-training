@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.util.Date;
@@ -34,7 +35,7 @@ public class CommunityDto extends GeneralDto {
     private CommunityType type;
     @ApiModelProperty(value = "Tittle of community",
         example = "COVID-19: Updates for the US")
-    @NotNull(message = "title must be specified")
+    @NotBlank(message = "title must be specified")
     private String title;
     @ApiModelProperty(value = "Community information",
         example = "This page is a timeline of Tweets with the latest information and advice from the CDC, HHS, "
