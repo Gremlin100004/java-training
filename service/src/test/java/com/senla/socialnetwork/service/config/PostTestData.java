@@ -26,7 +26,7 @@ public class PostTestData {
     public static Post getTestPost() {
         Post post = new Post();
         post.setId(POST_ID);
-        post.setTittle(POST_TITTLE);
+        post.setTitle(POST_TITTLE);
         post.setCreationDate(POST_CREATION_DATE);
         post.setCommunity(CommunityTestData.getTestCommunity());
         post.setIsDeleted(false);

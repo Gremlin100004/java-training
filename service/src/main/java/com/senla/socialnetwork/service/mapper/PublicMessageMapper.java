@@ -17,7 +17,7 @@ public class PublicMessageMapper {
         publicMessageDto.setId(publicMessage.getId());
         publicMessageDto.setCreationDate(publicMessage.getCreationDate());
         publicMessageDto.setAuthor(UserProfileMapper.getUserProfileForIdentificationDto(publicMessage.getAuthor()));
-        publicMessageDto.setTittle(publicMessage.getTittle());
+        publicMessageDto.setTitle(publicMessage.getTitle());
         publicMessageDto.setContent(publicMessage.getContent());
         publicMessageDto.setDeleted(publicMessage.getIsDeleted());
         return publicMessageDto;
@@ -36,7 +36,7 @@ public class PublicMessageMapper {
         if (publicMessage == null) {
             throw new BusinessException("Error, this message does not belong to this profile");
         }
-        publicMessage.setTittle(publicMessageDto.getTittle());
+        publicMessage.setTitle(publicMessageDto.getTitle());
         publicMessage.setContent(publicMessageDto.getContent());
         return publicMessage;
     }
@@ -44,7 +44,7 @@ public class PublicMessageMapper {
     public static PublicMessage getNewPublicMessage(final PublicMessageForCreateDto publicMessageDto,
                                                     final UserProfile userProfile) {
         PublicMessage publicMessage = new PublicMessage();
-        publicMessage.setTittle(publicMessageDto.getTittle());
+        publicMessage.setTitle(publicMessageDto.getTittle());
         publicMessage.setContent(publicMessageDto.getContent());
         publicMessage.setAuthor(userProfile);
         publicMessage.setCreationDate(new Date());

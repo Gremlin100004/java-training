@@ -18,7 +18,7 @@ public class CommunityMapper {
         communityDto.setCreationDate(community.getCreationDate());
         communityDto.setAuthor(UserProfileMapper.getUserProfileForIdentificationDto(community.getAuthor()));
         communityDto.setType(community.getType());
-        communityDto.setTitle(community.getTittle());
+        communityDto.setTitle(community.getTitle());
         communityDto.setInformation(community.getInformation());
         communityDto.setDeleted(community.getIsDeleted());
         return communityDto;
@@ -37,7 +37,7 @@ public class CommunityMapper {
         if (community == null) {
             throw new BusinessException("Error, this community does not belong to this profile");
         }
-        community.setTittle(communityDto.getTitle());
+        community.setTitle(communityDto.getTitle());
         community.setInformation(communityDto.getInformation());
         return community;
     }
@@ -46,7 +46,7 @@ public class CommunityMapper {
                                             final UserProfile userProfile) {
         Community community = new Community();
         if (communityDto.getTitle() != null) {
-            community.setTittle(communityDto.getTitle());
+            community.setTitle(communityDto.getTitle());
         }
         if (communityDto.getInformation() != null) {
             community.setInformation(communityDto.getInformation());

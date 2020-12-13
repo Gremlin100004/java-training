@@ -35,8 +35,8 @@ public class Community extends AEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private CommunityType type = CommunityType.GENERAL;
-    @Column(name = "tittle")
-    private String tittle;
+    @Column(name = "title")
+    private String title;
     @Column(name = "information")
     private String information;
     @Column(name = "is_deleted")

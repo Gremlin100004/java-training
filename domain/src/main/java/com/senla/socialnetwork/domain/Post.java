@@ -25,8 +25,8 @@ import java.util.List;
 public class Post extends AEntity {
     @Column(name = "creation_date", nullable = false)
     private Date creationDate;
-    @Column(name = "tittle")
-    private String tittle;
+    @Column(name = "title")
+    private String title;
     @Column(name = "content")
     private String content;
     @ManyToOne(fetch = FetchType.LAZY)

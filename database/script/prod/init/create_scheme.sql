@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS public_messages (
   id INT NOT NULL AUTO_INCREMENT,
   creation_date DATETIME NOT NULL,
   author_id INT NOT NULL,
-  tittle VARCHAR(1000) NULL,
+  title VARCHAR(1000) NULL,
   content VARCHAR(8000) NULL,
   is_deleted BOOLEAN DEFAULT false,
   PRIMARY KEY pk_public_messages (id)
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS communities (
   creation_date DATETIME NOT NULL,
   author_id INT NOT NULL,
   type VARCHAR(20) NOT NULL,
-  tittle VARCHAR(100) NOT NULL,
+  title VARCHAR(100) NOT NULL,
   information VARCHAR(1000) NULL,
   is_deleted BOOLEAN DEFAULT false,
   PRIMARY KEY pk_communities (id)
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS communities (
 CREATE TABLE IF NOT EXISTS posts (
   id INT NOT NULL AUTO_INCREMENT,
   creation_date DATETIME NOT NULL,
-  tittle VARCHAR(1000) NULL,
+  title VARCHAR(1000) NULL,
   content VARCHAR(8000) NULL,
   communities_id INT NOT NULL,
   is_deleted BOOLEAN DEFAULT false,

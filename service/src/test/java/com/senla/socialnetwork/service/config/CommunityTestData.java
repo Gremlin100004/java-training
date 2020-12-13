@@ -30,7 +30,7 @@ public class CommunityTestData {
         Community community = new Community();
         community.setId(COMMUNITY_ID);
         community.setAuthor(UserProfileTestData.getTestUserProfile());
-        community.setTittle(COMMUNITY_TITTLE);
+        community.setTitle(COMMUNITY_TITTLE);
         community.setAuthor(UserProfileTestData.getTestUserProfile());
         community.setIsDeleted(false);
         return community;

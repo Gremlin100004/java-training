@@ -28,8 +28,8 @@ public class PublicMessage extends AEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private UserProfile author;
-    @Column(name = "tittle")
-    private String tittle;
+    @Column(name = "title")
+    private String title;
     @Column(name = "content")
     private String content;
     @Column(name = "is_deleted")
