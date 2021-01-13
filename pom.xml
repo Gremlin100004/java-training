@@ -76,7 +76,7 @@
         <swagger-annotations.version>1.5.20</swagger-annotations.version>
         <bootstrap.version>3.3.5</bootstrap.version>
         <jakarta.version>2.3.2</jakarta.version>
-        <mysql.version>8.0.21</mysql.version>
+        <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
         <guava.version>10.0.1</guava.version>
         <javax.version>2.2</javax.version>
         <hibernate.version>5.4.2.Final</hibernate.version>

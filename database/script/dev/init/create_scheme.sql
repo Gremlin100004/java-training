@@ -1,58 +1,52 @@
-DROP DATABASE IF EXISTS hrinkov_social_network;
-
-CREATE SCHEMA IF NOT EXISTS hrinkov_social_network DEFAULT CHARACTER SET UTF8MB4 ;
-
-USE hrinkov_social_network;
-
 -- -----------------------------------------------------
 -- Table `locations`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS locations (
-  id INT NOT NULL AUTO_INCREMENT,
+  id SERIAL,
   country VARCHAR(45) NOT NULL,
   city VARCHAR(45) NOT NULL UNIQUE,
-  PRIMARY KEY pk_locations (id)
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `schools`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS schools (
-  id INT NOT NULL AUTO_INCREMENT,
+  id SERIAL,
   name VARCHAR(80) NOT NULL UNIQUE,
   location_id INT NOT NULL,
-  PRIMARY KEY pk_schools (id)
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `universities`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS universities (
-  id INT NOT NULL AUTO_INCREMENT,
+  id SERIAL,
   name VARCHAR(80) NOT NULL UNIQUE,
   location_id INT NOT NULL,
-  PRIMARY KEY pk_universities (id)
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `users`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS users (
-  id INT NOT NULL AUTO_INCREMENT,
+  id SERIAL,
   email VARCHAR(50) NOT NULL UNIQUE,
   password VARCHAR(256) NOT NULL,
   role VARCHAR(20) NOT NULL,
-  PRIMARY KEY pk_users (id)
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `user_profile`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS user_profiles (
-  id INT NOT NULL AUTO_INCREMENT,
+  id SERIAL,
   user_id INT NOT NULL UNIQUE,
-  registration_date DATETIME NOT NULL,
-  date_of_birth DATETIME NULL,
+  registration_date TIMESTAMP NOT NULL,
+  date_of_birth TIMESTAMP NULL,
   name VARCHAR(45) NULL,
   surname VARCHAR(45) NULL,
   telephone_number VARCHAR(20) NULL,
@@ -61,109 +55,109 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   school_graduation_year INT NULL,
   university_id INT NULL,
   university_graduation_year INT NULL,
-  PRIMARY KEY pk_user_profiles (id)
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `tokens`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS tokens (
-  id INT NOT NULL AUTO_INCREMENT,
+  id SERIAL,
   user_id INT NOT NULL,
   value VARCHAR(256) NOT NULL,
-  creation_date DATETIME NOT NULL,
-  PRIMARY KEY pk_tokens (id)
+  creation_date TIMESTAMP NOT NULL,
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `public_messages`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS public_messages (
-  id INT NOT NULL AUTO_INCREMENT,
-  creation_date DATETIME NOT NULL,
+  id SERIAL,
+  creation_date TIMESTAMP NOT NULL,
   author_id INT NOT NULL,
   title VARCHAR(1000) NULL,
   content VARCHAR(8000) NULL,
   is_deleted BOOLEAN DEFAULT false,
-  PRIMARY KEY pk_public_messages (id)
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `public_message_comments`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS public_message_comments (
-  id INT NOT NULL AUTO_INCREMENT,
-  creation_date DATETIME NOT NULL,
+  id SERIAL,
+  creation_date TIMESTAMP NOT NULL,
   author_id INT NOT NULL,
   public_message_id INT NOT NULL,
   content VARCHAR(8000) NULL,
   is_deleted BOOLEAN DEFAULT false,
-  PRIMARY KEY pk_public_message_comments (id)
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `private_messages`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS private_messages (
-  id INT NOT NULL AUTO_INCREMENT,
-  departure_date DATETIME NOT NULL,
+  id SERIAL,
+  departure_date TIMESTAMP NOT NULL,
   sender_id INT NOT NULL,
   recipient_id INT NOT NULL,
   content VARCHAR(8000) NULL,
   is_read BOOLEAN DEFAULT false,
   is_deleted BOOLEAN DEFAULT false,
-  PRIMARY KEY pk_messages (id)
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `communities`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS communities (
-  id INT NOT NULL AUTO_INCREMENT,
-  creation_date DATETIME NOT NULL,
+  id SERIAL,
+  creation_date TIMESTAMP NOT NULL,
   author_id INT NOT NULL,
   type VARCHAR(20) NOT NULL,
   title VARCHAR(100) NOT NULL,
   information VARCHAR(1000) NULL,
   is_deleted BOOLEAN DEFAULT false,
-  PRIMARY KEY pk_communities (id)
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `posts`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS posts (
-  id INT NOT NULL AUTO_INCREMENT,
-  creation_date DATETIME NOT NULL,
+  id SERIAL,
+  creation_date TIMESTAMP NOT NULL,
   title VARCHAR(1000) NULL,
   content VARCHAR(8000) NULL,
   communities_id INT NOT NULL,
   is_deleted BOOLEAN DEFAULT false,
-  PRIMARY KEY pk_posts (id)
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `post_comments`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS post_comments (
-  id INT NOT NULL AUTO_INCREMENT,
-  creation_date DATETIME NOT NULL,
+  id SERIAL,
+  creation_date TIMESTAMP NOT NULL,
   author_id INT NOT NULL,
   post_id INT NOT NULL,
   content VARCHAR(1000) NULL,
   is_deleted BOOLEAN DEFAULT false,
-  PRIMARY KEY pk_post_comments (id)
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
 -- Table `friendship_requests`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS weather_conditions (
-  id INT NOT NULL AUTO_INCREMENT,
+  id SERIAL,
   location_id INT NULL,
   status VARCHAR(20) NULL,
-  registration_date DATETIME NOT NULL,
-  PRIMARY KEY pk_weather_conditions (id)
+  registration_date TIMESTAMP NOT NULL,
+  PRIMARY KEY (id)
 );
 
 -- -----------------------------------------------------
