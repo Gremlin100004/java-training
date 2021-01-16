@@ -10,7 +10,6 @@ services:
       - 5432:5432
     volumes:
       - ./database/postgres:/var/lib/postgresql/data
-      - ./database/script/dev/init:/docker-entrypoint-initdb.d
     cap_add:
       - SYS_NICE
   web:

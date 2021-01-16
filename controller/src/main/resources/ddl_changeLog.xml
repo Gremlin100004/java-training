@@ -1,0 +1,551 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="Hrinkov" id="1">
+        <createTable tableName="locations">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_locations" primaryKey="true"/>
+            </column>
+            <column name="country" type="VARCHAR(45)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city" type="VARCHAR(45)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="2">
+        <createTable tableName="schools">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_schools" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(80)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="location_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="3">
+        <createTable tableName="universities">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_universities" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(80)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="location_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="4">
+        <createTable tableName="users">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_users" primaryKey="true"/>
+            </column>
+            <column name="email" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="5">
+        <createTable tableName="user_profiles">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_user_profiles" primaryKey="true"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="registration_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_of_birth" type="DATETIME"/>
+            <column name="name" type="VARCHAR(45)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="surname" type="VARCHAR(45)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="telephone_number" type="VARCHAR(20)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="location_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="school_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="school_graduation_year" type="INT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="university_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="university_graduation_year" type="INT">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="6">
+        <createTable tableName="public_messages">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_public_messages" primaryKey="true"/>
+            </column>
+            <column name="creation_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="content" type="VARCHAR(8000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="7">
+        <createTable tableName="public_message_comments">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_public_message_comments" primaryKey="true"/>
+            </column>
+            <column name="creation_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="public_message_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="VARCHAR(8000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="8">
+        <createTable tableName="private_messages">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_messages" primaryKey="true"/>
+            </column>
+            <column name="departure_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sender_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recipient_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="VARCHAR(8000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_read" type="BOOLEAN" defaultValue="false"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="9">
+        <createTable tableName="communities">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_communities" primaryKey="true"/>
+            </column>
+            <column name="creation_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="information" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="10">
+        <createTable tableName="posts">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_posts" primaryKey="true"/>
+            </column>
+            <column name="creation_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="content" type="VARCHAR(8000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="communities_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="11">
+        <createTable tableName="post_comments">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_post_comments" primaryKey="true"/>
+            </column>
+            <column name="creation_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="12">
+        <createTable tableName="weather_conditions">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKeyName="pk_weather_conditions" primaryKey="true"/>
+            </column>
+            <column name="location_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="registration_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="13">
+        <createTable tableName="friendship_requests">
+            <column name="user_profiles_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="friend_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="14">
+        <createTable tableName="friends">
+            <column name="user_profiles_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="friend_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Hrinkov" id="15">
+        <createTable tableName="community_user">
+            <column name="communities_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="users_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="16">
+        <addForeignKeyConstraint  baseTableName="schools"
+                                  baseColumnNames="location_id"
+                                  constraintName="fk_schools"
+                                  onDelete="CASCADE"
+                                  referencedTableName="locations"
+                                  referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="17">
+        <addForeignKeyConstraint  baseTableName="universities"
+                                  constraintName="fk_universities"
+                                  baseColumnNames="location_id"
+                                  referencedTableName="locations"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="18">
+        <addForeignKeyConstraint  baseTableName="user_profiles"
+                                  constraintName="fk_user_profiles_users"
+                                  baseColumnNames="user_id"
+                                  referencedTableName="users"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="19">
+        <addForeignKeyConstraint  baseTableName="user_profiles"
+                                  constraintName="fk_user_profiles_locations"
+                                  baseColumnNames="location_id"
+                                  referencedTableName="locations"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="20">
+        <addForeignKeyConstraint  baseTableName="user_profiles"
+                                  constraintName="fk_user_profiles_schools"
+                                  baseColumnNames="school_id"
+                                  referencedTableName="schools"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="21">
+        <addForeignKeyConstraint  baseTableName="public_messages"
+                                  constraintName="fk_public_messages"
+                                  baseColumnNames="author_id"
+                                  referencedTableName="user_profiles"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="22">
+        <addForeignKeyConstraint  baseTableName="public_message_comments"
+                                  constraintName="fk_public_message_comments_users"
+                                  baseColumnNames="author_id"
+                                  referencedTableName="user_profiles"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="23">
+        <addForeignKeyConstraint  baseTableName="public_message_comments"
+                                  constraintName="fk_public_message_comments_public_messages"
+                                  baseColumnNames="public_message_id"
+                                  referencedTableName="public_messages"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="24">
+        <addForeignKeyConstraint  baseTableName="private_messages"
+                                  constraintName="fk_private_messages_users_sender"
+                                  baseColumnNames="sender_id"
+                                  referencedTableName="user_profiles"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="25">
+        <addForeignKeyConstraint  baseTableName="private_messages"
+                                  constraintName="fk_private_messages_users_recipient"
+                                  baseColumnNames="recipient_id"
+                                  referencedTableName="user_profiles"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="26">
+        <addForeignKeyConstraint  baseTableName="friendship_requests"
+                                  constraintName="fk_friendship_requests_users_user"
+                                  baseColumnNames="user_profiles_id"
+                                  referencedTableName="user_profiles"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="27">
+        <addForeignKeyConstraint  baseTableName="friendship_requests"
+                                  constraintName="fk_friendship_requests_users_friend"
+                                  baseColumnNames="friend_id"
+                                  referencedTableName="user_profiles"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="28">
+        <addForeignKeyConstraint  baseTableName="communities"
+                                  constraintName="fk_communities_users"
+                                  baseColumnNames="author_id"
+                                  referencedTableName="user_profiles"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="29">
+        <addForeignKeyConstraint  baseTableName="posts"
+                                  constraintName="fk_posts_communities"
+                                  baseColumnNames="communities_id"
+                                  referencedTableName="communities"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="30">
+        <addForeignKeyConstraint  baseTableName="post_comments"
+                                  constraintName="fk_post_comments_users"
+                                  baseColumnNames="author_id"
+                                  referencedTableName="user_profiles"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="31">
+        <addForeignKeyConstraint  baseTableName="post_comments"
+                                  constraintName="fk_post_comments_posts"
+                                  baseColumnNames="post_id"
+                                  referencedTableName="posts"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="32">
+        <addForeignKeyConstraint  baseTableName="weather_conditions"
+                                  constraintName="fk_weather_conditions_locations"
+                                  baseColumnNames="location_id"
+                                  referencedTableName="locations"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="33">
+        <addForeignKeyConstraint  baseTableName="friends"
+                                  constraintName="fk_friends_users_user"
+                                  baseColumnNames="user_profiles_id"
+                                  referencedTableName="user_profiles"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="34">
+        <addForeignKeyConstraint  baseTableName="friends"
+                                  constraintName="fk_friends_users_friend"
+                                  baseColumnNames="friend_id"
+                                  referencedTableName="user_profiles"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="35">
+        <addForeignKeyConstraint  baseTableName="community_user"
+                                  constraintName="fk_community_user_communities"
+                                  baseColumnNames="communities_id"
+                                  referencedTableName="communities"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="36">
+        <addForeignKeyConstraint  baseTableName="community_user"
+                                  constraintName="fk_community_user_users"
+                                  baseColumnNames="users_id"
+                                  referencedTableName="users"
+                                  referencedColumnNames="id"
+                                  onDelete="CASCADE"/>
+
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="37">
+        <createIndex  indexName="locations_id_idx" tableName="locations" unique="true">
+            <column  name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="38">
+        <createIndex  indexName="schools_id_idx" tableName="schools" unique="true">
+            <column  name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="39">
+        <createIndex  indexName="universities_id_idx" tableName="universities" unique="true">
+            <column  name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="40">
+        <createIndex  indexName="users_email_idx" tableName="users" unique="true">
+            <column  name="email"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="41">
+        <createIndex  indexName="user_profiles_id_idx" tableName="user_profiles" unique="true">
+            <column  name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="42">
+        <createIndex  indexName="public_messages_id_idx" tableName="public_messages" unique="true">
+            <column  name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="43">
+        <createIndex  indexName="public_message_comments_id_idx" tableName="public_message_comments" unique="true">
+            <column  name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="44">
+        <createIndex  indexName="private_messages_id_idx" tableName="private_messages" unique="true">
+            <column  name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="45">
+        <createIndex  indexName="communities_id_idx" tableName="communities" unique="true">
+            <column  name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="46">
+        <createIndex  indexName="posts_id_idx" tableName="posts" unique="true">
+            <column  name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="47">
+        <createIndex  indexName="post_comments_id_idx" tableName="post_comments" unique="true">
+            <column  name="id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet  author="Hrinkov"  id="48">
+        <createIndex  indexName="weather_conditions_id_idx" tableName="weather_conditions" unique="true">
+            <column  name="id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

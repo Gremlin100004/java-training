@@ -1,5 +1,6 @@
 package com.senla.socialnetwork.dao.config;
 
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -20,6 +21,8 @@ public class DaoConfiguration {
     private static final String DATA_SOURCE_PACKAGE = "socialnetwork.datasource.package";
     private static final String CONNECTION_URL = "hibernate.connection.url";
     private static final String DRIVER_DATABASE = "hibernate.connection.driver_class";
+    private static final String USERNAME = "hibernate.connection.username";
+    private static final String PASSWORD = "hibernate.connection.password";
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(final Environment environment) {
@@ -36,6 +39,8 @@ public class DaoConfiguration {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(environment.getRequiredProperty(DRIVER_DATABASE));
         dataSource.setUrl(environment.getRequiredProperty(CONNECTION_URL));
+        dataSource.setUsername(environment.getRequiredProperty(USERNAME));
+        dataSource.setPassword(environment.getRequiredProperty(PASSWORD));
         return dataSource;
     }
 
@@ -49,6 +54,14 @@ public class DaoConfiguration {
     @Bean
     public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
+    }
+
+    @Bean
+    public SpringLiquibase liquibase(final Environment environment) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setChangeLog("classpath:liquibase-changeLog.xml");
+        liquibase.setDataSource(dataSource(environment));
+        return liquibase;
     }
 
 }

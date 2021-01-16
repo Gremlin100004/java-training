@@ -8,3 +8,4 @@ out/
 target/
 logs/
 database/mysql
+database/postgres
