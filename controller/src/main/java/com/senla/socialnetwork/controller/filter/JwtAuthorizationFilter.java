@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.dto.ClientMessageDto;
-import com.senla.socialnetwork.service.UserService;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.util.JwtUtil;
 import lombok.NoArgsConstructor;
@@ -34,8 +33,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private static final String EXCEPTION_MESSAGE = "Server error";
     @Autowired
     private UserDetailsService userDetailsService;
-    @Autowired
-    private UserService userService;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -70,8 +67,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return null;
         }
         String username = JwtUtil.extractUsername(token, signingKey.getSecretKey());
-        if (username == null || SecurityContextHolder.getContext().getAuthentication() != null
-            || userService.getUserLogoutToken(username).equals(token)) {
+        if (username == null || SecurityContextHolder.getContext().getAuthentication() != null) {
             return null;
         }
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);

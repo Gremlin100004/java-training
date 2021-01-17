@@ -1,9 +1,7 @@
 package com.senla.socialnetwork.service;
 
-import com.senla.socialnetwork.dao.TokenDao;
 import com.senla.socialnetwork.dao.UserDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
-import com.senla.socialnetwork.domain.LogoutToken;
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
@@ -18,7 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,12 +33,8 @@ public class UserServiceImpl implements UserService {
     private static final int LIST_SIZE = 2;
     private static final int ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA = 0;
     private static final int ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA = 1;
-    private static final int FIRST_RESULT = 0;
-    private static final int MAX_RESULTS = 0;
     @Autowired
     private UserDao userDao;
-    @Autowired
-    private TokenDao tokenDao;
     @Autowired
     private UserProfileDao userProfileDao;
     @Autowired
@@ -66,17 +59,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public String getUserLogoutToken(String email) {
-        log.debug("[email: {}]", email);
-        String token = tokenDao.getLogoutToken(email);
-        if (token == null) {
-            token = "";
-        }
-        return token;
-    }
-
-    @Override
-    @Transactional
     public String logIn(final UserForSecurityDto userDto, final SecretKey secretKey) {
         log.debug("[userDto: {}]", userDto);
         SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
@@ -86,13 +68,6 @@ public class UserServiceImpl implements UserService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
             userDto.getEmail(), userDto.getPassword()));
         return JwtUtil.generateToken(new UserPrincipal(systemUser), secretKey, expiration);
-    }
-
-    @Override
-    @Transactional
-    public void logOut(final String token) {
-        log.debug("[token: {}]", token);
-        tokenDao.saveRecord(getLogoutToken(token, userDao.findByEmail(PrincipalUtil.getUserName())));
     }
 
     @Override
@@ -113,8 +88,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateUser(final List<UserForSecurityDto> usersDto, String token) {
-        log.debug("[usersDto: {}, token: {}]", usersDto, token);
+    public void updateUser(final List<UserForSecurityDto> usersDto) {
+        log.debug("[usersDto: {}]", usersDto);
         if (usersDto.size() != LIST_SIZE) {
             throw new BusinessException("Input data amount error");
         }
@@ -130,7 +105,6 @@ public class UserServiceImpl implements UserService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
             oldUserDto.getEmail(), oldUserDto.getPassword()));
         SystemUser currentSystemUser = userDao.findByEmail(controlEmail);
-        tokenDao.saveRecord(getLogoutToken(token, currentSystemUser));
         UserMapper.getCurrentSystemUser(passwordEncoder, newUserDto, currentSystemUser);
         userDao.updateRecord(currentSystemUser);
     }
@@ -144,24 +118,6 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("Error, there is no such user");
         }
         userDao.deleteRecord(user);
-    }
-
-    @Scheduled(cron = "${cron.expression:0 4 * * * ?}")
-    public void cleanLogoutTokens() {
-        log.info("[clean table with tokens]");
-        Date currentDate = new Date();
-        List<LogoutToken> logoutTokens = tokenDao.getAllRecords(FIRST_RESULT, MAX_RESULTS);
-        logoutTokens.stream()
-            .filter(token -> token.getCreationDate().getTime() - currentDate.getTime() > expiration)
-            .forEach(token -> tokenDao.deleteRecord(token));
-    }
-
-    private LogoutToken getLogoutToken(String token, SystemUser user) {
-        LogoutToken logoutToken = new LogoutToken();
-        logoutToken.setValue(token);
-        logoutToken.setCreationDate(new Date());
-        logoutToken.setSystemUser(user);
-        return logoutToken;
     }
 
 }

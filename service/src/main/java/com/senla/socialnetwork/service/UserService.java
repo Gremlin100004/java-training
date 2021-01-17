@@ -12,15 +12,11 @@ public interface UserService {
 
     UserForSecurityDto getUser();
 
-    String getUserLogoutToken(String email);
-
     String logIn(UserForSecurityDto userDto, SecretKey secretKey);
-
-    void logOut(String token);
 
     void addUser(UserForSecurityDto userDto, RoleName roleName);
 
-    void updateUser(List<UserForSecurityDto> usersDto, String token);
+    void updateUser(List<UserForSecurityDto> usersDto);
 
     void deleteUser(Long userId);
 

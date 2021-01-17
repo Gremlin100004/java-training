@@ -7,7 +7,6 @@ import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
 import com.senla.socialnetwork.service.UserService;
-import com.senla.socialnetwork.service.util.JwtUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -51,7 +49,6 @@ public class UserController {
     public static final String ADD_USER_OK_MESSAGE = "Successfully registered a user";
     public static final String UPDATE_USER_OK_MESSAGE = "Successfully updated a user";
     public static final String LOGIN_OK_MESSAGE = "Logged in successfully";
-    public static final String LOGOUT_OK_MESSAGE = "Successful logout";
     public static final String DELETE_USER_OK_MESSAGE = "Successfully deleted a user";
     public static final String FIRST_RESULT_DESCRIPTION = "The number of the first element of the expected list";
     public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
@@ -68,7 +65,6 @@ public class UserController {
     public static final String ADD_USER_DESCRIPTION = "This method is used to add new user";
     public static final String ADD_ADMIN_DESCRIPTION = "This method is used to add new admin";
     public static final String LOGIN_DESCRIPTION = "This method is used to authorize the user";
-    public static final String LOGOUT_DESCRIPTION = "This method is used to log out the user";
     public static final String UPDATE_USER_DESCRIPTION = "This method is used to update security data by this user";
     public static final String DELETE_USER_DESCRIPTION = "This method is used to delete user by admin";
     @Autowired
@@ -149,20 +145,6 @@ public class UserController {
         return new ClientMessageDto(userService.logIn(userDto, signingKey.getSecretKey()));
     }
 
-    @PutMapping("/logout")
-    @ApiOperation(value = LOGOUT_DESCRIPTION, response = ClientMessageDto.class)
-    @ApiResponses(value = {
-        @ApiResponse(code = OK, message = LOGOUT_OK_MESSAGE),
-        @ApiResponse(code = UNAUTHORIZED, message = UNAUTHORIZED_MESSAGE),
-        @ApiResponse(code = FORBIDDEN, message = FORBIDDEN_MESSAGE),
-        @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
-    })
-    public ClientMessageDto logOut(final HttpServletRequest request) {
-
-        userService.logOut(JwtUtil.getToken(request));
-        return new ClientMessageDto(LOGOUT_OK_MESSAGE);
-    }
-
     @PutMapping
     @ApiOperation(value = UPDATE_USER_DESCRIPTION, response = ClientMessageDto.class)
     @ApiResponses(value = {
@@ -172,10 +154,9 @@ public class UserController {
         @ApiResponse(code = NOT_FOUND, message = NOT_FOUND_MESSAGE)
     })
     public ClientMessageDto updateUser(@ApiParam(value = USERS_DTO_DESCRIPTION)
-                                       @RequestBody final List<UserForSecurityDto> usersDto,
-                                       final HttpServletRequest request) {
+                                       @RequestBody final List<UserForSecurityDto> usersDto) {
         ValidationUtil.validate(usersDto);
-        userService.updateUser(usersDto, JwtUtil.getToken(request));
+        userService.updateUser(usersDto);
         return new ClientMessageDto(UPDATE_USER_OK_MESSAGE);
     }
 

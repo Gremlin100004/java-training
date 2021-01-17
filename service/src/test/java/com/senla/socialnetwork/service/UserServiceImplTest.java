@@ -1,8 +1,6 @@
 package com.senla.socialnetwork.service;
 
-import com.senla.socialnetwork.dao.TokenDao;
 import com.senla.socialnetwork.dao.UserDao;
-import com.senla.socialnetwork.domain.LogoutToken;
 import com.senla.socialnetwork.domain.SystemUser;
 import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserForAdminDto;
@@ -36,8 +34,6 @@ public class UserServiceImplTest {
     private UserService userService;
     @Autowired
     private UserDao userDao;
-    @Autowired
-    private TokenDao tokenDao;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -73,30 +69,6 @@ public class UserServiceImplTest {
         Assertions.assertEquals(userDto.getEmail(), resultUserDto.getEmail());
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
         Mockito.reset(userDao);
-    }
-
-    @Test
-    void UserServiceImpl_getUserLogoutToken() {
-        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
-        Mockito.doReturn(UserTestData.getToken()).when(tokenDao).getLogoutToken(UserTestData.getEmail());
-
-        String resultToken = userService.getUserLogoutToken(UserTestData.getEmail());
-        Assertions.assertNotNull(resultToken);
-        Assertions.assertEquals(UserTestData.getToken(), resultToken);
-        Mockito.verify(tokenDao, Mockito.times(1)).getLogoutToken(UserTestData.getEmail());
-        Mockito.reset(tokenDao);
-    }
-
-    @Test
-    void UserServiceImpl_getUserLogoutToken_userDao_getLogoutToken_nullObject() {
-        SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
-        Mockito.doReturn(null).when(tokenDao).getLogoutToken(UserTestData.getEmail());
-
-        String resultToken = userService.getUserLogoutToken(UserTestData.getEmail());
-        Assertions.assertNotNull(resultToken);
-        Assertions.assertEquals(UserTestData.getEmptyToken(), resultToken);
-        Mockito.verify(tokenDao, Mockito.times(1)).getLogoutToken(UserTestData.getEmail());
-        Mockito.reset(tokenDao);
     }
 
     @Test
@@ -163,13 +135,11 @@ public class UserServiceImplTest {
         Mockito.doReturn(usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getPassword()).when(
             passwordEncoder).encode(usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_NEW_DATA).getPassword());
 
-        Assertions.assertDoesNotThrow(() -> userService.updateUser(usersDto, UserTestData.getToken()));
+        Assertions.assertDoesNotThrow(() -> userService.updateUser(usersDto));
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(UserTestData.getEmail());
-        Mockito.verify(tokenDao, Mockito.times(1)).saveRecord(ArgumentMatchers.any(LogoutToken.class));
         Mockito.verify(passwordEncoder, Mockito.times(1)).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.times(1)).updateRecord(testUser);
         Mockito.reset(userDao);
-        Mockito.reset(tokenDao);
         Mockito.reset(passwordEncoder);
     }
 
@@ -179,10 +149,8 @@ public class UserServiceImplTest {
         List<UserForSecurityDto> usersDto = new ArrayList<>();
         usersDto.add(UserTestData.getTestUserForSecurityDto());
 
-        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(
-            usersDto, UserTestData.getToken()));
+        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(usersDto));
         Mockito.verify(userDao, Mockito.never()).findByEmail(UserTestData.getEmail());
-        Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
         Mockito.verify(passwordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.never()).updateRecord(testUser);
     }
@@ -194,10 +162,8 @@ public class UserServiceImplTest {
         usersDto.get(ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA).setEmail(UserTestData.getWrongEmail());
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
 
-        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(
-            usersDto, UserTestData.getToken()));
+        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(usersDto));
         Mockito.verify(userDao, Mockito.never()).findByEmail(UserTestData.getEmail());
-        Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
         Mockito.verify(passwordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.never()).updateRecord(testUser);
     }
@@ -210,10 +176,8 @@ public class UserServiceImplTest {
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
         Mockito.doReturn(testUser).when(userDao).findByEmail(ArgumentMatchers.anyString());
 
-        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(
-            usersDto, UserTestData.getToken()));
+        Assertions.assertThrows(BusinessException.class, () -> userService.updateUser(usersDto));
         Mockito.verify(userDao, Mockito.times(1)).findByEmail(ArgumentMatchers.anyString());
-        Mockito.verify(tokenDao, Mockito.never()).saveRecord(ArgumentMatchers.any(LogoutToken.class));
         Mockito.verify(passwordEncoder, Mockito.never()).encode(ArgumentMatchers.anyString());
         Mockito.verify(userDao, Mockito.never()).updateRecord(testUser);
         Mockito.reset(userDao);
@@ -233,7 +197,8 @@ public class UserServiceImplTest {
 
     @Test
     void UserServiceImplTest_deleteUser_userDao_findById_nullObject() {
-        SystemUser testUser = UserTestData.getTestUser();Mockito.doReturn(null).when(userDao).findById(UserTestData.getIdUser());
+        SystemUser testUser = UserTestData.getTestUser();Mockito.doReturn(null).when(
+                userDao).findById(UserTestData.getIdUser());
 
         Assertions.assertThrows(BusinessException.class, () -> userService.deleteUser(UserTestData.getIdUser()));
         Mockito.verify(userDao, Mockito.times(1)).findById(UserTestData.getIdUser());
