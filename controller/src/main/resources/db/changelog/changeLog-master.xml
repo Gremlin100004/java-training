@@ -6,6 +6,15 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
 
-    <include file="ddl_changeLog.xml"/>
-    <include file="dml_changeLog.sql"/>
+    <changeSet id="0" author="Hrinkov">
+        <tagDatabase tag="db_init"/>
+    </changeSet>
+
+    <include file="v-1.0/ddl_changeLog.xml" relativeToChangelogFile="true"/>
+    <include file="v-1.0/dml_changeLog.sql" relativeToChangelogFile="true"/>
+
+    <changeSet id="1" author="Hrinkov">
+        <tagDatabase tag="v.1.0"/>
+    </changeSet>
+
 </databaseChangeLog>

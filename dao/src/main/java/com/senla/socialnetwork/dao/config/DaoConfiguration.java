@@ -59,7 +59,7 @@ public class DaoConfiguration {
     @Bean
     public SpringLiquibase liquibase(final Environment environment) {
         SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setChangeLog("classpath:liquibase-changeLog.xml");
+        liquibase.setChangeLog("classpath:db/changelog/changeLog-master.xml");
         liquibase.setDataSource(dataSource(environment));
         return liquibase;
     }
