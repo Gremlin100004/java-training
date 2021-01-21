@@ -20,9 +20,9 @@ import java.util.List;
 @Slf4j
 public class UniversityServiceImpl implements UniversityService {
     @Autowired
-    LocationDao locationDao;
+    private LocationDao locationDao;
     @Autowired
-    UniversityDao universityDao;
+    private UniversityDao universityDao;
 
     @Override
     @Transactional

@@ -33,6 +33,7 @@ public class UserProfileDaoImpl extends AbstractDao<UserProfile, Long> implement
     private static final String PARAMETER_DAY = "day";
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 1;
+
     public UserProfileDaoImpl() {
         setType(UserProfile.class);
     }

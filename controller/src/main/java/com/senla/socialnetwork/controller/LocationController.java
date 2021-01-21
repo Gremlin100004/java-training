@@ -56,7 +56,7 @@ public class LocationController {
     public static final String UPDATE_LOCATION_DESCRIPTION = "This method is used to update location by admin";
     public static final String DELETE_LOCATION_DESCRIPTION = "This method is used to delete location by admin";
     @Autowired
-    LocationService locationService;
+    private LocationService locationService;
 
     @GetMapping
     @ApiOperation(value = GET_LOCATIONS_DESCRIPTION, response = LocationDto.class)

@@ -23,9 +23,9 @@ import java.util.List;
 @Slf4j
 public class PrivateMessageServiceImpl implements PrivateMessageService {
     @Autowired
-    PrivateMessageDao privateMessageDao;
+    private PrivateMessageDao privateMessageDao;
     @Autowired
-    UserProfileDao userProfileDao;
+    private UserProfileDao userProfileDao;
 
     @Override
     @Transactional

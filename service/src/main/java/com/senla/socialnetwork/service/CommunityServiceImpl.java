@@ -31,11 +31,11 @@ public class CommunityServiceImpl implements CommunityService {
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 0;
     @Autowired
-    CommunityDao communityDao;
+    private CommunityDao communityDao;
     @Autowired
-    PostDao postDao;
+    private PostDao postDao;
     @Autowired
-    UserProfileDao userProfileDao;
+    private UserProfileDao userProfileDao;
 
     @Override
     @Transactional

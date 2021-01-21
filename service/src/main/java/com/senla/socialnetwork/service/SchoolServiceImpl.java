@@ -20,9 +20,9 @@ import java.util.List;
 @Slf4j
 public class SchoolServiceImpl implements SchoolService {
     @Autowired
-    LocationDao locationDao;
+    private LocationDao locationDao;
     @Autowired
-    SchoolDao schoolDao;
+    private SchoolDao schoolDao;
 
     @Override
     @Transactional

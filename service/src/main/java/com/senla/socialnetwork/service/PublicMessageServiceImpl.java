@@ -28,11 +28,11 @@ public class PublicMessageServiceImpl implements PublicMessageService {
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 0;
     @Autowired
-    PublicMessageDao publicMessageDao;
+    private PublicMessageDao publicMessageDao;
     @Autowired
-    PublicMessageCommentDao publicMessageCommentDao;
+    private PublicMessageCommentDao publicMessageCommentDao;
     @Autowired
-    UserProfileDao userProfileDao;
+    private UserProfileDao userProfileDao;
 
     @Override
     @Transactional

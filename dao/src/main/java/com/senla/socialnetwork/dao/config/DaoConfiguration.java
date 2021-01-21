@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -23,6 +24,7 @@ public class DaoConfiguration {
     private static final String DRIVER_DATABASE = "hibernate.connection.driver_class";
     private static final String USERNAME = "hibernate.connection.username";
     private static final String PASSWORD = "hibernate.connection.password";
+    private static final String CHANGELOG_PATH = "classpath:db/changelog/changeLog-master.xml";
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(final Environment environment) {
@@ -57,9 +59,14 @@ public class DaoConfiguration {
     }
 
     @Bean
+    public JdbcTemplate jdbcTemplate(final Environment environment) {
+        return new JdbcTemplate(dataSource(environment));
+    }
+
+    @Bean
     public SpringLiquibase liquibase(final Environment environment) {
         SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setChangeLog("classpath:db/changelog/changeLog-master.xml");
+        liquibase.setChangeLog(CHANGELOG_PATH);
         liquibase.setDataSource(dataSource(environment));
         return liquibase;
     }

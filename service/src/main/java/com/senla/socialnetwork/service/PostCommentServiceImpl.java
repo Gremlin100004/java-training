@@ -22,13 +22,13 @@ import java.util.List;
 @Slf4j
 public class PostCommentServiceImpl implements PostCommentService {
     @Autowired
-    CommunityDao communityDao;
+    private CommunityDao communityDao;
     @Autowired
-    PostDao postDao;
+    private PostDao postDao;
     @Autowired
-    PostCommentDao postCommentDao;
+    private PostCommentDao postCommentDao;
     @Autowired
-    UserProfileDao userProfileDao;
+    private UserProfileDao userProfileDao;
 
     @Override
     @Transactional

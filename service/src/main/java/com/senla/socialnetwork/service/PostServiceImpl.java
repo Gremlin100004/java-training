@@ -28,13 +28,13 @@ public class PostServiceImpl implements PostService {
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 0;
     @Autowired
-    PostDao postDao;
+    private PostDao postDao;
     @Autowired
-    PostCommentDao postCommentDao;
+    private PostCommentDao postCommentDao;
     @Autowired
-    CommunityDao communityDao;
+    private CommunityDao communityDao;
     @Autowired
-    UserProfileDao userProfileDao;
+    private UserProfileDao userProfileDao;
 
     @Override
     @Transactional

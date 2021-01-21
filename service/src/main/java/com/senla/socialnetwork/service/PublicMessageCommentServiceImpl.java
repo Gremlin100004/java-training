@@ -20,9 +20,9 @@ import java.util.List;
 @Slf4j
 public class PublicMessageCommentServiceImpl implements PublicMessageCommentService {
     @Autowired
-    UserProfileDao userProfileDao;
+    private UserProfileDao userProfileDao;
     @Autowired
-    PublicMessageCommentDao publicMessageCommentDao;
+    private PublicMessageCommentDao publicMessageCommentDao;
 
     @Override
     @Transactional
