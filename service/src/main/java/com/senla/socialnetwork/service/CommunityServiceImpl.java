@@ -73,7 +73,7 @@ public class CommunityServiceImpl implements CommunityService {
     public List<CommunityDto> getOwnCommunities(final int firstResult, final int maxResults) {
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
-            communityDao.getOwnCommunitiesByEmail(PrincipalUtil.getUserName(), firstResult, maxResults));
+            communityDao.getCommunitiesByEmail(PrincipalUtil.getUserName(), firstResult, maxResults));
     }
 
     @Override

@@ -95,7 +95,7 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
     }
 
     @Override
-    public List<Community> getOwnCommunitiesByEmail(final String email, final int firstResult, final int maxResults) {
+    public List<Community> getCommunitiesByEmail(final String email, final int firstResult, final int maxResults) {
         log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -168,4 +168,5 @@ public class CommunityDaoImpl extends AbstractDao<Community, Long> implements Co
             return null;
         }
     }
+
 }

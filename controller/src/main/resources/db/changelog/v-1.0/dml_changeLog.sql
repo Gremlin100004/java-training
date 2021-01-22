@@ -9,6 +9,7 @@ INSERT INTO locations (country, city) VALUES
 ('Belarus', 'Bobruisk'),
 ('Belarus', 'Baranovichi');
 
+ALTER SEQUENCE locations_id_seq RESTART WITH 8;
 ALTER SEQUENCE schools_id_seq RESTART WITH 1;
 
 INSERT INTO schools (name, location_id) VALUES
@@ -28,6 +29,7 @@ INSERT INTO schools (name, location_id) VALUES
 ('Secondary school number 12', 7),
 ('Secondary school number 22', 7);
 
+ALTER SEQUENCE schools_id_seq RESTART WITH 16;
 ALTER SEQUENCE universities_id_seq RESTART WITH 1;
 
 INSERT INTO universities (name, location_id) VALUES
@@ -42,6 +44,7 @@ INSERT INTO universities (name, location_id) VALUES
 ('Baranovichi State University', 5),
 ('Brest State Technical University', 5);
 
+ALTER SEQUENCE universities_id_seq RESTART WITH 11;
 ALTER SEQUENCE users_id_seq RESTART WITH 1;
 
 INSERT INTO users (email, password, role) VALUES
@@ -51,6 +54,7 @@ INSERT INTO users (email, password, role) VALUES
 ('user4@test.com', '$2a$10$ehU.2fP2fFtcFB9Fti8u2unzBrCIzQRvUei8r/ppUzxlBxSP86eH2', 'ROLE_USER'),
 ('admin@test.com', '$2a$10$ehU.2fP2fFtcFB9Fti8u2unzBrCIzQRvUei8r/ppUzxlBxSP86eH2', 'ROLE_ADMIN');
 
+ALTER SEQUENCE users_id_seq RESTART WITH 6;
 ALTER SEQUENCE user_profiles_id_seq RESTART WITH 1;
 
 INSERT INTO user_profiles (user_id, registration_date, date_of_birth, name, surname, telephone_number, location_id, school_id, school_graduation_year, university_id, university_graduation_year) VALUES
@@ -59,6 +63,7 @@ INSERT INTO user_profiles (user_id, registration_date, date_of_birth, name, surn
 (3, '2020-09-11 10:00', '1996-03-21', 'Kiril', 'Myagkov', '+375(29)123-41-67', 3, 5, 2007, 4, 2013),
 (4, '2019-02-05 09:53', '2001-03-11', 'Vasya', 'Potryopovich', '+375(33)567-34-09', 4, 7, 2010,5, 2015);
 
+ALTER SEQUENCE user_profiles_id_seq RESTART WITH 5;
 ALTER SEQUENCE public_messages_id_seq RESTART WITH 1;
 
 INSERT INTO public_messages (creation_date, author_id, title, content, is_deleted) VALUES
@@ -71,6 +76,7 @@ INSERT INTO public_messages (creation_date, author_id, title, content, is_delete
 ('2020-09-16 10:00', 4, 'Something extremely bogus is going on.', 'Was tested for covid four times today. Two tests came back negative, two came back positive. Same machine, same test, same nurse. Rapid antigen test from BD.', false),
 ('2020-07-18 10:00', 4, 'It''s just a shout out but for a good cause promoting social inclusion, job opportunities and leadership development for children and adults with intellectual and developmental disabilities (IDD). Check it!', 'The Best Buddies Friendship Jam Silent Auction just went live! https://e.givesmart.com/events/iCc/i/', false);
 
+ALTER SEQUENCE public_messages_id_seq RESTART WITH 9;
 ALTER SEQUENCE public_message_comments_id_seq RESTART WITH 1;
 
 INSERT INTO public_message_comments (creation_date, author_id, public_message_id, content, is_deleted) VALUES
@@ -91,6 +97,7 @@ INSERT INTO public_message_comments (creation_date, author_id, public_message_id
 ('2020-07-18 07:23', 1, 8, 'Nice blue hat Ryan.', false),
 ('2020-07-18 08:34', 2, 8, 'do I drop the money or no...', false);
 
+ALTER SEQUENCE public_message_comments_id_seq RESTART WITH 16;
 ALTER SEQUENCE private_messages_id_seq RESTART WITH 1;
 
 INSERT INTO private_messages (departure_date, sender_id, recipient_id, content, is_read, is_deleted) VALUES
@@ -109,6 +116,7 @@ INSERT INTO private_messages (departure_date, sender_id, recipient_id, content, 
 ('2020-10-28 07:04', 4, 2, 'How is your family??', true, false),
 ('2020-10-28 07:05', 2, 4, 'They are good) I really glad to hear from you! but i must go to sleep, because i get up very early. good night sweety!', true, false);
 
+ALTER SEQUENCE private_messages_id_seq RESTART WITH 15;
 ALTER SEQUENCE communities_id_seq RESTART WITH 1;
 
 INSERT INTO communities (creation_date, author_id, type, title, information, is_deleted) VALUES
@@ -117,6 +125,7 @@ INSERT INTO communities (creation_date, author_id, type, title, information, is_
 ('2020-10-03 12:00', 3, 'AUTO', 'McLaren Automotive', 'Born and raised on the track, we use racing technology and expertise to create the most advanced performance cars in the world.', false),
 ('2020-10-04 12:00', 4, 'MUSIC', 'Lindsey Stirling', 'Fan community of violinist Lindsey Stirling.', false);
 
+ALTER SEQUENCE communities_id_seq RESTART WITH 5;
 ALTER SEQUENCE posts_id_seq RESTART WITH 1;
 
 INSERT INTO posts (creation_date, title, content, communities_id, is_deleted) VALUES
@@ -137,6 +146,7 @@ INSERT INTO posts (creation_date, title, content, communities_id, is_deleted) VA
 ('2020-10-15 11:58', 'New merch just in time for my Home for the Holidays Special! Use code ''HOMEFORTHEHOLIDAYS'' for 15% off your order and add a plush blanket for only $30 when you spend $75!', 'Check out all the new items here: https://found.ee/LSmerch', 4, false),
 ('2020-10-16 03:23', 'Stay In Touch With The People Who Matter Most To You', 'Gratitude post number 4: I’m grateful for the @marcopoloapp. I’m grateful that my friends and family can have continuous group conversations to stay connected even through distance. It’s really helped my mental health. #givethanks', 4, false);
 
+ALTER SEQUENCE posts_id_seq RESTART WITH 17;
 ALTER SEQUENCE post_comments_id_seq RESTART WITH 1;
 
 INSERT INTO post_comments (creation_date, author_id, post_id, content, is_deleted) VALUES
@@ -173,6 +183,8 @@ INSERT INTO post_comments (creation_date, author_id, post_id, content, is_delete
 ('2020-10-17 06:23', 2, 16, 'Thank you for sharing this app and for the last live stream, it was so much fun and sweet', false),
 ('2020-10-17 11:23', 3, 16, 'I''m happy to hear you''re able to stay connected with your friends and family. That app is pretty cool.', false);
 
+ALTER SEQUENCE post_comments_id_seq RESTART WITH 33;
+
 INSERT INTO friends VALUES
 (1, 3), (1, 4), (2, 4);
 
@@ -181,5 +193,7 @@ INSERT INTO friendship_requests VALUES
 
 INSERT INTO community_user VALUES
 (1, 2), (1, 3), (1, 4), (2, 1), (2, 4), (3, 4), (4, 3), (4, 2);
+
+ALTER SEQUENCE communities_id_seq RESTART WITH 42;
 
 COMMIT;

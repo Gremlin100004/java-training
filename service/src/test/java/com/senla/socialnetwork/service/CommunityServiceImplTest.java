@@ -127,7 +127,7 @@ public class CommunityServiceImplTest {
         List<Community> communities = CommunityTestData.getTestCommunities();
         List<CommunityDto> communitiesDto = CommunityTestData.getTestCommunitiesDto();
         SecurityContextHolder.getContext().setAuthentication(UserTestData.getUsernamePasswordAuthenticationToken());
-        Mockito.doReturn(communities).when(communityDao).getOwnCommunitiesByEmail(
+        Mockito.doReturn(communities).when(communityDao).getCommunitiesByEmail(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
 
         List<CommunityDto> resultCommunities = communityService.getOwnCommunities(FIRST_RESULT, NORMAL_MAX_RESULTS);
@@ -136,7 +136,7 @@ public class CommunityServiceImplTest {
         Assertions.assertFalse(resultCommunities.get(0).getDeleted());
         Assertions.assertFalse(resultCommunities.isEmpty());
         Assertions.assertEquals(resultCommunities, communitiesDto);
-        Mockito.verify(communityDao, Mockito.times(1)).getOwnCommunitiesByEmail(
+        Mockito.verify(communityDao, Mockito.times(1)).getCommunitiesByEmail(
             UserTestData.getEmail(), FIRST_RESULT, NORMAL_MAX_RESULTS);
         Mockito.reset(communityDao);
     }

@@ -21,7 +21,6 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     public AbstractDao() {
     }
 
-    @Override
     public void setType(final Class<T> typeClass) {
         type = typeClass;
     }
