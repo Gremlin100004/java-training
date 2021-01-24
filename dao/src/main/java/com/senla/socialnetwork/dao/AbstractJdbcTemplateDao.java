@@ -26,7 +26,6 @@ public abstract class AbstractJdbcTemplateDao<T extends AEntity, PK extends Seri
     @Override
     public T saveRecord(T entity) {
         log.debug("[entity: {}]", entity);
-        System.out.println(getSaveRequest(entity));
         entity.setId((long) jdbcTemplate.update(getSaveRequest(entity)));
         return entity;
     }
@@ -66,7 +65,7 @@ public abstract class AbstractJdbcTemplateDao<T extends AEntity, PK extends Seri
         jdbcTemplate.update(getDeleteRequest(), entity.getId());
     }
 
-    protected abstract String getSaveRequest( T entity);
+    protected abstract String getSaveRequest(T entity);
 
     protected abstract String getFindByIdRequest();
 
