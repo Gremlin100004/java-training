@@ -20,8 +20,8 @@ import java.util.List;
 
 @Repository
 @Slf4j
-public class CommunityDaoImpl extends AbstractDao<Community, Long> implements CommunityDao {
-    public CommunityDaoImpl() {
+public class CommunityCriteriaApiDaoImpl extends AbstractDao<Community, Long> implements CommunityDao {
+    public CommunityCriteriaApiDaoImpl() {
         setType(Community.class);
     }
 

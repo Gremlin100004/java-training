@@ -1,12 +1,13 @@
 package com.senla.socialnetwork.dao.mapper;
 
 import com.senla.socialnetwork.domain.UserProfile;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserProfileRowMapperImpl implements RowMapper<UserProfile> {
+@Component
+public class UserProfileRowMapperImpl implements UserProfileRowMapper {
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_SURNAME = "surname";

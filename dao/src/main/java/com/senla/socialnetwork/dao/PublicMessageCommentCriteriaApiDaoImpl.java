@@ -21,8 +21,8 @@ import java.util.List;
 
 @Repository
 @Slf4j
-public class PublicMessageCommentDaoImpl extends AbstractDao<PublicMessageComment, Long> implements PublicMessageCommentDao {
-    public PublicMessageCommentDaoImpl() {
+public class PublicMessageCommentCriteriaApiDaoImpl extends AbstractDao<PublicMessageComment, Long> implements PublicMessageCommentDao {
+    public PublicMessageCommentCriteriaApiDaoImpl() {
         setType(PublicMessageComment.class);
     }
 

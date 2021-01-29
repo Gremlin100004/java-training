@@ -12,15 +12,10 @@ import java.util.List;
 
 @Slf4j
 public abstract class AbstractJdbcTemplateDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, PK> {
-    protected Class<? extends RowMapper<T>> mapperType;
     @Autowired
     protected JdbcTemplate jdbcTemplate;
 
     public AbstractJdbcTemplateDao() {
-    }
-
-    public void setMapperType(final Class<? extends RowMapper<T>> typeClass) {
-        mapperType = typeClass;
     }
 
     @Override
@@ -34,8 +29,8 @@ public abstract class AbstractJdbcTemplateDao<T extends AEntity, PK extends Seri
     public T findById(PK id) {
         log.debug("[id: {}]", id);
         try {
-            return jdbcTemplate.queryForObject(getFindByIdRequest(), new Object[]{id}, mapperType.newInstance());
-        } catch (InstantiationException | IllegalAccessException | DataAccessException exception) {
+            return jdbcTemplate.queryForObject(getFindByIdRequest(), new Object[]{id}, getMapper());
+        } catch (DataAccessException exception) {
             log.error("[{}]", exception.getMessage());
             return null;
         }
@@ -45,9 +40,8 @@ public abstract class AbstractJdbcTemplateDao<T extends AEntity, PK extends Seri
     public List<T> getAllRecords(int firstResult, int maxResults) {
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         try {
-            return jdbcTemplate.query(
-                    getReadAllRequest(), new Object[]{firstResult, maxResults}, mapperType.newInstance());
-        } catch (InstantiationException | IllegalAccessException | DataAccessException exception) {
+            return jdbcTemplate.query(getReadAllRequest(), new Object[]{firstResult, maxResults}, getMapper());
+        } catch (DataAccessException exception) {
             log.error("[{}]", exception.getMessage());
             return null;
         }
@@ -64,6 +58,8 @@ public abstract class AbstractJdbcTemplateDao<T extends AEntity, PK extends Seri
         log.debug("[entity: {}]", entity);
         jdbcTemplate.update(getDeleteRequest(), entity.getId());
     }
+
+    protected abstract RowMapper<T> getMapper();
 
     protected abstract String getSaveRequest(T entity);
 

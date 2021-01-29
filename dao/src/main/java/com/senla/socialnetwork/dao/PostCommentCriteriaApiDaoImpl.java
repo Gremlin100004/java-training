@@ -22,8 +22,8 @@ import java.util.List;
 
 @Repository
 @Slf4j
-public class PostCommentDaoImpl extends AbstractDao<PostComment, Long> implements PostCommentDao {
-    public PostCommentDaoImpl() {
+public class PostCommentCriteriaApiDaoImpl extends AbstractDao<PostComment, Long> implements PostCommentDao {
+    public PostCommentCriteriaApiDaoImpl() {
         setType(PostComment.class);
     }
 

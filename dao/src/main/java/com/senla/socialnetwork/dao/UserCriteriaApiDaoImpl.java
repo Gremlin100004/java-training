@@ -12,8 +12,8 @@ import javax.persistence.criteria.Root;
 
 @Repository
 @Slf4j
-public class UserDaoImpl extends AbstractDao<SystemUser, Long> implements UserDao {
-    public UserDaoImpl() {
+public class UserCriteriaApiDaoImpl extends AbstractDao<SystemUser, Long> implements UserDao {
+    public UserCriteriaApiDaoImpl() {
         setType(SystemUser.class);
     }
 

@@ -16,8 +16,8 @@ import javax.persistence.criteria.Root;
 
 @Repository
 @Slf4j
-public class LocationDaoImpl extends AbstractDao<Location, Long> implements LocationDao {
-    public LocationDaoImpl() {
+public class LocationCriteriaApiDaoImpl extends AbstractDao<Location, Long> implements LocationDao {
+    public LocationCriteriaApiDaoImpl() {
         setType(Location.class);
     }
 

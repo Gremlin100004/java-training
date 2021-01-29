@@ -21,8 +21,8 @@ import java.util.List;
 
 @Repository
 @Slf4j
-public class PrivateMessageDaoImpl extends AbstractDao<PrivateMessage, Long> implements PrivateMessageDao {
-    public PrivateMessageDaoImpl() {
+public class PrivateMessageCriteriaApiDaoImpl extends AbstractDao<PrivateMessage, Long> implements PrivateMessageDao {
+    public PrivateMessageCriteriaApiDaoImpl() {
         setType(PrivateMessage.class);
     }
 

@@ -4,15 +4,17 @@ import com.senla.socialnetwork.dao.mapper.CommunityRowMapperImpl;
 import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@Primary
+//@Primary
 @Slf4j
 public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Community, Long> implements CommunityDao {
     private static final String SQL_REQUEST_GET_COMMUNITIES = "SELECT communities.id, communities.creation_date, "
@@ -67,16 +69,14 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
     private static final String FIELD_ID = " WHERE ID=";
     private static final String STRING_HIGHLIGHT_CHARACTER = "'";
     private static final String SQL_REQUEST_DELETE_RECORD = "DELETE FROM communities WHERE ID=?";
-
-    public CommunityJdbcTemplateDaoImpl() {
-        setMapperType(CommunityRowMapperImpl.class);
-    }
+    @Autowired
+    private CommunityRowMapperImpl communityRowMapper;
 
     @Override
     public List<Community> getCommunities(int firstResult, int maxResults) {
         try {
             return jdbcTemplate.query(
-                SQL_REQUEST_GET_COMMUNITIES, new Object[]{firstResult, maxResults}, new CommunityRowMapperImpl());
+                SQL_REQUEST_GET_COMMUNITIES, new Object[]{firstResult, maxResults}, communityRowMapper);
         } catch (DataAccessException exception) {
             log.error("[{}]", exception.getMessage());
             return new ArrayList<>();
@@ -88,7 +88,7 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
         try {
             return jdbcTemplate.query(
                 SQL_REQUEST_GET_COMMUNITIES_BY_TYPE, new Object[]{
-                    communityType.toString(), firstResult, maxResults}, new CommunityRowMapperImpl());
+                    communityType.toString(), firstResult, maxResults}, communityRowMapper);
         } catch (DataAccessException exception) {
             log.error("[{}]", exception.getMessage());
             return new ArrayList<>();
@@ -100,7 +100,7 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
         try {
             return jdbcTemplate.query(
                 SQL_REQUEST_GET_COMMUNITIES_SORTIED_BY_NUMBER_OF_SUBSCRIBERS, new Object[]{
-                    firstResult, maxResults}, new CommunityRowMapperImpl());
+                    firstResult, maxResults}, communityRowMapper);
         } catch (DataAccessException exception) {
             log.error("[{}]", exception.getMessage());
             return new ArrayList<>();
@@ -111,7 +111,7 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
     public List<Community> getCommunitiesByEmail(String email, int firstResult, int maxResults) {
         try {
             return jdbcTemplate.query(
-                SQL_REQUEST_GET_COMMUNITIES_BY_EMAIL, new Object[]{email, firstResult, maxResults}, new CommunityRowMapperImpl());
+                SQL_REQUEST_GET_COMMUNITIES_BY_EMAIL, new Object[]{email, firstResult, maxResults}, communityRowMapper);
         } catch (DataAccessException exception) {
             log.error("[{}]", exception.getMessage());
             return new ArrayList<>();
@@ -123,7 +123,7 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
         try {
             return jdbcTemplate.query(
                 SQL_REQUEST_GET_SUBSCRIBED_COMMUNITIES_BY_EMAIL, new Object[]{
-                    email, firstResult, maxResults}, new CommunityRowMapperImpl());
+                    email, firstResult, maxResults}, communityRowMapper);
         } catch (DataAccessException exception) {
             log.error("[{}]", exception.getMessage());
             return new ArrayList<>();
@@ -134,11 +134,16 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
     public Community findByIdAndEmail(String email, Long communityId) {
         try {
             return jdbcTemplate.queryForObject(
-                SQL_REQUEST_FIND_BY_ID_AND_EMAIL, new Object[]{communityId, email}, new CommunityRowMapperImpl());
+                SQL_REQUEST_FIND_BY_ID_AND_EMAIL, new Object[]{communityId, email}, communityRowMapper);
         } catch (DataAccessException exception) {
             log.error("[{}]", exception.getMessage());
             return null;
         }
+    }
+
+    @Override
+    protected RowMapper<Community> getMapper() {
+        return communityRowMapper;
     }
 
     @Override

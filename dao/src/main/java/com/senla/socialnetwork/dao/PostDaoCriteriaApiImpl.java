@@ -21,8 +21,8 @@ import java.util.List;
 
 @Repository
 @Slf4j
-public class PostDaoImpl extends AbstractDao<Post, Long> implements PostDao {
-    public PostDaoImpl() {
+public class PostDaoCriteriaApiImpl extends AbstractDao<Post, Long> implements PostDao {
+    public PostDaoCriteriaApiImpl() {
         setType(Post.class);
     }
 

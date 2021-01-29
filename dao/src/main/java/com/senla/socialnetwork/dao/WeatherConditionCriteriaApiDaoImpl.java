@@ -13,8 +13,8 @@ import javax.persistence.criteria.Root;
 
 @Repository
 @Slf4j
-public class WeatherConditionDaoImpl extends AbstractDao<WeatherCondition, Long> implements WeatherConditionDao {
-    public WeatherConditionDaoImpl() {
+public class WeatherConditionCriteriaApiDaoImpl extends AbstractDao<WeatherCondition, Long> implements WeatherConditionDao {
+    public WeatherConditionCriteriaApiDaoImpl() {
         setType(WeatherCondition.class);
     }
 

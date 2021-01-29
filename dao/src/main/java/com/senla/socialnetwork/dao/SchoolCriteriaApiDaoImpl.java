@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Slf4j
-public class SchoolDaoImpl extends AbstractDao<School, Long> implements SchoolDao {
-    public SchoolDaoImpl() {
+public class SchoolCriteriaApiDaoImpl extends AbstractDao<School, Long> implements SchoolDao {
+    public SchoolCriteriaApiDaoImpl() {
         setType(School.class);
     }
 

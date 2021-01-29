@@ -18,6 +18,7 @@ import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Primary
 @NoArgsConstructor
 @Slf4j
 public class CommunityServiceImpl implements CommunityService {
@@ -150,7 +152,7 @@ public class CommunityServiceImpl implements CommunityService {
         log.debug("[messageId: {}]", communityId);
         Community community = communityDao.findByIdAndEmail(PrincipalUtil.getUserName(), communityId);
         if (community == null) {
-            throw new BusinessException("Error, there is no such message");
+            throw new BusinessException("Error, there is no such community");
         } else if (community.getIsDeleted()) {
             throw new BusinessException("Error, the message has already been deleted");
         }

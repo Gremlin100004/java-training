@@ -20,8 +20,8 @@ import java.util.List;
 
 @Repository
 @Slf4j
-public class PublicMessageDaoImpl extends AbstractDao<PublicMessage, Long> implements PublicMessageDao {
-    public PublicMessageDaoImpl() {
+public class PublicMessageCriteriaApiDaoImpl extends AbstractDao<PublicMessage, Long> implements PublicMessageDao {
+    public PublicMessageCriteriaApiDaoImpl() {
         setType(PublicMessage.class);
     }
 

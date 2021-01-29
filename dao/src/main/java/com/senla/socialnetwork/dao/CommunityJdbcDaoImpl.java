@@ -6,6 +6,7 @@ import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-
+//@Primary
 @Slf4j
 public class CommunityJdbcDaoImpl extends AbstractJdbcDao<Community, Long> implements CommunityDao {
     private static final String SQL_REQUEST_GET_COMMUNITIES = "SELECT communities.id, communities.creation_date, "
