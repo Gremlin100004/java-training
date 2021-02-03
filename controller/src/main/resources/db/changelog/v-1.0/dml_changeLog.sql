@@ -1,5 +1,3 @@
-ALTER SEQUENCE locations_id_seq RESTART WITH 1;
-
 INSERT INTO locations (country, city) VALUES
 ('Belarus', 'Minsk'),
 ('Belarus', 'Gomel'),
@@ -8,9 +6,6 @@ INSERT INTO locations (country, city) VALUES
 ('Belarus', 'Brest'),
 ('Belarus', 'Bobruisk'),
 ('Belarus', 'Baranovichi');
-
-ALTER SEQUENCE locations_id_seq RESTART WITH 8;
-ALTER SEQUENCE schools_id_seq RESTART WITH 1;
 
 INSERT INTO schools (name, location_id) VALUES
 ('Secondary school number 104', 1),
@@ -29,9 +24,6 @@ INSERT INTO schools (name, location_id) VALUES
 ('Secondary school number 12', 7),
 ('Secondary school number 22', 7);
 
-ALTER SEQUENCE schools_id_seq RESTART WITH 16;
-ALTER SEQUENCE universities_id_seq RESTART WITH 1;
-
 INSERT INTO universities (name, location_id) VALUES
 ('Academy of Management under the President of the Republic of Belarus', 1),
 ('Belarusian State University', 1),
@@ -44,9 +36,6 @@ INSERT INTO universities (name, location_id) VALUES
 ('Baranovichi State University', 5),
 ('Brest State Technical University', 5);
 
-ALTER SEQUENCE universities_id_seq RESTART WITH 11;
-ALTER SEQUENCE users_id_seq RESTART WITH 1;
-
 INSERT INTO users (email, password, role) VALUES
 ('user1@test.com', '$2a$10$ehU.2fP2fFtcFB9Fti8u2unzBrCIzQRvUei8r/ppUzxlBxSP86eH2', 'ROLE_USER'),
 ('user2@test.com', '$2a$10$ehU.2fP2fFtcFB9Fti8u2unzBrCIzQRvUei8r/ppUzxlBxSP86eH2', 'ROLE_USER'),
@@ -54,17 +43,11 @@ INSERT INTO users (email, password, role) VALUES
 ('user4@test.com', '$2a$10$ehU.2fP2fFtcFB9Fti8u2unzBrCIzQRvUei8r/ppUzxlBxSP86eH2', 'ROLE_USER'),
 ('admin@test.com', '$2a$10$ehU.2fP2fFtcFB9Fti8u2unzBrCIzQRvUei8r/ppUzxlBxSP86eH2', 'ROLE_ADMIN');
 
-ALTER SEQUENCE users_id_seq RESTART WITH 6;
-ALTER SEQUENCE user_profiles_id_seq RESTART WITH 1;
-
 INSERT INTO user_profiles (user_id, registration_date, date_of_birth, name, surname, telephone_number, location_id, school_id, school_graduation_year, university_id, university_graduation_year) VALUES
 (1, '2020-07-11 10:00', '1990-07-28', 'Petya', 'Buhmetovich', '+375(29)766-54-23', 1, 1, 2007, 1, 2013),
 (2, '2020-08-11 10:00', '2004-11-12', 'Artem', 'Karchevskiy', '+375(29)467-34-62', 2, 3, 2007, 3, 2013),
 (3, '2020-09-11 10:00', '1996-03-21', 'Kiril', 'Myagkov', '+375(29)123-41-67', 3, 5, 2007, 4, 2013),
 (4, '2019-02-05 09:53', '2001-03-11', 'Vasya', 'Potryopovich', '+375(33)567-34-09', 4, 7, 2010,5, 2015);
-
-ALTER SEQUENCE user_profiles_id_seq RESTART WITH 5;
-ALTER SEQUENCE public_messages_id_seq RESTART WITH 1;
 
 INSERT INTO public_messages (creation_date, author_id, title, content, is_deleted) VALUES
 ('2020-07-21 10:00', 1, 'I deleted everything.', 'I deleted everything. I’m done. For those who wanted me to “address it” I did. I’m sure u can find it reposted somewhere. But I don’t want this energy in my life or on my timeline. I’m too sensitive for this shit and I’m done.', false),
@@ -75,9 +58,6 @@ INSERT INTO public_messages (creation_date, author_id, title, content, is_delete
 ('2020-08-12 10:00', 3, 'Good morning everyone!', 'OMG IT''S #SUGGSUNDAY #SUGGSUNDAY #SUGGSUNDAY #SUGGSUNDAY #SUGGSUNDAY #SUGGSUNDAY #SUGGSUNDAY #SUGGSUNDAY #SUGGSUNDAY', false),
 ('2020-09-16 10:00', 4, 'Something extremely bogus is going on.', 'Was tested for covid four times today. Two tests came back negative, two came back positive. Same machine, same test, same nurse. Rapid antigen test from BD.', false),
 ('2020-07-18 10:00', 4, 'It''s just a shout out but for a good cause promoting social inclusion, job opportunities and leadership development for children and adults with intellectual and developmental disabilities (IDD). Check it!', 'The Best Buddies Friendship Jam Silent Auction just went live! https://e.givesmart.com/events/iCc/i/', false);
-
-ALTER SEQUENCE public_messages_id_seq RESTART WITH 9;
-ALTER SEQUENCE public_message_comments_id_seq RESTART WITH 1;
 
 INSERT INTO public_message_comments (creation_date, author_id, public_message_id, content, is_deleted) VALUES
 ('2020-07-21 11:23', 1, 1, 'I know I’m a couple months late but everyone saying Shane the same person he was when he started YouTube, can you see his transformed into this caring youtuber, yeah he made funny sketches which may offend some people but at the time he was posting it to make people laugh', false),
@@ -97,9 +77,6 @@ INSERT INTO public_message_comments (creation_date, author_id, public_message_id
 ('2020-07-18 07:23', 1, 8, 'Nice blue hat Ryan.', false),
 ('2020-07-18 08:34', 2, 8, 'do I drop the money or no...', false);
 
-ALTER SEQUENCE public_message_comments_id_seq RESTART WITH 16;
-ALTER SEQUENCE private_messages_id_seq RESTART WITH 1;
-
 INSERT INTO private_messages (departure_date, sender_id, recipient_id, content, is_read, is_deleted) VALUES
 ('2020-11-11 12:00', 2, 1, 'Your great aunt just passed away. LOL', true, false),
 ('2020-11-11 12:01', 1, 2, 'Why is that funny?', false, false),
@@ -116,17 +93,11 @@ INSERT INTO private_messages (departure_date, sender_id, recipient_id, content, 
 ('2020-10-28 07:04', 4, 2, 'How is your family??', true, false),
 ('2020-10-28 07:05', 2, 4, 'They are good) I really glad to hear from you! but i must go to sleep, because i get up very early. good night sweety!', true, false);
 
-ALTER SEQUENCE private_messages_id_seq RESTART WITH 15;
-ALTER SEQUENCE communities_id_seq RESTART WITH 1;
-
 INSERT INTO communities (creation_date, author_id, type, title, information, is_deleted) VALUES
 ('2020-10-01 12:00', 1, 'MEDICINE', 'COVID-19: Updates for the US', 'This page is a timeline of Tweets with the latest information and advice from the CDC, HHS, NIH and public health authorities across the country. For more, visit https://https://cdc.gov/coronavirus.', false),
 ('2020-10-02 12:00', 2, 'SPORT', 'BBC Sport', 'Official http://bbc.co.uk/sport account. Also follow @bbcmotd and @bbctms.', false),
 ('2020-10-03 12:00', 3, 'AUTO', 'McLaren Automotive', 'Born and raised on the track, we use racing technology and expertise to create the most advanced performance cars in the world.', false),
 ('2020-10-04 12:00', 4, 'MUSIC', 'Lindsey Stirling', 'Fan community of violinist Lindsey Stirling.', false);
-
-ALTER SEQUENCE communities_id_seq RESTART WITH 5;
-ALTER SEQUENCE posts_id_seq RESTART WITH 1;
 
 INSERT INTO posts (creation_date, title, content, communities_id, is_deleted) VALUES
 ('2020-10-01 20:11', 'El Paso County sees drop in COVID-19 hospitalizations', 'COVID hospitalizations in El Paso have been going down for about 2 weeks now. The number of people in El Paso testing positive for COVID has been declining also. The positivity rate for all of Texas has declined for 14 consecutive days.', 1, false),
@@ -145,9 +116,6 @@ INSERT INTO posts (creation_date, title, content, communities_id, is_deleted) VA
 ('2020-10-14 02:48', 'So excited to share that the song @dariusrucker and I will perform on #CMAChristmas is now streaming!', 'Listen to #WhatChildIsThis here: https://found.ee/LS_WhatChildIsThis', 4, false),
 ('2020-10-15 11:58', 'New merch just in time for my Home for the Holidays Special! Use code ''HOMEFORTHEHOLIDAYS'' for 15% off your order and add a plush blanket for only $30 when you spend $75!', 'Check out all the new items here: https://found.ee/LSmerch', 4, false),
 ('2020-10-16 03:23', 'Stay In Touch With The People Who Matter Most To You', 'Gratitude post number 4: I’m grateful for the @marcopoloapp. I’m grateful that my friends and family can have continuous group conversations to stay connected even through distance. It’s really helped my mental health. #givethanks', 4, false);
-
-ALTER SEQUENCE posts_id_seq RESTART WITH 17;
-ALTER SEQUENCE post_comments_id_seq RESTART WITH 1;
 
 INSERT INTO post_comments (creation_date, author_id, post_id, content, is_deleted) VALUES
 ('2020-10-02 09:23', 1, 1, 'Do lockdowns, we need them.', false),
@@ -182,8 +150,6 @@ INSERT INTO post_comments (creation_date, author_id, post_id, content, is_delete
 ('2020-10-16 06:23', 1, 15, 'I love the blankets. I have the red and blue from the last two years. Time to do a little shopping for some friends.', false),
 ('2020-10-17 06:23', 2, 16, 'Thank you for sharing this app and for the last live stream, it was so much fun and sweet', false),
 ('2020-10-17 11:23', 3, 16, 'I''m happy to hear you''re able to stay connected with your friends and family. That app is pretty cool.', false);
-
-ALTER SEQUENCE post_comments_id_seq RESTART WITH 33;
 
 INSERT INTO friends VALUES
 (1, 3), (1, 4), (2, 4);

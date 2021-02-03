@@ -6,7 +6,7 @@
 
     <changeSet author="Hrinkov" id="1">
         <createTable tableName="locations">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_locations" primaryKey="true"/>
             </column>
             <column name="country" type="VARCHAR(45)">
@@ -20,7 +20,7 @@
 
     <changeSet author="Hrinkov" id="2">
         <createTable tableName="schools">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_schools" primaryKey="true"/>
             </column>
             <column name="name" type="VARCHAR(80)">
@@ -34,7 +34,7 @@
 
     <changeSet author="Hrinkov" id="3">
         <createTable tableName="universities">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_universities" primaryKey="true"/>
             </column>
             <column name="name" type="VARCHAR(80)">
@@ -48,7 +48,7 @@
 
     <changeSet author="Hrinkov" id="4">
         <createTable tableName="users">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_users" primaryKey="true"/>
             </column>
             <column name="email" type="VARCHAR(50)">
@@ -65,7 +65,7 @@
 
     <changeSet author="Hrinkov" id="5">
         <createTable tableName="user_profiles">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_user_profiles" primaryKey="true"/>
             </column>
             <column name="user_id" type="BIGINT">
@@ -104,7 +104,7 @@
 
     <changeSet author="Hrinkov" id="6">
         <createTable tableName="public_messages">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_public_messages" primaryKey="true"/>
             </column>
             <column name="creation_date" type="DATETIME">
@@ -125,7 +125,7 @@
 
     <changeSet author="Hrinkov" id="7">
         <createTable tableName="public_message_comments">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_public_message_comments" primaryKey="true"/>
             </column>
             <column name="creation_date" type="DATETIME">
@@ -146,7 +146,7 @@
 
     <changeSet author="Hrinkov" id="8">
         <createTable tableName="private_messages">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_messages" primaryKey="true"/>
             </column>
             <column name="departure_date" type="DATETIME">
@@ -168,7 +168,7 @@
 
     <changeSet author="Hrinkov" id="9">
         <createTable tableName="communities">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_communities" primaryKey="true"/>
             </column>
             <column name="creation_date" type="DATETIME">
@@ -192,7 +192,7 @@
 
     <changeSet author="Hrinkov" id="10">
         <createTable tableName="posts">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_posts" primaryKey="true"/>
             </column>
             <column name="creation_date" type="DATETIME">
@@ -213,7 +213,7 @@
 
     <changeSet author="Hrinkov" id="11">
         <createTable tableName="post_comments">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_post_comments" primaryKey="true"/>
             </column>
             <column name="creation_date" type="DATETIME">
@@ -234,7 +234,7 @@
 
     <changeSet author="Hrinkov" id="12">
         <createTable tableName="weather_conditions">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="SERIAL" autoIncrement="true">
                 <constraints nullable="false" primaryKeyName="pk_weather_conditions" primaryKey="true"/>
             </column>
             <column name="location_id" type="BIGINT">
