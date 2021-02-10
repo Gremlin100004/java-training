@@ -41,20 +41,20 @@ public class UserProfile extends AEntity {
     private String surname;
     @Column(name = "telephone_number")
     private String telephone_number;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
     private Location location;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id")
     private School school;
     @Column(name = "school_graduation_year")
     private Integer schoolGraduationYear;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "university_id")
     private University university;
     @Column(name = "university_graduation_year")
     private Integer universityGraduationYear;
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private List<PublicMessage> publicMessages = new ArrayList<>();
     @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
     private List<PrivateMessage> senderPrivateMessage = new ArrayList<>();

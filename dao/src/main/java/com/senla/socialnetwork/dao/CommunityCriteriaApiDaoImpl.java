@@ -8,33 +8,44 @@ import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.domain.UserProfile_;
 import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import java.util.List;
 
+@Primary
 @Repository
 @Slf4j
 public class CommunityCriteriaApiDaoImpl extends AbstractDao<Community, Long> implements CommunityDao {
+    private static final String ATTRIBUTE_NAME = "javax.persistence.fetchgraph";
+    private static final String GRAPH_NAME = "graph.Community";
+
     public CommunityCriteriaApiDaoImpl() {
         setType(Community.class);
     }
 
     @Override
     public List<Community> getCommunities(final int firstResult, final int maxResults) {
+        log.debug("[getCommunities]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         try {
+            EntityGraph<?> entityGraph = entityManager.getEntityGraph(GRAPH_NAME);
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
             criteriaQuery.select(communityRoot);
             criteriaQuery.where(criteriaBuilder.equal(communityRoot.get(Community_.isDeleted), false));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setHint(ATTRIBUTE_NAME, entityGraph);
             typedQuery.setFirstResult(firstResult);
             if (maxResults != 0) {
                 typedQuery.setMaxResults(maxResults);
@@ -50,8 +61,10 @@ public class CommunityCriteriaApiDaoImpl extends AbstractDao<Community, Long> im
     public List<Community> getCommunitiesByType(final CommunityType communityType,
                                                 final int firstResult,
                                                 final int maxResults) {
+        log.debug("[getCommunitiesByType]");
         log.debug("[communityType: {}, firstResult: {}, maxResults: {}]", communityType, firstResult, maxResults);
         try {
+            EntityGraph<?> entityGraph = entityManager.getEntityGraph(GRAPH_NAME);
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
@@ -61,6 +74,7 @@ public class CommunityCriteriaApiDaoImpl extends AbstractDao<Community, Long> im
                     Community_.isDeleted), false)));
             criteriaQuery.orderBy(criteriaBuilder.desc(communityRoot.get(Community_.creationDate)));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setHint(ATTRIBUTE_NAME, entityGraph);
             typedQuery.setFirstResult(firstResult);
             if (maxResults != 0) {
                 typedQuery.setMaxResults(maxResults);
@@ -74,8 +88,10 @@ public class CommunityCriteriaApiDaoImpl extends AbstractDao<Community, Long> im
 
     @Override
     public List<Community> getCommunitiesSortiedByNumberOfSubscribers(final int firstResult, final int maxResults) {
+        log.debug("[getCommunitiesSortiedByNumberOfSubscribers]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         try {
+            EntityGraph<?> entityGraph = entityManager.getEntityGraph(GRAPH_NAME);
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
@@ -83,6 +99,7 @@ public class CommunityCriteriaApiDaoImpl extends AbstractDao<Community, Long> im
             criteriaQuery.where(criteriaBuilder.equal(communityRoot.get(Community_.isDeleted), false));
             criteriaQuery.orderBy(criteriaBuilder.desc(criteriaBuilder.size(communityRoot.get(Community_.subscribers))));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setHint(ATTRIBUTE_NAME, entityGraph);
             typedQuery.setFirstResult(firstResult);
             if (maxResults != 0) {
                 typedQuery.setMaxResults(maxResults);
@@ -96,8 +113,12 @@ public class CommunityCriteriaApiDaoImpl extends AbstractDao<Community, Long> im
 
     @Override
     public List<Community> getCommunitiesByEmail(final String email, final int firstResult, final int maxResults) {
+        log.debug("[getCommunitiesByEmail]");
         log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
+//            EntityGraph<?> entityGraph = entityManager.getEntityGraph(GRAPH_NAME);
+            EntityGraph<Community> communityEntityGraph = entityManager.createEntityGraph(Community.class);
+            communityEntityGraph.addAttributeNodes(Community_.AUTHOR);
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
@@ -110,6 +131,7 @@ public class CommunityCriteriaApiDaoImpl extends AbstractDao<Community, Long> im
             criteriaQuery.orderBy(criteriaBuilder.desc(communityRoot.get(Community_.creationDate)));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
+            typedQuery.setHint(ATTRIBUTE_NAME, communityEntityGraph);
             if (maxResults != 0) {
                 typedQuery.setMaxResults(maxResults);
             }
@@ -124,18 +146,26 @@ public class CommunityCriteriaApiDaoImpl extends AbstractDao<Community, Long> im
     public List<Community> getSubscribedCommunitiesByEmail(final String email,
                                                            final int firstResult,
                                                            final int maxResults) {
+        log.debug("[getSubscribedCommunitiesByEmail]");
         log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
         try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
-            Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
+            Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
+            Root<UserProfile> userProfileRoot = subquery.from(UserProfile.class);
+            Join<UserProfile, Community> userProfileUserProfileJoin = userProfileRoot.join(
+                UserProfile_.communitiesSubscribedTo);
             Join<UserProfile, SystemUser> userProfileSystemUserJoin = userProfileRoot.join(UserProfile_.systemUser);
+            subquery.select(userProfileUserProfileJoin.get(Community_.id));
             Join<UserProfile, Community> userProfileCommunityJoin = userProfileRoot.join(
                 UserProfile_.communitiesSubscribedTo);
-            criteriaQuery.select(userProfileRoot.get(UserProfile_.COMMUNITIES_SUBSCRIBED_TO)).distinct(true);
-            criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(userProfileSystemUserJoin.get(
+            subquery.where(criteriaBuilder.and(criteriaBuilder.equal(userProfileSystemUserJoin.get(
                 SystemUser_.email), email), criteriaBuilder.equal(userProfileCommunityJoin.get(
                     Community_.isDeleted), false)));
+            Root<Community> communityRoot = criteriaQuery.from(Community.class);
+            communityRoot.fetch(Community_.AUTHOR, JoinType.INNER);
+            criteriaQuery.select(communityRoot).distinct(true);
+            criteriaQuery.where(communityRoot.get(Community_.id).in(subquery));
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
             if (maxResults != 0) {
@@ -150,8 +180,10 @@ public class CommunityCriteriaApiDaoImpl extends AbstractDao<Community, Long> im
 
     @Override
     public Community findByIdAndEmail(final String email, final Long communityId) {
+        log.debug("[findByIdAndEmail]");
         log.debug("[email: {}, messageId: {}]", email, communityId);
         try {
+            EntityGraph<?> entityGraph = entityManager.getEntityGraph(GRAPH_NAME);
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
@@ -162,7 +194,9 @@ public class CommunityCriteriaApiDaoImpl extends AbstractDao<Community, Long> im
             criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(
                 userProfileSystemUserJoin.get(SystemUser_.email), email)), criteriaBuilder.equal(
                     communityRoot.get(Community_.id), communityId));
-            return entityManager.createQuery(criteriaQuery).getSingleResult();
+            TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setHint(ATTRIBUTE_NAME, entityGraph);
+            return typedQuery.getSingleResult();
         } catch (NoResultException exception) {
             log.error("[{}]", exception.getMessage());
             return null;

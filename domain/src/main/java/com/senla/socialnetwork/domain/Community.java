@@ -14,6 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "communities")
+@NamedEntityGraph(name = "graph.Community",
+    attributeNodes = @NamedAttributeNode("author"))
 @Getter
 @Setter
 @ToString(exclude = {"posts", "subscribers"})
@@ -41,7 +45,7 @@ public class Community extends AEntity {
     private String information;
     @Column(name = "is_deleted")
     private Boolean isDeleted;
-    @OneToMany(mappedBy = "community")
+    @OneToMany(mappedBy = "community", fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
     @ManyToMany(mappedBy = "communitiesSubscribedTo", fetch = FetchType.LAZY)
     private List<UserProfile> subscribers;

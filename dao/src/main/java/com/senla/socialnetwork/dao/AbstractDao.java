@@ -27,6 +27,7 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public T saveRecord(final T entity) {
+        log.debug("[saveRecord]");
         log.debug("[entity: {}]", entity);
         entityManager.persist(entity);
         return entity;
@@ -34,12 +35,14 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public T findById(final PK id) {
+        log.debug("[findById]");
         log.debug("[type: {}, id: {}]", type, id);
         return entityManager.find(type, id);
     }
 
     @Override
     public List<T> getAllRecords(final int firstResult, final int maxResults) {
+        log.debug("[getAllRecords]");
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(type);
@@ -55,12 +58,14 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public void updateRecord(final T entity) {
+        log.debug("[updateRecord]");
         log.debug("[entity: {}]", entity);
         entityManager.merge(entity);
     }
 
     @Override
     public void deleteRecord(T entity) {
+        log.debug("[deleteRecord]");
         log.debug("[entity: {}]", entity);
         entityManager.remove(entity);
     }
