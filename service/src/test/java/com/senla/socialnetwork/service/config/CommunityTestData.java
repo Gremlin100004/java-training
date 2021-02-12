@@ -22,10 +22,6 @@ public class CommunityTestData {
         return RIGHT_NUMBER_COMMUNITIES;
     }
 
-    public static String getCommunityTittle() {
-        return COMMUNITY_TITTLE;
-    }
-
     public static Community getTestCommunity() {
         Community community = new Community();
         community.setId(COMMUNITY_ID);

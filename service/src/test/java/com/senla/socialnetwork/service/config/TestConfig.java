@@ -12,6 +12,7 @@ import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.dao.WeatherConditionDao;
+import com.senla.socialnetwork.dao.connection.DatabaseConnection;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.mockito.Mockito;
@@ -109,5 +110,9 @@ public class TestConfig {
         return Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
+    @Bean
+    DatabaseConnection databaseConnection() {
+        return Mockito.mock(DatabaseConnection.class);
+    }
 
 }

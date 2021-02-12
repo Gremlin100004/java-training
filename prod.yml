@@ -1,17 +1,15 @@
 version: '3.3'
 services:
   db:
-    image: mysql:8.0
+    image: postgres:13.1
     environment:
-      - MYSQL_ROOT_PASSWORD=RootPassword
-      - MYSQL_DATABASE=hrinkov_social_network
-      - MYSQL_USER=TestUser
-      - MYSQL_PASSWORD=TestPassword
+      - POSTGRES_DB=hrinkov_social_network
+      - POSTGRES_USER=TestUser
+      - POSTGRES_PASSWORD=TestPassword
     ports:
-      - 3306:3306
-    volumes:
-      - ./database/mysql:/var/lib/mysql
-      - ./database/script/prod/init:/docker-entrypoint-initdb.d
+      - 5432:5432
+        volumes:
+          - ./database/postgres:/var/lib/postgresql/data
     cap_add:
       - SYS_NICE
   web:
