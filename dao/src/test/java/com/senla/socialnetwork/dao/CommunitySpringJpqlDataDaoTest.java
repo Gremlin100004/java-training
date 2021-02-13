@@ -22,17 +22,17 @@ import java.util.Optional;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 @Slf4j
-public class SpringDataCommunityDaoTest {
+public class CommunitySpringJpqlDataDaoTest {
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 10;
     private static final String END_OF_TEST = "********* ****************************************";
     @Autowired
-    private CommunitySpringJpqlDataDao springDataCommunityDao;
+    private CommunitySpringJpqlDataDao communitySpringJpqlDataDao;
 
     @Test
     void CommunityDao_getCommunities() {
         log.info("********* Get communities *********");
-        List<Community> resultCommunities = springDataCommunityDao.findByIsDeletedFalse(
+        List<Community> resultCommunities = communitySpringJpqlDataDao.findByIsDeletedFalse(
             PageRequest.of(FIRST_RESULT, MAX_RESULTS));
         resultCommunities.forEach(community -> log.info(community.toString()));
         log.info(END_OF_TEST);
@@ -41,7 +41,7 @@ public class SpringDataCommunityDaoTest {
     @Test
     void CommunityDao_getCommunitiesByType() {
         log.info("********* Get communities by type *********");
-        List<Community> resultCommunities = springDataCommunityDao.getCommunitiesByType(
+        List<Community> resultCommunities = communitySpringJpqlDataDao.getCommunitiesByType(
             CommunityType.SPORT, PageRequest.of(FIRST_RESULT, MAX_RESULTS));
         resultCommunities.forEach(community -> log.info(community.toString()));
         log.info(END_OF_TEST);
@@ -50,7 +50,7 @@ public class SpringDataCommunityDaoTest {
     @Test
     void CommunityDao_getCommunitiesSortiedByNumberOfSubscribers() {
         log.info("********* Get communities sortied by number of subscribers *********");
-        List<Community> resultCommunities = springDataCommunityDao.OrderByCountBySubscribers(
+        List<Community> resultCommunities = communitySpringJpqlDataDao.OrderByCountBySubscribers(
             PageRequest.of(FIRST_RESULT, MAX_RESULTS));
         resultCommunities.forEach(community -> log.info(community.toString()));
         log.info(END_OF_TEST);
@@ -59,7 +59,7 @@ public class SpringDataCommunityDaoTest {
     @Test
     void CommunityDao_getCommunitiesByEmail() {
         log.info("********* Get communities by email *********");
-        List<Community> resultCommunities = springDataCommunityDao.getCommunitiesByEmail(
+        List<Community> resultCommunities = communitySpringJpqlDataDao.getCommunitiesByEmail(
             UserProfileTestData.getUserProfileEmail(), PageRequest.of(FIRST_RESULT, MAX_RESULTS));
         resultCommunities.forEach(community -> log.info(community.toString()));
         log.info(END_OF_TEST);
@@ -68,7 +68,7 @@ public class SpringDataCommunityDaoTest {
     @Test
     void CommunityDao_getSubscribedCommunitiesByEmail() {
         log.info("********* Get communities by email *********");
-        List<Community> resultCommunities = springDataCommunityDao.getSubscribedCommunitiesByEmail(
+        List<Community> resultCommunities = communitySpringJpqlDataDao.getSubscribedCommunitiesByEmail(
             UserProfileTestData.getUserProfileEmail(), PageRequest.of(FIRST_RESULT, MAX_RESULTS));
         resultCommunities.forEach(community -> log.info(community.toString()));
         log.info(END_OF_TEST);
@@ -77,7 +77,7 @@ public class SpringDataCommunityDaoTest {
     @Test
     void CommunityDao_findByIdAndEmail() {
         log.info("********* Find by id and email *********");
-        Optional<Community> community = springDataCommunityDao.findByIdAndEmail(
+        Optional<Community> community = communitySpringJpqlDataDao.findByIdAndEmail(
             CommunityTestData.getCommunityId(), UserProfileTestData.getUserProfileEmail());
         log.info(community.toString());
         log.info(END_OF_TEST);
@@ -88,17 +88,17 @@ public class SpringDataCommunityDaoTest {
         log.info("********* Save community *********");
         Community testCommunity = CommunityTestData.getTestCommunity();
         testCommunity.setId(null);
-        springDataCommunityDao.save(testCommunity);
+        communitySpringJpqlDataDao.save(testCommunity);
         log.info(testCommunity.getId().toString());
         log.info("********* Delete record *********");
-        springDataCommunityDao.delete(testCommunity);
+        communitySpringJpqlDataDao.delete(testCommunity);
         log.info(END_OF_TEST);
     }
 
     @Test
     void CommunityDao_findById() {
         log.info("********* Find by id *********");
-        Optional<Community> community = springDataCommunityDao.findById(CommunityTestData.getCommunityId());
+        Optional<Community> community = communitySpringJpqlDataDao.findById(CommunityTestData.getCommunityId());
         log.info(community.toString());
         log.info(END_OF_TEST);
     }
@@ -106,7 +106,8 @@ public class SpringDataCommunityDaoTest {
     @Test
     void CommunityDao_findAll() {
         log.info("********* Find all records *********");
-        Page<Community> resultCommunities = springDataCommunityDao.findAll(PageRequest.of(FIRST_RESULT, MAX_RESULTS));
+        Page<Community> resultCommunities = communitySpringJpqlDataDao
+            .findAll(PageRequest.of(FIRST_RESULT, MAX_RESULTS));
         resultCommunities.forEach(community -> log.info(community.toString()));
         log.info(END_OF_TEST);
     }
