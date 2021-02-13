@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -19,6 +20,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan("com.senla.socialnetwork.dao")
 @PropertySource("classpath:application.properties")
+@EnableJpaRepositories("com.senla.socialnetwork.dao")
 public class TestConfig {
     private static final String CHANGELOG_PATH = "classpath:db/changelog/changeLog-master.xml";
     private static final String DATA_SOURCE_PACKAGE = "socialnetwork.datasource.package";

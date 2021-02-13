@@ -59,6 +59,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.version>5.2.8.RELEASE</spring.version>
         <spring-security.version>5.4.1</spring-security.version>
+        <spring-data.version>2.3.6.RELEASE</spring-data.version>
         <maven-checkstyle.version>3.1.1</maven-checkstyle.version>
         <maven-surefire.version>3.0.0-M5</maven-surefire.version>
         <maven-compiler.version>3.6.1</maven-compiler.version>
