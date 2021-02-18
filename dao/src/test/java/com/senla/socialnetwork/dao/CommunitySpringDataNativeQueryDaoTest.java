@@ -22,12 +22,12 @@ import java.util.Optional;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 @Slf4j
-public class CommunitySpringNativeQueryDataDaoTest {
+public class CommunitySpringDataNativeQueryDaoTest {
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 10;
     private static final String END_OF_TEST = "********* ****************************************";
     @Autowired
-    private CommunitySpringNativeQueryDataDao communitySpringNativeQueryDataDao;
+    private CommunitySpringDataNativeQueryDao communitySpringNativeQueryDataDao;
 
     @Test
     void CommunityDao_getCommunities() {
