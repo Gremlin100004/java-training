@@ -16,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
@@ -24,16 +25,26 @@ import java.util.List;
 
 @Entity
 @Table(name = "communities")
-@NamedEntityGraph(name = "graph.Community",
-    attributeNodes = @NamedAttributeNode("author"))
+@NamedEntityGraph(
+    name = "graph.Community",
+    attributeNodes = @NamedAttributeNode(value = "author", subgraph = "subgraph.author"),
+    subgraphs = {
+        @NamedSubgraph(name = "subgraph.author",
+            attributeNodes = @NamedAttributeNode(value = "school", subgraph = "subgraph.school")),
+        @NamedSubgraph(name = "subgraph.author",
+            attributeNodes = @NamedAttributeNode(value = "location", subgraph = "subgraph.location")),
+        @NamedSubgraph(name = "subgraph.author",
+            attributeNodes = @NamedAttributeNode(value = "university", subgraph = "subgraph.university")) })
+
 @Getter
 @Setter
 @ToString(exclude = {"posts", "subscribers"})
 @NoArgsConstructor
+
 public class Community extends AEntity {
     @Column(name = "creation_date", nullable = false)
     private Date creationDate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private UserProfile author;
     @Enumerated(EnumType.STRING)

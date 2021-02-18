@@ -63,7 +63,7 @@ public class CommunityDaoTest {
 
     @Test
     void CommunityDao_getSubscribedCommunitiesByEmail() {
-        log.info("********* Get communities by email *********");
+        log.info("********* Get subscribe communities by email *********");
         List<Community> resultCommunities = communityDao.getSubscribedCommunitiesByEmail(
             UserProfileTestData.getUserProfileEmail(), FIRST_RESULT, MAX_RESULTS);
         resultCommunities.forEach(community -> log.info(community.toString()));

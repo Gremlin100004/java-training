@@ -12,6 +12,9 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -21,6 +24,18 @@ import java.util.List;
 
 @Entity
 @Table(name = "user_profiles")
+@NamedEntityGraph(
+    name = "graph.UserProfile.communitiesSubscribedTo",
+    attributeNodes = @NamedAttributeNode(value = "communitiesSubscribedTo", subgraph = "subgraph.communitiesSubscribedTo"),
+    subgraphs = {
+        @NamedSubgraph(name = "subgraph.communitiesSubscribedTo",
+            attributeNodes = @NamedAttributeNode(value = "author", subgraph = "subgraph.author")),
+        @NamedSubgraph(name = "subgraph.author",
+            attributeNodes = @NamedAttributeNode(value = "school", subgraph = "subgraph.school")),
+        @NamedSubgraph(name = "subgraph.author",
+            attributeNodes = @NamedAttributeNode(value = "location", subgraph = "subgraph.location")),
+        @NamedSubgraph(name = "subgraph.author",
+            attributeNodes = @NamedAttributeNode(value = "university", subgraph = "subgraph.university")) })
 @Getter
 @Setter
 @ToString(exclude = {"systemUser", "publicMessages", "senderPrivateMessage", "recipientPrivateMessage",
