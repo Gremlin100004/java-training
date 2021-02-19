@@ -16,6 +16,7 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractJdbcDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, PK> {
     protected static final int STATEMENT_WILDCARD_FIRST_INDEX = 1;
+    protected static final int ARRAY_FIRST_INDEX = 0;
     @Autowired
     protected DatabaseConnection databaseConnection;
 
@@ -38,7 +39,7 @@ public abstract class AbstractJdbcDao<T extends AEntity, PK extends Serializable
         log.debug("[id: {}]", id);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(getFindByIdRequest())) {
             statement.setObject(STATEMENT_WILDCARD_FIRST_INDEX, id);
-            return parseResultSet(statement.executeQuery());
+            return parseResultSet(statement.executeQuery()).get(ARRAY_FIRST_INDEX);
         } catch (SQLException exception) {
             log.error("[{}]", exception.getMessage());
             return null;
@@ -49,7 +50,7 @@ public abstract class AbstractJdbcDao<T extends AEntity, PK extends Serializable
     public List<T> getAllRecords(final int firstResult, final int maxResults) {
         log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(getReadAllRequest())) {
-            return parseResultSetReturnList(statement.executeQuery());
+            return parseResultSet(statement.executeQuery());
         } catch (SQLException exception) {
             log.error("[{}]", exception.getMessage());
             return new ArrayList<>();
@@ -84,9 +85,7 @@ public abstract class AbstractJdbcDao<T extends AEntity, PK extends Serializable
 
     protected abstract void fillStatementUpdate(PreparedStatement statement, T object);
 
-    protected abstract List<T> parseResultSetReturnList(ResultSet resultSet) throws SQLException;
-
-    protected abstract T parseResultSet(ResultSet resultSet) throws SQLException;
+    protected abstract List<T> parseResultSet(ResultSet resultSet) throws SQLException;
 
     protected abstract String getCreateRequest();
 
