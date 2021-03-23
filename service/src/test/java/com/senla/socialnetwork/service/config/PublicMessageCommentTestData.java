@@ -1,8 +1,8 @@
 package com.senla.socialnetwork.service.config;
 
-import com.senla.socialnetwork.domain.PublicMessageComment;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
+import com.senla.socialnetwork.model.PublicMessageComment;
 
 import java.util.ArrayList;
 import java.util.Date;

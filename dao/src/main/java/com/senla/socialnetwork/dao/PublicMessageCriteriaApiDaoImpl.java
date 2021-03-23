@@ -1,15 +1,13 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.PublicMessage;
-import com.senla.socialnetwork.domain.PublicMessage_;
-import com.senla.socialnetwork.domain.SystemUser;
-import com.senla.socialnetwork.domain.SystemUser_;
-import com.senla.socialnetwork.domain.UserProfile;
-import com.senla.socialnetwork.domain.UserProfile_;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.socialnetwork.model.PublicMessage;
+import com.senla.socialnetwork.model.PublicMessage_;
+import com.senla.socialnetwork.model.SystemUser;
+import com.senla.socialnetwork.model.SystemUser_;
+import com.senla.socialnetwork.model.UserProfile;
+import com.senla.socialnetwork.model.UserProfile_;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -19,7 +17,6 @@ import javax.persistence.criteria.Subquery;
 import java.util.List;
 
 @Repository
-@Slf4j
 public class PublicMessageCriteriaApiDaoImpl extends AbstractDao<PublicMessage, Long> implements PublicMessageDao {
     public PublicMessageCriteriaApiDaoImpl() {
         setType(PublicMessage.class);
@@ -27,8 +24,6 @@ public class PublicMessageCriteriaApiDaoImpl extends AbstractDao<PublicMessage, 
 
     @Override
     public List<PublicMessage> getFriendsMessages(final String email, final int firstResult, final int maxResults) {
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessage> criteriaQuery = criteriaBuilder.createQuery(PublicMessage.class);
             Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
@@ -50,16 +45,10 @@ public class PublicMessageCriteriaApiDaoImpl extends AbstractDao<PublicMessage, 
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
-    public List<PublicMessage> getByEmail(final String email, final int firstResult, final int maxResults) {
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        try {
+    public List<PublicMessage> findByEmail(final String email, final int firstResult, final int maxResults) {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessage> criteriaQuery = criteriaBuilder.createQuery(PublicMessage.class);
             Root<PublicMessage> publicMessageRoot = criteriaQuery.from(PublicMessage.class);
@@ -76,16 +65,10 @@ public class PublicMessageCriteriaApiDaoImpl extends AbstractDao<PublicMessage, 
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public PublicMessage findByIdAndEmail(final String email, final Long messageId) {
-        log.debug("[email: {}, messageId: {}]", email, messageId);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessage> criteriaQuery = criteriaBuilder.createQuery(PublicMessage.class);
             Root<PublicMessage> publicMessageRoot = criteriaQuery.from(PublicMessage.class);
@@ -97,10 +80,6 @@ public class PublicMessageCriteriaApiDaoImpl extends AbstractDao<PublicMessage, 
                 userProfileSystemUserJoin.get(SystemUser_.email), email)), criteriaBuilder.equal(
                     publicMessageRoot.get(PublicMessage_.id), messageId));
             return entityManager.createQuery(criteriaQuery).getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
 }

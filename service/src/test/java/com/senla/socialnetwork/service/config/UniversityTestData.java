@@ -1,8 +1,8 @@
 package com.senla.socialnetwork.service.config;
 
-import com.senla.socialnetwork.domain.University;
 import com.senla.socialnetwork.dto.UniversityDto;
 import com.senla.socialnetwork.dto.UniversityForCreateDto;
+import com.senla.socialnetwork.model.University;
 
 import java.util.ArrayList;
 import java.util.List;

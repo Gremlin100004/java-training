@@ -1,19 +1,19 @@
 package com.senla.socialnetwork.service;
 
+import com.senla.socialnetwork.aspect.ServiceLog;
 import com.senla.socialnetwork.dao.UserDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
-import com.senla.socialnetwork.domain.SystemUser;
-import com.senla.socialnetwork.domain.UserProfile;
-import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
+import com.senla.socialnetwork.model.UserProfile;
+import com.senla.socialnetwork.model.SystemUser;
+import com.senla.socialnetwork.model.enumaration.RoleName;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.mapper.UserMapper;
 import com.senla.socialnetwork.service.security.UserPrincipal;
 import com.senla.socialnetwork.service.util.JwtUtil;
 import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,8 +27,8 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@ServiceLog
 @NoArgsConstructor
-@Slf4j
 public class UserServiceImpl implements UserService {
     private static final int LIST_SIZE = 2;
     private static final int ELEMENT_NUMBER_OF_THE_OBJECT_WITH_OLD_DATA = 0;
@@ -41,13 +41,12 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private AuthenticationManager authenticationManager;
-    @Value("${com.senla.socialnetwork.controller.JwtUtil.expiration:3600000}")
+    @Value("${com.senla.socialnetwork.service.UserServiceImpl.expiration:3600000}")
     private Integer expiration;
 
     @Override
     @Transactional
     public List<UserForAdminDto> getUsers(final int firstResult, final int maxResults) {
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return UserMapper.getUserForAdminDto(userDao.getAllRecords(firstResult, maxResults));
     }
 
@@ -60,7 +59,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public String logIn(final UserForSecurityDto userDto, final SecretKey secretKey) {
-        log.debug("[userDto: {}]", userDto);
         SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
         if (systemUser == null) {
             throw new BusinessException("This email does not exist");
@@ -73,23 +71,21 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addUser(final UserForSecurityDto userDto, final RoleName roleName) {
-        log.debug("[userDto: {}, roleName: {}]", userDto, roleName);
         SystemUser systemUser = userDao.findByEmail(userDto.getEmail());
         if (systemUser != null) {
             throw new BusinessException("A user with this email address already exists");
         }
         systemUser = UserMapper.getSystemUser(passwordEncoder, userDto, roleName);
-        systemUser = userDao.saveRecord(systemUser);
+        systemUser = userDao.save(systemUser);
         UserProfile userProfile = new UserProfile();
         userProfile.setSystemUser(systemUser);
         userProfile.setRegistrationDate(new Date());
-        userProfileDao.saveRecord(userProfile);
+        userProfileDao.save(userProfile);
     }
 
     @Override
     @Transactional
     public void updateUser(final List<UserForSecurityDto> usersDto) {
-        log.debug("[usersDto: {}]", usersDto);
         if (usersDto.size() != LIST_SIZE) {
             throw new BusinessException("Input data amount error");
         }
@@ -112,7 +108,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(final Long userId) {
-        log.debug("[userId: {}]", userId);
         SystemUser user = userDao.findById(userId);
         if (user == null) {
             throw new BusinessException("Error, there is no such user");

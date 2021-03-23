@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "password")
 @NoArgsConstructor
 @ApiModel(value = "User For Security")
 public class UserForSecurityDto {
@@ -26,6 +26,7 @@ public class UserForSecurityDto {
     @ApiModelProperty(value = "user password",
         example = "test")
     @NotBlank(message = "password must be specified")
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Size(min = 4, message = "name must be specified")
     private String password;
 

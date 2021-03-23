@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.Post;
+import com.senla.socialnetwork.model.Post;
 
 import java.util.List;
 

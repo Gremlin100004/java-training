@@ -2,17 +2,19 @@ package com.senla.socialnetwork.service.mapper;
 
 import com.senla.socialnetwork.dao.PrivateMessageDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
-import com.senla.socialnetwork.domain.PrivateMessage;
-import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageForCreateDto;
+import com.senla.socialnetwork.model.PrivateMessage;
+import com.senla.socialnetwork.model.UserProfile;
 import com.senla.socialnetwork.service.exception.BusinessException;
 
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PrivateMessageMapper {
+public final class PrivateMessageMapper {
+    private PrivateMessageMapper() {
+    }
 
     public static PrivateMessageDto getPrivateMessageDto(final PrivateMessage privateMessage) {
         PrivateMessageDto privateMessageDto = new PrivateMessageDto();

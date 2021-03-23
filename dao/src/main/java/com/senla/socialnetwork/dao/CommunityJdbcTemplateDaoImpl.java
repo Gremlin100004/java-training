@@ -1,11 +1,10 @@
 package com.senla.socialnetwork.dao;
 
 import com.senla.socialnetwork.dao.mapper.CommunityRowMapperImpl;
-import com.senla.socialnetwork.domain.Community;
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
+import com.senla.socialnetwork.model.Community;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -13,8 +12,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
 //@Primary
+@Repository
 @Slf4j
 public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Community, Long> implements CommunityDao {
     private static final String SQL_REQUEST_GET_COMMUNITIES = "SELECT communities.id, communities.creation_date, "
@@ -73,7 +72,7 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
     private CommunityRowMapperImpl communityRowMapper;
 
     @Override
-    public List<Community> getCommunities(int firstResult, int maxResults) {
+    public List<Community> getCommunities(final int firstResult, final int maxResults) {
         try {
             return jdbcTemplate.query(
                 SQL_REQUEST_GET_COMMUNITIES, new Object[]{firstResult, maxResults}, communityRowMapper);
@@ -84,7 +83,9 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
     }
 
     @Override
-    public List<Community> getCommunitiesByType(CommunityType communityType, int firstResult, int maxResults) {
+    public List<Community> getCommunitiesByType(final CommunityType communityType,
+                                                final int firstResult,
+                                                final int maxResults) {
         try {
             return jdbcTemplate.query(
                 SQL_REQUEST_GET_COMMUNITIES_BY_TYPE, new Object[]{
@@ -96,7 +97,7 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
     }
 
     @Override
-    public List<Community> getCommunitiesSortiedByNumberOfSubscribers(int firstResult, int maxResults) {
+    public List<Community> getCommunitiesSortiedByNumberOfSubscribers(final int firstResult, final int maxResults) {
         try {
             return jdbcTemplate.query(
                 SQL_REQUEST_GET_COMMUNITIES_SORTIED_BY_NUMBER_OF_SUBSCRIBERS, new Object[]{
@@ -108,7 +109,7 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
     }
 
     @Override
-    public List<Community> getCommunitiesByEmail(String email, int firstResult, int maxResults) {
+    public List<Community> getCommunitiesByEmail(final String email, final int firstResult, final int maxResults) {
         try {
             return jdbcTemplate.query(
                 SQL_REQUEST_GET_COMMUNITIES_BY_EMAIL, new Object[]{email, firstResult, maxResults}, communityRowMapper);
@@ -119,7 +120,9 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
     }
 
     @Override
-    public List<Community> getSubscribedCommunitiesByEmail(String email, int firstResult, int maxResults) {
+    public List<Community> getSubscribedCommunitiesByEmail(final String email,
+                                                           final int firstResult,
+                                                           final int maxResults) {
         try {
             return jdbcTemplate.query(
                 SQL_REQUEST_GET_SUBSCRIBED_COMMUNITIES_BY_EMAIL, new Object[]{
@@ -131,7 +134,7 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
     }
 
     @Override
-    public Community findByIdAndEmail(String email, Long communityId) {
+    public Community findByIdAndEmail(final String email, final Long communityId) {
         try {
             return jdbcTemplate.queryForObject(
                 SQL_REQUEST_FIND_BY_ID_AND_EMAIL, new Object[]{communityId, email}, communityRowMapper);
@@ -147,7 +150,7 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
     }
 
     @Override
-    protected String getSaveRequest(Community community) {
+    protected String getSaveRequest(final Community community) {
         return START_FRAGMENT_REQUEST_SAVE_RECORD + community.getAuthor().getId() + QUERY_PARAMETER_SEPARATOR
                + getString(community.getType().toString()) + QUERY_PARAMETER_SEPARATOR
                + getString(community.getTitle()) + QUERY_PARAMETER_SEPARATOR + getString(community.getInformation())
@@ -161,7 +164,7 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
     }
 
     @Override
-    protected String getUpdateRequest(Community community) {
+    protected String getUpdateRequest(final Community community) {
         return START_FRAGMENT_REQUEST_UPDATE_RECORD + getString(community.getCreationDate().toString()) + FIELD_AUTHOR_ID
                + community.getAuthor().getId() + FIELD_TYPE + getString(community.getType().toString()) + FIELD_TITLE
                + getString(community.getTitle()) + FIELD_INFORMATION + getString(community.getInformation())
@@ -178,8 +181,11 @@ public class CommunityJdbcTemplateDaoImpl extends AbstractJdbcTemplateDao<Commun
         return SQL_REQUEST_DELETE_RECORD;
     }
 
-    private String getString(String value) {
-        return value != null ? STRING_HIGHLIGHT_CHARACTER + value + STRING_HIGHLIGHT_CHARACTER : null;
+    private String getString(final String value) {
+        if (value != null) {
+            return STRING_HIGHLIGHT_CHARACTER + value + STRING_HIGHLIGHT_CHARACTER;
+        }
+        return null;
     }
 
 }

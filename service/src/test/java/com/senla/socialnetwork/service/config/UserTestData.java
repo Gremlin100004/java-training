@@ -1,9 +1,9 @@
 package com.senla.socialnetwork.service.config;
 
-import com.senla.socialnetwork.domain.SystemUser;
-import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
+import com.senla.socialnetwork.model.SystemUser;
+import com.senla.socialnetwork.model.enumaration.RoleName;
 import com.senla.socialnetwork.service.security.UserPrincipal;
 import com.senla.socialnetwork.service.util.JwtUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +18,7 @@ public class UserTestData {
     private static final Long ID_USER = 1L;
     private static final Long ID_OTHER_USER = 2L;
     private static final Long RIGHT_NUMBER_USERS = 2L;
-    private static final String EMAIL = "test@test.com";
+    private static final String EMAIL = "c";
     private static final String WRONG_EMAIL = "test";
     private static final String PASSWORD = "test";
     private static final String TOKEN = "test";
@@ -50,7 +50,7 @@ public class UserTestData {
         return EMPTY_TOKEN;
     }
 
-    public static String getAuthorizationHeader(SecretKey secretKey){
+    public static String getAuthorizationHeader(SecretKey secretKey) {
         User user = new User(EMAIL, WRONG_EMAIL, new ArrayList<>());
         return TOKEN_TYPE + JwtUtil.generateToken(user, secretKey, EXPIRATION);
     }
@@ -83,20 +83,35 @@ public class UserTestData {
         SystemUser userOne = getTestUser();
         SystemUser userTwo = getTestUser();
         userTwo.setId(ID_OTHER_USER);
-        return Arrays.asList(userOne, userTwo);
+        return new ArrayList<SystemUser>() {
+            {
+                add(userOne);
+                add(userTwo);
+            }
+        };
     }
 
     public static List<UserForAdminDto> getTestUsersForClientDto() {
         UserForAdminDto userDtoOne = getTestUserForClientDto();
         UserForAdminDto userDtoTwo = getTestUserForClientDto();
         userDtoTwo.setId(ID_OTHER_USER);
-        return Arrays.asList(userDtoOne, userDtoTwo);
+        return new ArrayList<UserForAdminDto>() {
+            {
+                add(userDtoOne);
+                add(userDtoTwo);
+            }
+        };
     }
 
     public static List<UserForSecurityDto> getTestUsersForLoginDto() {
         UserForSecurityDto userDtoOne = getTestUserForSecurityDto();
         UserForSecurityDto userDtoTwo = getTestUserForSecurityDto();
-        return Arrays.asList(userDtoOne, userDtoTwo);
+        return new ArrayList<UserForSecurityDto>() {
+            {
+                add(userDtoOne);
+                add(userDtoTwo);
+            }
+        };
     }
 
     public static UsernamePasswordAuthenticationToken getUsernamePasswordAuthenticationToken() {

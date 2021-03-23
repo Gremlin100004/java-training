@@ -1,6 +1,5 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
@@ -73,8 +72,6 @@ public class PrivateMessageController {
        + "by admin";
     @Autowired
     private PrivateMessageService privateMessageService;
-    @Autowired
-    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping("/admin")

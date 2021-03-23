@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.PublicMessageComment;
+import com.senla.socialnetwork.model.PublicMessageComment;
 
 import java.util.List;
 

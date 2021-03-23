@@ -2,10 +2,10 @@ package com.senla.socialnetwork.controller;
 
 import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.controller.util.ValidationUtil;
-import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
+import com.senla.socialnetwork.model.enumaration.RoleName;
 import com.senla.socialnetwork.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 @Component
 @Slf4j
-public class PostgresDatabaseConnectionImpl implements DatabaseConnection {
+public final class PostgresDatabaseConnectionImpl implements DatabaseConnection {
     @Value("${hibernate.connection.username:Test}")
     private String userName;
     @Value("${hibernate.connection.password:Test}")

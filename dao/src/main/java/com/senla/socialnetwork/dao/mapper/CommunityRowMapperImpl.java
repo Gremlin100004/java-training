@@ -1,7 +1,7 @@
 package com.senla.socialnetwork.dao.mapper;
 
-import com.senla.socialnetwork.domain.Community;
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
+import com.senla.socialnetwork.model.Community;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ public class CommunityRowMapperImpl implements CommunityRowMapper {
     private UserProfileRowMapper userProfileRowMapper;
 
     @Override
-    public Community mapRow(ResultSet resultSet, int column) throws SQLException {
+    public Community mapRow(final ResultSet resultSet, final int column) throws SQLException {
         Community community = new Community();
         community.setId(resultSet.getLong(COLUMN_ID));
         community.setCreationDate(resultSet.getTimestamp(COLUMN_CREATION_DATE));

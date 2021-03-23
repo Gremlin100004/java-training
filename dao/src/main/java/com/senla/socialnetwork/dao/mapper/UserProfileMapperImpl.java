@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.dao.mapper;
 
-import com.senla.socialnetwork.domain.UserProfile;
+import com.senla.socialnetwork.model.UserProfile;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;

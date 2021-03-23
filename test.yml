@@ -1,0 +1,25 @@
+version: '3.3'
+services:
+  db:
+    image: postgres:13.1
+    environment:
+      - POSTGRES_DB=test_database
+      - POSTGRES_USER=TestUser
+      - POSTGRES_PASSWORD=TestPassword
+    ports:
+      - 5432:5432
+    volumes:
+      - ./database/postgres:/var/lib/postgresql/data
+    cap_add:
+      - SYS_NICE
+#  web:
+#    build:
+#      context: .
+#      dockerfile: dockerfile/ubuntu/Dockerfile
+#    restart: on-failure
+#    depends_on:
+#      - db
+#    ports:
+#      - 2308:8080
+#    volumes:
+#      - ./logs:/usr/local/tomcat/logs

@@ -40,6 +40,7 @@ import java.io.IOException;
 
 @ControllerAdvice
 @Slf4j
+@SuppressWarnings("NullableProblems")
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler implements AuthenticationEntryPoint, AccessDeniedHandler {
 
     @Autowired
@@ -52,7 +53,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     }
 
     @ExceptionHandler(ControllerException.class)
-    protected ResponseEntity<ClientMessageDto> handleControllerException(ControllerException exception) {
+    protected ResponseEntity<ClientMessageDto> handleControllerException(final ControllerException exception) {
         log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(new ClientMessageDto(exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
@@ -211,7 +212,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     }
 
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(final Exception exception, Object body,
+    protected ResponseEntity<Object> handleExceptionInternal(final Exception exception,
+                                                             final Object body,
                                                              final HttpHeaders headers,
                                                              final HttpStatus status,
                                                              final WebRequest request) {

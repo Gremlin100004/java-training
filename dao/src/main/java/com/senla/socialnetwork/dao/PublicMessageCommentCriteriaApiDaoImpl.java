@@ -1,17 +1,15 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.PublicMessage;
-import com.senla.socialnetwork.domain.PublicMessageComment;
-import com.senla.socialnetwork.domain.PublicMessageComment_;
-import com.senla.socialnetwork.domain.PublicMessage_;
-import com.senla.socialnetwork.domain.SystemUser;
-import com.senla.socialnetwork.domain.SystemUser_;
-import com.senla.socialnetwork.domain.UserProfile;
-import com.senla.socialnetwork.domain.UserProfile_;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.socialnetwork.model.PublicMessage;
+import com.senla.socialnetwork.model.PublicMessageComment;
+import com.senla.socialnetwork.model.PublicMessageComment_;
+import com.senla.socialnetwork.model.PublicMessage_;
+import com.senla.socialnetwork.model.SystemUser;
+import com.senla.socialnetwork.model.SystemUser_;
+import com.senla.socialnetwork.model.UserProfile;
+import com.senla.socialnetwork.model.UserProfile_;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -20,16 +18,14 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
-@Slf4j
-public class PublicMessageCommentCriteriaApiDaoImpl extends AbstractDao<PublicMessageComment, Long> implements PublicMessageCommentDao {
+public class PublicMessageCommentCriteriaApiDaoImpl extends AbstractDao<PublicMessageComment, Long>
+    implements PublicMessageCommentDao {
     public PublicMessageCommentCriteriaApiDaoImpl() {
         setType(PublicMessageComment.class);
     }
 
     @Override
     public PublicMessageComment findByIdAndEmail(final String email, final Long commentId) {
-        log.debug("[email: {}, commentId: {}]", email, commentId);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessageComment> criteriaQuery = criteriaBuilder.createQuery(PublicMessageComment.class);
             Root<PublicMessageComment> publicMessageCommentRoot = criteriaQuery.from(PublicMessageComment.class);
@@ -42,18 +38,12 @@ public class PublicMessageCommentCriteriaApiDaoImpl extends AbstractDao<PublicMe
                 userProfileSystemUserJoin.get(SystemUser_.email), email)), criteriaBuilder.equal(
                 publicMessageCommentRoot.get(PublicMessageComment_.id), commentId));
             return entityManager.createQuery(criteriaQuery).getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<PublicMessageComment> getPublicMessageComments(final Long publicMessageId,
                                                                final int firstResult,
                                                                final int maxResults) {
-        log.debug("[publicMessageId: {}]", publicMessageId);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PublicMessageComment> criteriaQuery = criteriaBuilder.createQuery(PublicMessageComment.class);
             Root<PublicMessageComment> publicMessageCommentRoot = criteriaQuery.from(PublicMessageComment.class);
@@ -69,10 +59,6 @@ public class PublicMessageCommentCriteriaApiDaoImpl extends AbstractDao<PublicMe
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
 }

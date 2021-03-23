@@ -1,20 +1,16 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.Community;
-import com.senla.socialnetwork.domain.Community_;
-import com.senla.socialnetwork.domain.Location;
-import com.senla.socialnetwork.domain.Location_;
-import com.senla.socialnetwork.domain.School;
-import com.senla.socialnetwork.domain.School_;
-import com.senla.socialnetwork.domain.SystemUser;
-import com.senla.socialnetwork.domain.SystemUser_;
-import com.senla.socialnetwork.domain.University;
-import com.senla.socialnetwork.domain.UserProfile;
-import com.senla.socialnetwork.domain.UserProfile_;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.socialnetwork.model.Location;
+import com.senla.socialnetwork.model.Location_;
+import com.senla.socialnetwork.model.School;
+import com.senla.socialnetwork.model.School_;
+import com.senla.socialnetwork.model.SystemUser;
+import com.senla.socialnetwork.model.SystemUser_;
+import com.senla.socialnetwork.model.University;
+import com.senla.socialnetwork.model.UserProfile;
+import com.senla.socialnetwork.model.UserProfile_;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -27,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-@Slf4j
 public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long> implements UserProfileDao {
     private static final String PARAMETER_MONTH = "month";
     private static final String PARAMETER_DAY = "day";
@@ -40,8 +35,6 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
 
     @Override
     public UserProfile findByEmail(final String email) {
-        log.debug("[email: {}]", email);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
@@ -49,34 +42,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
             criteriaQuery.select(userProfileRoot);
             criteriaQuery.where(criteriaBuilder.equal(userProfileSystemUserJoin.get(SystemUser_.email), email));
             return entityManager.createQuery(criteriaQuery).getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
-    }
-
-    @Override
-    public List<UserProfile> getCommunityUsers(final Long communityId) {
-        log.debug("[getCommunityUsers]");
-        log.trace("[communityId: {}]", communityId);
-        try {
-            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
-            Root<Community> communityRoot = criteriaQuery.from(Community.class);
-            criteriaQuery.select(communityRoot.get(Community_.SUBSCRIBERS));
-            criteriaQuery.where(criteriaBuilder.equal(communityRoot.get(Community_.id), communityId));
-            return entityManager.createQuery(criteriaQuery).getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<UserProfile> getUserProfilesSortBySurname(final int firstResult, final int maxResults) {
-        log.debug("[getUserProfilesSortByName]");
-        log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
@@ -88,17 +57,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<UserProfile> getUserProfilesSortByRegistrationDate(final int firstResult, final int maxResults) {
-        log.debug("[getUserProfilesSortByRegistrationDate]");
-        log.trace("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
@@ -110,19 +72,12 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<UserProfile> getUserProfilesFilteredByLocation(final Long locationId,
                                                                final int firstResult,
                                                                final int maxResults) {
-        log.debug("[getUserProfilesFilteredByLocation]");
-        log.trace("[locationId: {}, firstResult: {}, maxResults: {}]", locationId, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
@@ -135,19 +90,12 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<UserProfile> getUserProfilesFilteredBySchool(final Long schoolId,
                                                              final int firstResult,
                                                              final int maxResults) {
-        log.debug("[getUserProfilesFilteredBySchool]");
-        log.trace("[schoolId: {}, firstResult: {}, maxResults: {}]", schoolId, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
@@ -160,19 +108,12 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<UserProfile> getUserProfilesFilteredByUniversity(final Long universityId,
                                                                  final int firstResult,
                                                                  final int maxResults) {
-        log.debug("[getUserProfilesFilteredByUniversity]");
-        log.trace("[universityId: {}, firstResult: {}, maxResults: {}]", universityId, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
@@ -185,10 +126,6 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
@@ -196,10 +133,6 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                                                           final Date endPeriodDate,
                                                           final int firstResult,
                                                           final int maxResults) {
-        log.debug("[getUserProfilesFilteredByAge]");
-        log.trace("[startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
-             startPeriodDate, endPeriodDate, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> orderRoot = criteriaQuery.from(UserProfile.class);
@@ -213,17 +146,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public UserProfile getNearestBirthdayByCurrentDate(final String email) {
-        log.debug("[getNearestBirthdayByCurrentDate]");
-        log.trace("[email: {}]", email);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             Expression<java.sql.Date> currentDate = criteriaBuilder.currentDate();
             Expression<Integer> month = criteriaBuilder.function(PARAMETER_MONTH, Integer.class, currentDate);
@@ -249,17 +175,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
             typedQuery.setFirstResult(FIRST_RESULT);
             typedQuery.setMaxResults(MAX_RESULTS);
             return typedQuery.getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public UserProfile getNearestBirthdayFromTheBeginningOfTheYear(final String email) {
-        log.debug("[getNearestBirthdayFromTheBeginningOfTheYear]");
-        log.trace("[email: {}]", email);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = fillCriteriaQueryFriend(criteriaQuery, criteriaBuilder, email);
@@ -271,17 +190,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
             typedQuery.setFirstResult(FIRST_RESULT);
             typedQuery.setMaxResults(MAX_RESULTS);
             return typedQuery.getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<UserProfile> getFriendsSortByAge(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getFriendsSortByAge]");
-        log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = fillCriteriaQueryFriend(criteriaQuery, criteriaBuilder, email);
@@ -289,17 +201,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<UserProfile> getFriendsSortByName(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getFriendsSortByName]");
-        log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = fillCriteriaQueryFriend(criteriaQuery, criteriaBuilder, email);
@@ -307,17 +212,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<UserProfile> getFriendsSortByNumberOfFriends(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getFriendsSortByNumberOfFriends]");
-        log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Root<UserProfile> userProfileRoot = fillCriteriaQueryFriend(criteriaQuery, criteriaBuilder, email);
@@ -327,17 +225,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
             TypedQuery<UserProfile> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setFirstResult(firstResult);
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<UserProfile> getFriends(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getFriends]");
-        log.trace("[email: {}]", email);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             fillCriteriaQueryFriend(criteriaQuery, criteriaBuilder, email);
@@ -347,17 +238,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public UserProfile getFriend(final String email, final Long userProfileId) {
-        log.debug("[getFriend]");
-        log.trace("[email: {}, userProfileId: {}]", email, userProfileId);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
@@ -382,17 +266,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                     UserProfile_.id).in(subquery), criteriaBuilder.equal(
                         friendRoot.get(UserProfile_.id), userProfileId))));
             return entityManager.createQuery(criteriaQuery).getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<UserProfile> getSignedFriends(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getFriends]");
-        log.trace("[email: {}]", email);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
@@ -419,17 +296,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public UserProfile getSignedFriend(final String email, final Long userProfileId) {
-        log.debug("[getSignedFriend]");
-        log.trace("[email: {}, userProfileId: {}]", email, userProfileId);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
@@ -454,17 +324,10 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                         UserProfile_.id).in(subquery), criteriaBuilder.equal(
                             futureFriendRoot.get(UserProfile_.id), userProfileId))));
             return entityManager.createQuery(criteriaQuery).getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public UserProfile getFutureFriend(final String email, final Long userProfileId) {
-        log.debug("[getFriends]");
-        log.trace("[email: {}, userProfileId: {}]", email, userProfileId);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<UserProfile> criteriaQuery = criteriaBuilder.createQuery(UserProfile.class);
             Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
@@ -495,10 +358,6 @@ public class UserProfileCriteriaApiDaoImpl extends AbstractDao<UserProfile, Long
                         UserProfile_.id).in(subquery).not(), futureFriendRoot.get(UserProfile_.id).in(
                             subqueryFriendShipRequest).not()));
            return entityManager.createQuery(criteriaQuery).getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     private Root<UserProfile> fillCriteriaQueryFriend(final CriteriaQuery<UserProfile> criteriaQuery,

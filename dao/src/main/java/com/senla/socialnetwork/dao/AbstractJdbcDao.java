@@ -2,8 +2,7 @@ package com.senla.socialnetwork.dao;
 
 import com.senla.socialnetwork.dao.connection.DatabaseConnection;
 import com.senla.socialnetwork.dao.exception.DaoException;
-import com.senla.socialnetwork.domain.AEntity;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.socialnetwork.model.AEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
@@ -13,70 +12,59 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 public abstract class AbstractJdbcDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, PK> {
     protected static final int STATEMENT_WILDCARD_FIRST_INDEX = 1;
     protected static final int ARRAY_FIRST_INDEX = 0;
     @Autowired
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     protected DatabaseConnection databaseConnection;
 
     @Override
-    public T saveRecord(final T entity) {
-        log.debug("[entity: {}]", entity);
+    public T save(final T entity) {
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(getCreateRequest())) {
             fillStatementCreate(statement, entity);
-            log.debug("[SQL: {}]", statement.toString());
             entity.setId((long) statement.executeUpdate());
             return entity;
         } catch (SQLException exception) {
-            log.error("[{}]", exception.getMessage());
             throw new DaoException("Error request add record");
         }
     }
 
     @Override
     public T findById(final PK id) {
-        log.debug("[id: {}]", id);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(getFindByIdRequest())) {
             statement.setObject(STATEMENT_WILDCARD_FIRST_INDEX, id);
             return parseResultSet(statement.executeQuery()).get(ARRAY_FIRST_INDEX);
         } catch (SQLException exception) {
-            log.error("[{}]", exception.getMessage());
             return null;
         }
     }
 
     @Override
     public List<T> getAllRecords(final int firstResult, final int maxResults) {
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(getReadAllRequest())) {
             return parseResultSet(statement.executeQuery());
         } catch (SQLException exception) {
-            log.error("[{}]", exception.getMessage());
             return new ArrayList<>();
         }
     }
 
     @Override
     public void updateRecord(final T entity) {
-        log.debug("[entity: {}]", entity);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(getUpdateRequest())) {
             fillStatementUpdate(statement, entity);
             statement.execute();
         } catch (SQLException exception) {
-            log.error("[{}]", exception.getMessage());
             throw new DaoException("Error request update record");
         }
     }
 
     @Override
     public void deleteRecord(final T entity) {
-        log.debug("[entity: {}]", entity);
         try (PreparedStatement statement = databaseConnection.getConnection().prepareStatement(getDeleteRequest())) {
             statement.setLong(STATEMENT_WILDCARD_FIRST_INDEX, entity.getId());
             statement.execute();
         } catch (SQLException exception) {
-            log.error("[{}]", exception.getMessage());
             throw new DaoException("Error request delete record");
         }
     }

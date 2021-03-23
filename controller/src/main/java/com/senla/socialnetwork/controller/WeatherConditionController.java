@@ -1,6 +1,5 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.WeatherConditionDto;
 import com.senla.socialnetwork.dto.WeatherConditionForAdminDto;
@@ -52,8 +51,6 @@ public class WeatherConditionController {
        + "condition by admin";
     @Autowired
     private WeatherConditionService weatherConditionService;
-    @Autowired
-    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping

@@ -1,7 +1,7 @@
 package com.senla.socialnetwork.dao.mapper;
 
-import com.senla.socialnetwork.domain.Community;
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
+import com.senla.socialnetwork.model.Community;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

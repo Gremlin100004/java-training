@@ -1,15 +1,14 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.Community;
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
+import com.senla.socialnetwork.model.Community;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
 import java.util.List;
 
-@Primary
+//@Primary
 @Repository
 @Slf4j
 public class CommunityNativeQueryDaoImpl extends AbstractNativeQueryDao<Community, Long> implements CommunityDao {
@@ -194,8 +193,11 @@ public class CommunityNativeQueryDaoImpl extends AbstractNativeQueryDao<Communit
         return SQL_REQUEST_DELETE_RECORD;
     }
 
-    private String getString(String value) {
-        return value != null ? STRING_HIGHLIGHT_CHARACTER + value + STRING_HIGHLIGHT_CHARACTER : null;
+    private String getString(final String value) {
+        if (value != null) {
+            return STRING_HIGHLIGHT_CHARACTER + value + STRING_HIGHLIGHT_CHARACTER;
+        }
+        return null;
     }
 
 }

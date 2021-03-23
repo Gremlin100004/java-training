@@ -1,14 +1,15 @@
 package com.senla.socialnetwork.service;
 
-import com.senla.socialnetwork.dao.LocationDao;
+import com.senla.socialnetwork.aspect.ServiceLog;
 import com.senla.socialnetwork.dao.PrivateMessageDao;
 import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
-import com.senla.socialnetwork.domain.UserProfile;
+import com.senla.socialnetwork.dao.springdata.LocationSpringDataSpecificationDao;
 import com.senla.socialnetwork.dto.PrivateMessageDto;
 import com.senla.socialnetwork.dto.UserProfileDto;
 import com.senla.socialnetwork.dto.UserProfileForIdentificationDto;
+import com.senla.socialnetwork.model.UserProfile;
 import com.senla.socialnetwork.service.enumaration.UserProfileFriendSortParameter;
 import com.senla.socialnetwork.service.enumaration.UserProfileSortParameter;
 import com.senla.socialnetwork.service.exception.BusinessException;
@@ -16,7 +17,6 @@ import com.senla.socialnetwork.service.mapper.PrivateMessageMapper;
 import com.senla.socialnetwork.service.mapper.UserProfileMapper;
 import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,15 +25,15 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@ServiceLog
 @NoArgsConstructor
-@Slf4j
 public class UserProfileServiceImpl implements UserProfileService {
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULT = 0;
     @Autowired
     private UserProfileDao userProfileDao;
     @Autowired
-    private LocationDao locationDao;
+    private LocationSpringDataSpecificationDao locationDao;
     @Autowired
     private SchoolDao schoolDao;
     @Autowired
@@ -44,7 +44,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional
     public List<UserProfileForIdentificationDto> getUserProfiles(final int firstResult, final int maxResults) {
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return UserProfileMapper.getUserProfileForIdentificationDto(userProfileDao.getAllRecords(
             firstResult, maxResults));
     }
@@ -58,9 +57,8 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional
     public void updateUserProfile(final UserProfileDto userProfileDto) {
-        log.debug("[userProfileDto: {}]", userProfileDto);
         userProfileDao.updateRecord(UserProfileMapper.getUserProfile(
-            userProfileDto, userProfileDao, PrincipalUtil.getUserName(),  locationDao, schoolDao, universityDao));
+            userProfileDto, userProfileDao, PrincipalUtil.getUserName(), locationDao, schoolDao, universityDao));
     }
 
     @Override
@@ -68,7 +66,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<UserProfileForIdentificationDto> getSortUserProfiles(final UserProfileSortParameter sortParameter,
                                                                      final int firstResult,
                                                                      final int maxResults) {
-        log.debug("[sortParameter: {}, firstResult: {}, maxResults: {}]", sortParameter, firstResult, maxResults);
         List<UserProfile> userProfiles;
         if (sortParameter.equals(UserProfileSortParameter.BY_SURNAME)) {
             userProfiles = userProfileDao.getUserProfilesSortBySurname(firstResult, maxResults);
@@ -85,7 +82,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<UserProfileForIdentificationDto> getUserProfilesByLocationId(final Long locationId,
                                                                              final int firstResult,
                                                                              final int maxResults) {
-        log.debug("[locationDto: {}, firstResult: {}, maxResults: {}]", locationId, firstResult, maxResults);
         return UserProfileMapper.getUserProfileForIdentificationDto(
             userProfileDao.getUserProfilesFilteredByLocation(locationId, firstResult, maxResults));
     }
@@ -95,7 +91,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<UserProfileForIdentificationDto> getUserProfilesBySchoolId(final Long schoolId,
                                                                            final int firstResult,
                                                                            final int maxResults) {
-        log.debug("[schoolDto: {}, firstResult: {}, maxResults: {}]", schoolId, firstResult, maxResults);
         return UserProfileMapper.getUserProfileForIdentificationDto(
             userProfileDao.getUserProfilesFilteredBySchool(schoolId, firstResult, maxResults));
     }
@@ -105,7 +100,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<UserProfileForIdentificationDto> getUserProfilesByUniversityId(final Long universityId,
                                                                                final int firstResult,
                                                                                final int maxResults) {
-        log.debug("[universityDto: {}, firstResult: {}, maxResults: {}]", universityId, firstResult, maxResults);
         return UserProfileMapper.getUserProfileForIdentificationDto(
             userProfileDao.getUserProfilesFilteredByUniversity(universityId, firstResult, maxResults));
     }
@@ -117,8 +111,6 @@ public class UserProfileServiceImpl implements UserProfileService {
                                                                               final int firstResult,
                                                                               final int maxResults) {
 
-        log.debug("[startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
-                  startPeriodDate, endPeriodDate, firstResult, maxResults);
         return UserProfileMapper.getUserProfileForIdentificationDto(
             userProfileDao.getUserProfilesFilteredByAge(startPeriodDate, endPeriodDate, firstResult, maxResults));
     }
@@ -140,14 +132,12 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional
     public UserProfileDto getUserProfileDetails(final Long userProfileId) {
-        log.debug("[userProfileId: {}]", userProfileId);
         return UserProfileMapper.getUserProfileDto(userProfileDao.findById(userProfileId));
     }
 
     @Override
     @Transactional
     public List<UserProfileForIdentificationDto> getUserProfileFriends(final int firstResult, final int maxResults) {
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return UserProfileMapper.getUserProfileForIdentificationDto(userProfileDao.getFriends(
             PrincipalUtil.getUserName(), firstResult, maxResults));
     }
@@ -157,8 +147,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<UserProfileForIdentificationDto> getSortedFriendsOfUserProfile(final UserProfileFriendSortParameter sortParameter,
                                                                                final int firstResult,
                                                                                final int maxResults) {
-        log.debug("[sortParameter: {}, firstResult: {}, maxResults: {}]",
-                  sortParameter, firstResult, maxResults);
         String email = PrincipalUtil.getUserName();
         List<UserProfile> userProfiles;
         if (sortParameter.equals(UserProfileFriendSortParameter.BY_BIRTHDAY)) {
@@ -177,7 +165,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Transactional
     public List<UserProfileForIdentificationDto> getUserProfileSignedFriends(final int firstResult,
                                                                              final int maxResults) {
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return UserProfileMapper.getUserProfileForIdentificationDto(userProfileDao.getSignedFriends(
             PrincipalUtil.getUserName(), firstResult, maxResults));
     }
@@ -185,7 +172,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional
     public void sendAFriendRequest(final  Long userProfileId) {
-        log.debug("[userProfileId: {}]", userProfileId);
         String email = PrincipalUtil.getUserName();
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
@@ -202,7 +188,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional
     public void confirmFriend(final Long userProfileId) {
-        log.debug("[userProfileId: {}]", userProfileId);
         String email = PrincipalUtil.getUserName();
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
@@ -220,7 +205,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional
     public void removeUserFromFriends(final Long userProfileId) {
-        log.debug("[userProfileId: {}]", userProfileId);
         String email = PrincipalUtil.getUserName();
         UserProfile ownProfile = userProfileDao.findByEmail(email);
         if (ownProfile == null) {
@@ -239,7 +223,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional
     public void deleteUserProfile(final Long userProfileId) {
-        log.debug("[userProfileId: {}]", userProfileId);
         UserProfile userProfile = userProfileDao.findById(userProfileId);
         if (userProfile == null) {
             throw new BusinessException("Error, there is no such profile");
@@ -250,8 +233,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     @Transactional
     public List<PrivateMessageDto> getDialogue(final Long userProfileId, final int firstResult, final int maxResults) {
-        log.debug("[userProfileId: {}, firstResult: {}, maxResults: {}]",
-                  userProfileId, firstResult, maxResults);
         return PrivateMessageMapper.getPrivateMessageDto(
             privateMessageDao.getDialogue(PrincipalUtil.getUserName(), userProfileId, firstResult, maxResults));
     }

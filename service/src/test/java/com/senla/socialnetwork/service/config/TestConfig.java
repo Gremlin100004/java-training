@@ -1,7 +1,6 @@
 package com.senla.socialnetwork.service.config;
 
 import com.senla.socialnetwork.dao.CommunityDao;
-import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.PostCommentDao;
 import com.senla.socialnetwork.dao.PostDao;
 import com.senla.socialnetwork.dao.PrivateMessageDao;
@@ -13,12 +12,13 @@ import com.senla.socialnetwork.dao.UserDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.dao.WeatherConditionDao;
 import com.senla.socialnetwork.dao.connection.DatabaseConnection;
+import com.senla.socialnetwork.dao.springdata.LocationSpringDataSpecificationDao;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.mockito.Mockito;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 
-@Configuration
+@SpringBootConfiguration
 @ComponentScan("com.senla.socialnetwork.service")
 public class TestConfig {
 
@@ -36,8 +36,8 @@ public class TestConfig {
     }
 
     @Bean
-    LocationDao locationDao() {
-        return Mockito.mock(LocationDao.class);
+    LocationSpringDataSpecificationDao locationDao() {
+        return Mockito.mock(LocationSpringDataSpecificationDao.class);
     }
 
     @Bean

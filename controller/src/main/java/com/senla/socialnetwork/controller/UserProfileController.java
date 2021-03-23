@@ -1,6 +1,5 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
@@ -98,8 +97,6 @@ public class UserProfileController {
     private UserProfileService userProfileService;
     @Autowired
     private PublicMessageService publicMessageService;
-    @Autowired
-    private SigningKey signingKey;
 
     @GetMapping
     @ApiOperation(value = GET_USER_PROFILES_DESCRIPTION, response = UserProfileDto.class)

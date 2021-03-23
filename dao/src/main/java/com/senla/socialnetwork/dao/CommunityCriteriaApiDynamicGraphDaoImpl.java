@@ -1,21 +1,26 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.*;
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
+import com.senla.socialnetwork.model.Community;
+import com.senla.socialnetwork.model.Community_;
+import com.senla.socialnetwork.model.SystemUser;
+import com.senla.socialnetwork.model.SystemUser_;
+import com.senla.socialnetwork.model.UserProfile;
+import com.senla.socialnetwork.model.UserProfile_;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityGraph;
-import javax.persistence.NoResultException;
 import javax.persistence.Subgraph;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import java.util.List;
 
-@Primary
-//@Repository
-@Slf4j
+//@Primary
+@Repository
 public class CommunityCriteriaApiDynamicGraphDaoImpl extends AbstractCriteriaApiDynamicGraphDao<Community, Long> implements CommunityDao {
     private static final String ATTRIBUTE_NAME = "javax.persistence.fetchgraph";
 
@@ -25,9 +30,6 @@ public class CommunityCriteriaApiDynamicGraphDaoImpl extends AbstractCriteriaApi
 
     @Override
     public List<Community> getCommunities(final int firstResult, final int maxResults) {
-        log.debug("[getCommunities]");
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
@@ -40,19 +42,12 @@ public class CommunityCriteriaApiDynamicGraphDaoImpl extends AbstractCriteriaApi
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<Community> getCommunitiesByType(final CommunityType communityType,
                                                 final int firstResult,
                                                 final int maxResults) {
-        log.debug("[getCommunitiesByType]");
-        log.debug("[communityType: {}, firstResult: {}, maxResults: {}]", communityType, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
@@ -68,17 +63,10 @@ public class CommunityCriteriaApiDynamicGraphDaoImpl extends AbstractCriteriaApi
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<Community> getCommunitiesSortiedByNumberOfSubscribers(final int firstResult, final int maxResults) {
-        log.debug("[getCommunitiesSortiedByNumberOfSubscribers]");
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
@@ -92,17 +80,10 @@ public class CommunityCriteriaApiDynamicGraphDaoImpl extends AbstractCriteriaApi
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<Community> getCommunitiesByEmail(final String email, final int firstResult, final int maxResults) {
-        log.debug("[getCommunitiesByEmail]");
-        log.debug("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
@@ -120,19 +101,12 @@ public class CommunityCriteriaApiDynamicGraphDaoImpl extends AbstractCriteriaApi
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<Community> getSubscribedCommunitiesByEmail(final String email,
                                                            final int firstResult,
                                                            final int maxResults) {
-        log.debug("[getSubscribedCommunitiesByEmail]");
-        log.trace("[email: {}, firstResult: {}, maxResults: {}]", email, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Subquery<Long> subquery = criteriaQuery.subquery(Long.class);
@@ -155,17 +129,10 @@ public class CommunityCriteriaApiDynamicGraphDaoImpl extends AbstractCriteriaApi
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public Community findByIdAndEmail(final String email, final Long communityId) {
-        log.debug("[findByIdAndEmail]");
-        log.debug("[email: {}, messageId: {}]", email, communityId);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Community> criteriaQuery = criteriaBuilder.createQuery(Community.class);
             Root<Community> communityRoot = criteriaQuery.from(Community.class);
@@ -179,10 +146,6 @@ public class CommunityCriteriaApiDynamicGraphDaoImpl extends AbstractCriteriaApi
             TypedQuery<Community> typedQuery = entityManager.createQuery(criteriaQuery);
             typedQuery.setHint(ATTRIBUTE_NAME, getEntityGraph());
             return typedQuery.getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override

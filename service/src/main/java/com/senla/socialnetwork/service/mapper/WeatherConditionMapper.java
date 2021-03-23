@@ -1,13 +1,15 @@
 package com.senla.socialnetwork.service.mapper;
 
-import com.senla.socialnetwork.domain.WeatherCondition;
 import com.senla.socialnetwork.dto.WeatherConditionDto;
 import com.senla.socialnetwork.dto.WeatherConditionForAdminDto;
+import com.senla.socialnetwork.model.WeatherCondition;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class WeatherConditionMapper {
+public final class WeatherConditionMapper {
+    private WeatherConditionMapper() {
+    }
 
     public static WeatherConditionDto getWeatherConditionDto(final WeatherCondition weatherCondition) {
         WeatherConditionDto weatherConditionDto = new WeatherConditionDto();

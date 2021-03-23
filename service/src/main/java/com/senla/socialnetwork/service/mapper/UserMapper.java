@@ -1,20 +1,22 @@
 package com.senla.socialnetwork.service.mapper;
 
-import com.senla.socialnetwork.domain.SystemUser;
-import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
+import com.senla.socialnetwork.model.SystemUser;
+import com.senla.socialnetwork.model.enumaration.RoleName;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UserMapper {
+public final class UserMapper {
+    private UserMapper() {
+    }
 
     public static List<UserForAdminDto> getUserForAdminDto(final List<SystemUser> users) {
         return users.stream()
-            .map(UserMapper::getUserForAdminDto)
-            .collect(Collectors.toList());
+                .map(UserMapper::getUserForAdminDto)
+                .collect(Collectors.toList());
     }
 
     public static UserForAdminDto getUserForAdminDto(final SystemUser user) {
@@ -42,8 +44,8 @@ public class UserMapper {
     }
 
     public static void getCurrentSystemUser(final PasswordEncoder passwordEncoder,
-                                                  final UserForSecurityDto userDto,
-                                                  final SystemUser currentSystemUser) {
+                                            final UserForSecurityDto userDto,
+                                            final SystemUser currentSystemUser) {
         currentSystemUser.setEmail(userDto.getEmail());
         currentSystemUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
     }

@@ -1,16 +1,19 @@
 package com.senla.socialnetwork.service.mapper;
 
 import com.senla.socialnetwork.dao.PostDao;
-import com.senla.socialnetwork.domain.Community;
-import com.senla.socialnetwork.domain.Post;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.dto.PostForCreationDto;
+import com.senla.socialnetwork.model.Community;
+import com.senla.socialnetwork.model.Post;
 
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PostMapper {
+public final class PostMapper {
+    private PostMapper() {
+    }
+
     public static PostDto getPostDto(final Post post) {
         PostDto postDto = new PostDto();
         postDto.setId(post.getId());

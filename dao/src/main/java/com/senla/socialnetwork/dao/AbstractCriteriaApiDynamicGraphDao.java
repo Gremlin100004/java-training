@@ -1,7 +1,6 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.AEntity;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.socialnetwork.model.AEntity;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
@@ -15,11 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
-public abstract class AbstractCriteriaApiDynamicGraphDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, PK> {
+public abstract class AbstractCriteriaApiDynamicGraphDao<T extends AEntity, PK extends Serializable> implements
+                                                                                                     GenericDao<T, PK> {
     private static final String ATTRIBUTE_NAME = "javax.persistence.fetchgraph";
     private Class<T> type;
     @PersistenceContext
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     protected EntityManager entityManager;
 
     public AbstractCriteriaApiDynamicGraphDao() {
@@ -30,17 +30,13 @@ public abstract class AbstractCriteriaApiDynamicGraphDao<T extends AEntity, PK e
     }
 
     @Override
-    public T saveRecord(final T entity) {
-        log.debug("[saveRecord]");
-        log.debug("[entity: {}]", entity);
+    public T save(final T entity) {
         entityManager.persist(entity);
         return entity;
     }
 
     @Override
     public T findById(final PK id) {
-        log.debug("[findById]");
-        log.debug("[type: {}, id: {}]", type, id);
         Map<String, Object> hints = new HashMap<>();
         hints.put(ATTRIBUTE_NAME, getEntityGraph());
         return entityManager.find(type, id, hints);
@@ -48,8 +44,6 @@ public abstract class AbstractCriteriaApiDynamicGraphDao<T extends AEntity, PK e
 
     @Override
     public List<T> getAllRecords(final int firstResult, final int maxResults) {
-        log.debug("[getAllRecords]");
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(type);
         Root<T> root = criteriaQuery.from(type);
@@ -65,15 +59,11 @@ public abstract class AbstractCriteriaApiDynamicGraphDao<T extends AEntity, PK e
 
     @Override
     public void updateRecord(final T entity) {
-        log.debug("[updateRecord]");
-        log.debug("[entity: {}]", entity);
         entityManager.merge(entity);
     }
 
     @Override
-    public void deleteRecord(T entity) {
-        log.debug("[deleteRecord]");
-        log.debug("[entity: {}]", entity);
+    public void deleteRecord(final T entity) {
         entityManager.remove(entity);
     }
 

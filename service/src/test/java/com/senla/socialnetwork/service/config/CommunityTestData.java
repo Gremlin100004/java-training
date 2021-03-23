@@ -1,8 +1,8 @@
 package com.senla.socialnetwork.service.config;
 
-import com.senla.socialnetwork.domain.Community;
 import com.senla.socialnetwork.dto.CommunityDto;
 import com.senla.socialnetwork.dto.CommunityForCreateDto;
+import com.senla.socialnetwork.model.Community;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +51,12 @@ public class CommunityTestData {
         Community communityOne = getTestCommunity();
         Community communityTwo = getTestCommunity();
         communityTwo.setId(COMMUNITY_OTHER_ID);
-        return Arrays.asList(communityOne, communityTwo);
+        return new ArrayList<Community>() {
+            {
+                add(communityOne);
+                add(communityTwo);
+            }
+        };
     }
 
     public static List<CommunityDto> getTestCommunitiesDto() {

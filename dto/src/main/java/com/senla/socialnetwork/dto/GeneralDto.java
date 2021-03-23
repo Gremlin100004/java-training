@@ -14,6 +14,7 @@ public class GeneralDto {
     @ApiModelProperty(value = "id",
         example = "1")
     @NotNull
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     protected Long id;
 
 }

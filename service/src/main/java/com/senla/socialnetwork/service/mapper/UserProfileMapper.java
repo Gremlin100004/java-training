@@ -1,17 +1,20 @@
 package com.senla.socialnetwork.service.mapper;
 
-import com.senla.socialnetwork.dao.LocationDao;
 import com.senla.socialnetwork.dao.SchoolDao;
 import com.senla.socialnetwork.dao.UniversityDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
-import com.senla.socialnetwork.domain.UserProfile;
+import com.senla.socialnetwork.dao.springdata.LocationSpringDataSpecificationDao;
 import com.senla.socialnetwork.dto.UserProfileDto;
 import com.senla.socialnetwork.dto.UserProfileForIdentificationDto;
+import com.senla.socialnetwork.model.UserProfile;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UserProfileMapper {
+public final class UserProfileMapper {
+    private UserProfileMapper() {
+    }
+
     public static UserProfileDto getUserProfileDto(final UserProfile userProfile) {
         UserProfileDto userProfileDto = new UserProfileDto();
         userProfileDto.setId(userProfile.getId());
@@ -21,8 +24,8 @@ public class UserProfileMapper {
         }
         userProfileDto.setName(userProfile.getName());
         userProfileDto.setSurname(userProfile.getSurname());
-        if (userProfile.getTelephone_number() != null) {
-            userProfileDto.setTelephone_number(userProfile.getTelephone_number());
+        if (userProfile.getTelephoneNumber() != null) {
+            userProfileDto.setTelephoneNumber(userProfile.getTelephoneNumber());
         }
         if (userProfile.getLocation() != null) {
             userProfileDto.setLocation(LocationMapper.getLocationDto(userProfile.getLocation()));
@@ -53,7 +56,7 @@ public class UserProfileMapper {
     public static UserProfile getUserProfile(final UserProfileDto userProfileDto,
                                              final UserProfileDao userProfileDao,
                                              final String email,
-                                             final LocationDao locationDao,
+                                             final LocationSpringDataSpecificationDao locationDao,
                                              final SchoolDao schoolDao,
                                              final UniversityDao universityDao) {
         UserProfile userProfile = userProfileDao.findByEmail(email);
@@ -67,8 +70,8 @@ public class UserProfileMapper {
         if (userProfileDto.getSurname() != null) {
             userProfile.setSurname(userProfileDto.getSurname());
         }
-        if (userProfileDto.getTelephone_number() != null) {
-            userProfile.setTelephone_number(userProfileDto.getTelephone_number());
+        if (userProfileDto.getTelephoneNumber() != null) {
+            userProfile.setTelephoneNumber(userProfileDto.getTelephoneNumber());
         }
         if (userProfileDto.getLocation() != null) {
             userProfile.setLocation(LocationMapper.getLocation(userProfileDto.getLocation(), locationDao));

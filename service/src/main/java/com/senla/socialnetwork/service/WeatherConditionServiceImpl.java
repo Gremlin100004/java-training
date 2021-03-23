@@ -2,12 +2,13 @@ package com.senla.socialnetwork.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.senla.socialnetwork.dao.LocationDao;
+import com.senla.socialnetwork.aspect.ServiceLog;
 import com.senla.socialnetwork.dao.WeatherConditionDao;
-import com.senla.socialnetwork.domain.Location;
-import com.senla.socialnetwork.domain.WeatherCondition;
+import com.senla.socialnetwork.dao.springdata.LocationSpringDataSpecificationDao;
 import com.senla.socialnetwork.dto.WeatherConditionDto;
 import com.senla.socialnetwork.dto.WeatherConditionForAdminDto;
+import com.senla.socialnetwork.model.Location;
+import com.senla.socialnetwork.model.WeatherCondition;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.mapper.WeatherConditionMapper;
 import com.senla.socialnetwork.service.util.PrincipalUtil;
@@ -27,6 +28,7 @@ import java.util.List;
 @Service
 @NoArgsConstructor
 @Slf4j
+@ServiceLog
 public class WeatherConditionServiceImpl implements WeatherConditionService {
     private static final String WEATHER_API_URL = "http://api.openweathermap.org/data/2.5/weather";
     private static final String LOCATION_PARAMETER = "?q=";
@@ -41,7 +43,7 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
     @Value("${com.senla.socialnetwork.service.WeatherConditionServiceImpl.updateTime:2000}")
     private Long updateTime;
     @Autowired
-    private LocationDao locationDao;
+    private LocationSpringDataSpecificationDao locationDao;
     @Autowired
     private WeatherConditionDao weatherConditionDao;
     @Autowired
@@ -67,7 +69,7 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
         WeatherCondition weatherCondition = weatherConditionDao.findByLocation(location);
         if (weatherCondition == null) {
             weatherCondition = getWeatherCondition(location);
-            weatherConditionDao.saveRecord(weatherCondition);
+            weatherConditionDao.save(weatherCondition);
         } else if (getTimeWithoutUpdate(weatherCondition.getRegistrationDate().getTime()) > updateTime) {
             updateWeatherCondition(weatherCondition, location);
         }
@@ -114,7 +116,6 @@ public class WeatherConditionServiceImpl implements WeatherConditionService {
         try {
             String url = WEATHER_API_URL + LOCATION_PARAMETER + location.getCity() + PARAMETERS_SEPARATOR
                          + location.getCountry() + KEY_PARAMETER + weatherKey;
-            System.out.println(url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             String stringJson = response.getBody();
             if (stringJson == null) {

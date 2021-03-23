@@ -1,6 +1,5 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PostCommentDto;
@@ -62,9 +61,7 @@ public class PostController {
     public static final String DELETE_POST_BY_USER_DESCRIPTION = "This method is used to delete a post by this user";
     public static final String ADD_COMMENT_DESCRIPTION = "This method is used to add new comment to post by this user";
     @Autowired
-    PostService postService;
-    @Autowired
-    private SigningKey signingKey;
+    private PostService postService;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping

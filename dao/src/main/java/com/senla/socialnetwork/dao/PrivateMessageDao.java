@@ -1,12 +1,12 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.PrivateMessage;
+import com.senla.socialnetwork.model.PrivateMessage;
 
 import java.util.Date;
 import java.util.List;
 
 public interface PrivateMessageDao extends GenericDao<PrivateMessage, Long> {
-    List<PrivateMessage> getByEmail(String email, int firstResult, int maxResults);
+    List<PrivateMessage> findByEmail(String email, int firstResult, int maxResults);
 
     List<PrivateMessage> getDialogue(String email, Long idUser, int firstResult, int maxResults);
 

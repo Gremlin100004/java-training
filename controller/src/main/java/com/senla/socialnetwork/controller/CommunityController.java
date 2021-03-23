@@ -1,14 +1,13 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.controller.exception.ControllerException;
 import com.senla.socialnetwork.controller.util.ValidationUtil;
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.CommunityDto;
 import com.senla.socialnetwork.dto.CommunityForCreateDto;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.dto.PostForCreationDto;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
 import com.senla.socialnetwork.service.CommunityService;
 import com.senla.socialnetwork.service.enumaration.CommunitySortParameter;
 import io.swagger.annotations.Api;
@@ -92,8 +91,6 @@ public class CommunityController {
     public static final String POST_DTO_DESCRIPTION = " DTO community post object";
     @Autowired
     private CommunityService communityService;
-    @Autowired
-    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping("/all")
@@ -167,7 +164,7 @@ public class CommunityController {
     })
     public List<PostDto> getCommunityPosts(@ApiParam(value = COMMUNITY_ID_DESCRIPTION,
                                                      example = COMMUNITY_ID_FOR_GET_POSTS)
-                                           @PathVariable("id") Long communityId,
+                                           @PathVariable("id") final Long communityId,
                                            @ApiParam(value = FIRST_RESULT_DESCRIPTION, example = FIRST_RESULT_EXAMPLE)
                                            @RequestParam final int firstResult,
                                            @ApiParam(value = MAX_RESULTS_DESCRIPTION, example = MAX_RESULTS_EXAMPLE)

@@ -1,18 +1,16 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.Post;
-import com.senla.socialnetwork.domain.PostComment;
-import com.senla.socialnetwork.domain.PostComment_;
-import com.senla.socialnetwork.domain.Post_;
-import com.senla.socialnetwork.domain.PublicMessageComment_;
-import com.senla.socialnetwork.domain.SystemUser;
-import com.senla.socialnetwork.domain.SystemUser_;
-import com.senla.socialnetwork.domain.UserProfile;
-import com.senla.socialnetwork.domain.UserProfile_;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.socialnetwork.model.Post;
+import com.senla.socialnetwork.model.PostComment;
+import com.senla.socialnetwork.model.PostComment_;
+import com.senla.socialnetwork.model.Post_;
+import com.senla.socialnetwork.model.PublicMessageComment_;
+import com.senla.socialnetwork.model.SystemUser;
+import com.senla.socialnetwork.model.SystemUser_;
+import com.senla.socialnetwork.model.UserProfile;
+import com.senla.socialnetwork.model.UserProfile_;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,7 +19,6 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
-@Slf4j
 public class PostCommentCriteriaApiDaoImpl extends AbstractDao<PostComment, Long> implements PostCommentDao {
     public PostCommentCriteriaApiDaoImpl() {
         setType(PostComment.class);
@@ -29,8 +26,6 @@ public class PostCommentCriteriaApiDaoImpl extends AbstractDao<PostComment, Long
 
     @Override
     public PostComment findByIdAndEmail(final String email, final Long commentId) {
-        log.debug("[email: {}, commentId: {}]", email, commentId);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PostComment> criteriaQuery = criteriaBuilder.createQuery(PostComment.class);
             Root<PostComment> postCommentRoot = criteriaQuery.from(PostComment.class);
@@ -42,16 +37,10 @@ public class PostCommentCriteriaApiDaoImpl extends AbstractDao<PostComment, Long
                 userProfileSystemUserJoin.get(SystemUser_.email), email)), criteriaBuilder.equal(
                 postCommentRoot.get(PublicMessageComment_.id), commentId));
             return entityManager.createQuery(criteriaQuery).getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<PostComment> getPostComments(final Long postId, final int firstResult, final int maxResults) {
-        log.debug("[postId: {}, firstResult: {}, maxResults: {}]", postId, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PostComment> criteriaQuery = criteriaBuilder.createQuery(PostComment.class);
             Root<PostComment> postCommentRoot = criteriaQuery.from(PostComment.class);
@@ -66,10 +55,6 @@ public class PostCommentCriteriaApiDaoImpl extends AbstractDao<PostComment, Long
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
 }

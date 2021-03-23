@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.service.config;
 
-import com.senla.socialnetwork.domain.WeatherCondition;
+import com.senla.socialnetwork.model.WeatherCondition;
 
 import java.util.ArrayList;
 import java.util.Date;

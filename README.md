@@ -9,7 +9,7 @@ This repository includes a basic REST API built with Spring framework and for de
 #### Java
 Install java 8 use following command in terminal
 ```sh
-$ sudo apt update
+    $ sudo apt update
 $ sudo apt-get install openjdk-8-jdk
 ```
 You will be prompted to accept the license.
@@ -157,7 +157,7 @@ Save file.
 Open controller/src/main/resources/application.properties (in any text editor).
 ```sh
 socialnetwork.source.package=com.senla.socialnetwork
-socialnetwork.datasource.package=com.senla.socialnetwork.domain
+socialnetwork.datasource.package=com.senla.socialnetwork.model
 hibernate.connection.driver_class=com.mysql.cj.jdbc.Driver 
 hibernate.connection.url=jdbc:mysql://db:3306/hrinkov_social_network
 com.senla.socialnetwork.service.WeatherConditionServiceImpl.weatherKey=b68b4778fdca71f0acfc8b78bb3bb162

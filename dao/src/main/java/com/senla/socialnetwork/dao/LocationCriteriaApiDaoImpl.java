@@ -1,21 +1,18 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.Location;
-import com.senla.socialnetwork.domain.SystemUser;
-import com.senla.socialnetwork.domain.SystemUser_;
-import com.senla.socialnetwork.domain.UserProfile;
-import com.senla.socialnetwork.domain.UserProfile_;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.socialnetwork.model.Location;
+import com.senla.socialnetwork.model.SystemUser;
+import com.senla.socialnetwork.model.SystemUser_;
+import com.senla.socialnetwork.model.UserProfile;
+import com.senla.socialnetwork.model.UserProfile_;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 @Repository
-@Slf4j
 public class LocationCriteriaApiDaoImpl extends AbstractDao<Location, Long> implements LocationDao {
     public LocationCriteriaApiDaoImpl() {
         setType(Location.class);
@@ -23,8 +20,6 @@ public class LocationCriteriaApiDaoImpl extends AbstractDao<Location, Long> impl
 
     @Override
     public Location getLocation(final String email) {
-        log.debug("[email: {}]", email);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Location> criteriaQuery = criteriaBuilder.createQuery(Location.class);
             Root<UserProfile> userProfileRoot = criteriaQuery.from(UserProfile.class);
@@ -32,10 +27,6 @@ public class LocationCriteriaApiDaoImpl extends AbstractDao<Location, Long> impl
             criteriaQuery.select(userProfileRoot.get(UserProfile_.location));
             criteriaQuery.where(criteriaBuilder.equal(masterOrderJoin.get(SystemUser_.email), email));
             return entityManager.createQuery(criteriaQuery).getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
 }

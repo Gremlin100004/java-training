@@ -1,25 +1,24 @@
 package com.senla.socialnetwork.service;
 
+import com.senla.socialnetwork.aspect.ServiceLog;
 import com.senla.socialnetwork.dao.CommunityDao;
 import com.senla.socialnetwork.dao.PostDao;
 import com.senla.socialnetwork.dao.UserProfileDao;
 import com.senla.socialnetwork.dao.connection.DatabaseConnection;
-import com.senla.socialnetwork.domain.Community;
-import com.senla.socialnetwork.domain.Post;
-import com.senla.socialnetwork.domain.UserProfile;
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.CommunityDto;
 import com.senla.socialnetwork.dto.CommunityForCreateDto;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.dto.PostForCreationDto;
+import com.senla.socialnetwork.model.Community;
+import com.senla.socialnetwork.model.Post;
+import com.senla.socialnetwork.model.UserProfile;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
 import com.senla.socialnetwork.service.exception.BusinessException;
 import com.senla.socialnetwork.service.mapper.CommunityMapper;
 import com.senla.socialnetwork.service.mapper.PostMapper;
 import com.senla.socialnetwork.service.util.PrincipalUtil;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,8 +26,8 @@ import java.util.List;
 
 
 @Service
+@ServiceLog
 @NoArgsConstructor
-@Slf4j
 public class CommunityJdbcServiceImpl implements CommunityService {
     private static final int FIRST_RESULT = 0;
     private static final int MAX_RESULTS = 0;
@@ -48,13 +47,11 @@ public class CommunityJdbcServiceImpl implements CommunityService {
 
     @Override
     public List<CommunityDto> getCommunities(final int firstResult, final int maxResults) {
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(communityDao.getCommunities(firstResult, maxResults));
     }
 
     @Override
     public List<CommunityDto> getCommunitiesSortiedByNumberOfSubscribers(final int firstResult, final int maxResults) {
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
             communityDao.getCommunitiesSortiedByNumberOfSubscribers(firstResult, maxResults));
     }
@@ -63,28 +60,24 @@ public class CommunityJdbcServiceImpl implements CommunityService {
     public List<CommunityDto> getCommunitiesFilteredByType(final CommunityType communityType,
                                                            final int firstResult,
                                                            final int maxResults) {
-        log.debug("[communityType: {}, firstResult: {}, maxResults: {}]", communityType, firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
             communityDao.getCommunitiesByType(communityType, firstResult, maxResults));
     }
 
     @Override
     public List<CommunityDto> getOwnCommunities(final int firstResult, final int maxResults) {
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
             communityDao.getCommunitiesByEmail(PrincipalUtil.getUserName(), firstResult, maxResults));
     }
 
     @Override
     public List<CommunityDto> getSubscribedCommunities(final int firstResult, final int maxResults) {
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         return CommunityMapper.getCommunityDto(
             communityDao.getSubscribedCommunitiesByEmail(PrincipalUtil.getUserName(), firstResult, maxResults));
     }
 
     @Override
     public void subscribeToCommunity(final Long communityId) {
-        log.debug("[communityId: {}]", communityId);
         try {
             databaseConnection.disableAutoCommit();
             Community community = communityDao.findById(communityId);
@@ -101,7 +94,6 @@ public class CommunityJdbcServiceImpl implements CommunityService {
             communityDao.updateRecord(community);
             databaseConnection.commitTransaction();
         } catch (BusinessException exception) {
-            log.error("[{}]", exception.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction subscribe to community");
         } finally {
@@ -111,7 +103,6 @@ public class CommunityJdbcServiceImpl implements CommunityService {
 
     @Override
     public void unsubscribeFromCommunity(final Long communityId) {
-        log.debug("[communityId: {}]", communityId);
         try {
             databaseConnection.disableAutoCommit();
             Community community = communityDao.findById(communityId);
@@ -129,7 +120,6 @@ public class CommunityJdbcServiceImpl implements CommunityService {
             communityDao.updateRecord(community);
             databaseConnection.commitTransaction();
         } catch (BusinessException exception) {
-            log.error("[{}]", exception.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction unsubscribe from community");
         } finally {
@@ -139,21 +129,19 @@ public class CommunityJdbcServiceImpl implements CommunityService {
 
     @Override
     public List<PostDto> getCommunityPosts(final Long communityId, final int firstResult, final int maxResults) {
-        log.debug("[communityId: {}, firstResult: {}, maxResults: {}]", communityId, firstResult, maxResults);
         return PostMapper.getPostDto(postDao.getByCommunityId(communityId, firstResult, maxResults));
     }
 
     @Override
     public CommunityDto addCommunity(final CommunityForCreateDto communityDto) {
-        log.debug("[communityDto: {}]", communityDto);
         try {
             databaseConnection.disableAutoCommit();
-            CommunityDto returnedCommunityDto = CommunityMapper.getCommunityDto(communityDao.saveRecord(CommunityMapper.getNewCommunity(
+            CommunityDto
+                returnedCommunityDto = CommunityMapper.getCommunityDto(communityDao.save(CommunityMapper.getNewCommunity(
                 communityDto, userProfileDao.findByEmail(PrincipalUtil.getUserName()))));
             databaseConnection.commitTransaction();
             return returnedCommunityDto;
         } catch (BusinessException exception) {
-            log.error("[{}]", exception.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction add community");
         } finally {
@@ -163,14 +151,12 @@ public class CommunityJdbcServiceImpl implements CommunityService {
 
     @Override
     public void updateCommunity(final CommunityDto communityDto) {
-        log.debug("[communityDto: {}]", communityDto);
         try {
             databaseConnection.disableAutoCommit();
             communityDao.updateRecord(CommunityMapper.getCommunity(
                 communityDto, communityDao, PrincipalUtil.getUserName()));
             databaseConnection.commitTransaction();
         } catch (BusinessException exception) {
-            log.error("[{}]", exception.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction update community");
         } finally {
@@ -180,7 +166,6 @@ public class CommunityJdbcServiceImpl implements CommunityService {
 
     @Override
     public void deleteCommunityByUser(final Long communityId) {
-        log.debug("[messageId: {}]", communityId);
         try {
             databaseConnection.disableAutoCommit();
             Community community = communityDao.findByIdAndEmail(PrincipalUtil.getUserName(), communityId);
@@ -197,7 +182,6 @@ public class CommunityJdbcServiceImpl implements CommunityService {
             communityDao.updateRecord(community);
             databaseConnection.commitTransaction();
         } catch (BusinessException exception) {
-            log.error("[{}]", exception.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction delete community");
         } finally {
@@ -207,7 +191,6 @@ public class CommunityJdbcServiceImpl implements CommunityService {
 
     @Override
     public void deleteCommunity(final Long communityId) {
-        log.debug("[communityId: {}]", communityId);
         try {
             databaseConnection.disableAutoCommit();
             Community community = communityDao.findById(communityId);
@@ -217,7 +200,6 @@ public class CommunityJdbcServiceImpl implements CommunityService {
             communityDao.deleteRecord(community);
             databaseConnection.commitTransaction();
         } catch (BusinessException exception) {
-            log.error("[{}]", exception.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction delete community");
         } finally {
@@ -227,7 +209,6 @@ public class CommunityJdbcServiceImpl implements CommunityService {
 
     @Override
     public PostDto addPostToCommunity(final PostForCreationDto postDto, final Long communityId) {
-        log.debug("[postDto: {}, communityId: {}]", postDto, communityId);
         try {
             databaseConnection.disableAutoCommit();
             Community community = communityDao.findByIdAndEmail(PrincipalUtil.getUserName(), communityId);
@@ -236,11 +217,11 @@ public class CommunityJdbcServiceImpl implements CommunityService {
             } else if (community.getIsDeleted()) {
                 throw new BusinessException("Error, the community has already been deleted");
             }
-            PostDto returnedPostDto = PostMapper.getPostDto(postDao.saveRecord(PostMapper.getNewPost(postDto, community)));
+            PostDto
+                returnedPostDto = PostMapper.getPostDto(postDao.save(PostMapper.getNewPost(postDto, community)));
             databaseConnection.commitTransaction();
             return returnedPostDto;
         } catch (BusinessException exception) {
-            log.error("[{}]", exception.getMessage());
             databaseConnection.rollBackTransaction();
             throw new BusinessException("Error transaction add post");
         } finally {

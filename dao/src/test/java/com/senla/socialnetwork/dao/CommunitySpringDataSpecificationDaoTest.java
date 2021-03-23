@@ -1,117 +1,150 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.dao.config.CommunityTestData;
-import com.senla.socialnetwork.dao.config.TestConfig;
-import com.senla.socialnetwork.dao.config.UserProfileTestData;
-import com.senla.socialnetwork.domain.Community;
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.socialnetwork.dao.enumaration.ArrayIndex;
+import com.senla.socialnetwork.dao.springdata.CommunitySpecification;
+import com.senla.socialnetwork.dao.springdata.CommunitySpringDataSpecificationDao;
+import com.senla.socialnetwork.model.Community;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestConfig.class)
-@Transactional
-@Slf4j
-public class CommunitySpringDataSpecificationDaoTest {
+public class CommunitySpringDataSpecificationDaoTest extends AbstractDaoTest {
     private static final int FIRST_RESULT = 0;
-    private static final int MAX_RESULTS = 10;
-    private static final String END_OF_TEST = "********* ****************************************";
+    private static final int MAX_RESULT = 20;
+    private static final String TITTLE = "test";
+    private static final String INFORMATION = "test";
     @Autowired
-    private CommunitySpringDataSpecificationDao communitySpecificationDao;
+    private CommunitySpringDataSpecificationDao communityDao;
 
     @Test
-    void CommunityDao_getCommunities() {
-        log.info("********* Get communities *********");
-        Page<Community> resultCommunities = communitySpecificationDao.findAll(
-                CommunitySpecification.communityIsDeleted(false),
-            PageRequest.of(FIRST_RESULT, MAX_RESULTS));
-        resultCommunities.forEach(community -> log.info(community.toString()));
-        log.info(END_OF_TEST);
+    void CommunityDao_findAll_communityIsDeleted() {
+        Page<Community> resultCommunities = communityDao.findAll(
+            CommunitySpecification.communityIsDeleted(false), PageRequest.of(FIRST_RESULT, MAX_RESULT));
+        Assertions.assertNotNull(resultCommunities);
+        Assertions.assertFalse(resultCommunities.isEmpty());
+        Assertions.assertEquals(resultCommunities.getContent().size(), testDataUtil.getCommunitiesNotDelete().size());
+        Assertions.assertEquals(resultCommunities.toList(), testDataUtil.getCommunitiesNotDelete());
     }
 
     @Test
-    void CommunityDao_getCommunitiesByType() {
-        log.info("********* Get communities by type *********");
-        Page<Community> resultCommunities = communitySpecificationDao.findAll(
-                CommunitySpecification.communityBelongToType(
-                        CommunityType.SPORT), PageRequest.of(FIRST_RESULT, MAX_RESULTS));
-        resultCommunities.forEach(community -> log.info(community.toString()));
-        log.info(END_OF_TEST);
+    void CommunityDao_findAll_communityBelongToType() {
+        List<Community> communities = testDataUtil.getCommunitiesByType(CommunityType.SPORT);
+        Page<Community> resultCommunities = communityDao.findAll(CommunitySpecification.communityBelongToType(
+            CommunityType.SPORT), PageRequest.of(FIRST_RESULT, MAX_RESULT));
+        Assertions.assertNotNull(resultCommunities);
+        Assertions.assertFalse(resultCommunities.isEmpty());
+        Assertions.assertEquals(resultCommunities.getContent().size(), communities.size());
+        Assertions.assertEquals(resultCommunities.getContent(), communities);
     }
 
     @Test
     void CommunityDao_getCommunitiesSortiedByNumberOfSubscribers() {
-        log.info("********* Get communities sortied by number of subscribers *********");
-        List<Community> resultCommunities = communitySpecificationDao.getCommunitiesSortiedByNumberOfSubscribers(
-            FIRST_RESULT, MAX_RESULTS);
-        resultCommunities.forEach(community -> log.info(community.toString()));
-        log.info(END_OF_TEST);
+        List<Community> resultCommunities = communityDao.getCommunitiesSortiedByNumberOfSubscribers(
+                FIRST_RESULT, MAX_RESULT);
+        Assertions.assertNotNull(resultCommunities);
+        Assertions.assertFalse(resultCommunities.isEmpty());
+        Assertions.assertEquals(resultCommunities.size(), testDataUtil.getCommunitiesNotDelete().size());
+        Assertions.assertTrue(resultCommunities.contains(testDataUtil.getCommunitiesNotDelete().get(
+            ArrayIndex.FIRST_INDEX_OF_ARRAY.index)));
+        Assertions.assertTrue(resultCommunities.contains(testDataUtil.getCommunitiesNotDelete().get(
+            ArrayIndex.SECOND_INDEX_OF_ARRAY.index)));
+        Assertions.assertTrue(resultCommunities.contains(testDataUtil.getCommunitiesNotDelete().get(
+            ArrayIndex.THIRD_INDEX_OF_ARRAY.index)));
     }
 
     @Test
     void CommunityDao_getCommunitiesByEmail() {
-        log.info("********* Get communities by email *********");
-        Page<Community> resultCommunities = communitySpecificationDao.findAll(CommunitySpecification.emailLike(
-            UserProfileTestData.getUserProfileEmail()), PageRequest.of(FIRST_RESULT, MAX_RESULTS));
-        resultCommunities.forEach(community -> log.info(community.toString()));
-        log.info(END_OF_TEST);
+        String email = testDataUtil.getUsers().get(ArrayIndex.FIRST_INDEX_OF_ARRAY.index).getEmail();
+
+        Page<Community> resultCommunities = communityDao.findAll(
+            CommunitySpecification.emailLike(email), PageRequest.of(FIRST_RESULT, MAX_RESULT));
+        Assertions.assertNotNull(resultCommunities);
+        Assertions.assertFalse(resultCommunities.isEmpty());
+        Assertions.assertEquals(resultCommunities.getContent().size(), testDataUtil.getCommunitiesByEmail(email).size());
+        Assertions.assertEquals(resultCommunities.getContent(), testDataUtil.getCommunitiesByEmail(email));
     }
 
     @Test
     void CommunityDao_getSubscribedCommunitiesByEmail() {
-        log.info("********* Get communities by email *********");
-        List<Community> resultCommunities = communitySpecificationDao.getSubscribedCommunitiesByEmail(
-                UserProfileTestData.getUserProfileEmail(), FIRST_RESULT, MAX_RESULTS);
-        resultCommunities.forEach(community -> log.info(community.toString()));
-        log.info(END_OF_TEST);
+        String email = testDataUtil.getUsers().get(ArrayIndex.SECOND_INDEX_OF_ARRAY.index).getEmail();
+
+        List<Community> resultCommunities = communityDao.getSubscribedCommunitiesByEmail(
+            email, FIRST_RESULT, MAX_RESULT);
+        Assertions.assertNotNull(resultCommunities);
+        Assertions.assertFalse(resultCommunities.isEmpty());
+        Assertions.assertEquals(resultCommunities.size(), testDataUtil.getSubscribedCommunitiesByEmail(email).size());
+        Assertions.assertEquals(resultCommunities, testDataUtil.getSubscribedCommunitiesByEmail(email));
     }
 
     @Test
     void CommunityDao_findByIdAndEmail() {
-        log.info("********* Find by id and email *********");
-        Optional<Community> resultCommunities = communitySpecificationDao.findOne(CommunitySpecification.emailAndIdLike(
-            CommunityTestData.getCommunityId(), UserProfileTestData.getUserProfileEmail()));
-        log.info(resultCommunities.toString());
-        log.info(END_OF_TEST);
+        String email = testDataUtil.getUsers().get(ArrayIndex.FIRST_INDEX_OF_ARRAY.index).getEmail();
+        Community community = testDataUtil.getCommunities().get(ArrayIndex.FIRST_INDEX_OF_ARRAY.index);
+
+        Optional<Community> resultCommunity = communityDao.findOne(CommunitySpecification.emailAndIdLike(
+            community.getId(), email));
+        Assertions.assertTrue(resultCommunity.isPresent());
+        Assertions.assertNotNull(resultCommunity.get());
+        Assertions.assertEquals(community, resultCommunity.get());
     }
 
     @Test
-    void CommunityDao_save_delete_record() {
-        log.info("********* Save community *********");
-        Community testCommunity = CommunityTestData.getTestCommunity();
-        testCommunity.setId(null);
-        communitySpecificationDao.save(testCommunity);
-        log.info(testCommunity.getId().toString());
-        log.info("********* Delete record *********");
-        communitySpecificationDao.delete(testCommunity);
-        log.info(END_OF_TEST);
+    void CommunityDao_saveRecord() {
+        Community community = new Community();
+        community.setIsDeleted(false);
+        community.setInformation(INFORMATION);
+        community.setTitle(TITTLE);
+        community.setType(CommunityType.BUSINESS);
+        community.setCreationDate(new Date());
+        community.setAuthor(testDataUtil.getUserProfiles().get(ArrayIndex.FIRST_INDEX_OF_ARRAY.index));
+
+        communityDao.save(community);
+        Assertions.assertNotNull(community.getId());
     }
 
     @Test
     void CommunityDao_findById() {
-        log.info("********* Find by id *********");
-        Optional<Community> community = communitySpecificationDao.findById(CommunityTestData.getCommunityId());
-        log.info(community.toString());
-        log.info(END_OF_TEST);
+        Community community = testDataUtil.getCommunities().get(ArrayIndex.FIRST_INDEX_OF_ARRAY.index);
+
+        Optional<Community> resultCommunity = communityDao.findById(community.getId());
+        Assertions.assertTrue(resultCommunity.isPresent());
+        Assertions.assertEquals(community, resultCommunity.get());
     }
 
     @Test
-    void CommunityDao_findAll() {
-        log.info("********* Find all records *********");
-        Page<Community> resultCommunities = communitySpecificationDao
-            .findAll(PageRequest.of(FIRST_RESULT, MAX_RESULTS));
-        resultCommunities.forEach(community -> log.info(community.toString()));
-        log.info(END_OF_TEST);
+    void CommunityDao_getAllRecords() {
+        List<Community> resultCommunities = communityDao.findAll(PageRequest.of(FIRST_RESULT, MAX_RESULT)).getContent();
+        Assertions.assertNotNull(resultCommunities);
+        Assertions.assertFalse(resultCommunities.isEmpty());
+        Assertions.assertEquals(resultCommunities.size(), testDataUtil.getCommunities().size());
+        Assertions.assertEquals(resultCommunities, testDataUtil.getCommunities());
+    }
+
+    @Test
+    void CommunityDao_updateRecord() {
+        Community community = testDataUtil.getCommunities().get(ArrayIndex.SECOND_INDEX_OF_ARRAY.index);
+        community.setTitle(TITTLE);
+
+        communityDao.save(community);
+        Optional<Community> resultCommunity = communityDao.findById(community.getId());
+        Assertions.assertTrue(resultCommunity.isPresent());
+        Assertions.assertEquals(community, resultCommunity.get());
+    }
+
+    @Test
+    void CommunityDao_deleteRecord() {
+        Community community = testDataUtil.getCommunities().get(ArrayIndex.SECOND_INDEX_OF_ARRAY.index);
+
+        communityDao.delete(community);
+        Optional<Community> resultCommunity = communityDao.findById(community.getId());
+        Assertions.assertFalse(resultCommunity.isPresent());
     }
 
 }

@@ -1,19 +1,22 @@
 package com.senla.socialnetwork.service.mapper;
 
 import com.senla.socialnetwork.dao.PublicMessageCommentDao;
-import com.senla.socialnetwork.domain.PublicMessage;
-import com.senla.socialnetwork.domain.PublicMessageComment;
-import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentForCreateDto;
+import com.senla.socialnetwork.model.PublicMessage;
+import com.senla.socialnetwork.model.PublicMessageComment;
+import com.senla.socialnetwork.model.UserProfile;
 import com.senla.socialnetwork.service.exception.BusinessException;
 
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PublicMessageCommentMapper {
-        public static PublicMessageCommentDto getPublicMessageCommentDto(final PublicMessageComment publicMessageComment) {
+public final class PublicMessageCommentMapper {
+    private PublicMessageCommentMapper() {
+    }
+
+    public static PublicMessageCommentDto getPublicMessageCommentDto(final PublicMessageComment publicMessageComment) {
         PublicMessageCommentDto publicMessageCommentDto = new PublicMessageCommentDto();
         publicMessageCommentDto.setId(publicMessageComment.getId());
         publicMessageCommentDto.setCreationDate(publicMessageComment.getCreationDate());

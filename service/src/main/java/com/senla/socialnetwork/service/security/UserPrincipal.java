@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.service.security;
 
-import com.senla.socialnetwork.domain.SystemUser;
+import com.senla.socialnetwork.model.SystemUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +13,7 @@ public class UserPrincipal implements UserDetails {
     private final String password;
     private final Collection<? extends GrantedAuthority> grantedAuthorities;
 
-    public UserPrincipal(SystemUser systemUser) {
+    public UserPrincipal(final SystemUser systemUser) {
         this.login = systemUser.getEmail();
         this.password = systemUser.getPassword();
         this.grantedAuthorities = Collections.singletonList(

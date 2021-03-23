@@ -28,6 +28,7 @@ import java.io.IOException;
 @Component
 @NoArgsConstructor
 @Slf4j
+@SuppressWarnings("NullableProblems")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private static final String INCORRECT_RESULT_SIZE_DATA_ACCESS_EXCEPTION_MESSAGE = "User is not logged in";
     private static final String EXCEPTION_MESSAGE = "Server error";
@@ -36,7 +37,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    SigningKey signingKey;
+    private SigningKey signingKey;
 
     @Override
     protected void doFilterInternal(final HttpServletRequest request,
@@ -61,7 +62,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+    private UsernamePasswordAuthenticationToken getAuthentication(final HttpServletRequest request) {
         String token = JwtUtil.getToken(request);
         if (token == null) {
             return null;
@@ -80,7 +81,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         return authenticationToken;
     }
 
-    private void fillResponse(String forClientMessage,  HttpServletResponse response) {
+    private void fillResponse(final String forClientMessage,  final HttpServletResponse response) {
         try {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setStatus(HttpStatus.BAD_REQUEST.value());

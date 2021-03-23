@@ -1,8 +1,8 @@
 package com.senla.socialnetwork.service.config;
 
-import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.UserProfileDto;
 import com.senla.socialnetwork.dto.UserProfileForIdentificationDto;
+import com.senla.socialnetwork.model.UserProfile;
 
 import java.util.ArrayList;
 import java.util.Date;

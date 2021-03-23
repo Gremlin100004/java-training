@@ -1,14 +1,12 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.UserProfile;
+import com.senla.socialnetwork.model.UserProfile;
 
 import java.util.Date;
 import java.util.List;
 
 public interface UserProfileDao extends GenericDao<UserProfile, Long> {
     UserProfile findByEmail(String email);
-
-    List<UserProfile> getCommunityUsers(Long communityId);
 
     List<UserProfile> getUserProfilesSortBySurname(int firstResult, int maxResults);
 

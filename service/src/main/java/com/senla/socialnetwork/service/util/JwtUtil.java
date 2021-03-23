@@ -16,8 +16,11 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Slf4j
-public class JwtUtil {
+public final class JwtUtil {
     private static final String TYPE_TOKEN = "Bearer ";
+
+    private JwtUtil() {
+    }
 
     public static String getToken(final HttpServletRequest request) {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);

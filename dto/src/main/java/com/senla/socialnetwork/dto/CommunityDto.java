@@ -1,7 +1,7 @@
 package com.senla.socialnetwork.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

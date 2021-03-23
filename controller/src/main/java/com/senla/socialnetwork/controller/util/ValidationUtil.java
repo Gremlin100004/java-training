@@ -9,10 +9,13 @@ import javax.validation.Validator;
 import java.util.Set;
 
 @Slf4j
-public class ValidationUtil {
+public final class ValidationUtil {
     private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
-    public static void validate(Object object) {
+    private ValidationUtil() {
+    }
+
+    public static void validate(final Object object) {
         Set<ConstraintViolation<Object>> violations = VALIDATOR.validate(object);
         for (ConstraintViolation<Object> violation : violations) {
             log.error(violation.getMessage());

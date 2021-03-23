@@ -1,6 +1,5 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PublicMessageCommentDto;
@@ -56,8 +55,6 @@ public class PublicMessageCommentController {
        + "by admin";
     @Autowired
     private PublicMessageCommentService publicMessageCommentService;
-    @Autowired
-    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping

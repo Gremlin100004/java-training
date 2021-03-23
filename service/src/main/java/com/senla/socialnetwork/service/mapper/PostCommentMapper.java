@@ -1,18 +1,21 @@
 package com.senla.socialnetwork.service.mapper;
 
 import com.senla.socialnetwork.dao.PostCommentDao;
-import com.senla.socialnetwork.domain.Post;
-import com.senla.socialnetwork.domain.PostComment;
-import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.PostCommentDto;
 import com.senla.socialnetwork.dto.PostCommentForCreateDto;
+import com.senla.socialnetwork.model.Post;
+import com.senla.socialnetwork.model.PostComment;
+import com.senla.socialnetwork.model.UserProfile;
 import com.senla.socialnetwork.service.exception.BusinessException;
 
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PostCommentMapper {
+public final class PostCommentMapper {
+    private PostCommentMapper() {
+    }
+
     public static PostCommentDto getPostCommentDto(final PostComment postComment) {
         PostCommentDto postCommentDto = new PostCommentDto();
         postCommentDto.setId(postComment.getId());

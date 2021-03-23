@@ -1,15 +1,15 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.Community;
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
+import com.senla.socialnetwork.model.Community;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
 import java.util.List;
 
-@Repository
 //@Primary
+@Repository
 @Slf4j
 public class CommunityJpqlDaoImpl extends AbstractJpqlDao<Community, Long> implements CommunityDao {
     private static final String JPQL_REQUEST_GET_COMMUNITIES_IDS = "SELECT c.id FROM Community c WHERE c.isDeleted=false";
@@ -133,7 +133,7 @@ public class CommunityJpqlDaoImpl extends AbstractJpqlDao<Community, Long> imple
     }
 
     @Override
-    protected String getUpdateRequest(Community community) {
+    protected String getUpdateRequest(final Community community) {
         return START_FRAGMENT_REQUEST_UPDATE_RECORD + getString(community.getCreationDate().toString()) + FIELD_AUTHOR_ID
                + community.getAuthor().getId() + FIELD_TYPE + getString(community.getType().toString()) + FIELD_TITLE
                + getString(community.getTitle()) + FIELD_INFORMATION + getString(community.getInformation())
@@ -155,8 +155,11 @@ public class CommunityJpqlDaoImpl extends AbstractJpqlDao<Community, Long> imple
         return SQL_REQUEST_DELETE_RECORD;
     }
 
-    private String getString(String value) {
-        return value != null ? STRING_HIGHLIGHT_CHARACTER + value + STRING_HIGHLIGHT_CHARACTER : null;
+    private String getString(final String value) {
+        if (value != null) {
+            return STRING_HIGHLIGHT_CHARACTER + value + STRING_HIGHLIGHT_CHARACTER;
+        }
+        return null;
     }
 
 }

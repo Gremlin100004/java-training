@@ -1,7 +1,6 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.AEntity;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.socialnetwork.model.AEntity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -12,10 +11,10 @@ import javax.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.List;
 
-@Slf4j
 public abstract class AbstractDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, PK> {
     private Class<T> type;
     @PersistenceContext
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     protected EntityManager entityManager;
 
     public AbstractDao() {
@@ -26,24 +25,18 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
     }
 
     @Override
-    public T saveRecord(final T entity) {
-        log.debug("[saveRecord]");
-        log.debug("[entity: {}]", entity);
+    public T save(final T entity) {
         entityManager.persist(entity);
         return entity;
     }
 
     @Override
     public T findById(final PK id) {
-        log.debug("[findById]");
-        log.debug("[type: {}, id: {}]", type, id);
         return entityManager.find(type, id);
     }
 
     @Override
     public List<T> getAllRecords(final int firstResult, final int maxResults) {
-        log.debug("[getAllRecords]");
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(type);
         Root<T> root = criteriaQuery.from(type);
@@ -58,15 +51,11 @@ public abstract class AbstractDao<T extends AEntity, PK extends Serializable> im
 
     @Override
     public void updateRecord(final T entity) {
-        log.debug("[updateRecord]");
-        log.debug("[entity: {}]", entity);
         entityManager.merge(entity);
     }
 
     @Override
-    public void deleteRecord(T entity) {
-        log.debug("[deleteRecord]");
-        log.debug("[entity: {}]", entity);
+    public void deleteRecord(final T entity) {
         entityManager.remove(entity);
     }
 

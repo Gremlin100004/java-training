@@ -1,10 +1,14 @@
 package com.senla.socialnetwork.service.config;
 
-import com.senla.socialnetwork.domain.Location;
 import com.senla.socialnetwork.dto.LocationDto;
 import com.senla.socialnetwork.dto.LocationForCreateDto;
+import com.senla.socialnetwork.model.Location;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LocationTestData {
@@ -45,24 +49,24 @@ public class LocationTestData {
         return locationDto;
     }
 
-    public static List<Location> getTestLocations() {
+    public static Page<Location> getTestLocations() {
         Location locationOne = getTestLocation();
         Location locationTwo = getTestLocation();
         locationTwo.setId(LOCATION_OTHER_ID);
-        List<Location> privateMessages = new ArrayList<>();
-        privateMessages.add(locationOne);
-        privateMessages.add(locationTwo);
-        return privateMessages;
+        List<Location> locations = new ArrayList<>();
+        locations.add(locationOne);
+        locations.add(locationTwo);
+        return new PageImpl<>(locations, Pageable.unpaged(), 2L);
     }
 
-    public static List<LocationDto> getTestLocationsDto() {
+    public static Page<LocationDto> getTestLocationsDto() {
         LocationDto locationDtoOne = getTestLocationDto();
         LocationDto locationDtoTwo = getTestLocationDto();
         locationDtoTwo.setId(LOCATION_OTHER_ID);
         List<LocationDto> locationsDto = new ArrayList<>();
         locationsDto.add(locationDtoOne);
         locationsDto.add(locationDtoTwo);
-        return locationsDto;
+        return new PageImpl<>(locationsDto, Pageable.unpaged(), 2L);
     }
 
 }

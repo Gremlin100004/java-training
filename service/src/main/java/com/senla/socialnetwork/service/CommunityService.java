@@ -1,10 +1,10 @@
 package com.senla.socialnetwork.service;
 
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
 import com.senla.socialnetwork.dto.CommunityDto;
 import com.senla.socialnetwork.dto.CommunityForCreateDto;
 import com.senla.socialnetwork.dto.PostDto;
 import com.senla.socialnetwork.dto.PostForCreationDto;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
 
 import java.util.List;
 

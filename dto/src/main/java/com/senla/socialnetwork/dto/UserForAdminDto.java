@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.dto;
 
-import com.senla.socialnetwork.domain.enumaration.RoleName;
+import com.senla.socialnetwork.model.enumaration.RoleName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -28,6 +28,7 @@ public class UserForAdminDto extends GeneralDto {
         example = "example")
     @NotBlank(message = "password must be specified")
     private String password;
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Size(min = 4, message = "name must be specified")
     @ApiModelProperty(value = "User role")
     private RoleName role;

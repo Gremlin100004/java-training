@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.School;
+import com.senla.socialnetwork.model.School;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,5 @@
 package com.senla.socialnetwork.controller;
 
-import com.senla.socialnetwork.controller.config.SigningKey;
 import com.senla.socialnetwork.controller.util.ValidationUtil;
 import com.senla.socialnetwork.dto.ClientMessageDto;
 import com.senla.socialnetwork.dto.PostCommentDto;
@@ -52,8 +51,6 @@ public class PostCommentController {
     public static final String DELETE_COMMENT_DESCRIPTION = "This method is used to delete comment by admin";
     @Autowired
     private PostCommentService postCommentService;
-    @Autowired
-    private SigningKey signingKey;
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping

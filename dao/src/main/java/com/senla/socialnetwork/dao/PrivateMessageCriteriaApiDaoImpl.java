@@ -1,15 +1,13 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.PrivateMessage;
-import com.senla.socialnetwork.domain.PrivateMessage_;
-import com.senla.socialnetwork.domain.SystemUser;
-import com.senla.socialnetwork.domain.SystemUser_;
-import com.senla.socialnetwork.domain.UserProfile;
-import com.senla.socialnetwork.domain.UserProfile_;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.socialnetwork.model.PrivateMessage;
+import com.senla.socialnetwork.model.PrivateMessage_;
+import com.senla.socialnetwork.model.SystemUser;
+import com.senla.socialnetwork.model.SystemUser_;
+import com.senla.socialnetwork.model.UserProfile;
+import com.senla.socialnetwork.model.UserProfile_;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -20,16 +18,13 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-@Slf4j
 public class PrivateMessageCriteriaApiDaoImpl extends AbstractDao<PrivateMessage, Long> implements PrivateMessageDao {
     public PrivateMessageCriteriaApiDaoImpl() {
         setType(PrivateMessage.class);
     }
 
     @Override
-    public List<PrivateMessage> getByEmail(final String email, final int firstResult, final int maxResults) {
-        log.debug("[email: {}, firstResult: {},maxResults: {}]", email, firstResult, maxResults);
-        try {
+    public List<PrivateMessage> findByEmail(final String email, final int firstResult, final int maxResults) {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PrivateMessage> criteriaQuery = criteriaBuilder.createQuery(PrivateMessage.class);
             Root<PrivateMessage> privateMessageRoot = criteriaQuery.from(PrivateMessage.class);
@@ -53,10 +48,6 @@ public class PrivateMessageCriteriaApiDaoImpl extends AbstractDao<PrivateMessage
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
@@ -64,8 +55,6 @@ public class PrivateMessageCriteriaApiDaoImpl extends AbstractDao<PrivateMessage
                                             final Long idUser,
                                             final int firstResult,
                                             final int maxResults) {
-        log.debug("[email: {}, idUser: {}, firstResult: {},maxResults: {}]", email, idUser, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PrivateMessage> criteriaQuery = criteriaBuilder.createQuery(PrivateMessage.class);
             Root<PrivateMessage> privateMessageRoot = criteriaQuery.from(PrivateMessage.class);
@@ -98,16 +87,10 @@ public class PrivateMessageCriteriaApiDaoImpl extends AbstractDao<PrivateMessage
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public List<PrivateMessage> getUnreadMessages(final String email, final int firstResult, final int maxResults) {
-        log.trace("[debug: {}]", email);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PrivateMessage> criteriaQuery = criteriaBuilder.createQuery(PrivateMessage.class);
             Root<PrivateMessage> privateMessageRoot = criteriaQuery.from(PrivateMessage.class);
@@ -130,10 +113,6 @@ public class PrivateMessageCriteriaApiDaoImpl extends AbstractDao<PrivateMessage
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
@@ -142,9 +121,6 @@ public class PrivateMessageCriteriaApiDaoImpl extends AbstractDao<PrivateMessage
                                                            final Date endPeriodDate,
                                                            final int firstResult,
                                                            final int maxResults) {
-        log.debug("[email: {}, startPeriodDate: {}, endPeriodDate: {}, firstResult: {}, maxResults: {}]",
-                  email, startPeriodDate, endPeriodDate, firstResult, maxResults);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PrivateMessage> criteriaQuery = criteriaBuilder.createQuery(PrivateMessage.class);
             Root<PrivateMessage> privateMessageRoot = criteriaQuery.from(PrivateMessage.class);
@@ -172,16 +148,10 @@ public class PrivateMessageCriteriaApiDaoImpl extends AbstractDao<PrivateMessage
                 typedQuery.setMaxResults(maxResults);
             }
             return typedQuery.getResultList();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
     @Override
     public PrivateMessage findByIdAndEmail(final String email, final Long messageId) {
-        log.debug("[email: {}, messageId: {}]", email, messageId);
-        try {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<PrivateMessage> criteriaQuery = criteriaBuilder.createQuery(PrivateMessage.class);
             Root<PrivateMessage> privateMessageRoot = criteriaQuery.from(PrivateMessage.class);
@@ -201,10 +171,6 @@ public class PrivateMessageCriteriaApiDaoImpl extends AbstractDao<PrivateMessage
                             SystemUser_.email), email), criteriaBuilder.equal(privateMessageRoot.get(
                                 PrivateMessage_.id), messageId))));
             return entityManager.createQuery(criteriaQuery).getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
     }
 
 }

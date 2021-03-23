@@ -1,6 +1,6 @@
 package com.senla.socialnetwork.dto;
 
-import com.senla.socialnetwork.domain.enumaration.CommunityType;
+import com.senla.socialnetwork.model.enumaration.CommunityType;
 
 import java.util.Date;
 

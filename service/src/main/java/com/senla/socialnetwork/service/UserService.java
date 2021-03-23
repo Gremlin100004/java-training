@@ -1,8 +1,8 @@
 package com.senla.socialnetwork.service;
 
-import com.senla.socialnetwork.domain.enumaration.RoleName;
 import com.senla.socialnetwork.dto.UserForAdminDto;
 import com.senla.socialnetwork.dto.UserForSecurityDto;
+import com.senla.socialnetwork.model.enumaration.RoleName;
 
 import javax.crypto.SecretKey;
 import java.util.List;

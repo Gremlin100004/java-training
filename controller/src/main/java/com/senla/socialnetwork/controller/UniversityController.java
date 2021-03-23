@@ -40,10 +40,10 @@ public class UniversityController {
     public static final String UNAUTHORIZED_MESSAGE = "You are not authorized to view the resource";
     public static final String FORBIDDEN_MESSAGE = "Accessing the resource you were trying to reach is forbidden";
     public static final String NOT_FOUND_MESSAGE = "The resource you were trying to reach is not found";
-    public static final String RETURN_LIST_OF_UNIVERSITIES_OK_MESSAGE = "Successfully retrieved list of locations";
-    public static final String RETURN_UNIVERSITY_OK_MESSAGE = "Successfully retrieved a location";
-    public static final String UPDATE_UNIVERSITY_OK_MESSAGE = "Successfully updated a location";
-    public static final String DELETE_UNIVERSITY_OK_MESSAGE = "Successfully deleted a location";
+    public static final String RETURN_LIST_OF_UNIVERSITIES_OK_MESSAGE = "Successfully retrieved list of university";
+    public static final String RETURN_UNIVERSITY_OK_MESSAGE = "Successfully retrieved a university";
+    public static final String UPDATE_UNIVERSITY_OK_MESSAGE = "Successfully updated a university";
+    public static final String DELETE_UNIVERSITY_OK_MESSAGE = "Successfully deleted a university";
     public static final String FIRST_RESULT_DESCRIPTION = "The number of the first element of the expected list";
     public static final String MAX_RESULTS_DESCRIPTION = "Maximum number of list elements";
     public static final String FIRST_RESULT_EXAMPLE = "1";

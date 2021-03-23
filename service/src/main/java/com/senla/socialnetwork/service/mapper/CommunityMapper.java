@@ -1,17 +1,20 @@
 package com.senla.socialnetwork.service.mapper;
 
 import com.senla.socialnetwork.dao.CommunityDao;
-import com.senla.socialnetwork.domain.Community;
-import com.senla.socialnetwork.domain.UserProfile;
 import com.senla.socialnetwork.dto.CommunityDto;
 import com.senla.socialnetwork.dto.CommunityForCreateDto;
+import com.senla.socialnetwork.model.Community;
+import com.senla.socialnetwork.model.UserProfile;
 import com.senla.socialnetwork.service.exception.BusinessException;
 
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CommunityMapper {
+public final class CommunityMapper {
+    private CommunityMapper() {
+    }
+
     public static CommunityDto getCommunityDto(final Community community) {
         CommunityDto communityDto = new CommunityDto();
         communityDto.setId(community.getId());

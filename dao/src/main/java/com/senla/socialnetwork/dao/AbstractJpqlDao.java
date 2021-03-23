@@ -1,20 +1,18 @@
 package com.senla.socialnetwork.dao;
 
-import com.senla.socialnetwork.domain.AEntity;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.socialnetwork.model.AEntity;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.io.Serializable;
 import java.util.List;
 
-@Slf4j
 public abstract class AbstractJpqlDao<T extends AEntity, PK extends Serializable> implements GenericDao<T, PK> {
     private static final String ID_PARAMETER = "ids";
     @PersistenceContext
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     protected EntityManager entityManager;
     private Class<T> type;
 
@@ -26,49 +24,34 @@ public abstract class AbstractJpqlDao<T extends AEntity, PK extends Serializable
     }
 
     @Override
-    public T saveRecord(final T entity) {
-        log.debug("[entity: {}]", entity);
+    public T save(final T entity) {
         entityManager.persist(entity);
         return entity;
     }
 
     @Override
     public T findById(final PK id) {
-        log.debug("[id: {}]", id);
-        try {
-            return entityManager
-                .createQuery(getFindByIdRequest(), type)
-                .setParameter(1, id)
-                .getSingleResult();
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
+        return entityManager
+            .createQuery(getFindByIdRequest(), type)
+            .setParameter(1, id)
+            .getSingleResult();
     }
 
     @Override
     public List<T> getAllRecords(final int firstResult, final int maxResults) {
-        log.debug("[firstResult: {}, maxResults: {}]", firstResult, maxResults);
-        try {
-            return getEntityWithPagination(firstResult, maxResults, entityManager.createQuery(
-                getReadAllRequest(), Long.class).getResultList(), getRequestEntitiesWithPagination());
-        } catch (NoResultException exception) {
-            log.error("[{}]", exception.getMessage());
-            return null;
-        }
+        return getEntityWithPagination(firstResult, maxResults, entityManager.createQuery(
+            getReadAllRequest(), Long.class).getResultList(), getRequestEntitiesWithPagination());
     }
 
     @Override
     public void updateRecord(final T entity) {
-        log.debug("[entity: {}]", entity);
         entityManager
             .createQuery(getUpdateRequest(entity))
             .executeUpdate();
     }
 
     @Override
-    public void deleteRecord(T entity) {
-        log.debug("[entity: {}]", entity);
+    public void deleteRecord(final T entity) {
         Query query = entityManager.createQuery(getDeleteRequest(), type);
         query.setParameter(1, entity.getId());
         query.executeUpdate();
