@@ -1,6 +1,6 @@
-package com.senla.socialnetwork.controller.copier;
+package com.senla.logger.copier;
 
-import com.senla.socialnetwork.controller.exception.ControllerException;
+import com.senla.logger.exception.ControllerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
 
@@ -15,7 +15,6 @@ import java.io.InputStreamReader;
 
 @Slf4j
 public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
-
     private final byte[] cachedBody;
 
     public CachedBodyHttpServletRequest(HttpServletRequest request) {

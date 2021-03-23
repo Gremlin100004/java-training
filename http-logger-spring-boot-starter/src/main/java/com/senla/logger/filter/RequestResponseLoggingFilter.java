@@ -1,14 +1,15 @@
-package com.senla.socialnetwork.controller.filter;
+package com.senla.logger.filter;
 
-import com.senla.socialnetwork.controller.copier.CachedBodyHttpServletRequest;
-import com.senla.socialnetwork.controller.copier.HttpServletResponseCopier;
-import com.senla.socialnetwork.controller.exception.ControllerException;
+import com.senla.logger.copier.CachedBodyHttpServletRequest;
+import com.senla.logger.copier.HttpServletResponseCopier;
+import com.senla.logger.exception.ControllerException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.annotation.WebFilter;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
@@ -16,11 +17,11 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-@WebFilter(filterName = "LoggingFilter", urlPatterns = "/*")
 @Slf4j
-public class LoggingFilter extends OncePerRequestFilter {
+public class RequestResponseLoggingFilter implements Filter {
     private static final String COMBINING_PARAMETERS = "&";
     private static final String PARAMETER_SYMBOL = "?";
+    private static final String SWAGGER_URI = "/swagger-ui/";
     private static final String VALUE_PARAMETER_SYMBOL = "=";
     private static final String HTTP_HEADER_CLIENT_IP_ADDRESS = "X-FORWARDED-FOR";
     private static final String PROGRAM_SYSTEM_INFORMATION_PROTOCOL = "&__psip=";
@@ -28,19 +29,21 @@ public class LoggingFilter extends OncePerRequestFilter {
     private static final int NUMBER_PARAMETERS = 1;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest,
-                                    HttpServletResponse httpServletResponse,
-                                    FilterChain filterChain) {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) {
         try {
-            HttpServletResponseCopier responseCopier = new HttpServletResponseCopier(httpServletResponse);
-            CachedBodyHttpServletRequest requestCopier = new CachedBodyHttpServletRequest(httpServletRequest);
-            filterChain.doFilter(requestCopier, responseCopier);
+            HttpServletResponseCopier responseCopier = new HttpServletResponseCopier((HttpServletResponse)response);
+            CachedBodyHttpServletRequest requestCopier = new CachedBodyHttpServletRequest((HttpServletRequest)request);
             String requestBody = IOUtils.toString(requestCopier.getInputStream(), StandardCharsets.UTF_8);
             log.info("[request][headers: {}][method: {}][{}{}][body: {}]",
-                getList(requestCopier.getHeaderNames()), requestCopier.getMethod(),
-                requestCopier.getRequestURI(), getParameters(httpServletRequest), requestBody);
+                     getList(requestCopier.getHeaderNames()), requestCopier.getMethod(),
+                     requestCopier.getRequestURI(), getParameters((HttpServletRequest)request), requestBody);
+            if (requestCopier.getRequestURI().contains(SWAGGER_URI)){
+                filterChain.doFilter(request, response);
+            } else {
+                filterChain.doFilter(requestCopier, responseCopier);
+            }
             log.info("[response][status: {}] [body: {}]", responseCopier.getStatus(),
-                new String(responseCopier.getCopy(), httpServletResponse.getCharacterEncoding()));
+                     new String(responseCopier.getCopy(), response.getCharacterEncoding()));
         } catch (Exception exception) {
             log.error("[{}:{}]", exception.getClass().getSimpleName(), exception.getMessage());
             throw new ControllerException("Request error");

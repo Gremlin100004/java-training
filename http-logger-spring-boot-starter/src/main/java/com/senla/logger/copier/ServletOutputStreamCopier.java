@@ -1,7 +1,6 @@
-package com.senla.socialnetwork.controller.copier;
+package com.senla.logger.copier;
 
-import com.senla.socialnetwork.controller.exception.ControllerException;
-import lombok.extern.slf4j.Slf4j;
+import com.senla.logger.exception.ControllerException;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -9,7 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-@Slf4j
 public class ServletOutputStreamCopier extends ServletOutputStream {
     private static final Integer BUFFER_SIZE = 1024;
     private final OutputStream outputStream;

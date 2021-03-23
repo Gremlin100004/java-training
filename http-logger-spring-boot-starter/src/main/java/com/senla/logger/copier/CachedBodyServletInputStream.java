@@ -1,6 +1,6 @@
-package com.senla.socialnetwork.controller.copier;
+package com.senla.logger.copier;
 
-import com.senla.socialnetwork.controller.exception.ControllerException;
+import com.senla.logger.exception.ControllerException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ReadListener;
@@ -11,7 +11,6 @@ import java.io.InputStream;
 
 @Slf4j
 public class CachedBodyServletInputStream extends ServletInputStream {
-
     private final InputStream cachedBodyInputStream;
     private ReadListener listener;
 
