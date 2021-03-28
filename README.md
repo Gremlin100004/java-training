@@ -105,92 +105,60 @@ docker-compose version 1.17.1
 Go to the folder with the project.
 Open prod.yml (in any text editor):
 ```sh
-version: '3.3'
 services:
-  social-network-mysql:
-    image: mysql:8.0
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=hrinkov_social_network
-      - MYSQL_USER=User
-      - MYSQL_PASSWORD=password
-    ports:
-      - 3306:3306
-    volumes: 
-     - ./database/script/prod/init:/docker-entrypoint-initdb.d
   web:
     build:
       context: .
-      dockerfile: dockerfile/tomcat/Dockerfile
+      dockerfile: dockerfile/ubuntu/Dockerfile
     restart: on-failure
     depends_on:
-      - social-network-mysql
+      - db
     ports:
       - 2308:8080
+    volumes:
+      - ./logs:/usr/local/tomcat/logs
+  db:
+    image: postgres:13.1
+    environment:
+      - POSTGRES_DB=test_database
+      - POSTGRES_USER=TestUser
+      - POSTGRES_PASSWORD=TestPassword
+    ports:
+      - 5432:5432
+    volumes:
+      - ./database/postgres:/var/lib/postgresql/data
+    cap_add:
+      - SYS_NICE
 ```
-Сhange the following fields:
+Change the following fields:
 ```sh
-" - MYSQL_USER= " - MYSQL username;
-" - MYSQL_PASSWORD= " - MYSQL password;
+" - POSTGRES_USER= " - POSTGRESSQL username;
+" - POSTGRES_PASSWORD= " - POSTGRESSQL password;
 ```
 Save file.
 Open controller/src/main/resources/hibernate.properties (in any text editor).
 ```sh
-hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
-hibernate.connection.username=User
-hibernate.connection.password=password
-hibernate.c3p0.min_size=5
-hibernate.c3p0.max_size=20
-hibernate.c3p0.timeout=1800
-hibernate.c3p0.max_statements=50
-hibernate.show_sql=false
-hibernate.format_sql=true
-hibernate.use_sql_comments=false
-hibernate.generate_statistics=trues
-```
-Сhange the following fields:
-```sh
-"hibernate.connection.username= " - MYSQL username;
-"hibernate.connection.password= " - MYSQL password;
-```
-Save file.
-Open controller/src/main/resources/application.properties (in any text editor).
-```sh
-socialnetwork.source.package=com.senla.socialnetwork
-socialnetwork.datasource.package=com.senla.socialnetwork.model
-hibernate.connection.driver_class=com.mysql.cj.jdbc.Driver 
-hibernate.connection.url=jdbc:mysql://db:3306/hrinkov_social_network
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQL10Dialect
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://db:5432/test_database
+spring.datasource.driver_class=org.postgresql.Driver
+spring.datasource.username=TestUser
+spring.datasource.password=TestPassword
+spring.liquibase.change-log=classpath:db/changelog/changeLog-master.xml
+spring.banner.location=classpath:banner.txt
 com.senla.socialnetwork.service.WeatherConditionServiceImpl.weatherKey=b68b4778fdca71f0acfc8b78bb3bb162
 com.senla.socialnetwork.service.WeatherConditionServiceImpl.updateTime=1800
-com.senla.socialnetwork.controller.JwtUtil.expiration=20000000
-cron.expression=0 4 * * * ?
-```
-Register on the site https://openweathermap.org/, get the api key and save it in the settings:
-```sh
-"hibernate.connection.username= "
-```
-Save file.
-Open tomcat-users.xml (in any text editor).
-```sh
-<tomcat-users xmlns="http://tomcat.apache.org/xml"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd"
-              version="1.0">
-    <role rolename="manager-gui"/>
-    <role rolename="manager-script"/>
-    <user username="admin" password="sjdhbgfjs+)%gjabsvdbasj" roles="manager-gui,manager-script"/>
-</tomcat-users>
+com.senla.socialnetwork.service.UserServiceImpl.expiration=20000000
 ```
 Change the following fields:
 ```sh
-"username= " - tomcat username;
-"password= " - tomcat password;
+"spring.datasource.username= " - POSTGRESSQL username;
+"spring.datasource.password= " - POSTGRESSQL password;
 ```
 Save file.
-Open database/script/prod/init/data_filling_for_prod.sql (in any text editor).
-```sh
-USE hrinkov_social_network;
 
+Open app/src/main/resources/db/changelog/v-1.0/dml_changeLog.sql (in any text editor).
+```sh
 ALTER TABLE users AUTO_INCREMENT = 1;
 
 INSERT INTO users VALUES
@@ -243,4 +211,4 @@ web_1                   | 01-Dec-2020 11:37:11.526 INFO [main] org.apache.catali
 social-network-mysql_1  | 2020-12-01T11:37:11.586746Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.22'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
 ```
 To see the capabilities of a RESTful application, visit the following link:
-http://localhost:2308/socialnetwork/swagger-ui.html
+http://localhost:2308/swagger-ui.html
