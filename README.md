@@ -9,7 +9,7 @@ This repository includes a basic REST API built with Spring framework and for de
 #### Java
 Install java 8 use following command in terminal
 ```sh
-    $ sudo apt update
+$ sudo apt update
 $ sudo apt-get install openjdk-8-jdk
 ```
 You will be prompted to accept the license.
