@@ -211,4 +211,4 @@ web_1                   | 01-Dec-2020 11:37:11.526 INFO [main] org.apache.catali
 social-network-mysql_1  | 2020-12-01T11:37:11.586746Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.22'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
 ```
 To see the capabilities of a RESTful application, visit the following link:
-http://localhost:2308/swagger-ui.html
+http://localhost:2308/swagger-ui/
